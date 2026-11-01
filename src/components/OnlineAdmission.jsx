@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SchoolLogo from './common/SchoolLogo';
 import { useSchool } from '../context/useSchool';
 import { 
   Send, 
@@ -108,6 +109,9 @@ export default function OnlineAdmission() {
             <div className="p-6 sm:p-10 bg-white space-y-6">
               {/* Slip Header */}
               <div className="text-center border-b-2 border-emerald-900 pb-4">
+                <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-white p-0.5 shadow ring-1 ring-emerald-800">
+                  <SchoolLogo logo={schoolInfo.logo} />
+                </div>
                 <h3 className="text-2xl sm:text-3xl font-extrabold font-bangla text-emerald-950">
                   {lang === 'bn' ? schoolInfo.nameBn : schoolInfo.nameEn}
                 </h3>

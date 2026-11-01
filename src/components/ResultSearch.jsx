@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
+import SchoolLogo from './common/SchoolLogo';
 import { useSchool } from '../context/useSchool';
 import { 
   GraduationCap, 
   Search, 
   Printer, 
   RotateCcw, 
-  Award, 
   CheckCircle2, 
   AlertCircle,
   FileCheck
@@ -200,8 +200,8 @@ export default function ResultSearch() {
               {/* Header Letterhead */}
               <div className="text-center border-b-2 border-emerald-950 pb-4">
                 <div className="flex justify-center mb-2">
-                  <div className="w-14 h-14 bg-emerald-900 text-amber-400 rounded-full flex items-center justify-center font-bold text-xs p-1">
-                    <Award className="w-8 h-8" />
+                  <div className="w-14 h-14 rounded-full bg-white p-1 shadow-md ring-2 ring-emerald-900">
+                    <SchoolLogo logo={schoolInfo.logo} />
                   </div>
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-extrabold font-bangla text-emerald-950">

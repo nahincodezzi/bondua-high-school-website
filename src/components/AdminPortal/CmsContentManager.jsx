@@ -94,8 +94,8 @@ export default function CmsContentManager() {
     const file = e.target.files?.[0];
     if (!file || activeSlideUploadIndex === null) return;
 
-    if (file.size > 8 * 1024 * 1024) {
-      alert('ছবির আকার সর্বোচ্চ ৮ মেগাবাইট হতে পারবে।');
+    if (file.size > 15 * 1024 * 1024) {
+      alert('ছবির আকার সর্বোচ্চ ১৫ মেগাবাইট (15 MB) হতে পারবে।');
       return;
     }
 
@@ -104,8 +104,8 @@ export default function CmsContentManager() {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_W = 1600;
-        const MAX_H = 900;
+        const MAX_W = 1920;
+        const MAX_H = 1080;
         let w = img.width;
         let h = img.height;
         if (w > MAX_W || h > MAX_H) {
@@ -121,7 +121,7 @@ export default function CmsContentManager() {
         canvas.height = h;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, w, h);
-        const compressed = canvas.toDataURL('image/jpeg', 0.85);
+        const compressed = canvas.toDataURL('image/jpeg', 0.88);
         handleSlideChange(activeSlideUploadIndex, 'image', compressed);
       };
       img.src = event.target.result;
@@ -134,8 +134,8 @@ export default function CmsContentManager() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 8 * 1024 * 1024) {
-      alert('ছবির আকার সর্বোচ্চ ৮ মেগাবাইট হতে পারবে।');
+    if (file.size > 15 * 1024 * 1024) {
+      alert('ছবির আকার সর্বোচ্চ ১৫ মেগাবাইট (15 MB) হতে পারবে।');
       return;
     }
 
@@ -145,8 +145,8 @@ export default function CmsContentManager() {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_W = 1200;
-        const MAX_H = 800;
+        const MAX_W = 1920;
+        const MAX_H = 1080;
         let w = img.width;
         let h = img.height;
         if (w > MAX_W || h > MAX_H) {
@@ -196,7 +196,7 @@ export default function CmsContentManager() {
     setTimeout(() => setSavedMessage(false), 3000);
   };
 
-  // Gallery Video Submit
+  // Gallery Video Submit (High Quality YouTube Embed & Thumbnail Extraction)
   const handleAddVideoSubmit = (e) => {
     e.preventDefault();
     if (!videoTitleBn || !videoUrl) {
@@ -204,22 +204,31 @@ export default function CmsContentManager() {
       return;
     }
 
-    // Convert standard watch URL to embed URL if needed
-    let finalEmbedUrl = videoUrl;
-    if (videoUrl.includes('watch?v=')) {
-      const vidId = videoUrl.split('watch?v=')[1]?.split('&')[0];
+    let finalEmbedUrl = videoUrl.trim();
+    let thumbnail = 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=600&auto=format&fit=crop&q=80';
+    let vidId = '';
+
+    if (finalEmbedUrl.includes('watch?v=')) {
+      vidId = finalEmbedUrl.split('watch?v=')[1]?.split('&')[0];
+    } else if (finalEmbedUrl.includes('youtu.be/')) {
+      vidId = finalEmbedUrl.split('youtu.be/')[1]?.split('?')[0];
+    } else if (finalEmbedUrl.includes('youtube.com/shorts/')) {
+      vidId = finalEmbedUrl.split('youtube.com/shorts/')[1]?.split('?')[0];
+    } else if (finalEmbedUrl.includes('youtube.com/embed/')) {
+      vidId = finalEmbedUrl.split('youtube.com/embed/')[1]?.split('?')[0];
+    }
+
+    if (vidId) {
       finalEmbedUrl = `https://www.youtube.com/embed/${vidId}`;
-    } else if (videoUrl.includes('youtu.be/')) {
-      const vidId = videoUrl.split('youtu.be/')[1]?.split('?')[0];
-      finalEmbedUrl = `https://www.youtube.com/embed/${vidId}`;
+      thumbnail = `https://img.youtube.com/vi/${vidId}/hqdefault.jpg`;
     }
 
     addVideoItem({
       titleBn: videoTitleBn,
       titleEn: videoTitleEn || videoTitleBn,
       videoUrl: finalEmbedUrl,
-      duration: videoDuration || '10:00',
-      thumbnail: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=600&auto=format&fit=crop&q=80'
+      duration: videoDuration || '05:30',
+      thumbnail: thumbnail
     });
 
     setVideoTitleBn('');

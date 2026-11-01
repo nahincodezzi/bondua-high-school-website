@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SchoolLogo from '../common/SchoolLogo';
 import { useSchool } from '../../context/useSchool';
 import { 
   Search, 
@@ -334,7 +335,10 @@ export default function StudentManager() {
               <div className="absolute top-0 left-0 right-0 h-2 bg-amber-400"></div>
 
               {/* School Emblem & Name */}
-              <div>
+              <div className="flex flex-col items-center">
+                <div className="w-10 h-10 rounded-full bg-white p-0.5 shadow ring-1 ring-amber-400 mb-1 shrink-0">
+                  <SchoolLogo logo={schoolInfo.logo} />
+                </div>
                 <h3 className="text-base font-extrabold font-bangla text-white leading-tight">
                   {schoolInfo.nameBn}
                 </h3>

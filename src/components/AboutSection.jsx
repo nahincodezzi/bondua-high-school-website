@@ -74,7 +74,7 @@ export default function AboutSection() {
           <div className="lg:col-span-5">
             <div className="relative rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-slate-100">
               <img
-                src="https://images.unsplash.com/photo-1562774053-701939374585?w=800&auto=format&fit=crop&q=80"
+                src={schoolInfo.campusImage || "https://images.unsplash.com/photo-1562774053-701939374585?w=800&auto=format&fit=crop&q=80"}
                 alt="School Campus"
                 className="w-full h-80 sm:h-96 object-cover"
               />
@@ -101,8 +101,8 @@ export default function AboutSection() {
             </h3>
             <p className="text-xs sm:text-sm text-emerald-100 font-bangla leading-relaxed">
               {lang === 'bn'
-                ? 'মানসম্মত শিক্ষা, নৈতিক মূল্যবোধ ও ডিজিটাল প্রযুক্তির সমন্বয়ে প্রতিটি শিক্ষার্থীকে আধুনিক বিজ্ঞানমনস্ক, দেশপ্রেমিক ও দক্ষ মানবসম্পদ হিসেবে গড়ে তোলা।'
-                : 'To deliver quality secondary education emphasizing moral character, scientific literacy, and 21st-century technological proficiency.'}
+                ? (schoolInfo.missionBn || 'মানসম্মত শিক্ষা, নৈতিক মূল্যবোধ ও ডিজিটাল প্রযুক্তির সমন্বয়ে প্রতিটি শিক্ষার্থীকে আধুনিক বিজ্ঞানমনস্ক, দেশপ্রেমিক ও দক্ষ মানবসম্পদ হিসেবে গড়ে তোলা।')
+                : (schoolInfo.missionEn || 'To deliver quality secondary education emphasizing moral character, scientific literacy, and 21st-century technological proficiency.')}
             </p>
           </div>
 
@@ -115,8 +115,8 @@ export default function AboutSection() {
             </h3>
             <p className="text-xs sm:text-sm text-slate-300 font-bangla leading-relaxed">
               {lang === 'bn'
-                ? 'একটি বৈষম্যহীন, প্রযুক্তি-নির্ভর ও আদর্শ শিক্ষাঙ্গন হিসেবে ফুলগাজী তথা বৃহত্তর নোয়াখালী-কুমিল্লা অঞ্চলের শ্রেষ্ঠ মডেল বিদ্যালয়ে রূপান্তরিত হওয়া।'
-                : 'To emerge as a beacon of academic brilliance and ethical leadership in the greater Feni and Chittagong division.'}
+                ? (schoolInfo.visionBn || 'একটি বৈষম্যহীন, আধুনিক প্রযুক্তি-নির্ভর ও আদর্শ বিদ্যাপীঠ হিসেবে কুমিল্লা শিক্ষা বোর্ডের অন্যতম শ্রেষ্ঠ ও মডেল বিদ্যালয়ে রূপান্তরিত হওয়া।')
+                : (schoolInfo.visionEn || 'To emerge as one of the premier model institutions under the Comilla Education Board, fostering discrimination-free, technology-driven, and holistic moral education.')}
             </p>
           </div>
 
@@ -129,8 +129,8 @@ export default function AboutSection() {
             </h3>
             <p className="text-xs sm:text-sm text-slate-900 font-bangla leading-relaxed font-medium">
               {lang === 'bn'
-                ? 'শৃঙ্খলা, সততা, সহমর্মিতা, বিজ্ঞানচেতনা এবং মাতৃভূমির সার্বিক উন্নয়নে অবদান রাখার চিরন্তন ব্রত।'
-                : 'Discipline, integrity, empathy, inquiry-based learning, and selfless service to the nation.'}
+                ? (schoolInfo.coreValuesBn || 'শৃঙ্খলা, সততা, সহমর্মিতা, বিজ্ঞানচেতনা এবং মাতৃভূমির সার্বিক উন্নয়নে অবদান রাখার চিরন্তন ব্রত।')
+                : (schoolInfo.coreValuesEn || 'Discipline, integrity, empathy, inquiry-based learning, and selfless service to the nation.')}
             </p>
           </div>
         </div>

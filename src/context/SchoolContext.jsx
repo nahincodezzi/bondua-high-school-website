@@ -108,6 +108,21 @@ export function SchoolProvider({ children }) {
           parsed.headmasterDesignationBn = 'ভারপ্রাপ্ত প্রধান শিক্ষক';
           parsed.headmasterDesignationEn = 'Acting Headmaster';
         }
+        if (!parsed.visionBn || parsed.visionBn.includes('নোয়াখালী') || parsed.visionBn.includes('বৃহত্তর')) {
+          parsed.visionBn = initialSchoolInfo.visionBn;
+          parsed.visionEn = initialSchoolInfo.visionEn;
+        }
+        if (!parsed.missionBn) {
+          parsed.missionBn = initialSchoolInfo.missionBn;
+          parsed.missionEn = initialSchoolInfo.missionEn;
+        }
+        if (!parsed.coreValuesBn) {
+          parsed.coreValuesBn = initialSchoolInfo.coreValuesBn;
+          parsed.coreValuesEn = initialSchoolInfo.coreValuesEn;
+        }
+        if (!parsed.campusImage) {
+          parsed.campusImage = initialSchoolInfo.campusImage;
+        }
         return parsed;
       } catch {
         return initialSchoolInfo;

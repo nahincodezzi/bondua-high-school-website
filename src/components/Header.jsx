@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SchoolLogo from './common/SchoolLogo';
 import { useSchool } from '../context/useSchool';
 import { 
   Phone, 
@@ -130,17 +131,7 @@ export default function Header() {
           >
             {/* School Crest Emblem */}
             <div className="relative w-12 h-12 sm:w-16 sm:h-16 shrink-0 bg-white rounded-full p-1 shadow-lg ring-2 ring-amber-400/80 group-hover:scale-105 transition-transform duration-300">
-              <svg viewBox="0 0 100 100" className="w-full h-full">
-                <circle cx="50" cy="50" r="46" fill="#064e3b" stroke="#f59e0b" strokeWidth="4"/>
-                <circle cx="50" cy="50" r="39" fill="#ffffff" stroke="#064e3b" strokeWidth="1"/>
-                <circle cx="50" cy="40" r="11" fill="#f59e0b"/>
-                <path d="M 30 58 Q 50 52 50 64 Q 50 52 70 58 L 70 66 Q 50 60 50 72 Q 50 60 30 66 Z" fill="#064e3b"/>
-                <path d="M 50 64 L 50 72" stroke="#ffffff" strokeWidth="1.5"/>
-                <path d="M 50 28 L 53 37 L 47 37 Z" fill="#d97706"/>
-                <polygon points="50,14 52,18 56,18 53,21 54,25 50,22 46,25 47,21 44,18 48,18" fill="#f59e0b"/>
-                <text x="50" y="80" textAnchor="middle" fontSize="6.5" fontWeight="bold" fill="#064e3b">ESTD 1990</text>
-                <text x="50" y="87" textAnchor="middle" fontSize="5" fontWeight="600" fill="#64748b">EIIN: 106644</text>
-              </svg>
+              <SchoolLogo logo={schoolInfo.logo} />
             </div>
 
             {/* School Typography */}

@@ -1,4 +1,5 @@
 import React from 'react';
+import SchoolLogo from './common/SchoolLogo';
 import { useSchool } from '../context/useSchool';
 import { 
   Share2, 
@@ -25,13 +26,7 @@ export default function Footer() {
           <div className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-white p-1 ring-2 ring-amber-400">
-                <svg viewBox="0 0 100 100" className="w-full h-full">
-                  <circle cx="50" cy="50" r="46" fill="#064e3b" stroke="#f59e0b" strokeWidth="4"/>
-                  <circle cx="50" cy="50" r="39" fill="#ffffff"/>
-                  <circle cx="50" cy="40" r="11" fill="#f59e0b"/>
-                  <path d="M 30 58 Q 50 52 50 64 Q 50 52 70 58 L 70 66 Q 50 60 50 72 Q 50 60 30 66 Z" fill="#064e3b"/>
-                  <polygon points="50,14 52,18 56,18 53,21 54,25 50,22 46,25 47,21 44,18 48,18" fill="#f59e0b"/>
-                </svg>
+                <SchoolLogo logo={schoolInfo.logo} />
               </div>
               <div>
                 <h3 className="text-base sm:text-lg font-bold font-bangla text-white leading-tight">
