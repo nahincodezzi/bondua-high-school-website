@@ -30,7 +30,7 @@
       padding: 40px 20px;
     }
     .container {
-      max-width: 900px;
+      max-width: 950px;
       margin: 0 auto;
       background: #ffffff;
       padding: 48px;
@@ -76,6 +76,7 @@
       padding: 4px 12px;
       border-radius: 999px;
       margin-bottom: 12px;
+      border: 1px solid #a7f3d0;
     }
     h1 {
       font-size: 26px;
@@ -144,8 +145,26 @@
       background: #f8fafc;
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 16px 20px;
+      padding: 18px 22px;
       margin-bottom: 14px;
+    }
+    .callout-success {
+      background: #f0fdf4;
+      border-left: 4px solid #16a34a;
+      padding: 14px 18px;
+      border-radius: 8px;
+      margin: 14px 0;
+      font-size: 13.5px;
+      color: #166534;
+    }
+    .callout-warning {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 14px 18px;
+      border-radius: 8px;
+      margin: 14px 0;
+      font-size: 13.5px;
+      color: #92400e;
     }
     .footer {
       margin-top: 50px;
@@ -178,7 +197,7 @@
     <div class="print-bar no-print">
       <div>
         <strong style="color: var(--primary);">বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়</strong>
-        <p style="font-size: 12px; color: var(--slate);">সফটওয়্যার কারিগরি বিবরণী ও ফাইল ডিরেক্টরি পরিচিতি</p>
+        <p style="font-size: 12px; color: var(--slate);">সফটওয়্যার কারিগরি স্থাপত্য, ফাইল পরিচিতি ও মালিকানা গাইডলাইন</p>
       </div>
       <button onclick="window.print()" class="print-btn">
         🖨️ PDF হিসেবে সংরক্ষণ / প্রিন্ট করুন
@@ -186,53 +205,67 @@
     </div>
 
     <div class="header">
-      <span class="badge">TECHNICAL DOCUMENTATION & FILE MANUAL</span>
+      <span class="badge">TECHNICAL DOCUMENTATION & ARCHITECTURE MANUAL</span>
       <h1>বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়</h1>
-      <p class="subtitle">স্কুল পোর্টাল ও সিএমএস ইআরপি সফটওয়্যার আর্কিটেকচার • EIIN: 106644</p>
+      <p class="subtitle">স্কুল পোর্টাল ও সিএমএস ইআরপি সফটওয়্যার আর্কিটেকচার • EIIN: 106644 • MPO: 105476301 • স্থাপিত: ১৯৯০</p>
     </div>
 
-    <h2>১. ফ্রন্টএন্ড ও ব্যাকএন্ডে ব্যবহৃত টেকনোলজি ও ল্যাঙ্গুয়েজ</h2>
+    <div class="callout-success">
+      ✅ <strong>প্রোডাকশন প্রস্তুতি স্ট্যাটাস: ১০০% প্রস্তুত।</strong> বিদ্যালয়ের মূল ওয়েবসাইট, প্রশাসনিক সিএমএস, অনলাইন ভর্তি, ফলাফল, নোটিশ ও ১৬ জন শিক্ষক-কর্মচারীর পূর্ণ তালিকা সহ সিস্টেমটি সম্পূর্ণ ত্রুটিমুক্ত ও লাইভ টেস্টেড।
+    </div>
+
+    <h2>১. ফ্রন্টএন্ড ও ব্যাকএন্ডে ব্যবহৃত টেকনোলজি ও ল্যাঙ্গুয়েজ (Tech Stack)</h2>
     <div class="card">
-      <p>এই সফটওয়্যারটি অত্যন্ত আধুনিক, লাইটওয়েট এবং আন্তর্জাতিক স্ট্যান্ডার্ড কোডিং নীতি মেনে তৈরি করা হয়েছে। নিচে ব্যবহৃত প্রযুক্তিগুলোর তালিকা দেওয়া হলো:</p>
+      <p>এই সফটওয়্যারটি অত্যন্ত আধুনিক, লাইটওয়েট এবং আন্তর্জাতিক স্ট্যান্ডার্ড কোডিং নীতি মেনে তৈরি করা হয়েছে। নিচে ব্যবহৃত প্রযুক্তিগুলোর পূর্ণ তালিকা দেওয়া হলো:</p>
       <br>
       <table>
         <thead>
           <tr>
             <th>বিভাগ</th>
-            <th>ব্যবহৃত প্রযুক্তি / লাইব্রেরি</th>
-            <th>কাজের উদ্দেশ্য</th>
+            <th>ব্যবহৃত প্রযুক্তি / ফ্রেমওয়ার্ক</th>
+            <th>ভূমিকা ও কাজের উদ্দেশ্য</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td><strong>মূল ফ্রেমওয়ার্ক</strong></td>
-            <td><span class="code">React 18</span> + <span class="code">JavaScript (ES6+)</span></td>
-            <td>কম্পোনেন্টভিত্তিক অত্যন্ত দ্রুত ও সিঙ্গেল পেজ ইউজার ইন্টারফেস।</td>
+            <td><span class="code">React 18.3</span> + <span class="code">JavaScript (ES6+)</span></td>
+            <td>কম্পোনেন্টভিত্তিক অত্যন্ত দ্রুত, স্মুথ ও সিঙ্গেল পেজ ইউজার ইন্টারফেস (SPA)।</td>
           </tr>
           <tr>
-            <td><strong>বিল্ড টুল</strong></td>
+            <td><strong>বিল্ড ইঞ্জিন</strong></td>
             <td><span class="code">Vite 8.3</span></td>
-            <td>মাত্র ৩০০ মিলিসেকেন্ডে বিদ্যুৎগতিতে কোড কম্পাইল ও লাইভ রিলোড।</td>
+            <td>মাত্র ৩০০ মিলিসেকেন্ডে কোড কম্পাইল ও লাইভ হট-মডিউল রিলোড (HMR)।</td>
           </tr>
           <tr>
             <td><strong>স্টাইলিং ও সিএসএস</strong></td>
             <td><span class="code">Tailwind CSS v4</span></td>
-            <td>ক্লিন, মিনিমালিস্ট, রেসপন্সিভ এবং চোখ-জুড়ানো (Eye-Smoothing) ডিজাইন।</td>
+            <td>ক্লিন, মিনিমালিস্ট, রেসপন্সিভ এবং আরামদায়ক গ্রিন-অ্যাম্বার স্কুল থিম।</td>
           </tr>
           <tr>
             <td><strong>টাইপোগ্রাফি</strong></td>
             <td><span class="code">Noto Sans Bengali</span> + <span class="code">Plus Jakarta Sans</span></td>
-            <td>গুগলের প্রমিত বাংলা ফন্ট (যাতে ১, ২, ৩ সহ সকল সংখ্যা ও অক্ষর সুস্পষ্ট থাকে)।</td>
+            <td>গুগলের প্রমিত বাংলা ফন্ট (যাতে ১, ২, ৩ সহ সকল বাংলা সংখ্যা ও যুক্তবর্ণ সুস্পষ্ট থাকে)।</td>
           </tr>
           <tr>
-            <td><strong>আইকন লাইব্রেরি</strong></td>
+            <td><strong>ভেক্টর আইকন</strong></td>
             <td><span class="code">Lucide React</span></td>
-            <td>পরিচ্ছন্ন, আধুনিক ও লাইটওয়েট ভেক্টর আইকন সেট।</td>
+            <td>পরিচ্ছন্ন, স্কেলেবল ও দ্রুত লোড হওয়া প্রিমিয়াম ভেক্টর আইকন সেট।</td>
           </tr>
           <tr>
-            <td><strong>স্টেট ও ডেটা পারসিসটেন্স</strong></td>
-            <td><span class="code">React Context API</span> + <span class="code">LocalStorage</span></td>
-            <td>ক্লায়েন্ট-সাইড অফলাইন ডাটাবেস। পেজ রিফ্রেশ করলেও তথ্য মুছে যায় না।</td>
+            <td><strong>স্টেট ও লোকাল ডাটাবেস</strong></td>
+            <td><span class="code">React Context API</span> + <span class="code">LocalStorage Engine</span></td>
+            <td>জিরো-ল্যাগ ক্লায়েন্ট-সাইড অফলাইন ডাটাবেস। পেজ রিফ্রেশ করলেও তথ্য সুরক্ষিত থাকে।</td>
+          </tr>
+          <tr>
+            <td><strong>ছবি প্রসেসিং ও অপটিমাইজেশন</strong></td>
+            <td><span class="code">HTML5 Canvas API</span> + <span class="code">FileReader</span></td>
+            <td>শিক্ষকদের ছবি আপলোডের সময় ব্রাউজারেই স্বয়ংক্রিয়ভাবে কম্প্রেস ও রিসাইজ করে ডেটাবেসে সংরক্ষণ।</td>
+          </tr>
+          <tr>
+            <td><strong>স্মার্ট অবতার ইঞ্জিন</strong></td>
+            <td><span class="code">Custom SVG Vector Avatar Generator</span></td>
+            <td>আসল ছবি আপলোড না থাকলে প্রাতিষ্ঠানিক প্রফেশনাল ভেক্টর পোর্ট্রেট তৈরি করে।</td>
           </tr>
           <tr>
             <td><strong>নিরাপত্তা ও অ্যাক্সেস</strong></td>
@@ -243,71 +276,134 @@
       </table>
     </div>
 
-    <h2>২. প্রজেক্টের প্রতিটি ফাইল ও ফোল্ডারের বিস্তারিত কাজ</h2>
-    <p>প্রজেক্টের আর্কিটেকচার অত্যন্ত সুবিন্যস্ত এবং মডুলার। নিচে কোন ফাইলটি ঠিক কী কাজের জন্য তৈরি তা ব্যাখ্যা করা হলো:</p>
+    <h2>২. প্রজেক্টের প্রতিটি ফাইল ও ফোল্ডারের বিস্তারিত কাজ (File Directory Structure)</h2>
+    <p>প্রজেক্টের আর্কিটেকচার অত্যন্ত সুবিন্যস্ত এবং মডুলার। নিচে ফাইলগুলোর তালিকা ও তাদের উদ্দেশ্য দেওয়া হলো:</p>
 
     <h3>📁 মূল রুট ফাইলসমূহ (Root Files)</h3>
     <ul>
-      <li><span class="code">index.html</span> — পুরো ওয়েবসাইটের মূল এইচটিএমএল এন্ট্রি পয়েন্ট। এখানে গুগলের Noto Sans Bengali ফন্ট, ফেভিকন এবং মেটাট্যাগ লোড করা হয়েছে।</li>
-      <li><span class="code">package.json</span> — প্রজেক্টের ডিপেন্ডেন্সি (React, Lucide, Tailwind) এবং স্ক্রিপ্ট কনফিগারেশন।</li>
-      <li><span class="code">vite.config.js</span> — Vite বিল্ডার কনফিগারেশন।</li>
-      <li><span class="code">.gitignore</span> — গিট রিপোজিটরিতে কোন কোন ফাইল (node_modules, dist) পুশ হবে না তার তালিকা।</li>
+      <li><span class="code">index.html</span> — প্রধান এইচটিএমএল এন্ট্রি পয়েন্ট। এখানে Noto Sans Bengali ফন্ট, ফেভিকন এবং মেটাট্যাগ রয়েছে।</li>
+      <li><span class="code">package.json</span> — রিঅ্যাক্ট প্যাকেজ ডিপেন্ডেন্সি এবং বিল্ড স্ক্রিপ্টস কনফিগারেশন।</li>
+      <li><span class="code">vite.config.js</span> — Vite বিল্ডার ও ডেভ সার্ভার কনফিগারেশন।</li>
+      <li><span class="code">DOCUMENTATION_AND_ARCHITECTURE.html</span> — সফটওয়্যার স্থাপত্য ও কোড বিবরণী নির্দেশিকা।</li>
+      <li><span class="code">USER_OPERATING_MANUAL.html</span> — সাধারণ ব্যবহারকারী ও শিক্ষকদের জন্য সহজ গাইডলাইন বই।</li>
+      <li><span class="code">.gitignore</span> — গিট রিপোজিটরিতে বিল্ড ফাইল বাদ দেওয়ার নিয়মাবলী।</li>
     </ul>
 
     <h3>📁 সোর্স ফোল্ডার (src/ Folder)</h3>
     <ul>
-      <li><span class="code">src/main.jsx</span> — রিঅ্যাক্ট অ্যাপ্লিকেশনের শুরু এবং ডম-এ রেন্ডার করার ফাইল।</li>
-      <li><span class="code">src/App.jsx</span> — মূল রাউটার এবং পাবলিক পোর্টাল ও সিএমএস পোর্টালে সুইচ করার কেন্দ্রীয় লজিক।</li>
-      <li><span class="code">src/index.css</span> — গ্লোবাল সিএসএস, ফন্ট ভেরিয়েবল এবং প্রিন্ট মিডিয়া স্টাইল।</li>
+      <li><span class="code">src/main.jsx</span> — রিঅ্যাক্ট অ্যাপ্লিকেশনের শুরু এবং ডম-এ মাউন্ট করার পয়েন্ট।</li>
+      <li><span class="code">src/App.jsx</span> — মূল রাউটার; পাবলিক পোর্টাল ও সিএমএস পোর্টালে সুইচ করার কেন্দ্রীয় লজিক।</li>
+      <li><span class="code">src/index.css</span> — গ্লোবাল স্টাইল, ফন্ট ভেরিয়েবল এবং প্রিন্ট মিডিয়া স্টাইল।</li>
     </ul>
 
     <h3>📁 ডেটা ও স্টেট ম্যানেজমেন্ট (src/data/ & src/context/)</h3>
     <ul>
-      <li><span class="code">src/data/initialData.js</span> — বিদ্যালয়ের প্রাথমিক তথ্য ভাণ্ডার (EIIN 106644, MPO 905171301, কুমিল্লা বোর্ড, ড্রেস কোড, হিরো স্লাইডার, প্রাথমিক শিক্ষক তালিকা, ফলাফল ও ফি ইত্যাদি)।</li>
+      <li><span class="code">src/data/initialData.js</span> — বিদ্যালয়ের প্রাথমিক তথ্য ভাণ্ডার (EIIN 106644, MPO 105476301, কুমিল্লা বোর্ড, ড্রেস কোড, হিরো স্লাইডার, ১৬ জন শিক্ষক-কর্মচারীর তালিকা, ফলাফল ও ফি ইত্যাদি)।</li>
       <li><span class="code">src/context/SchoolContextInstance.js</span> — রিঅ্যাক্ট কনটেক্সট ইনস্ট্যান্স।</li>
-      <li><span class="code">src/context/SchoolContext.jsx</span> — ডেটাবেস ও স্টেট প্রোভাইডার। এটি LocalStorage এর সাথে ডেটা সিঙ্ক রাখে এবং নতুন ডেটা যুক্ত/এডিট/ডিলিট পরিচালনা করে।</li>
+      <li><span class="code">src/context/SchoolContext.jsx</span> — ডেটাবেস ও স্টেট প্রোভাইডার। এটি LocalStorage এর সাথে ডেটা সিঙ্ক রাখে, প্রথম ভিজিটে স্বয়ংক্রিয়ভাবে বাংলা ভাষা নির্বাচন করে এবং ডেটা সিঙ্ক বজায় রাখে।</li>
       <li><span class="code">src/context/useSchool.js</span> — কাস্টম হুক, যার সাহায্যে যেকোনো কম্পোনেন্ট এক লাইনে স্কুলের তথ্য ও ফাংশন কল করতে পারে।</li>
+      <li><span class="code">src/utils/avatarGenerator.js</span> — ১৬ জন শিক্ষক-কর্মচারীর জন্য স্বয়ংক্রিয় প্রফেশনাল এসভিজি ভেক্টর পোর্ট্রেট জেনারেটর ইঞ্জিন।</li>
     </ul>
 
     <h3>📁 পাবলিক ওয়েবসাইটের কম্পোনেন্টসমূহ (src/components/)</h3>
     <ul>
-      <li><span class="code">Header.jsx</span> — প্রাতিষ্ঠানিক লোগো, মনোগ্রাম, হটলাইন, ইমেইল, ভাষা পরিবর্তন এবং মূল মেনুবার।</li>
-      <li><span class="code">NoticeTicker.jsx</span> — স্ক্রিনের শীর্ষে অ্যানিমেটেড ব্রেকিং নোটিশ স্ক্রলার।</li>
-      <li><span class="code">HeroSlider.jsx</span> — হোমপেজের বড় স্লাইডার, ফটো ব্যানার ও দ্রুত অ্যাকশন বাটন।</li>
-      <li><span class="code">HeadmasterMessage.jsx</span> — প্রধান শিক্ষকের বাণী ও প্রাতিষ্ঠানিক লক্ষ্য।</li>
-      <li><span class="code">UniformSection.jsx</span> — ছাত্র-ছাত্রীদের ড্রেস কোড প্রদর্শনী (সাদা শার্ট + নীল প্যান্ট এবং লাল ড্রেস + সাদা সালোয়ার ও ওড়না)।</li>
+      <li><span class="code">Header.jsx</span> — প্রাতিষ্ঠানিক লোগো, মনোগ্রাম, হটলাইন, ইমেইল, দ্বৈত ভাষা পরিবর্তন (বাংলা/ইংরেজি) ও মূল মেনুবার।</li>
+      <li><span class="code">NoticeTicker.jsx</span> — স্ক্রিনের শীর্ষে চলমান ব্রেকিং নোটিশ স্ক্রলার।</li>
+      <li><span class="code">HeroSlider.jsx</span> — হোমপেজের প্রধান স্লাইডার, ফটো ব্যানার ও অ্যাকশন বাটন।</li>
+      <li><span class="code">HeadmasterMessage.jsx</span> — ভারপ্রাপ্ত প্রধান শিক্ষক জনাব বাহার উদ্দিন ভূঁইয়ার বাণী ও লক্ষ্য।</li>
+      <li><span class="code">UniformSection.jsx</span> — ড্রেস কোড প্রদর্শনী (সাদা শার্ট + নীল প্যান্ট এবং লাল ড্রেস + সাদা সালোয়ার ও ওড়না)।</li>
       <li><span class="code">NoticeBoard.jsx</span> — ক্যাটাগরিভিত্তিক নোটিশ বোর্ড এবং বিদ্যালয়ের অফিশিয়াল প্যাডে নোটিশ প্রিন্ট সুবিধা।</li>
-      <li><span class="code">AcademicPrograms.jsx</span> — ষষ্ঠ থেকে দশম শ্রেণি এবং বিজ্ঞান, ব্যবসায় শিক্ষা ও মানবিক বিভাগের পাঠ্যক্রম।</li>
-      <li><span class="code">FacultyDirectory.jsx</span> — শিক্ষকদের সার্চযোগ্য তালিকা, ছবি, পদবী ও মোবাইল নম্বর।</li>
-      <li><span class="code">OnlineAdmission.jsx</span> — শিক্ষার্থীদের জন্য অনলাইন ভর্তি ফরম এবং অ্যাডমিট স্লিপ প্রিন্ট সুবিধা।</li>
-      <li><span class="code">ResultSearch.jsx</span> — রোল ও শ্রেণি দিয়ে কুমিল্লা বোর্ডের ফরম্যাটে গ্রেড পয়েন্টসহ মার্কশিট প্রিন্ট করার ব্যবস্থা।</li>
+      <li><span class="code">AcademicPrograms.jsx</span> — ষষ্ঠ থেকে দশম শ্রেণি এবং বিজ্ঞান, ব্যবসায় শিক্ষা ও মানবিক পাঠ্যক্রম।</li>
+      <li><span class="code">FacultyDirectory.jsx</span> — ১৬ জন শিক্ষক ও কর্মচারীর সার্চযোগ্য তালিকা, ছবি, পদবী ও মোবাইল নম্বর।</li>
+      <li><span class="code">OnlineAdmission.jsx</span> — অনলাইন ভর্তি আবেদন ফরম এবং রঙিন প্রবেশপত্র (Admit Slip) প্রিন্টার।</li>
+      <li><span class="code">ResultSearch.jsx</span> — রোল ও শ্রেণি দিয়ে কুমিল্লা বোর্ডের ফরম্যাটে গ্রেড পয়েন্টসহ মার্কশিট প্রিন্টার।</li>
       <li><span class="code">Gallery.jsx</span> — বিদ্যালয় ক্যাম্পাসের ছবি ও ভিডিও গ্যালারি উইথ পপআপ জুম।</li>
       <li><span class="code">FacebookMediaHub.jsx</span> — স্কুলের অফিসিয়াল ফেসবুক গ্রুপের সাথে যুক্ত ফটো/ভিডিও হাব।</li>
-      <li><span class="code">RoutinesDownload.jsx</span> — সাপ্তাহিক ক্লাস রুটিন ও এনসিটিবি সিলেবাস ডাউনলোড।</li>
-      <li><span class="code">AboutSection.jsx</span> — বিদ্যালয়ের ১৯৯০ সালের প্রতিষ্ঠাকাল ও ঐতিহ্যবাহী পরিচিতি।</li>
-      <li><span class="code">ContactSection.jsx</span> — বিদ্যালয়ের কার্যালয়ের অবস্থান, গুগল ম্যাপ ও অনুসন্ধান ফরম।</li>
+      <li><span class="code">RoutinesDownload.jsx</span> — ক্লাস রুটিন ও এনসিটিবি সিলেবাস ডাউনলোড।</li>
+      <li><span class="code">AboutSection.jsx</span> — ১৯৯০ সালের প্রতিষ্ঠাকাল ও ঐতিহ্যবাহী পরিচিতি।</li>
+      <li><span class="code">ContactSection.jsx</span> — কার্যালয়ের অবস্থান, গুগল ম্যাপ ও অনুসন্ধান ফরম।</li>
       <li><span class="code">Footer.jsx</span> — ফুটার সেকশন, সরকারি শিক্ষা পোর্টালসমূহের লিংক ও কপিরাইট।</li>
-      <li><span class="code">AuthModal.jsx</span> — সুপার অ্যাডমিন, প্রধান শিক্ষক, শিক্ষক ও হিসাবরক্ষকদের জন্য সুরক্ষিত লগইন মডাল।</li>
+      <li><span class="code">AuthModal.jsx</span> — সুরক্ষিত লগইন মডাল (সুপার অ্যাডমিন, শিক্ষক, ক্যাশিয়ার)।</li>
     </ul>
 
     <h3>📁 সিএমএস ও ইআরপি অ্যাডমিন পোর্টাল (src/components/AdminPortal/)</h3>
     <ul>
       <li><span class="code">AdminLayout.jsx</span> — অ্যাডমিন ড্যাশবোর্ডের ফ্রেমওয়ার্ক, সাইডবার ও পারমিশন অনুযায়ী মেনু প্রদর্শন।</li>
-      <li><span class="code">UserManager.jsx</span> — 👑 সুপার অ্যাডমিনের জন্য অ্যাকাউন্ট তৈরি ও কার কী অ্যাক্সেস থাকবে তা নিয়ন্ত্রণের মডিউল।</li>
+      <li><span class="code">UserManager.jsx</span> — 👑 সুপার অ্যাডমিন কর্তৃক নতুন অ্যাকাউন্ট তৈরি ও পারমিশন কন্ট্রোল।</li>
       <li><span class="code">DashboardOverview.jsx</span> — শিক্ষার্থী সংখ্যা, পেন্ডিং ভর্তি, আদায়কৃত ফি ও সাম্প্রতিক কার্যক্রমের সামারি।</li>
       <li><span class="code">CmsContentManager.jsx</span> — হোমপেজের ব্যানার, স্লাইডার এবং ইউনিফর্মের নিয়মাবলি পরিবর্তনের CMS।</li>
-      <li><span class="code">TeacherManager.jsx</span> — নতুন শিক্ষক যোগ, তথ্য সংশোধন বা বাদ দেওয়ার শিক্ষক পরিষদ CMS।</li>
-      <li><span class="code">StudentManager.jsx</span> — শ্রেণিভিত্তিক শিক্ষার্থী তালিকা ও প্রাতিষ্ঠানিক রঙিন স্টুডেন্ট আইডি কার্ড প্রিন্টার।</li>
+      <li><span class="code">TeacherManager.jsx</span> — শিক্ষক পরিষদ CMS (ছবি ফাইল আপলোড, তথ্য সংশোধন বা বাদ দেওয়া)।</li>
+      <li><span class="code">StudentManager.jsx</span> — শিক্ষার্থী তালিকা ও রঙিন ডিজিটাল স্টুডেন্ট আইডি কার্ড প্রিন্টার।</li>
       <li><span class="code">AdmissionManager.jsx</span> — অনলাইনে জমা পড়া ভর্তি আবেদন যাচাই, অনুমোদন ও বাতিল করার ব্যবস্থা।</li>
       <li><span class="code">ResultManager.jsx</span> — বিষয়ভিত্তিক পরীক্ষার নম্বর ইনপুট এবং স্বয়ংক্রিয় জিপিএ মার্কশিট পাবলিশার।</li>
-      <li><span class="code">NoticeManager.jsx</span> — নতুন নোটিশ তৈরি ও প্রকাশ করার ব্যবস্থাপনা।</li>
-      <li><span class="code">FeeManager.jsx</span> — শিক্ষার্থীদের মাসিক বেতন বা ফি গ্রহণ এবং মানি রসিদ তৈরি।</li>
+      <li><span class="code">NoticeManager.jsx</span> — নতুন নোটিশ তৈরি ও প্যাড প্রিন্ট।</li>
+      <li><span class="code">FeeManager.jsx</span> — শিক্ষার্থীদের ফি গ্রহণ এবং সিলযুক্ত অফিসিয়াল মানি রসিদ তৈরি।</li>
       <li><span class="code">SchoolSettings.jsx</span> — স্কুলের নাম, প্রধান শিক্ষকের বাণী, ফোন নম্বর ইত্যাদি সেটিংস এডিটর।</li>
     </ul>
 
+    <h2>৩. ভবিষ্যতে স্কুলের নিজস্ব ডোমেইন কানেক্ট ও মালিকানা হস্তান্তরের নিয়ম</h2>
+    <div class="card">
+      <h3>ক. স্কুলের নিজস্ব ডোমেইন নাম নির্বাচন (Custom Domain)</h3>
+      <p>স্কুল কর্তৃপক্ষ চাইলে তাদের নিজস্ব ডোমেইন যেমন <strong>bdhs.edu.bd</strong> অথবা <strong>bonduadaulatpurhighschool.edu.bd</strong> অথবা <strong>bonduahighschool.com</strong> যুক্ত করতে পারে।</p>
+      
+      <div class="callout-warning">
+        🌐 <strong>.edu.bd ডোমেইন কেনার নিয়ম:</strong> বাংলাদেশে সরকারি শিক্ষাপ্রতিষ্ঠানের জন্য <span class="code">.edu.bd</span> ডোমেইন কিনতে হয় সরকারি বিটিসিএল (BTCL - btcl.gov.bd / btrc) থেকে। স্কুলের প্যাডে প্রধান শিক্ষকের আবেদনপত্র, EIIN স্বীকৃতি সনদ এবং ট্রেডিশনাল কাগজপত্রের মাধ্যমে খুব সহজেই ২ বছরের জন্য নামমাত্র মূল্যে (প্রায় ১০০০-১৫০০ টাকা) নেওয়া যায়। অথবা আন্তর্জাতিক <span class="code">.com</span> বা <span class="code">.org</span> ডোমেইন যেকোনো আন্তর্জাতিক প্রোভাইডার (Namecheap, GoDaddy, ExonHost) থেকে ১০ মিনিটে কেনা যায়।
+      </div>
+
+      <h3>খ. ভার্সেল (Vercel)-এ ডোমেইন যুক্ত করার ৩টি সহজ ধাপ</h3>
+      <ol>
+        <li><strong>ভার্সেল প্রজেক্টে ডোমেইন যোগ:</strong> ভার্সেল ড্যাশবোর্ডে গিয়ে প্রজেক্টের <strong>Settings > Domains</strong> এ যান। সেখানে আপনার কাঙ্ক্ষিত ডোমেইন (যেমন: <span class="code">bdhs.edu.bd</span>) লিখুন এবং <strong>Add</strong> বাটনে ক্লিক করুন।</li>
+        <li><strong>DNS রেকর্ড কনফিগারেশন:</strong> ডোমেইন কন্ট্রোল প্যানেলে (BTCL বা যেখান থেকে ডোমেইন কেনা হয়েছে) গিয়ে নিচের ২টি রেকর্ড সেট করুন:
+          <ul>
+            <li><strong>A Record:</strong> হোস্ট <span class="code">@</span> এবং ভ্যালু হবে <span class="code">76.76.21.21</span></li>
+            <li><strong>CNAME Record:</strong> হোস্ট <span class="code">www</span> এবং ভ্যালু হবে <span class="code">cname.vercel-dns.com</span></li>
+          </ul>
+        </li>
+        <li><strong>স্বয়ংক্রিয় ফ্রি SSL:</strong> রেকর্ড যুক্ত করার মাত্র ৫-১০ মিনিটের মধ্যে ভার্সেল স্বয়ংক্রিয়ভাবে বিশ্বমানের ফ্রি SSL সার্টিফিকেট (HTTPS) সক্রিয় করে দেবে।</li>
+      </ol>
+
+      <h3>গ. স্কুল ম্যানেজমেন্টকে সম্পূর্ণ ডিজিটাল মালিকানা বুঝিয়ে দেওয়ার পদ্ধতি</h3>
+      <ol>
+        <li><strong>গিটহাব ট্রান্সফার:</strong> গিটহাব রিপোজিটরির <strong>Settings > Danger Zone > Transfer Ownership</strong> এ গিয়ে স্কুলের অফিসিয়াল গিটহাব অ্যাকাউন্টের ইউজারনেম দিয়ে ট্রান্সফার করে দিন।</li>
+        <li><strong>ভার্সেল প্রজেক্ট ট্রান্সফার:</strong> ভার্সেল প্রজেক্ট সেটিংস থেকে মেম্বার ইনভাইটেশনের মাধ্যমে স্কুলের ইমেইল অ্যাডমিন হিসেবে যুক্ত করে সরাসরি প্রজেক্টের মালিকানা হস্তান্তর করা যাবে।</li>
+      </ol>
+    </div>
+
+    <h2>৪. ভবিষ্যতে সেন্ট্রাল ক্লাউড ডাটাবেস ও ব্যাকএন্ড সংযোগের রোডম্যাপ</h2>
+    <div class="card">
+      <p>বর্তমানে অ্যাপ্লিকেশনটি ক্লায়েন্ট-সাইড <strong>React Context + LocalStorage</strong> ইঞ্জিনে চালিত। ফলে এটি সার্ভারহীন অবস্থায় অত্যন্ত দ্রুত ও অফলাইনেও নির্বিঘ্নে চলে। ভবিষ্যতে যদি সারা বাংলাদেশ থেকে হাজার হাজার শিক্ষার্থী একযোগে সেন্ট্রাল ক্লাউডে ডেটা সিঙ্ক করতে চায়, তবে নিচের রোডম্যাপ অনুযায়ী ক্লাউড ডাটাবেস যুক্ত করা যাবে:</p>
+      <br>
+      <table>
+        <thead>
+          <tr>
+            <th>অপশন</th>
+            <th>প্রস্তাবিত ডাটাবেস প্ল্যাটফর্ম</th>
+            <th>কীভাবে যুক্ত করবেন (সহজ পদ্ধতি)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>পদ্ধতি ১ (সবচেয়ে আধুনিক ও ফ্রি)</strong></td>
+            <td><span class="code">Supabase (PostgreSQL)</span></td>
+            <td>সুপাবেসে ফ্রি অ্যাকাউন্ট খুলে টেবিল তৈরি করুন। এরপর <span class="code">src/context/SchoolContext.jsx</span> ফাইলে কেবল API ফেচ মেথড যুক্ত করে দিলেই পুরো সাইট ক্লাউড ডেটায় রূপান্তরিত হবে (ইউজার ইন্টারফেস পরিবর্তনের দরকার হবে না)।</td>
+          </tr>
+          <tr>
+            <td><strong>পদ্ধতি ২ (গুগল ক্লাউড)</strong></td>
+            <td><span class="code">Firebase Firestore</span></td>
+            <td>গুগল ফায়ারবেস এসডিকে ইনস্টল করে রিয়েলটাইম লিসেনার যুক্ত করলে যেকোনো নোটিশ বা রেজাল্ট তাৎক্ষণিক মোবাইলে পুশ নোটিফিকেশন আকারে সিঙ্ক হবে।</td>
+          </tr>
+          <tr>
+            <td><strong>পদ্ধতি ৩ (কাস্টম API)</strong></td>
+            <td><span class="code">Node.js + Express + MongoDB</span></td>
+            <td>একটি স্বতন্ত্র ব্যাকএন্ড সার্ভার তৈরি করে রেস্টফুল এপিআই (REST API) এর মাধ্যমে সকল রিকোয়েস্ট পরিচালনা করা সম্ভব।</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <div class="footer">
-      <p>© ২০২৬ বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় (EIIN: ১০৬৬৪৪)। আনন্দপুর, ফুলগাজী, ফেনী।</p>
-      <p>নথিপত্র সংস্করণ: ২.০ (প্রোডাকশন রেডি)</p>
+      <p>© ২০২৬ বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় (EIIN: ১০৬৬৪৪, MPO: ১০৫৪৭৬৩০১)। আনন্দপুর, ফুলগাজী, ফেনী।</p>
+      <p>কারিগরি নথি সংস্করণ: ৩.০ (প্রোডাকশন ফাইনাল রিলিজ)</p>
     </div>
   </div>
 
