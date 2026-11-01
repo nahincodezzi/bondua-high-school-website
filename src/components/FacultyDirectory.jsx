@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSchool } from '../context/useSchool';
+import { createEducatorAvatar } from '../utils/avatarGenerator';
 import { 
   Users, 
   Search, 
@@ -160,7 +161,11 @@ export default function FacultyDirectory() {
                       alt={teacher.nameEn}
                       className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                       onError={(e) => {
-                        e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80";
+                        e.currentTarget.src = createEducatorAvatar({
+                          initials: (teacher.nameEn || 'BD').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(),
+                          role: isHead ? 'headmaster' : isStaff ? 'staff' : 'faculty',
+                          designation: teacher.designationEn || 'Faculty Member'
+                        });
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
@@ -191,14 +196,9 @@ export default function FacultyDirectory() {
                   {/* Info Content */}
                   <div className="p-5 space-y-3 font-bangla">
                     <div>
-                      <h3 className="text-base font-bold text-slate-900 group-hover:text-emerald-800 transition line-clamp-1">
+                      <h3 className="text-base font-bold font-bangla text-slate-900 group-hover:text-emerald-800 transition line-clamp-1">
                         {lang === 'bn' ? teacher.nameBn : teacher.nameEn}
                       </h3>
-                      {lang === 'bn' && (
-                        <p className="text-[11px] text-slate-400 font-medium font-sans">
-                          {teacher.nameEn}
-                        </p>
-                      )}
                     </div>
 
                     {/* Subject / Department */}

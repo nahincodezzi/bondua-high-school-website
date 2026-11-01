@@ -1,9 +1,16 @@
 import React from 'react';
 import { useSchool } from '../context/useSchool';
 import { Quote, Award, CheckCircle, ArrowRight } from 'lucide-react';
+import { createEducatorAvatar } from '../utils/avatarGenerator';
 
 export default function HeadmasterMessage() {
   const { lang, schoolInfo, setActiveTab } = useSchool();
+  const headmasterAvatar = createEducatorAvatar({
+    initials: 'BU',
+    role: 'headmaster',
+    designation: 'Acting Headmaster',
+    gender: 'male'
+  });
 
   return (
     <section className="py-12 sm:py-16 bg-gradient-to-b from-white to-slate-50 border-b border-slate-200">
@@ -17,7 +24,8 @@ export default function HeadmasterMessage() {
               
               <div className="relative w-64 sm:w-72 h-80 sm:h-92 rounded-2xl overflow-hidden shadow-2xl bg-slate-100 border-4 border-white">
                 <img
-                  src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=700&auto=format&fit=crop&q=80"
+                  src={schoolInfo.headmasterImage || headmasterAvatar}
+                  onError={(e) => { e.currentTarget.src = headmasterAvatar; }}
                   alt={schoolInfo.headmasterNameEn}
                   className="w-full h-full object-cover object-top"
                 />

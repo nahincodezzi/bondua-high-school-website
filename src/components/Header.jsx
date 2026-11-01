@@ -58,7 +58,7 @@ export default function Header() {
             </span>
             <span className="hidden lg:inline-flex items-center gap-1 text-emerald-200">
               <MapPin className="w-3.5 h-3.5 text-amber-400" />
-              <span>{lang === 'bn' ? `${schoolInfo.roadBn} • আনন্দপুর, ফুলগাজী, ফেনী` : `${schoolInfo.roadEn} • Anandapur, Fulgazi, Feni`}</span>
+              <span>{lang === 'bn' ? `${schoolInfo.roadBn || 'ফেনী-পরশুরাম রোড সংলগ্ন'} • আনন্দপুর, ফুলগাজী, ফেনী` : `${schoolInfo.roadEn || 'Along Feni-Parshuram Road'} • Anandapur, Fulgazi, Feni`}</span>
             </span>
           </div>
 
@@ -156,7 +156,9 @@ export default function Header() {
                 {lang === 'bn' ? schoolInfo.nameBn : schoolInfo.nameEn}
               </h1>
               <p className="text-xs sm:text-sm text-emerald-200 font-medium">
-                {lang === 'bn' ? `${schoolInfo.nameEn} • ${schoolInfo.roadBn}, ফুলগাজী, ফেনী` : `${schoolInfo.nameEn} • ${schoolInfo.roadEn}, Fulgazi, Feni`}
+                {lang === 'bn' 
+                  ? `${schoolInfo.nameEn || 'Bandua Daulatpur High School'} • ${schoolInfo.roadBn || 'ফেনী-পরশুরাম রোড সংলগ্ন'}, আনন্দপুর, ফুলগাজী, ফেনী` 
+                  : `${schoolInfo.nameEn || 'Bandua Daulatpur High School'} • ${schoolInfo.roadEn || 'Along Feni-Parshuram Road'}, Anandapur, Fulgazi, Feni`}
               </p>
             </div>
           </div>

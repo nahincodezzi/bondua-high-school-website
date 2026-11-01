@@ -147,7 +147,7 @@ export default function Footer() {
               {lang === 'bn' ? 'যোগাযোগের ঠিকানা' : 'School Address'}
             </h4>
             <p className="leading-relaxed">
-              {lang === 'bn' ? schoolInfo.addressBn : schoolInfo.addressEn}
+              {lang === 'bn' ? schoolInfo.addressBn : (schoolInfo.addressEn || 'Along Feni-Parshuram Road, Bandua Daulatpur, Anandapur Union, Fulgazi, Feni, Bangladesh')}
             </p>
             <p className="font-mono text-emerald-300">
               {lang === 'bn' ? `ফোন: ${schoolInfo.phone}` : `Phone: ${schoolInfo.phone}`}

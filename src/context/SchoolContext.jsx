@@ -38,6 +38,18 @@ export function SchoolProvider({ children }) {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
+        // Force official school identifiers & foundation date alignment
+        parsed.mpoCode = '105476301';
+        parsed.eiin = '106644';
+        parsed.foundationDate = '৮ জানুয়ারি, ১৯৯০ (স্বীকৃতি: ১ জানুয়ারি, ১৯৯৪)';
+        parsed.foundationDateEn = 'January 8, 1990 (Recognized: January 1, 1994)';
+        parsed.roadBn = parsed.roadBn || 'ফেনী-পরশুরাম রোড সংলগ্ন';
+        parsed.roadEn = parsed.roadEn || 'Along Feni-Parshuram Road';
+        parsed.addressBn = parsed.addressBn || 'ফেনী-পরশুরাম রোড সংলগ্ন, বন্দুয়া দৌলতপুর, আনন্দপুর ইউনিয়ন, ফুলগাজী উপজেলা, ফেনী জেলা, বাংলাদেশ';
+        parsed.addressEn = parsed.addressEn || 'Along Feni-Parshuram Road, Bandua Daulatpur, Anandapur Union, Fulgazi, Feni, Bangladesh';
+        parsed.nameBn = parsed.nameBn || 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়';
+        parsed.nameEn = parsed.nameEn || 'Bandua Daulatpur High School';
+
         if (!parsed.email || parsed.email.includes('fulgazi')) {
           parsed.email = 'bonduas106644@gmail.com';
         }
@@ -77,6 +89,19 @@ export function SchoolProvider({ children }) {
         const parsed = JSON.parse(saved);
         if (!Array.isArray(parsed) || parsed.length < 16 || !parsed[0].nameBn.includes('বাহার')) {
           return initialTeachers;
+        }
+        // If cached teachers contain old stock unsplash fashion model images, upgrade to executive avatars while keeping user-uploaded custom photos
+        const hasStockModel = parsed.some(t => t.image && t.image.includes('images.unsplash.com'));
+        if (hasStockModel) {
+          return parsed.map((t, idx) => {
+            if (t.image && t.image.startsWith('data:image/jpeg') && !t.image.includes('svg')) {
+              return t; // Keep custom photo uploaded by user in CMS!
+            }
+            return {
+              ...t,
+              image: initialTeachers[idx]?.image || t.image
+            };
+          });
         }
         return parsed;
       } catch {

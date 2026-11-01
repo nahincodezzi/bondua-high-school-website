@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useSchool } from '../../context/useSchool';
+import { createEducatorAvatar } from '../../utils/avatarGenerator';
 import { 
   Plus, 
   Trash2, 
@@ -7,7 +8,10 @@ import {
   X,
   Search,
   Award,
-  Briefcase
+  Briefcase,
+  Upload,
+  RefreshCw,
+  CheckCircle2
 } from 'lucide-react';
 
 export default function TeacherManager() {
@@ -16,6 +20,9 @@ export default function TeacherManager() {
   const [editingTeacher, setEditingTeacher] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
+
+  const fileInputRef = useRef(null);
+  const [uploadStatus, setUploadStatus] = useState('');
 
   const defaultFormState = {
     nameBn: '',
@@ -28,7 +35,7 @@ export default function TeacherManager() {
     category: 'faculty',
     phone: '',
     email: '',
-    image: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=400&auto=format&fit=crop&q=80'
+    image: createEducatorAvatar({ initials: 'BD', role: 'faculty', designation: 'Assistant Teacher' })
   };
 
   const [formData, setFormData] = useState(defaultFormState);
@@ -36,6 +43,7 @@ export default function TeacherManager() {
   const handleOpenAdd = () => {
     setEditingTeacher(null);
     setFormData(defaultFormState);
+    setUploadStatus('');
     setShowModal(true);
   };
 
@@ -45,7 +53,80 @@ export default function TeacherManager() {
       ...t,
       category: t.category || (t.designationEn?.includes('Peon') || t.designationEn?.includes('Guard') || t.designationEn?.includes('Aya') || t.designationEn?.includes('Assistant') ? 'staff' : 'faculty')
     });
+    setUploadStatus('');
     setShowModal(true);
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('ছবির আকার সর্বোচ্চ ৫ মেগাবাইট (5MB) হতে পারবে।');
+      return;
+    }
+
+    setUploadStatus('প্রসেসিং হচ্ছে...');
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const rawDataUrl = event.target.result;
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 600;
+        const MAX_HEIGHT = 720;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = Math.round(width);
+        canvas.height = Math.round(height);
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.88);
+
+        setFormData(prev => ({
+          ...prev,
+          image: optimizedDataUrl
+        }));
+        setUploadStatus('ছবি সফলভাবে আপলোড হয়েছে!');
+        setTimeout(() => setUploadStatus(''), 3000);
+      };
+      img.src = rawDataUrl;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleResetAvatar = () => {
+    const initials = (formData.nameEn || formData.nameBn || 'BD')
+      .split(' ')
+      .map(w => w[0])
+      .join('')
+      .slice(0, 2)
+      .toUpperCase();
+    const avatar = createEducatorAvatar({
+      initials: initials || 'BD',
+      role: formData.category === 'staff' ? 'staff' : (formData.designationEn?.includes('Headmaster') ? 'headmaster' : 'faculty'),
+      designation: formData.designationEn || 'Faculty Member',
+      gender: formData.designationBn?.includes('আয়া') || formData.nameBn?.includes('আক্তার') || formData.nameBn?.includes('ছিদ্দিকা') || formData.nameBn?.includes('হাজেরা') ? 'female' : 'male'
+    });
+    setFormData(prev => ({
+      ...prev,
+      image: avatar
+    }));
+    setUploadStatus('অফিসিয়াল অবতারে রূপান্তর করা হয়েছে');
+    setTimeout(() => setUploadStatus(''), 3000);
   };
 
   const handleSubmit = (e) => {
@@ -342,15 +423,80 @@ export default function TeacherManager() {
                 </div>
               </div>
 
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">ছবির URL</label>
-                <input
-                  type="text"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  placeholder="https://..."
-                  className="w-full rounded-lg border border-slate-300 p-2 font-mono text-[11px]"
-                />
+              {/* Teacher Photo File Upload & Avatar Preview */}
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="block font-bold text-slate-800 text-xs">
+                    শিক্ষক / কর্মচারীর ছবি (Profile Photo)
+                  </label>
+                  {uploadStatus && (
+                    <span className="text-[11px] text-emerald-600 font-bold flex items-center gap-1 animate-pulse">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      {uploadStatus}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="relative w-20 h-24 rounded-xl overflow-hidden border-2 border-emerald-600 bg-slate-200 shrink-0 shadow-sm">
+                    <img
+                      src={formData.image}
+                      alt="Preview"
+                      className="w-full h-full object-cover object-top"
+                    />
+                    <div className="absolute inset-0 bg-black/10 pointer-events-none"></div>
+                  </div>
+
+                  <div className="flex-1 space-y-2">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      accept="image/png, image/jpeg, image/jpg, image/webp"
+                      className="hidden"
+                      onChange={handleImageUpload}
+                    />
+
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="bg-emerald-800 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition shadow-xs"
+                      >
+                        <Upload className="w-3.5 h-3.5 text-amber-300" />
+                        <span>ছবি আপলোড করুন (Upload File)</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleResetAvatar}
+                        className="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-semibold px-2.5 py-1.5 rounded-lg text-xs flex items-center gap-1 transition"
+                        title="অফিসিয়াল অবতারে রূপান্তর করুন"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
+                        <span>অফিসিয়াল অবতার</span>
+                      </button>
+                    </div>
+
+                    <p className="text-[11px] text-slate-500">
+                      কম্পিউটার বা মোবাইল থেকে সরাসরি JPG / PNG ছবি নির্বাচন করুন। স্বয়ংক্রিয়ভাবে অপ্টিমাইজ হয়ে যাবে।
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <details className="text-[11px] text-slate-600">
+                    <summary className="cursor-pointer font-semibold text-emerald-800 hover:underline">
+                      অথবা অনলাইন ছবির লিঙ্ক (URL) ব্যবহার করুন
+                    </summary>
+                    <input
+                      type="text"
+                      value={formData.image}
+                      onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                      placeholder="https://..."
+                      className="w-full mt-1.5 rounded-lg border border-slate-300 p-2 font-mono text-[11px] bg-white"
+                    />
+                  </details>
+                </div>
               </div>
 
               <div className="pt-3 border-t flex items-center justify-end gap-2">

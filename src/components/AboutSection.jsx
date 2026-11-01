@@ -26,7 +26,7 @@ export default function AboutSection() {
           <p className="text-sm text-slate-600 font-bangla mt-1">
             {lang === 'bn' 
               ? '১৯৯০ সাল থেকে ফেনী জেলার ফুলগাজীতে গুণগত শিক্ষার আলোকবর্তিকা'
-              : 'Serving with dedication in Anandapur, Fulgazi, Feni since January 1, 1990.'}
+              : 'Serving with dedication in Anandapur, Fulgazi, Feni since January 8, 1990.'}
           </p>
         </div>
 
@@ -41,20 +41,20 @@ export default function AboutSection() {
 
             <p>
               {lang === 'bn' 
-                ? 'ফেনী জেলার ফুলগাজী উপজেলার ঐতিহ্যবাহী আনন্দপুর ইউনিয়নের বন্দুয়া দৌলতপুর গ্রামে ১৯৯০ সালের ১ জানুয়ারি বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় প্রতিষ্ঠিত হয়। এলাকার শিক্ষানুরাগী, সমাজসেবক ও গুণীজনদের নিরলস প্রচেষ্টায় অবহেলিত গ্রামীণ জনপদে শিক্ষার আলো প্রজ্বলন করাই ছিল এই প্রতিষ্ঠানের মূল লক্ষ্য।'
-                : 'Bandua Daulatpur High School was established on January 1, 1990, in the scenic village of Bandua Daulatpur under Anandapur Union, Fulgazi Upazila, Feni District.'}
+                ? 'ফেনী জেলার ফুলগাজী উপজেলার ঐতিহ্যবাহী আনন্দপুর ইউনিয়নের বন্দুয়া দৌলতপুর গ্রামে ১৯৯০ সালের ৮ জানুয়ারি বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় প্রতিষ্ঠিত হয়। এলাকার শিক্ষানুরাগী, সমাজসেবক ও গুণীজনদের নিরলস প্রচেষ্টায় অবহেলিত গ্রামীণ জনপদে শিক্ষার আলো প্রজ্বলন করাই ছিল এই প্রতিষ্ঠানের মূল লক্ষ্য।'
+                : 'Bandua Daulatpur High School was established on January 8, 1990, in the scenic village of Bandua Daulatpur under Anandapur Union, Fulgazi Upazila, Feni District.'}
             </p>
 
             <p>
               {lang === 'bn'
-                ? 'কুমিল্লা শিক্ষাবোর্ডের আওতাধীন এবং শিক্ষা মন্ত্রণালয় কর্তৃক ১৯৯৪ সালে পূর্ণাঙ্গ স্বীকৃতি লাভ করে প্রতিষ্ঠানটি (EIIN: ১০৬৬৪৪, MPO: ৯০৫১৭১৩০১)। প্রতিষ্ঠার পর থেকে অদ্যাবধি এসএসসি পরীক্ষায় শতভাগ সাফল্য ও উপজেলার শীর্ষস্থানীয় ফলাফলের সুনাম অক্ষুণ্ন রেখেছে বিদ্যালয়টি।'
-                : 'Formally recognized under the Comilla Education Board in 1994 (EIIN: 106644, MPO Code: 905171301), the school consistently secures outstanding success in secondary school certificate examinations.'}
+                ? 'কুমিল্লা শিক্ষাবোর্ডের আওতাধীন এবং শিক্ষা মন্ত্রণালয় কর্তৃক ১৯৯৪ সালে পূর্ণাঙ্গ স্বীকৃতি লাভ করে প্রতিষ্ঠানটি (EIIN: ১০৬৬৪৪, MPO: ১০৫৪৭৬৩০১)। প্রতিষ্ঠার পর থেকে অদ্যাবধি এসএসসি পরীক্ষায় শতভাগ সাফল্য ও উপজেলার শীর্ষস্থানীয় ফলাফলের সুনাম অক্ষুণ্ন রেখেছে বিদ্যালয়টি।'
+                : 'Formally recognized under the Comilla Education Board in 1994 (EIIN: 106644, MPO Code: 105476301), the school consistently secures outstanding success in secondary school certificate examinations.'}
             </p>
 
             <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-semibold text-emerald-900">
               <div className="flex items-center gap-2 bg-emerald-50 p-2.5 rounded-lg border border-emerald-100">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>{lang === 'bn' ? 'প্রতিষ্ঠাকাল: ১ জানুয়ারি, ১৯৯০' : 'Founded: January 1, 1990'}</span>
+                <span>{lang === 'bn' ? 'প্রতিষ্ঠাকাল: ৮ জানুয়ারি, ১৯৯০' : 'Founded: January 8, 1990'}</span>
               </div>
               <div className="flex items-center gap-2 bg-emerald-50 p-2.5 rounded-lg border border-emerald-100">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
@@ -62,7 +62,7 @@ export default function AboutSection() {
               </div>
               <div className="flex items-center gap-2 bg-emerald-50 p-2.5 rounded-lg border border-emerald-100">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>{lang === 'bn' ? 'এমপিও কোড: ৯০৫১৭১৩০১' : 'MPO Code: 905171301'}</span>
+                <span>{lang === 'bn' ? 'এমপিও কোড: ১০৫৪৭৬৩০১' : 'MPO Code: 105476301'}</span>
               </div>
               <div className="flex items-center gap-2 bg-emerald-50 p-2.5 rounded-lg border border-emerald-100">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />

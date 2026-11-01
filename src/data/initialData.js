@@ -1,18 +1,22 @@
+import { createEducatorAvatar } from '../utils/avatarGenerator';
+
 // School Information and Seed Data for Bandua Daulatpur High School (EIIN: 106644)
 export const initialSchoolInfo = {
   nameBn: "বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়",
-  nameEn: "Bondua Doulatpur High School",
-  nameAlt: "Bandua Daulatpur High School",
+  nameEn: "Bandua Daulatpur High School",
+  nameAlt: "Bondua Doulatpur High School",
   shortName: "BDHS",
   eiin: "106644",
-  mpoCode: "905171301",
+  mpoCode: "105476301",
   schoolCode: "4320",
   established: 1990,
   recognized: 1994,
-  foundationDate: "১ জানুয়ারি, ১৯৯০ (স্বীকৃতি: ১ জানুয়ারি, ১৯৯৪)",
+  foundationDate: "৮ জানুয়ারি, ১৯৯০ (স্বীকৃতি: ১ জানুয়ারি, ১৯৯৪)",
+  foundationDateEn: "January 8, 1990 (Recognized: January 1, 1994)",
   board: "Comilla",
   boardBn: "কুমিল্লা শিক্ষাবোর্ড",
   boardFullBn: "মাধ্যমিক ও উচ্চমাধ্যমিক শিক্ষা বোর্ড, কুমিল্লা",
+  boardFullEn: "Board of Intermediate and Secondary Education, Comilla",
   levelBn: "মাধ্যমিক (৬ষ্ঠ থেকে ১০ম শ্রেণি / এসএসসি)",
   levelEn: "Secondary (Classes 6 through 10 / SSC)",
   disciplinesBn: ["বিজ্ঞান বিভাগ (Science)", "ব্যবসায় শিক্ষা (Business Studies)", "মানবিক বিভাগ (Humanities)"],
@@ -21,9 +25,9 @@ export const initialSchoolInfo = {
   mottoBn: "জ্ঞানই আলো, শিক্ষাই শক্তি",
   mottoEn: "Knowledge is Light, Education is Power",
   roadBn: "ফেনী-পরশুরাম রোড সংলগ্ন",
-  roadEn: "Situated along Feni-Parshuram Road",
-  addressBn: "ফেনী-পরশুরাম রোড সংলগ্ন, বন্দুয়া / দৌলতপুর, আনন্দপুর ইউনিয়ন, ফুলগাজী উপজেলা, ফেনী জেলা, বাংলাদেশ",
-  addressEn: "Along Feni-Parshuram Road, Bandua / Daulatpur, Anandapur Union, Fulgazi, Feni, Chattogram Division, Bangladesh",
+  roadEn: "Along Feni-Parshuram Road",
+  addressBn: "ফেনী-পরশুরাম রোড সংলগ্ন, বন্দুয়া দৌলতপুর, আনন্দপুর ইউনিয়ন, ফুলগাজী উপজেলা, ফেনী জেলা, বাংলাদেশ",
+  addressEn: "Along Feni-Parshuram Road, Bandua Daulatpur, Anandapur Union, Fulgazi, Feni, Bangladesh",
   phone: "+880 1819-204561",
   phoneAlt: "+880 1712-893042",
   email: "bonduas106644@gmail.com",
@@ -191,7 +195,7 @@ export const initialTeachers = [
     category: "faculty",
     phone: "+880 1819-204561",
     email: "bonduas106644@gmail.com",
-    image: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=400&auto=format&fit=crop&q=80"
+    image: createEducatorAvatar({ initials: "BU", role: "headmaster", designation: "Acting Headmaster", gender: "male" })
   },
   {
     id: "tea-02",
@@ -205,7 +209,7 @@ export const initialTeachers = [
     category: "faculty",
     phone: "+880 1818-450123",
     email: "solim.majumder.bdhs@gmail.com",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80"
+    image: createEducatorAvatar({ initials: "SM", role: "asst_headmaster", designation: "Acting Assistant Headmaster", gender: "male" })
   },
   {
     id: "tea-03",
@@ -219,7 +223,7 @@ export const initialTeachers = [
     category: "faculty",
     phone: "+880 1711-234567",
     email: "jahangir.alam.bdhs@gmail.com",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80"
+    image: createEducatorAvatar({ initials: "JA", role: "faculty", designation: "Assistant Teacher", gender: "male" })
   },
   {
     id: "tea-04",
@@ -233,7 +237,7 @@ export const initialTeachers = [
     category: "faculty",
     phone: "+880 1815-998877",
     email: "jafor.chowdhury.bdhs@gmail.com",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80"
+    image: createEducatorAvatar({ initials: "JC", role: "faculty", designation: "Assistant Teacher", gender: "male" })
   },
   {
     id: "tea-05",
@@ -247,7 +251,7 @@ export const initialTeachers = [
     category: "faculty",
     phone: "+880 1715-667788",
     email: "hanif.bhuiyan.bdhs@gmail.com",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80"
+    image: createEducatorAvatar({ initials: "HB", role: "faculty", designation: "Assistant Teacher", gender: "male" })
   },
   {
     id: "tea-06",
@@ -261,7 +265,7 @@ export const initialTeachers = [
     category: "faculty",
     phone: "+880 1912-334455",
     email: "anwar.ict.bdhs@gmail.com",
-    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&auto=format&fit=crop&q=80"
+    image: createEducatorAvatar({ initials: "AH", role: "faculty", designation: "Assistant Teacher", gender: "male" })
   },
   {
     id: "tea-07",
@@ -275,7 +279,7 @@ export const initialTeachers = [
     category: "faculty",
     phone: "+880 1823-112233",
     email: "ayesha.siddiqa.bdhs@gmail.com",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80"
+    image: createEducatorAvatar({ initials: "AS", role: "faculty", designation: "Assistant Teacher", gender: "female" })
   },
   {
     id: "tea-08",
@@ -289,7 +293,7 @@ export const initialTeachers = [
     category: "faculty",
     phone: "+880 1817-554433",
     email: "rashida.akter.bdhs@gmail.com",
-    image: "https://images.unsplash.com/photo-1580894732444-8ecded7900cd?w=400&auto=format&fit=crop&q=80"
+    image: createEducatorAvatar({ initials: "RF", role: "faculty", designation: "Assistant Teacher", gender: "female" })
   },
   {
     id: "tea-09",
@@ -303,7 +307,7 @@ export const initialTeachers = [
     category: "faculty",
     phone: "+880 1716-443322",
     email: "rabeya.science.bdhs@gmail.com",
-    image: "https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=400&auto=format&fit=crop&q=80"
+    image: createEducatorAvatar({ initials: "RA", role: "faculty", designation: "Assistant Teacher", gender: "female" })
   },
   {
     id: "tea-10",
@@ -317,7 +321,7 @@ export const initialTeachers = [
     category: "faculty",
     phone: "+880 1814-776655",
     email: "redowan.math.bdhs@gmail.com",
-    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&auto=format&fit=crop&q=80"
+    image: createEducatorAvatar({ initials: "RU", role: "faculty", designation: "Assistant Teacher", gender: "male" })
   },
   {
     id: "tea-11",
@@ -331,7 +335,7 @@ export const initialTeachers = [
     category: "faculty",
     phone: "+880 1718-990011",
     email: "chandan.sarkar.bdhs@gmail.com",
-    image: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=400&auto=format&fit=crop&q=80"
+    image: createEducatorAvatar({ initials: "CS", role: "faculty", designation: "Assistant Teacher", gender: "male" })
   },
   {
     id: "stf-12",
@@ -345,7 +349,7 @@ export const initialTeachers = [
     category: "staff",
     phone: "+880 1712-893042",
     email: "nurul.kabir.bdhs@gmail.com",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80"
+    image: createEducatorAvatar({ initials: "NK", role: "staff", designation: "Office Assistant", gender: "male" })
   },
   {
     id: "stf-13",
@@ -359,7 +363,7 @@ export const initialTeachers = [
     category: "staff",
     phone: "+880 1819-001122",
     email: "staff.bdhs@gmail.com",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80"
+    image: createEducatorAvatar({ initials: "NA", role: "staff", designation: "Peon / Office Attendant", gender: "male" })
   },
   {
     id: "stf-14",
@@ -373,21 +377,21 @@ export const initialTeachers = [
     category: "staff",
     phone: "+880 1711-556677",
     email: "security.bdhs@gmail.com",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80"
+    image: createEducatorAvatar({ initials: "AJ", role: "staff", designation: "Security Guard", gender: "male" })
   },
   {
     id: "stf-15",
     nameBn: "সুমি আক্তার",
     nameEn: "Sumi Akter",
-    designationBn: "আয়া",
-    designationEn: "Aya (Maid)",
+    designationBn: "আয়া (পরিচ্ছন্নতাকর্মী)",
+    designationEn: "Aya (Maid / Attendant)",
     subjectBn: "ক্যাম্পাস ও শিক্ষার্থী পরিচর্যা",
     subjectEn: "Campus Care & Student Support",
     qualification: "সহায়ক কর্মী",
     category: "staff",
     phone: "+880 1813-223344",
     email: "care.bdhs@gmail.com",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80"
+    image: createEducatorAvatar({ initials: "SA", role: "staff", designation: "Aya (Maid / Attendant)", gender: "female" })
   },
   {
     id: "stf-16",
@@ -401,7 +405,7 @@ export const initialTeachers = [
     category: "staff",
     phone: "+880 1714-889900",
     email: "staff2.bdhs@gmail.com",
-    image: "https://images.unsplash.com/photo-1580894732444-8ecded7900cd?w=400&auto=format&fit=crop&q=80"
+    image: createEducatorAvatar({ initials: "BH", role: "staff", designation: "Peon / Office Attendant", gender: "female" })
   }
 ];
 
