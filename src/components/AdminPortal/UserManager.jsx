@@ -562,7 +562,7 @@ export default function UserManager() {
                   <input
                     type="text"
                     required
-                    placeholder="যেমন: মো. রবিউল হক মজুমদার"
+                    placeholder="যেমন: জনাব বাহার উদ্দিন ভূঁইয়া"
                     value={formData.nameBn}
                     onChange={(e) => setFormData({ ...formData, nameBn: e.target.value })}
                     className="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-purple-500"

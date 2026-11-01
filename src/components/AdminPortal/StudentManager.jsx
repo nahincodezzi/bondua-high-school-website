@@ -392,8 +392,8 @@ export default function StudentManager() {
               <div className="pt-2 flex justify-between items-end border-t border-emerald-800/80 text-[10px]">
                 <span className="text-emerald-300 font-mono">Session: 2026</span>
                 <div className="text-center">
-                  <span className="font-serif italic text-amber-300 font-bold text-xs block">Rabiul H.</span>
-                  <span className="text-emerald-300">প্রধান শিক্ষক</span>
+                  <span className="font-serif italic text-amber-300 font-bold text-xs block">Bahar U.</span>
+                  <span className="text-emerald-300">ভারপ্রাপ্ত প্রধান শিক্ষক</span>
                 </div>
               </div>
             </div>

@@ -233,7 +233,7 @@ export default function NoticeBoard() {
 
                   <div className="text-center space-y-1">
                     <div className="w-28 border-b border-slate-700 mx-auto">
-                      <span className="font-serif italic text-emerald-800 text-sm font-bold">Rabiul H.</span>
+                      <span className="font-serif italic text-emerald-800 text-sm font-bold">Bahar U.</span>
                     </div>
                     <p className="font-bold text-slate-800 font-bangla">{schoolInfo.headmasterNameBn}</p>
                     <p className="text-slate-600">{schoolInfo.headmasterDesignationBn}</p>

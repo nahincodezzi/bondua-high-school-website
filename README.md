@@ -1,6 +1,6 @@
 # বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় (Bandua Daulatpur High School)
 ### Official Institutional Portal & School ERP Management System
-**EIIN: 106644 • MPO: 905171301 • কুমিল্লা শিক্ষাবোর্ড • আনন্দপুর, ফুলগাজী, ফেনী**
+**EIIN: 106644 • MPO: 105476301 • কুমিল্লা শিক্ষাবোর্ড • আনন্দপুর, ফুলগাজী, ফেনী**
 
 ---
 
@@ -16,7 +16,7 @@ The platform integrates the school's public website with an administrative ERP s
 ### 1. 🏛️ Public Institutional Website
 - **School Crest & Brand Identity**: Custom SVG seal with motto ("জ্ঞানই আলো, শিক্ষাই শক্তি"), Comilla Education Board affiliation, EIIN (106644), and establishment year (1990).
 - **Hero Slider**: High-impact campus life, morning assembly, Sheikh Russel Digital Lab, and sports championship banners.
-- **Headmaster's Desk**: Authentic message from Headmaster **মো. রবিউল হক মজুমদার** (Md. Rabiul Haque Mazumder).
+- **Headmaster's Desk**: Authentic message from Acting Headmaster **জনাব বাহার উদ্দিন ভূঁইয়া** (Mr. Bahar Uddin Bhuiyan).
 - **Managing Committee**: Message from the Chairman, Managing Committee.
 - **Breaking Notice Ticker**: Interactive announcement marquee with pause/play.
 - **Notice Board**: Official notices with category filters (Academic, Exam, Admission, Events) and printable letterhead document modal.

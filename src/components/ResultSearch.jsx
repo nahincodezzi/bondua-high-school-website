@@ -336,7 +336,7 @@ export default function ResultSearch() {
 
                 <div className="text-center space-y-1">
                   <div className="w-28 border-b border-slate-700 mx-auto pb-1">
-                    <span className="font-serif italic text-emerald-900 font-bold text-sm">Rabiul H.</span>
+                    <span className="font-serif italic text-emerald-900 font-bold text-sm">Bahar U.</span>
                   </div>
                   <p className="font-bold text-slate-900 font-bangla">{schoolInfo.headmasterNameBn}</p>
                   <p className="text-slate-600 font-bangla">{schoolInfo.headmasterDesignationBn}</p>

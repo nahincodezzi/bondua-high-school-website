@@ -60,7 +60,22 @@ export function SchoolProvider({ children }) {
       }
     }
     const saved = localStorage.getItem('bdhs_auth');
-    return saved ? JSON.parse(saved) : null;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.nameBn && parsed.nameBn.includes('রবিউল')) {
+          parsed.nameBn = 'জনাব বাহার উদ্দিন ভূঁইয়া';
+          parsed.nameEn = 'Mr. Bahar Uddin Bhuiyan';
+          parsed.designationBn = 'ভারপ্রাপ্ত প্রধান শিক্ষক';
+          parsed.designationEn = 'Acting Headmaster';
+          localStorage.setItem('bdhs_auth', JSON.stringify(parsed));
+        }
+        return parsed;
+      } catch {
+        return null;
+      }
+    }
+    return null;
   });
   const [authModalOpen, setAuthModalOpen] = useState(false);
 

@@ -266,9 +266,9 @@ export default function FeeManager() {
 
                 <div className="text-center space-y-1">
                   <div className="w-24 border-b border-slate-600 mx-auto pb-1">
-                    <span className="font-serif italic text-emerald-900 font-bold">Rabiul H.</span>
+                    <span className="font-serif italic text-emerald-900 font-bold">Bahar U.</span>
                   </div>
-                  <p className="font-bold text-slate-900">প্রধান শিক্ষক</p>
+                  <p className="font-bold text-slate-900">ভারপ্রাপ্ত প্রধান শিক্ষক</p>
                 </div>
               </div>
             </div>

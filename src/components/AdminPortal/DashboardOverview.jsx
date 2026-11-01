@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 
 export default function DashboardOverview({ onNavigate }) {
-  const { lang, students, teachers, admissions, fees, updateAdmissionStatus } = useSchool();
+  const { lang, students, teachers, admissions, fees, authUser, schoolInfo } = useSchool();
 
   const pendingAdmissions = admissions.filter(a => a.status === 'Pending');
   const totalFeeCollected = fees.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
@@ -26,8 +26,8 @@ export default function DashboardOverview({ onNavigate }) {
     {
       titleBn: 'শিক্ষক ও কর্মচারী',
       titleEn: 'Faculty Members',
-      value: teachers.length + 16,
-      subtextBn: 'নিয়মিত ও অভিজ্ঞ শিক্ষক',
+      value: teachers.length,
+      subtextBn: 'নিয়মিত ও অভিজ্ঞ শিক্ষক-কর্মচারী',
       icon: School,
       action: 'students'
     },
@@ -56,7 +56,10 @@ export default function DashboardOverview({ onNavigate }) {
         <div>
           <span className="text-amber-400 text-xs font-bold font-mono">SYSTEM DASHBOARD</span>
           <h2 className="text-xl sm:text-2xl font-bold font-bangla text-white mt-1">
-            {lang === 'bn' ? 'স্বাগতম, মো. রবিউল হক মজুমদার (প্রধান শিক্ষক)' : 'Welcome, Md. Rabiul Haque Mazumder'}
+            {lang === 'bn' 
+              ? `স্বাগতম, ${authUser?.nameBn || schoolInfo?.headmasterNameBn || 'জনাব বাহার উদ্দিন ভূঁইয়া'} (${authUser?.designationBn || schoolInfo?.headmasterDesignationBn || 'ভারপ্রাপ্ত প্রধান শিক্ষক'})` 
+              : `Welcome, ${authUser?.nameEn || schoolInfo?.headmasterNameEn || 'Mr. Bahar Uddin Bhuiyan'} (${authUser?.designationEn || schoolInfo?.headmasterDesignationEn || 'Acting Headmaster'})`
+            }
           </h2>
           <p className="text-xs text-emerald-200 font-bangla mt-0.5">
             বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় ডিজিটাল ম্যানেজমেন্ট সফটওয়্যার

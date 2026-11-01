@@ -671,8 +671,8 @@ export const initialVideos = [
   },
   {
     id: "vid-02",
-    titleBn: "প্রধান শিক্ষক মো. রবিউল হক মজুমদারের দিকনির্দেশনামূলক বক্তব্য",
-    titleEn: "Headmaster's Keynote Address to SSC Candidates",
+    titleBn: "ভারপ্রাপ্ত প্রধান শিক্ষক জনাব বাহার উদ্দিন ভূঁইয়ার দিকনির্দেশনামূলক বক্তব্য",
+    titleEn: "Acting Headmaster Mr. Bahar Uddin Bhuiyan's Keynote Address",
     videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     duration: "08:20",
     thumbnail: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=600&auto=format&fit=crop&q=80"

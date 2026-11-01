@@ -206,7 +206,7 @@ export default function OnlineAdmission() {
 
                 <div className="text-center space-y-1">
                   <div className="w-32 border-b border-slate-700 mx-auto pb-1">
-                    <span className="font-serif italic text-emerald-900 font-bold text-sm">Rabiul H.</span>
+                    <span className="font-serif italic text-emerald-900 font-bold text-sm">Bahar U.</span>
                   </div>
                   <p className="font-bold text-slate-900">{schoolInfo.headmasterNameBn}</p>
                   <p className="text-slate-600 text-[11px]">{schoolInfo.headmasterDesignationBn}</p>
