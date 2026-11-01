@@ -30,11 +30,35 @@ export function SchoolProvider({ children }) {
     return localStorage.getItem('bdhs_lang') || 'bn';
   });
 
-  // Active navigation tab
-  const [activeTab, setActiveTab] = useState('home');
+  // Active navigation tab with query/hash support
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab');
+      if (tabParam) return tabParam;
+      const hash = window.location.hash.replace('#', '');
+      if (hash) return hash;
+    }
+    return 'home';
+  });
 
-  // Auth User
+  // Auth User with query support for demo previews
   const [authUser, setAuthUser] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('demo') === 'admin') {
+        return {
+          id: 'u-1',
+          nameBn: 'প্রধান সিস্টেম অ্যাডমিনিস্ট্রেটর',
+          nameEn: 'Super Administrator',
+          username: 'superadmin',
+          role: 'superadmin',
+          designationBn: 'সুপার অ্যাডমিন',
+          designationEn: 'Super Admin',
+          permissions: ['*']
+        };
+      }
+    }
     const saved = localStorage.getItem('bdhs_auth');
     return saved ? JSON.parse(saved) : null;
   });
