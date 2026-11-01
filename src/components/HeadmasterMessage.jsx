@@ -40,7 +40,7 @@ export default function HeadmasterMessage() {
 
             <div className="mt-4 flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-100/70 px-3 py-1.5 rounded-full border border-emerald-200">
               <Award className="w-4 h-4 text-emerald-700" />
-              <span>{lang === 'bn' ? 'এম.এ (ইংরেজি), বি.এড • প্রধান শিক্ষক' : 'M.A (English), B.Ed • Headmaster'}</span>
+              <span>{lang === 'bn' ? `${schoolInfo.headmasterDesignationBn} • বি.এ (ইংরেজি)` : `${schoolInfo.headmasterDesignationEn} • B.A. (English)`}</span>
             </div>
           </div>
 
@@ -49,7 +49,7 @@ export default function HeadmasterMessage() {
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-emerald-800 font-bold text-xs uppercase tracking-wider font-bangla">
                 <Quote className="w-4 h-4 text-amber-500" />
-                <span>{lang === 'bn' ? 'প্রধান শিক্ষকের বাণী' : "Headmaster's Message"}</span>
+                <span>{lang === 'bn' ? `${schoolInfo.headmasterDesignationBn}-এর বাণী` : `${schoolInfo.headmasterDesignationEn}'s Message`}</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold font-bangla text-slate-900 leading-tight">
                 {lang === 'bn' 

@@ -87,7 +87,7 @@ export default function AuthModal() {
                 role === 'headmaster' ? 'bg-emerald-900 text-white shadow font-extrabold' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              👨‍💼 প্রধান শিক্ষক
+              👨‍💼 ভারপ্রাপ্ত প্রধান শিক্ষক
             </button>
             <button
               type="button"
@@ -96,16 +96,16 @@ export default function AuthModal() {
                 role === 'teacher' ? 'bg-teal-900 text-white shadow font-extrabold' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              👨‍🏫 শিক্ষক পরিষদ
+              👨‍🏫 সহকারী শিক্ষক
             </button>
             <button
               type="button"
-              onClick={() => handlePresetSelect('accountant', 'accountant', 'acc123')}
+              onClick={() => handlePresetSelect('operator', 'office_assistant', 'office123')}
               className={`py-2 px-1.5 rounded-lg transition text-center ${
-                role === 'accountant' ? 'bg-amber-800 text-white shadow font-extrabold' : 'text-slate-600 hover:text-slate-900'
+                role === 'operator' ? 'bg-amber-800 text-white shadow font-extrabold' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              💰 হিসাবরক্ষক
+              🏢 অফিস সহকারী
             </button>
           </div>
 
@@ -182,8 +182,8 @@ export default function AuthModal() {
                 onClick={() => handleInstantLogin('headmaster', 'headmaster', 'headmaster123')}
                 className="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-950 p-2 rounded-xl text-left transition"
               >
-                <div className="font-bold">👨‍💼 প্রধান শিক্ষক</div>
-                <div className="text-[10px] text-emerald-700 font-mono">ID: headmaster</div>
+                <div className="font-bold">👨‍💼 ভারপ্রাপ্ত প্রধান শিক্ষক</div>
+                <div className="text-[10px] text-emerald-700 font-mono">ID: headmaster (জনাব বাহার উদ্দিন)</div>
               </button>
 
               <button
@@ -192,16 +192,16 @@ export default function AuthModal() {
                 className="bg-teal-50 hover:bg-teal-100 border border-teal-200 text-teal-950 p-2 rounded-xl text-left transition"
               >
                 <div className="font-bold">👨‍🏫 সহকারী শিক্ষক</div>
-                <div className="text-[10px] text-teal-700 font-mono">ID: teacher (Marks Entry)</div>
+                <div className="text-[10px] text-teal-700 font-mono">ID: teacher (জনাব জাহাঙ্গীর আলম)</div>
               </button>
 
               <button
                 type="button"
-                onClick={() => handleInstantLogin('accountant', 'accountant', 'acc123')}
+                onClick={() => handleInstantLogin('operator', 'office_assistant', 'office123')}
                 className="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-950 p-2 rounded-xl text-left transition"
               >
-                <div className="font-bold">💰 হিসাবরক্ষক</div>
-                <div className="text-[10px] text-amber-700 font-mono">ID: accountant (Fees)</div>
+                <div className="font-bold">🏢 অফিস সহকারী</div>
+                <div className="text-[10px] text-amber-700 font-mono">ID: office_assistant (নুরুল কবির)</div>
               </button>
             </div>
           </div>

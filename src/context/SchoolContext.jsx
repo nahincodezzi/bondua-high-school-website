@@ -41,6 +41,12 @@ export function SchoolProvider({ children }) {
         if (!parsed.email || parsed.email.includes('fulgazi')) {
           parsed.email = 'bonduas106644@gmail.com';
         }
+        if (!parsed.headmasterNameBn || parsed.headmasterNameBn.includes('রবিউল')) {
+          parsed.headmasterNameBn = 'জনাব বাহার উদ্দিন ভূঁইয়া';
+          parsed.headmasterNameEn = 'Mr. Bahar Uddin Bhuiyan';
+          parsed.headmasterDesignationBn = 'ভারপ্রাপ্ত প্রধান শিক্ষক';
+          parsed.headmasterDesignationEn = 'Acting Headmaster';
+        }
         return parsed;
       } catch {
         return initialSchoolInfo;
@@ -66,7 +72,18 @@ export function SchoolProvider({ children }) {
 
   const [teachers, setTeachers] = useState(() => {
     const saved = localStorage.getItem('bdhs_teachers');
-    return saved ? JSON.parse(saved) : initialTeachers;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (!Array.isArray(parsed) || parsed.length < 16 || !parsed[0].nameBn.includes('বাহার')) {
+          return initialTeachers;
+        }
+        return parsed;
+      } catch {
+        return initialTeachers;
+      }
+    }
+    return initialTeachers;
   });
 
   const [students, setStudents] = useState(() => {
@@ -101,7 +118,18 @@ export function SchoolProvider({ children }) {
 
   const [systemUsers, setSystemUsers] = useState(() => {
     const saved = localStorage.getItem('bdhs_system_users');
-    return saved ? JSON.parse(saved) : initialUsers;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (!Array.isArray(parsed) || !parsed.some(u => u.nameBn && u.nameBn.includes('বাহার'))) {
+          return initialUsers;
+        }
+        return parsed;
+      } catch {
+        return initialUsers;
+      }
+    }
+    return initialUsers;
   });
 
   const [routines] = useState(initialRoutines);
