@@ -9,10 +9,17 @@ import {
 } from 'lucide-react';
 
 export default function DashboardOverview({ onNavigate }) {
-  const { lang, students, teachers, admissions, fees, authUser, schoolInfo } = useSchool();
+  const { lang, students, teachers, admissions, fees, authUser } = useSchool();
 
   const pendingAdmissions = admissions.filter(a => a.status === 'Pending');
   const totalFeeCollected = fees.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+
+  const [greeting] = React.useState(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return { bn: 'শুভ সকাল 🌅', en: 'Good Morning 🌅' };
+    if (hour < 17) return { bn: 'শুভ অপরাহ্ন ☀️', en: 'Good Afternoon ☀️' };
+    return { bn: 'শুভ সন্ধ্যা 🌙', en: 'Good Evening 🌙' };
+  });
 
   const kpis = [
     {
@@ -51,31 +58,39 @@ export default function DashboardOverview({ onNavigate }) {
 
   return (
     <div className="space-y-6">
-      {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-emerald-900 to-teal-900 text-white p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            {/* Welcome Banner */}
+      <div className="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white p-5 sm:p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <span className="text-amber-400 text-xs font-bold font-mono">SYSTEM DASHBOARD</span>
-          <h2 className="text-xl sm:text-2xl font-bold font-bangla text-white mt-1">
+          <div className="flex items-center gap-2">
+            <span className="text-amber-400 text-xs font-bold font-mono">SYSTEM DASHBOARD</span>
+            <span className="bg-amber-400/20 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-400/30 font-bangla">
+              {lang === 'bn' ? greeting.bn : greeting.en}
+            </span>
+          </div>
+          <h2 className="text-lg sm:text-2xl font-bold font-bangla text-white mt-1">
             {lang === 'bn' 
-              ? `স্বাগতম, ${authUser?.nameBn || schoolInfo?.headmasterNameBn || 'জনাব বাহার উদ্দিন ভূঁইয়া'} (${authUser?.designationBn || schoolInfo?.headmasterDesignationBn || 'ভারপ্রাপ্ত প্রধান শিক্ষক'})` 
-              : `Welcome, ${authUser?.nameEn || schoolInfo?.headmasterNameEn || 'Mr. Bahar Uddin Bhuiyan'} (${authUser?.designationEn || schoolInfo?.headmasterDesignationEn || 'Acting Headmaster'})`
+              ? `স্বাগতম, ${authUser?.nameBn || authUser?.name || 'সম্মানিত ব্যবহারকারী'} (${authUser?.designationBn || authUser?.designation || authUser?.role || 'প্রশাসক'})` 
+              : `Welcome, ${authUser?.nameEn || authUser?.name || 'Authorized User'} (${authUser?.designationEn || authUser?.designation || authUser?.role || 'Administrator'})`
             }
           </h2>
           <p className="text-xs text-emerald-200 font-bangla mt-0.5">
-            বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় ডিজিটাল ম্যানেজমেন্ট সফটওয়্যার
+            {lang === 'bn'
+              ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় ডিজিটাল ম্যানেজমেন্ট সফটওয়্যারে আপনাকে স্বাগতম।'
+              : 'Welcome to Bandua Daulatpur High School Digital Management ERP.'
+            }
           </p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap sm:flex-nowrap gap-2 w-full sm:w-auto">
           <button
             onClick={() => onNavigate('admissions')}
-            className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs font-bangla transition shadow"
+            className="flex-1 sm:flex-initial bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs font-bangla transition shadow text-center"
           >
             ভর্তি আবেদন যাচাই ({pendingAdmissions.length})
           </button>
           <button
             onClick={() => onNavigate('notices')}
-            className="bg-emerald-800 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs font-bangla transition border border-emerald-600"
+            className="flex-1 sm:flex-initial bg-emerald-800 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs font-bangla transition border border-emerald-600 text-center"
           >
             নতুন নোটিশ দিন
           </button>
@@ -83,7 +98,7 @@ export default function DashboardOverview({ onNavigate }) {
       </div>
 
       {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {kpis.map((kpi, idx) => {
           const Icon = kpi.icon;
           return (

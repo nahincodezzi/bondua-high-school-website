@@ -35,7 +35,7 @@ export default function HeroSlider() {
   return (
     <div className="relative bg-slate-900 text-white overflow-hidden shadow-xl no-print">
       {/* Background Slides */}
-      <div className="relative h-[500px] sm:h-[550px] md:h-[600px] w-full">
+      <div className="relative h-[560px] sm:h-[550px] md:h-[600px] w-full">
         {slides.map((slide, idx) => (
           <div
             key={slide.id || idx}
@@ -89,28 +89,28 @@ export default function HeroSlider() {
                   </div>
 
                   {/* Call to Actions */}
-                  <div className="pt-2 flex flex-wrap items-center gap-3">
+                  <div className="pt-2 flex flex-wrap items-center gap-2 sm:gap-3">
                     <button
                       onClick={() => setActiveTab('admission')}
-                      className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-5 py-3 rounded-xl text-sm sm:text-base shadow-lg hover:shadow-amber-400/20 transition transform hover:-translate-y-0.5 flex items-center gap-2 font-bangla"
+                      className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-xl text-xs sm:text-base shadow-lg hover:shadow-amber-400/20 transition transform hover:-translate-y-0.5 flex items-center gap-1.5 sm:gap-2 font-bangla"
                     >
-                      <FileText className="w-5 h-5 text-emerald-950" />
+                      <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-950" />
                       <span>{lang === 'bn' ? 'অনলাইন ভর্তি আবেদন ২০২৬' : 'Apply for Admission'}</span>
                     </button>
 
                     <button
                       onClick={() => setActiveTab('results')}
-                      className="bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-5 py-3 rounded-xl text-sm sm:text-base border border-emerald-500 shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-2 font-bangla"
+                      className="bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-xl text-xs sm:text-base border border-emerald-500 shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-1.5 sm:gap-2 font-bangla"
                     >
-                      <GraduationCap className="w-5 h-5 text-amber-300" />
+                      <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-amber-300" />
                       <span>{lang === 'bn' ? 'ফলাফল অনুসন্ধান' : 'Check Results'}</span>
                     </button>
 
                     <button
                       onClick={() => setActiveTab('uniform')}
-                      className="bg-slate-800/80 hover:bg-slate-800 text-amber-300 border border-slate-700 px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 font-bangla"
+                      className="bg-slate-800/80 hover:bg-slate-800 text-amber-300 border border-slate-700 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 sm:gap-2 font-bangla"
                     >
-                      <Shirt className="w-4 h-4" />
+                      <Shirt className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       <span>{lang === 'bn' ? 'পোশাক নীতিমালা' : 'Dress Code Policy'}</span>
                     </button>
 
@@ -118,10 +118,10 @@ export default function HeroSlider() {
                       href={schoolInfo.facebookGroupUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-blue-600/90 hover:bg-blue-600 text-white font-semibold px-4 py-3 rounded-xl text-xs sm:text-sm transition flex items-center gap-2"
+                      className="bg-blue-600/90 hover:bg-blue-600 text-white font-semibold px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm transition flex items-center gap-1.5 sm:gap-2"
                       title="Join Facebook Group"
                     >
-                      <Share2 className="w-4 h-4 text-blue-200" />
+                      <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-200" />
                       <span className="hidden sm:inline">{lang === 'bn' ? 'ফেসবুক গ্রুপ' : 'Facebook Group'}</span>
                     </a>
                   </div>

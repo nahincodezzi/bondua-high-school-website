@@ -129,7 +129,7 @@ export default function Header() {
             className="flex items-center gap-3.5 sm:gap-4 cursor-pointer group"
           >
             {/* School Crest Emblem */}
-            <div className="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0 bg-white rounded-full p-1 shadow-lg ring-2 ring-amber-400/80 group-hover:scale-105 transition-transform duration-300">
+            <div className="relative w-12 h-12 sm:w-16 sm:h-16 shrink-0 bg-white rounded-full p-1 shadow-lg ring-2 ring-amber-400/80 group-hover:scale-105 transition-transform duration-300">
               <svg viewBox="0 0 100 100" className="w-full h-full">
                 <circle cx="50" cy="50" r="46" fill="#064e3b" stroke="#f59e0b" strokeWidth="4"/>
                 <circle cx="50" cy="50" r="39" fill="#ffffff" stroke="#064e3b" strokeWidth="1"/>
@@ -152,7 +152,7 @@ export default function Header() {
                 <span className="text-emerald-300 text-xs font-mono hidden sm:inline">MPO: {schoolInfo.mpoCode}</span>
                 <span className="text-amber-300 text-xs font-mono hidden md:inline">EIIN: {schoolInfo.eiin}</span>
               </div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold font-bangla tracking-wide text-white drop-shadow-sm leading-tight mt-0.5">
+              <h1 className="text-lg sm:text-2xl md:text-3xl font-bold font-bangla tracking-wide text-white drop-shadow-sm leading-tight mt-0.5">
                 {lang === 'bn' ? schoolInfo.nameBn : schoolInfo.nameEn}
               </h1>
               <p className="text-xs sm:text-sm text-emerald-200 font-medium">

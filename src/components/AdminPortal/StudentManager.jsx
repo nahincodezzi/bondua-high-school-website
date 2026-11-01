@@ -197,7 +197,7 @@ export default function StudentManager() {
       {/* Add Student Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white max-w-xl w-full rounded-2xl overflow-hidden shadow-2xl border border-slate-200 p-6 space-y-4">
+          <div className="bg-white max-w-xl w-full rounded-2xl overflow-y-auto max-h-[92vh] shadow-2xl border border-slate-200 p-5 sm:p-6 space-y-4">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="font-bold font-bangla text-slate-900 text-base">
                 নতুন শিক্ষার্থী নিবন্ধন ফরম
@@ -308,7 +308,7 @@ export default function StudentManager() {
       {/* Student ID Card Modal (Official & Printable) */}
       {activeIdCardStudent && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white max-w-sm w-full rounded-3xl overflow-hidden shadow-2xl border border-slate-200">
+          <div className="bg-white max-w-sm w-full rounded-3xl overflow-y-auto max-h-[92vh] shadow-2xl border border-slate-200">
             {/* Modal Controls */}
             <div className="bg-slate-900 text-white p-3 flex justify-between items-center text-xs no-print">
               <span className="font-semibold">ডিজিটাল স্টুডেন্ট আইডি কার্ড</span>

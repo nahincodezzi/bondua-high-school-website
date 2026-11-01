@@ -104,7 +104,7 @@ export default function AdminLayout() {
             </button>
 
             {/* User Profile Badge */}
-            <div className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bangla ${
+            <div className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl border text-[11px] sm:text-xs font-bangla ${
               authUser?.role === 'superadmin' 
                 ? 'bg-purple-900/90 border-purple-500 shadow-xs' 
                 : 'bg-emerald-900/80 border-emerald-800'
@@ -115,9 +115,9 @@ export default function AdminLayout() {
                 <ShieldCheck className="w-4 h-4 text-amber-400" />
               )}
               <div>
-                <span className="font-bold text-white block">{authUser?.name || 'Administrator'}</span>
+                <span className="font-bold text-white block truncate max-w-[90px] sm:max-w-none">{lang === 'bn' ? (authUser?.nameBn || authUser?.name || 'অ্যাডমিন') : (authUser?.nameEn || authUser?.name || 'Admin')}</span>
                 <span className="text-[10px] text-amber-300 font-mono capitalize">
-                  {authUser?.role === 'superadmin' ? '👑 SUPER ADMIN' : authUser?.role || 'Principal'}
+                  {authUser?.role === 'superadmin' ? '👑 SUPER ADMIN' : (authUser?.designationBn || authUser?.role || 'Principal')}
                 </span>
               </div>
             </div>
@@ -216,8 +216,39 @@ export default function AdminLayout() {
         )}
 
         {/* Active Module Content Canvas */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
-          <div className="max-w-6xl mx-auto">
+                {/* Active Module Content Canvas */}
+        <main className="flex-1 p-3 sm:p-6 lg:p-8 overflow-y-auto">
+          <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6">
+            {/* Personalized Welcome Card for Logged In User */}
+            <div className="bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-900 text-white p-3.5 sm:p-4 rounded-2xl shadow-sm border border-emerald-700/60 flex flex-wrap items-center justify-between gap-3 text-xs font-bangla">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-amber-400 text-slate-950 font-bold flex items-center justify-center shrink-0 shadow text-sm font-sans">
+                  {authUser?.nameBn ? authUser.nameBn.charAt(0) : 'অ'}
+                </div>
+                <div>
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                    <span className="font-bold text-white text-xs sm:text-sm">
+                      {lang === 'bn' 
+                        ? `স্বাগতম, ${authUser?.nameBn || authUser?.name || 'ব্যবহারকারী'}` 
+                        : `Welcome, ${authUser?.nameEn || authUser?.name || 'User'}`
+                      }
+                    </span>
+                    <span className="bg-amber-400 text-slate-950 text-[10px] font-bold px-2 py-0.2 rounded-full font-mono">
+                      {authUser?.role === 'superadmin' ? '👑 SUPER ADMIN' : (authUser?.designationBn || authUser?.role || 'Staff')}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-emerald-200 mt-0.5">
+                    {lang === 'bn' 
+                      ? 'ডিজিটাল ম্যানেজমেন্ট ও সিএমএস পোর্টালে আপনার সেশন সফলভাবে সক্রিয় হয়েছে।' 
+                      : 'You are authenticated with full access to authorized modules.'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-[10px] sm:text-xs text-emerald-300 font-mono ml-auto sm:ml-0">
+                <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Active Session</span>
+              </div>
+            </div>
             {activeModule === 'overview' && <DashboardOverview onNavigate={setActiveModule} />}
             {activeModule === 'users' && (
               authUser?.role === 'superadmin' ? (

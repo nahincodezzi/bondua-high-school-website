@@ -37,7 +37,7 @@ export default function UniformSection() {
 
             <div className="space-y-6">
               {/* Card Title & Icon */}
-              <div className="flex items-center justify-between pb-4 border-b border-blue-100">
+              <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 pb-4 border-b border-blue-100">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-2xl bg-blue-900 text-white flex items-center justify-center font-bold shadow-md">
                     <Users className="w-6 h-6" />
@@ -117,7 +117,7 @@ export default function UniformSection() {
 
             <div className="space-y-6">
               {/* Card Title & Icon */}
-              <div className="flex items-center justify-between pb-4 border-b border-rose-100">
+              <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 pb-4 border-b border-rose-100">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-2xl bg-rose-600 text-white flex items-center justify-center font-bold shadow-md">
                     <Users className="w-6 h-6" />

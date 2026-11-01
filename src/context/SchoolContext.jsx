@@ -287,9 +287,12 @@ export function SchoolProvider({ children }) {
       id: user.id,
       username: user.username,
       name: user.nameBn,
+      nameBn: user.nameBn,
       nameEn: user.nameEn,
       role: user.role,
       designation: user.designationBn,
+      designationBn: user.designationBn,
+      designationEn: user.designationEn,
       permissions: user.permissions || [],
       loginTime: new Date().toISOString()
     };
@@ -297,8 +300,6 @@ export function SchoolProvider({ children }) {
     setLang('bn');
     localStorage.setItem('bdhs_lang', 'bn');
     setAuthModalOpen(false);
-    setLang('bn');
-    localStorage.setItem('bdhs_lang', 'bn');
     setActiveTab('admin');
     return { success: true, user: authData };
   };
@@ -311,9 +312,12 @@ export function SchoolProvider({ children }) {
         id: matched.id,
         username: matched.username,
         name: matched.nameBn,
+        nameBn: matched.nameBn,
         nameEn: matched.nameEn,
         role: matched.role,
         designation: matched.designationBn,
+        designationBn: matched.designationBn,
+        designationEn: matched.designationEn,
         permissions: matched.permissions || [],
         loginTime: new Date().toISOString()
       });
@@ -322,10 +326,13 @@ export function SchoolProvider({ children }) {
       setAuthUser({
         id: `usr-${role || 'admin'}`,
         username: username || role || 'admin',
-        name: role === 'superadmin' ? 'প্রধান সিস্টেম অ্যাডমিন' : 'বিদ্যালয় পরিচালক',
+        name: role === 'superadmin' ? 'প্রধান সিস্টেম অ্যাডমিনিস্ট্রেটর' : 'বিদ্যালয় পরিচালক',
+        nameBn: role === 'superadmin' ? 'প্রধান সিস্টেম অ্যাডমিনিস্ট্রেটর' : 'বিদ্যালয় পরিচালক',
         nameEn: role === 'superadmin' ? 'Super Administrator' : 'Administrator',
         role: role || 'superadmin',
         designation: roleDef?.nameBn || 'Administrator',
+        designationBn: roleDef?.nameBn || 'Administrator',
+        designationEn: roleDef?.nameEn || 'Administrator',
         permissions: roleDef?.defaultPermissions || ['cms', 'teachers', 'students', 'admissions', 'results', 'notices', 'fees', 'settings', 'users'],
         loginTime: new Date().toISOString()
       });

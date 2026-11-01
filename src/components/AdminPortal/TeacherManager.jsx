@@ -206,7 +206,7 @@ export default function TeacherManager() {
         <div className="flex bg-slate-100 p-1 rounded-xl text-xs font-bold w-full sm:w-auto">
           <button
             onClick={() => setActiveCategory('all')}
-            className={`px-3 py-1.5 rounded-lg transition ${
+            className={`flex-1 sm:flex-initial px-2.5 sm:px-3 py-1.5 rounded-lg transition text-center ${
               activeCategory === 'all' ? 'bg-emerald-900 text-white shadow' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -214,21 +214,21 @@ export default function TeacherManager() {
           </button>
           <button
             onClick={() => setActiveCategory('faculty')}
-            className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1 ${
+            className={`flex-1 sm:flex-initial px-2.5 sm:px-3 py-1.5 rounded-lg transition flex items-center justify-center gap-1 ${
               activeCategory === 'faculty' ? 'bg-emerald-900 text-white shadow' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <Award className="w-3.5 h-3.5 text-amber-400" />
-            <span>শিক্ষক পরিষদ ({facultyCount})</span>
+            <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span className="truncate">শিক্ষক পরিষদ ({facultyCount})</span>
           </button>
           <button
             onClick={() => setActiveCategory('staff')}
-            className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1 ${
+            className={`flex-1 sm:flex-initial px-2.5 sm:px-3 py-1.5 rounded-lg transition flex items-center justify-center gap-1 ${
               activeCategory === 'staff' ? 'bg-emerald-900 text-white shadow' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <Briefcase className="w-3.5 h-3.5 text-amber-400" />
-            <span>কর্মচারীবৃন্দ ({staffCount})</span>
+            <Briefcase className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span className="truncate">কর্মচারী ({staffCount})</span>
           </button>
         </div>
 
@@ -335,8 +335,8 @@ export default function TeacherManager() {
 
       {/* Add / Edit Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white max-w-lg w-full rounded-2xl overflow-hidden shadow-2xl border border-slate-200 p-6 space-y-4 font-bangla text-xs">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white max-w-lg w-full rounded-2xl overflow-y-auto max-h-[92vh] shadow-2xl border border-slate-200 p-5 sm:p-6 space-y-4 font-bangla text-xs">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="font-bold text-slate-900 text-base">
                 {editingTeacher ? 'শিক্ষক / কর্মচারীর তথ্য সম্পাদনা' : 'নতুন শিক্ষক / কর্মচারী সংযোজন ফরম'}
