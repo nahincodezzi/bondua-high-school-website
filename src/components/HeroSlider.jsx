@@ -64,7 +64,7 @@ export default function HeroSlider() {
                     </div>
 
                     <span className="bg-emerald-900/90 text-amber-300 border border-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full font-bangla hidden sm:inline-flex">
-                      {schoolInfo.roadBn}
+                      {lang === 'bn' ? (schoolInfo.roadBn || 'ফেনী-পরশুরাম রোড সংলগ্ন') : (schoolInfo.roadEn || 'Situated along Feni-Parshuram Road')}
                     </span>
                   </div>
 
@@ -111,7 +111,7 @@ export default function HeroSlider() {
                       className="bg-slate-800/80 hover:bg-slate-800 text-amber-300 border border-slate-700 px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 font-bangla"
                     >
                       <Shirt className="w-4 h-4" />
-                      <span>পোশাক নীতিমালা</span>
+                      <span>{lang === 'bn' ? 'পোশাক নীতিমালা' : 'Dress Code Policy'}</span>
                     </button>
 
                     <a
@@ -122,7 +122,7 @@ export default function HeroSlider() {
                       title="Join Facebook Group"
                     >
                       <Share2 className="w-4 h-4 text-blue-200" />
-                      <span className="hidden sm:inline">ফেসবুক গ্রুপ</span>
+                      <span className="hidden sm:inline">{lang === 'bn' ? 'ফেসবুক গ্রুপ' : 'Facebook Group'}</span>
                     </a>
                   </div>
                 </div>
@@ -185,7 +185,9 @@ export default function HeroSlider() {
             </p>
           </div>
           <div className="px-2">
-            <p className="text-2xl sm:text-3xl font-extrabold text-white font-mono">৩টি শাখা</p>
+            <p className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
+              {lang === 'bn' ? '৩টি শাখা' : '3 Groups'}
+            </p>
             <p className="text-xs sm:text-sm text-emerald-200 font-bangla">
               {lang === 'bn' ? 'বিজ্ঞান, ব্যবসায় ও মানবিক' : 'Science, Business & Humanities'}
             </p>

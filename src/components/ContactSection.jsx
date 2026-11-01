@@ -68,7 +68,7 @@ export default function ContactSection() {
                   </div>
                   <div>
                     <span className="font-bold text-slate-900 block">{lang === 'bn' ? 'অবস্থান:' : 'Address:'}</span>
-                    <p className="text-slate-600 mt-0.5">{schoolInfo.addressBn}</p>
+                    <p className="text-slate-600 mt-0.5">{lang === 'bn' ? schoolInfo.addressBn : (schoolInfo.addressEn || 'Along Feni-Parshuram Road, Bandua Daulatpur, Anandapur Union, Fulgazi, Feni, Bangladesh')}</p>
                     <p className="text-[11px] text-slate-400 font-mono mt-0.5">EIIN: {schoolInfo.eiin} • MPO: {schoolInfo.mpoCode}</p>
                   </div>
                 </div>
@@ -80,7 +80,7 @@ export default function ContactSection() {
                   <div>
                     <span className="font-bold text-slate-900 block">{lang === 'bn' ? 'হটলাইন / মোবাইল:' : 'Phone Numbers:'}</span>
                     <p className="text-slate-700 font-mono font-semibold mt-0.5">{schoolInfo.phone}</p>
-                    <p className="text-slate-500 font-mono text-xs">{schoolInfo.phoneAlt} (অফিস সহকারী)</p>
+                    <p className="text-slate-500 font-mono text-xs">{schoolInfo.phoneAlt} ({lang === 'bn' ? 'অফিস সহকারী' : 'Office Assistant'})</p>
                   </div>
                 </div>
 
@@ -100,8 +100,8 @@ export default function ContactSection() {
                   </div>
                   <div>
                     <span className="font-bold text-slate-900 block">{lang === 'bn' ? 'অফিস সময়সূচি:' : 'Office Hours:'}</span>
-                    <p className="text-slate-600 mt-0.5">রবিবার হতে বৃহস্পতিবার: সকাল ৯:০০ - বিকাল ৪:০০</p>
-                    <p className="text-rose-600 text-[11px] font-semibold">শুক্রবার ও শনিবার: সাপ্তাহিক ছুটি</p>
+                    <p className="text-slate-600 mt-0.5">{lang === 'bn' ? 'রবিবার হতে বৃহস্পতিবার: সকাল ৯:০০ - বিকাল ৪:০০' : 'Sunday to Thursday: 9:00 AM - 4:00 PM'}</p>
+                    <p className="text-rose-600 text-[11px] font-semibold">{lang === 'bn' ? 'শুক্রবার ও শনিবার: সাপ্তাহিক ছুটি' : 'Friday & Saturday: Weekly Holiday'}</p>
                   </div>
                 </div>
               </div>
@@ -111,13 +111,13 @@ export default function ContactSection() {
             <div className="bg-gradient-to-r from-blue-900 to-indigo-900 text-white p-6 rounded-2xl shadow-sm border border-blue-800">
               <div className="flex items-center gap-2 text-amber-300 text-xs font-bold mb-2">
                 <Share2 className="w-4 h-4" />
-                <span>অফিসিয়াল ফেসবুক গ্রুপ</span>
+                <span>{lang === 'bn' ? 'অফিসিয়াল ফেসবুক গ্রুপ' : 'Official Facebook Group'}</span>
               </div>
               <h4 className="text-base font-bold font-bangla mb-1">
-                বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় পরিবার
+                {lang === 'bn' ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় পরিবার' : 'Bandua Daulatpur High School Family'}
               </h4>
               <p className="text-xs text-blue-200 font-bangla mb-4">
-                আমাদের গ্রুপে যুক্ত হয়ে নিয়মিত বিদ্যালয়ের কার্যক্রমের ভিডিও ও ছবি দেখুন।
+                {lang === 'bn' ? 'আমাদের গ্রুপে যুক্ত হয়ে নিয়মিত বিদ্যালয়ের কার্যক্রমের ভিডিও ও ছবি দেখুন।' : 'Join our group to connect and view latest school events.'}
               </p>
               <a
                 href={schoolInfo.facebookGroupUrl}
@@ -125,7 +125,7 @@ export default function ContactSection() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow"
               >
-                <span>গ্রুপে যুক্ত হোন</span>
+                <span>{lang === 'bn' ? 'গ্রুপে যুক্ত হোন' : 'Join FB Group'}</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
             </div>
@@ -236,13 +236,15 @@ export default function ContactSection() {
         <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-slate-100 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2 max-w-lg">
             <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider block font-bangla">
-              মানচিত্রে আমাদের অবস্থান (Map Location)
+              {lang === 'bn' ? 'মানচিত্রে আমাদের অবস্থান (Map Location)' : 'Location Map & Directions'}
             </span>
             <h4 className="text-lg font-bold font-bangla text-slate-900">
-              বন্দুয়া দৌলতপুর, আনন্দপুর ইউনিয়ন, ফুলগাজী, ফেনী
+              {lang === 'bn' ? 'বন্দুয়া দৌলতপুর, আনন্দপুর ইউনিয়ন, ফুলগাজী, ফেনী' : 'Bandua Daulatpur, Anandapur, Fulgazi, Feni'}
             </h4>
             <p className="text-xs text-slate-600 font-bangla leading-relaxed">
-              ফেনী জেলা শহর হতে পরশুরাম/ফুলগাজী আঞ্চলিক সড়ক দিয়ে আনন্দপুর বাজার হয়ে বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়ে খুব সহজেই যাতায়াত করা যায়।
+              {lang === 'bn' 
+                ? 'ফেনী জেলা শহর হতে পরশুরাম/ফুলগাজী আঞ্চলিক সড়ক দিয়ে আনন্দপুর বাজার হয়ে বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়ে খুব সহজেই যাতায়াত করা যায়।'
+                : 'Easily accessible from Feni district headquarters along the Feni-Parshuram highway via Anandapur Bazar.'}
             </p>
           </div>
 
@@ -253,7 +255,7 @@ export default function ContactSection() {
             className="bg-emerald-900 hover:bg-emerald-950 text-white font-bold px-6 py-3 rounded-xl text-xs flex items-center gap-2 transition shadow-md shrink-0 font-bangla"
           >
             <MapPin className="w-4 h-4 text-amber-400" />
-            <span>গুগল ম্যাপে দিকনির্দেশনা দেখুন (Google Maps)</span>
+            <span>{lang === 'bn' ? 'গুগল ম্যাপে দিকনির্দেশনা দেখুন (Google Maps)' : 'Get Directions on Google Maps'}</span>
             <ExternalLink className="w-3.5 h-3.5 text-slate-300" />
           </a>
         </div>

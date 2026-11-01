@@ -54,7 +54,7 @@ export default function UniformSection() {
                 <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-blue-200 shadow-xs">
                   <span className="w-4 h-4 rounded-full bg-white border-2 border-slate-400 shadow-xs" title="White Shirt"></span>
                   <span className="w-4 h-4 rounded-full bg-blue-900 border border-blue-950 shadow-xs" title="Blue Pant"></span>
-                  <span className="text-[11px] font-bold text-slate-700 font-bangla ml-1">সাদা ও নীল</span>
+                  <span className="text-[11px] font-bold text-slate-700 font-bangla ml-1">{lang === 'bn' ? 'সাদা ও নীল' : 'White & Blue'}</span>
                 </div>
               </div>
 
@@ -105,8 +105,8 @@ export default function UniformSection() {
             </div>
 
             <div className="mt-6 pt-4 border-t border-blue-100 flex items-center justify-between text-xs text-blue-900 font-semibold font-bangla">
-              <span>প্রতিদিন নির্ধারিত পোশাক পরা আবশ্যক</span>
-              <span className="bg-blue-100 px-2.5 py-0.5 rounded-full text-[11px]">ছাত্রদের পোশাক কোড</span>
+              <span>{lang === 'bn' ? 'প্রতিদিন নির্ধারিত পোশাক পরা আবশ্যক' : 'Mandatory to wear prescribed uniform daily'}</span>
+              <span className="bg-blue-100 px-2.5 py-0.5 rounded-full text-[11px]">{lang === 'bn' ? 'ছাত্রদের পোশাক কোড' : 'Boys Dress Code'}</span>
             </div>
           </div>
 
@@ -134,7 +134,7 @@ export default function UniformSection() {
                 <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-rose-200 shadow-xs">
                   <span className="w-4 h-4 rounded-full bg-rose-600 border border-rose-700 shadow-xs" title="Red Dress"></span>
                   <span className="w-4 h-4 rounded-full bg-white border-2 border-slate-400 shadow-xs" title="White Salwar"></span>
-                  <span className="text-[11px] font-bold text-slate-700 font-bangla ml-1">লাল ও সাদা</span>
+                  <span className="text-[11px] font-bold text-slate-700 font-bangla ml-1">{lang === 'bn' ? 'লাল ও সাদা' : 'Red & White'}</span>
                 </div>
               </div>
 
@@ -185,8 +185,8 @@ export default function UniformSection() {
             </div>
 
             <div className="mt-6 pt-4 border-t border-rose-100 flex items-center justify-between text-xs text-rose-900 font-semibold font-bangla">
-              <span>শালীনতা ও পরিচ্ছন্নতা বজায় রাখা আবশ্যিক</span>
-              <span className="bg-rose-100 px-2.5 py-0.5 rounded-full text-[11px]">ছাত্রীদের পোশাক কোড</span>
+              <span>{lang === 'bn' ? 'শালীনতা ও পরিচ্ছন্নতা বজায় রাখা আবশ্যিক' : 'Modesty and cleanliness must be maintained'}</span>
+              <span className="bg-rose-100 px-2.5 py-0.5 rounded-full text-[11px]">{lang === 'bn' ? 'ছাত্রীদের পোশাক কোড' : 'Girls Dress Code'}</span>
             </div>
           </div>
         </div>
@@ -197,7 +197,7 @@ export default function UniformSection() {
             <div className="md:col-span-8 space-y-2">
               <div className="flex items-center gap-2 text-amber-400 font-bold text-xs">
                 <Sparkles className="w-4 h-4" />
-                <span>শীতকালীন ইউনিফর্ম ও শৃঙ্খলামূলক নীতিমালা</span>
+                <span>{lang === 'bn' ? 'শীতকালীন ইউনিফর্ম ও শৃঙ্খলামূলক নীতিমালা' : 'Winter Uniform & Disciplinary Guidelines'}</span>
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-white">
                 {lang === 'bn' ? uniformInfo.winterBn : uniformInfo.winterEn}
@@ -212,13 +212,13 @@ export default function UniformSection() {
                 onClick={() => setActiveTab('admission')}
                 className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold py-3 px-4 rounded-xl text-xs transition shadow text-center"
               >
-                ভর্তি আবেদন নির্দেশিকা দেখুন
+                {lang === 'bn' ? 'ভর্তি আবেদন নির্দেশিকা দেখুন' : 'View Admission Guidelines'}
               </button>
               <button
                 onClick={() => setActiveTab('notices')}
                 className="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-4 rounded-xl text-xs transition text-center border border-slate-700"
               >
-                পোশাক সংক্রান্ত নোটিশ দেখুন
+                {lang === 'bn' ? 'পোশাক সংক্রান্ত নোটিশ দেখুন' : 'View Dress Code Circulars'}
               </button>
             </div>
           </div>

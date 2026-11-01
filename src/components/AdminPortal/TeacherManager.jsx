@@ -51,7 +51,7 @@ export default function TeacherManager() {
     setEditingTeacher(t);
     setFormData({
       ...t,
-      category: t.category || (t.designationEn?.includes('Peon') || t.designationEn?.includes('Guard') || t.designationEn?.includes('Aya') || t.designationEn?.includes('Assistant') ? 'staff' : 'faculty')
+      category: t.category || (t.designationEn === 'Office Assistant' || t.designationBn?.includes('অফিস সহকারী') || t.designationEn?.includes('Peon') || t.designationEn?.includes('Guard') || t.designationEn?.includes('Aya') ? 'staff' : 'faculty')
     });
     setUploadStatus('');
     setShowModal(true);
@@ -153,7 +153,14 @@ export default function TeacherManager() {
       t.designationBn?.toLowerCase().includes(q) ||
       t.subjectBn?.toLowerCase().includes(q);
 
-    const isStaff = t.category === 'staff' || t.designationEn?.includes('Peon') || t.designationEn?.includes('Guard') || t.designationEn?.includes('Aya') || t.designationEn?.includes('Assistant');
+    const isStaff = 
+      t.category === 'staff' || 
+      t.designationEn === 'Office Assistant' || 
+      t.designationBn?.includes('অফিস সহকারী') || 
+      t.designationEn?.includes('Peon') || 
+      t.designationEn?.includes('Guard') || 
+      t.designationEn?.includes('Aya');
+
     const matchesCategory = 
       activeCategory === 'all' ||
       (activeCategory === 'staff' && isStaff) ||
@@ -162,8 +169,16 @@ export default function TeacherManager() {
     return matchesSearch && matchesCategory;
   });
 
-  const facultyCount = teachers.filter(t => t.category === 'faculty' || (!t.category && !t.designationEn?.includes('Peon') && !t.designationEn?.includes('Guard') && !t.designationEn?.includes('Aya') && !t.designationEn?.includes('Assistant'))).length;
-  const staffCount = teachers.filter(t => t.category === 'staff' || t.designationEn?.includes('Peon') || t.designationEn?.includes('Guard') || t.designationEn?.includes('Aya') || t.designationEn?.includes('Assistant')).length;
+  const staffCount = teachers.filter(t => 
+    t.category === 'staff' || 
+    t.designationEn === 'Office Assistant' || 
+    t.designationBn?.includes('অফিস সহকারী') || 
+    t.designationEn?.includes('Peon') || 
+    t.designationEn?.includes('Guard') || 
+    t.designationEn?.includes('Aya')
+  ).length;
+
+  const facultyCount = teachers.length - staffCount;
 
   return (
     <div className="space-y-6">
@@ -257,7 +272,11 @@ export default function TeacherManager() {
                     alt={t.nameEn}
                     className="w-16 h-16 rounded-xl object-cover object-top border border-slate-200"
                     onError={(e) => {
-                      e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80";
+                      e.currentTarget.src = createEducatorAvatar({
+                        initials: (t.nameEn || t.nameBn || 'BD').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(),
+                        role: isHead ? 'headmaster' : isStaff ? 'staff' : 'faculty',
+                        designation: t.designationEn || 'Faculty Member'
+                      });
                     }}
                   />
                   <span className="absolute -top-1.5 -left-1.5 bg-black/70 text-white text-[9px] font-mono font-bold px-1.5 py-0.2 rounded-full">

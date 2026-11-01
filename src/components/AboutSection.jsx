@@ -155,13 +155,13 @@ export default function AboutSection() {
                 onClick={() => setActiveTab('faculty')}
                 className="flex-1 bg-emerald-800 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl text-xs font-bangla transition text-center shadow"
               >
-                শিক্ষক ও কর্মচারীদের তালিকা দেখুন
+                {lang === 'bn' ? 'শিক্ষক ও কর্মচারীদের তালিকা দেখুন' : 'View Faculty & Staff List'}
               </button>
               <button
                 onClick={() => setActiveTab('contact')}
                 className="flex-1 bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 font-bold py-3 px-4 rounded-xl text-xs font-bangla transition text-center"
               >
-                যোগাযোগের তথ্য ও ঠিকানা
+                {lang === 'bn' ? 'যোগাযোগের তথ্য ও ঠিকানা' : 'Contact Information & Location'}
               </button>
             </div>
           </div>

@@ -148,13 +148,13 @@ export default function AcademicPrograms() {
           <div className="mt-6 p-4 bg-emerald-50 rounded-xl border border-emerald-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-2 text-emerald-900 font-bangla font-semibold">
               <Clock className="w-4 h-4 text-emerald-700 shrink-0" />
-              <span>বিদ্যালয় সময়সূচি: প্রতিদিন সকাল ৯:৩০ মি. হতে বিকাল ৪:০০ টা পর্যন্ত (শুক্রবার ও শনিবার ছুটি)</span>
+              <span>{lang === 'bn' ? 'বিদ্যালয় সময়সূচি: প্রতিদিন সকাল ৯:৩০ মি. হতে বিকাল ৪:০০ টা পর্যন্ত (শুক্রবার ও শনিবার ছুটি)' : 'School Hours: Daily 9:30 AM to 4:00 PM (Friday & Saturday Closed)'}</span>
             </div>
             <button
               onClick={() => setActiveTab('routines')}
               className="bg-emerald-800 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg font-bangla transition shrink-0"
             >
-              ক্লাস রুটিন দেখুন
+              {lang === 'bn' ? 'ক্লাস রুটিন দেখুন' : 'View Class Routines'}
             </button>
           </div>
         </div>
@@ -177,7 +177,7 @@ export default function AcademicPrograms() {
                     }`}
                   >
                     <IconComponent className={`w-4 h-4 ${isActive ? 'text-amber-300' : 'text-slate-500'}`} />
-                    <span>{grp.titleBn}</span>
+                    <span>{lang === 'bn' ? grp.titleBn : grp.titleEn}</span>
                   </button>
                 );
               })}
@@ -189,14 +189,14 @@ export default function AcademicPrograms() {
             <div key={grp.id} className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 animate-in fade-in duration-300">
               <div className="max-w-3xl">
                 <h3 className="text-xl sm:text-2xl font-bold font-bangla text-emerald-950 mb-2">
-                  {grp.titleBn}
+                  {lang === 'bn' ? grp.titleBn : grp.titleEn}
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600 font-bangla leading-relaxed mb-6">
                   {grp.descriptionBn}
                 </p>
 
                 <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
-                  অন্তর্ভুক্ত আবশ্যিক ও ঐচ্ছিক বিষয়সমূহ:
+                  {lang === 'bn' ? 'অন্তর্ভুক্ত আবশ্যিক ও ঐচ্ছিক বিষয়সমূহ:' : 'Core & Elective Subjects:'}
                 </h4>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

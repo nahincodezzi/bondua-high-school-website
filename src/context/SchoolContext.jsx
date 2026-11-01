@@ -19,8 +19,16 @@ import {
 } from '../data/initialData';
 
 export function SchoolProvider({ children }) {
-  // Language toggle (Default: Bengali for BD institutional audience, with English toggle)
-  const [lang, setLang] = useState(() => localStorage.getItem('bdhs_lang') || 'bn');
+  // Auto-select Bangla ('bn') on first load / new session; user can toggle to English anytime
+  const [lang, setLang] = useState(() => {
+    const sessionActive = sessionStorage.getItem('bdhs_session_active');
+    if (!sessionActive) {
+      sessionStorage.setItem('bdhs_session_active', 'true');
+      localStorage.setItem('bdhs_lang', 'bn');
+      return 'bn';
+    }
+    return localStorage.getItem('bdhs_lang') || 'bn';
+  });
 
   // Active navigation tab
   const [activeTab, setActiveTab] = useState('home');
@@ -247,7 +255,11 @@ export function SchoolProvider({ children }) {
       loginTime: new Date().toISOString()
     };
     setAuthUser(authData);
+    setLang('bn');
+    localStorage.setItem('bdhs_lang', 'bn');
     setAuthModalOpen(false);
+    setLang('bn');
+    localStorage.setItem('bdhs_lang', 'bn');
     setActiveTab('admin');
     return { success: true, user: authData };
   };
@@ -280,6 +292,8 @@ export function SchoolProvider({ children }) {
       });
     }
     setAuthModalOpen(false);
+    setLang('bn');
+    localStorage.setItem('bdhs_lang', 'bn');
     setActiveTab('admin');
   };
 
