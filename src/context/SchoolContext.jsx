@@ -497,6 +497,10 @@ export function SchoolProvider({ children }) {
     setVideos(prev => [newVid, ...prev]);
   };
 
+  const deleteVideoItem = (id) => {
+    setVideos(prev => prev.filter(v => v.id !== id));
+  };
+
   const resetToDefaults = () => {
     localStorage.clear();
     setSchoolInfo(initialSchoolInfo);
@@ -560,6 +564,7 @@ export function SchoolProvider({ children }) {
         deleteGalleryItem,
         videos,
         addVideoItem,
+        deleteVideoItem,
         admissions,
         submitAdmission,
         updateAdmissionStatus,

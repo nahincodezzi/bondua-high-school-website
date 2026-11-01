@@ -7,7 +7,9 @@ import {
   Eye, 
   X, 
   Printer, 
-  FileText
+  FileText,
+  Download,
+  Paperclip
 } from 'lucide-react';
 
 export default function NoticeBoard() {
@@ -126,6 +128,11 @@ export default function NoticeBoard() {
                           <span className="font-semibold text-slate-800 hover:text-emerald-800 transition">
                             {lang === 'bn' ? notice.titleBn : notice.titleEn}
                           </span>
+                          {notice.fileUrl && notice.fileUrl !== '#' && (
+                            <span className="text-emerald-700 shrink-0 inline-flex items-center gap-0.5" title="ফাইল সংযুক্ত">
+                              <Paperclip className="w-3.5 h-3.5 text-emerald-600" />
+                            </span>
+                          )}
                         </div>
                       </td>
                       <td className="py-3 px-4 text-center">
@@ -222,6 +229,29 @@ export default function NoticeBoard() {
                 <div className="text-sm font-bangla text-slate-700 leading-relaxed min-h-[140px] whitespace-pre-line bg-slate-50/50 p-4 rounded-xl border border-slate-100">
                   {lang === 'bn' ? activeNoticeModal.contentBn : activeNoticeModal.contentEn}
                 </div>
+
+                {/* Attached Document File Download if available */}
+                {activeNoticeModal.fileUrl && activeNoticeModal.fileUrl !== '#' && (
+                  <div className="bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl flex items-center justify-between no-print">
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-5 h-5 text-emerald-800" />
+                      <div>
+                        <p className="font-bold text-emerald-950 text-xs font-bangla">সংযুক্ত অফিসিয়াল বিজ্ঞপ্তি / ডকুমেন্ট ফাইল</p>
+                        <p className="text-[10px] text-emerald-700 font-mono">{activeNoticeModal.fileName || 'Notice-Document'}</p>
+                      </div>
+                    </div>
+                    <a
+                      href={activeNoticeModal.fileUrl}
+                      download={activeNoticeModal.fileName || `Notice-${activeNoticeModal.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-emerald-800 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 shadow"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>{lang === 'bn' ? 'ডকুমেন্ট দেখুন / ডাউনলোড' : 'View / Download'}</span>
+                    </a>
+                  </div>
+                )}
 
                 {/* Headmaster Signature & Seal */}
                 <div className="pt-6 flex justify-between items-end text-xs">

@@ -31,13 +31,20 @@ import UserManager from './UserManager';
 
 export default function AdminLayout() {
   const { authUser, logout, setActiveTab, lang, toggleLanguage, schoolInfo, hasPermission } = useSchool();
-  const [activeModule, setActiveModule] = useState('overview');
+  const [activeModule, setActiveModule] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const mod = params.get('module');
+      if (mod) return mod;
+    }
+    return 'overview';
+  });
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const menuItems = [
     { id: 'overview', labelBn: 'ড্যাশবোর্ড ওভারভিউ', labelEn: 'Dashboard Overview', icon: LayoutDashboard },
     { id: 'users', labelBn: 'ইউজার ও এক্সেস কন্ট্রোল', labelEn: 'User & Access Control', icon: Key, badge: 'SUPER', superadminOnly: true },
-    { id: 'cms', labelBn: 'ওয়েবসাইট কনটেন্ট (CMS)', labelEn: 'Website Content CMS', icon: Sliders, badge: 'CMS' },
+    { id: 'cms', labelBn: 'কনটেন্ট ও গ্যালারি (CMS)', labelEn: 'Content & Gallery CMS', icon: Sliders, badge: 'CMS' },
     { id: 'teachers', labelBn: 'শিক্ষক পরিষদ (Faculty CMS)', labelEn: 'Faculty Directory CMS', icon: School },
     { id: 'students', labelBn: 'শিক্ষার্থী ব্যবস্থাপনা', labelEn: 'Student Management', icon: Users },
     { id: 'admissions', labelBn: 'ভর্তি আবেদন যাচাই', labelEn: 'Admission Review', icon: FileCheck },
