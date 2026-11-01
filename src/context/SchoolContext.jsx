@@ -63,9 +63,11 @@ export function SchoolProvider({ children }) {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (parsed.nameBn && parsed.nameBn.includes('রবিউল')) {
+        if (saved.includes('রবিউল') || saved.includes('Rabiul') || (parsed.name && parsed.name.includes('রবিউল')) || (parsed.nameBn && parsed.nameBn.includes('রবিউল'))) {
+          parsed.name = 'জনাব বাহার উদ্দিন ভূঁইয়া';
           parsed.nameBn = 'জনাব বাহার উদ্দিন ভূঁইয়া';
           parsed.nameEn = 'Mr. Bahar Uddin Bhuiyan';
+          parsed.designation = 'ভারপ্রাপ্ত প্রধান শিক্ষক';
           parsed.designationBn = 'ভারপ্রাপ্ত প্রধান শিক্ষক';
           parsed.designationEn = 'Acting Headmaster';
           localStorage.setItem('bdhs_auth', JSON.stringify(parsed));
@@ -141,7 +143,7 @@ export function SchoolProvider({ children }) {
         const hasStockModel = parsed.some(t => t.image && t.image.includes('images.unsplash.com'));
         if (hasStockModel) {
           return parsed.map((t, idx) => {
-            if (t.image && t.image.startsWith('data:image/jpeg') && !t.image.includes('svg')) {
+            if (t.image && t.image.startsWith('data:image/') && !t.image.includes('svg')) {
               return t; // Keep custom photo uploaded by user in CMS!
             }
             return {
@@ -192,6 +194,10 @@ export function SchoolProvider({ children }) {
     const saved = localStorage.getItem('bdhs_system_users');
     if (saved) {
       try {
+        if (saved.includes('রবিউল') || saved.includes('Rabiul')) {
+          localStorage.setItem('bdhs_system_users', JSON.stringify(initialUsers));
+          return initialUsers;
+        }
         const parsed = JSON.parse(saved);
         if (!Array.isArray(parsed) || !parsed.some(u => u.nameBn && u.nameBn.includes('বাহার'))) {
           return initialUsers;
