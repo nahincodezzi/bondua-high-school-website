@@ -11,23 +11,50 @@
   --brand-gold-text: #022c22;
 }
 
+/* Glassmorphism Design Shade Utilities */
+.glass-capsule {
+  background: rgba(2, 6, 23, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.glass-card {
+  background: rgba(6, 78, 59, 0.25);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+}
+
+.glass-pill {
+  background: rgba(2, 6, 23, 0.5);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.35);
+}
+
 /* Global Unified Brand Gold Button Utility */
 .btn-gold {
   background-color: var(--brand-gold);
   color: var(--brand-gold-text);
   font-weight: 700;
+  border-radius: 9999px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 14px 0 rgba(251, 191, 36, 0.35);
 }
 
 .btn-gold:hover {
   background-color: var(--brand-gold-hover);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 20px 0 rgba(245, 158, 11, 0.45);
+  transform: translateY(-1px);
 }
 
 .btn-gold:active {
   background-color: var(--brand-gold-active);
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 body {

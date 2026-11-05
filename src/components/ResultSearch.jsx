@@ -131,10 +131,10 @@ export default function ResultSearch() {
             <div>
               <button
                 type="submit"
-                className="w-full bg-emerald-800 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-lg text-xs flex items-center justify-center gap-2 transition shadow"
+                className="w-full btn-gold py-2.5 px-4 text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md font-bangla active:scale-95 transition"
               >
-                <Search className="w-4 h-4 text-amber-300" />
-                <span className="font-bangla">{lang === 'bn' ? 'ফলাফল দেখুন' : 'Get Result'}</span>
+                <Search className="w-4 h-4 text-emerald-950" />
+                <span>{lang === 'bn' ? 'ফলাফল দেখুন' : 'Get Result'}</span>
               </button>
             </div>
           </form>

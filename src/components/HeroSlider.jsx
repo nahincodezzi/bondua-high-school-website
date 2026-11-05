@@ -35,7 +35,7 @@ export default function HeroSlider() {
   return (
     <div className="relative bg-slate-900 text-white overflow-hidden shadow-xl no-print">
       {/* Background Slides */}
-      <div className="relative h-[560px] sm:h-[550px] md:h-[600px] w-full">
+      <div className="relative min-h-[640px] sm:min-h-[620px] md:min-h-[680px] w-full">
         {slides.map((slide, idx) => (
           <div
             key={slide.id || idx}
@@ -49,21 +49,21 @@ export default function HeroSlider() {
               alt={slide.titleEn || slide.titleBn}
               className="w-full h-full object-cover object-center transform scale-105 transition-transform duration-7000 ease-out"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/95 via-slate-950/80 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-transparent"></div>
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/30"></div>
 
             {/* Slide Content */}
-            <div className="absolute inset-0 flex items-center">
+            <div className="absolute inset-0 flex items-center pt-24 sm:pt-28 md:pt-32">
               <div className="max-w-7xl mx-auto px-4 sm:px-8 w-full">
                 <div className="max-w-2xl space-y-4">
                   {/* Tag Pill & Location Indicator */}
                   <div className="flex flex-wrap items-center gap-2">
-                    <div className="inline-flex items-center gap-1.5 bg-amber-400 text-emerald-950 text-xs sm:text-sm font-bold px-3 py-1 rounded-full shadow-md font-bangla">
+                    <div className="inline-flex items-center gap-1.5 btn-gold px-3.5 py-1 text-xs sm:text-sm font-bold shadow-md font-bangla">
                       <Sparkles className="w-4 h-4 text-emerald-950" />
                       <span>{lang === 'bn' ? slide.tagBn : slide.tagEn}</span>
                     </div>
 
-                    <span className="bg-emerald-900/90 text-amber-300 border border-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full font-bangla hidden sm:inline-flex">
+                    <span className="glass-pill text-amber-300 text-xs font-semibold px-3 py-1 rounded-full font-bangla hidden sm:inline-flex">
                       {lang === 'bn' ? (schoolInfo.roadBn || 'ফেনী-পরশুরাম রোড সংলগ্ন') : (schoolInfo.roadEn || 'Situated along Feni-Parshuram Road')}
                     </span>
                   </div>
@@ -74,12 +74,12 @@ export default function HeroSlider() {
                   </h2>
 
                   {/* Subtitle */}
-                  <p className="text-sm sm:text-lg text-slate-200 font-bangla leading-relaxed max-w-xl">
+                  <p className="text-sm sm:text-lg text-slate-200 font-bangla leading-relaxed max-w-xl drop-shadow-sm">
                     {lang === 'bn' ? slide.subtitleBn : slide.subtitleEn}
                   </p>
 
                   {/* Quick Uniform Callout Tag */}
-                  <div className="inline-flex items-center gap-2 bg-slate-900/80 border border-emerald-500/50 backdrop-blur-md px-3.5 py-1.5 rounded-xl text-xs text-emerald-100 font-bangla">
+                  <div className="inline-flex items-center gap-2 glass-pill px-4 py-1.5 rounded-full text-xs text-emerald-100 font-bangla">
                     <Shirt className="w-4 h-4 text-amber-400 shrink-0" />
                     <span>
                       {lang === 'bn' 
@@ -88,11 +88,11 @@ export default function HeroSlider() {
                     </span>
                   </div>
 
-                  {/* Call to Actions */}
+                  {/* Call to Actions - Pill Buttons */}
                   <div className="pt-2 flex flex-wrap items-center gap-2 sm:gap-3">
                     <button
                       onClick={() => setActiveTab('admission')}
-                      className="bg-amber-400 hover:bg-amber-500 text-emerald-950 font-bold px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-xl text-xs sm:text-base shadow-lg hover:shadow-amber-400/20 transition transform hover:-translate-y-0.5 flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer active:scale-95"
+                      className="btn-gold px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-base flex items-center gap-1.5 sm:gap-2 font-bangla active:scale-95 cursor-pointer shadow-xl"
                     >
                       <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-950" />
                       <span>{lang === 'bn' ? 'অনলাইন ভর্তি আবেদন ২০২৬' : 'Apply for Admission'}</span>
@@ -100,7 +100,7 @@ export default function HeroSlider() {
 
                     <button
                       onClick={() => setActiveTab('results')}
-                      className="bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-xl text-xs sm:text-base border border-emerald-500 shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer active:scale-95"
+                      className="glass-capsule hover:bg-white/20 text-white font-bold px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-base border border-white/25 shadow-xl transition transform hover:-translate-y-0.5 flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer active:scale-95"
                     >
                       <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-amber-300" />
                       <span>{lang === 'bn' ? 'ফলাফল অনুসন্ধান' : 'Check Results'}</span>
@@ -108,21 +108,21 @@ export default function HeroSlider() {
 
                     <button
                       onClick={() => setActiveTab('uniform')}
-                      className="bg-slate-800/80 hover:bg-slate-800 text-amber-300 border border-slate-700 hover:border-amber-400/50 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer"
+                      className="glass-pill text-amber-300 hover:text-white px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer"
                     >
                       <Shirt className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                      <span>{lang === 'bn' ? 'পোশাক নীতিমালা' : 'Dress Code Policy'}</span>
+                      <span>{lang === 'bn' ? 'পোশাক নীতিমালা' : 'Dress Code'}</span>
                     </button>
 
                     <a
                       href={schoolInfo.facebookGroupUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-blue-600/90 hover:bg-blue-600 text-white font-semibold px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm transition flex items-center gap-1.5 sm:gap-2"
+                      className="glass-pill text-blue-300 hover:text-white px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 sm:gap-2"
                       title="Join Facebook Group"
                     >
-                      <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-200" />
-                      <span className="hidden sm:inline">{lang === 'bn' ? 'ফেসবুক গ্রুপ' : 'Facebook Group'}</span>
+                      <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-300" />
+                      <span className="hidden sm:inline">{lang === 'bn' ? 'ফেসবুক গ্রুপ' : 'Facebook'}</span>
                     </a>
                   </div>
                 </div>
@@ -164,7 +164,7 @@ export default function HeroSlider() {
       </div>
 
       {/* Stat Bar Bottom Ribbon */}
-      <div className="relative z-20 bg-emerald-950/95 border-t border-emerald-800/80 py-4 px-4 sm:px-8">
+      <div className="relative z-20 glass-capsule border-x-0 border-b-0 border-t border-white/15 py-4 px-4 sm:px-8">
         <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
           <div className="border-r border-emerald-800/60 last:border-none px-2">
             <p className="text-2xl sm:text-3xl font-extrabold text-amber-400 font-mono">1990</p>

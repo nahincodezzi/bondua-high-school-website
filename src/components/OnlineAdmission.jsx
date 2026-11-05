@@ -496,9 +496,9 @@ export default function OnlineAdmission() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full sm:w-auto bg-emerald-800 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-xl text-sm transition shadow-md flex items-center justify-center gap-2 font-bangla"
+                  className="w-full sm:w-auto btn-gold py-3 px-8 text-sm transition shadow-lg flex items-center justify-center gap-2 font-bangla active:scale-95 cursor-pointer"
                 >
-                  <Send className="w-4 h-4 text-amber-300" />
+                  <Send className="w-4 h-4 text-emerald-950" />
                   <span>{isSubmitting ? 'প্রসেসিং হচ্ছে...' : (lang === 'bn' ? 'ভর্তি আবেদন জমা দিন' : 'Submit Application')}</span>
                 </button>
               </div>

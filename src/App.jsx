@@ -41,7 +41,7 @@ function MainApp() {
       <NoticeTicker />
 
       {/* Main Page Content based on activeTab */}
-      <main className="flex-1">
+      <main className={`flex-1 ${activeTab === 'home' ? '' : 'pt-28 sm:pt-32'}`}>
         {activeTab === 'home' && (
           <>
             <HeroSlider />

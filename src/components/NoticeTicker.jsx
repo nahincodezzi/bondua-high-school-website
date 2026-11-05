@@ -1,73 +1,53 @@
 import React, { useState } from 'react';
 import { useSchool } from '../context/useSchool';
-import { Bell, ChevronRight, Pause, Play } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 export default function NoticeTicker() {
   const { lang, notices, setActiveTab } = useSchool();
-  const [isPaused, setIsPaused] = useState(false);
+  const [currentIdx, setCurrentIdx] = useState(0);
 
   // Take latest 5 notices
   const latestNotices = notices.slice(0, 5);
+  const currentNotice = latestNotices[currentIdx] || latestNotices[0];
 
   return (
-    <div className="bg-amber-50 border-b border-amber-200 text-slate-800 text-xs sm:text-sm py-2 px-4 no-print">
-      <div className="max-w-7xl mx-auto flex items-center gap-3">
-        {/* Badge */}
-        <div className="shrink-0 flex items-center gap-1.5 bg-rose-600 text-white font-bold px-2.5 py-1 rounded text-xs shadow-sm uppercase tracking-wider font-bangla">
-          <Bell className="w-3.5 h-3.5 animate-bounce" />
-          <span>{lang === 'bn' ? 'জরুরি বিজ্ঞপ্তি' : 'Latest Notice'}</span>
-        </div>
-
-        {/* Marquee Ticker */}
+    <div className="fixed top-18 sm:top-20 left-0 right-0 z-40 px-3 sm:px-6 pointer-events-none no-print">
+      <div className="max-w-fit mx-auto pointer-events-auto">
+        {/* Floating Frosted Notice Pill (Exact Match to Screenshot) */}
         <div 
-          className="overflow-hidden relative flex-1 cursor-pointer"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
           onClick={() => setActiveTab('notices')}
+          className="glass-pill rounded-full px-3.5 sm:px-5 py-1 sm:py-1.5 text-xs text-white shadow-xl flex items-center gap-2 sm:gap-2.5 font-bangla cursor-pointer hover:border-amber-400/40 transition-all duration-300 group"
+          title="Click to view all notices"
         >
-          <div className={`whitespace-nowrap flex items-center gap-8 ${isPaused ? '' : 'animate-marquee'}`}>
-            {latestNotices.map((n, idx) => (
-              <span key={n.id} className="inline-flex items-center gap-2 hover:text-emerald-700 font-medium font-bangla">
-                <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                <span>{lang === 'bn' ? n.titleBn : n.titleEn}</span>
-                <span className="text-slate-400 text-xs">({n.date})</span>
-                {idx < latestNotices.length - 1 && <span className="text-amber-300">✦</span>}
-              </span>
-            ))}
-          </div>
-        </div>
+          {/* Pulsing Red Dot & Urgent Tag */}
+          <span className="inline-flex items-center gap-1.5 shrink-0">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+            </span>
+            <span className="text-white font-bold tracking-wide text-[11px] sm:text-xs drop-shadow-xs">
+              {lang === 'bn' ? 'জরুরি বিজ্ঞপ্তি' : 'Notice'}
+            </span>
+          </span>
 
-        {/* Action Controls */}
-        <div className="shrink-0 flex items-center gap-1.5 pl-2 border-l border-amber-200">
-          <button 
-            onClick={() => setIsPaused(!isPaused)} 
-            className="p-1 text-slate-500 hover:text-slate-800 hover:bg-amber-100 rounded"
-            title={isPaused ? "Play" : "Pause"}
-          >
-            {isPaused ? <Play className="w-3.5 h-3.5" /> : <Pause className="w-3.5 h-3.5" />}
-          </button>
-          <button
-            onClick={() => setActiveTab('notices')}
-            className="hidden sm:inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-800 hover:text-emerald-950 font-bangla"
-          >
+          <span className="text-white/40 font-mono text-[10px]">||</span>
+
+          {/* Notice Title Preview */}
+          {currentNotice && (
+            <span className="text-emerald-100/90 group-hover:text-amber-300 font-medium transition-colors text-[11px] sm:text-xs max-w-[180px] sm:max-w-xs md:max-w-md truncate">
+              {lang === 'bn' ? currentNotice.titleBn : currentNotice.titleEn}
+            </span>
+          )}
+
+          <span className="text-white/40 font-mono text-[10px] hidden min-[400px]:inline">||</span>
+
+          {/* View All Link Button */}
+          <span className="text-amber-400 group-hover:text-amber-300 font-bold text-[11px] sm:text-xs flex items-center gap-0.5 shrink-0 whitespace-nowrap">
             <span>{lang === 'bn' ? 'সকল নোটিশ' : 'View All'}</span>
-            <ChevronRight className="w-3.5 h-3.5" />
-          </button>
+            <ChevronRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
+          </span>
         </div>
       </div>
-
-      <style>{`
-        @keyframes marquee {
-          0% { transform: translateX(100%); }
-          100% { transform: translateX(-100%); }
-        }
-        .animate-marquee {
-          animation: marquee 25s linear infinite;
-        }
-        .animate-marquee:hover {
-          animation-play-state: paused;
-        }
-      `}</style>
     </div>
   );
 }
