@@ -3,16 +3,12 @@ import SchoolLogo from './common/SchoolLogo';
 import { useSchool } from '../context/useSchool';
 import { 
   Globe, 
-  LogIn, 
   LogOut, 
   Menu, 
   X, 
   Bell, 
   ShieldCheck, 
-  ChevronDown, 
-  ChevronRight,
-  Sparkles,
-  ExternalLink
+  ChevronRight
 } from 'lucide-react';
 
 export default function Header() {

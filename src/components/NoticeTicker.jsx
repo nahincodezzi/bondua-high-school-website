@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSchool } from '../context/useSchool';
 import { ChevronRight } from 'lucide-react';
 
@@ -8,6 +8,15 @@ export default function NoticeTicker() {
 
   // Take latest 5 notices
   const latestNotices = notices.slice(0, 5);
+
+  useEffect(() => {
+    if (latestNotices.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIdx((prev) => (prev + 1) % latestNotices.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [latestNotices.length]);
+
   const currentNotice = latestNotices[currentIdx] || latestNotices[0];
 
   return (
