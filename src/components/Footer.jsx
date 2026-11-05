@@ -175,14 +175,35 @@ export default function Footer() {
       </div>
 
       {/* Bottom Sub-footer */}
-      <div className="bg-emerald-950/90 border-t border-emerald-900 py-4 px-4 sm:px-8 text-xs text-emerald-300/80">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left font-bangla">
-          <p>
+      <div className="bg-emerald-950/95 border-t border-emerald-900 py-4 px-4 sm:px-8 text-xs text-emerald-300/80">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left font-bangla">
+          {/* Copyright Notice */}
+          <p className="text-emerald-300/80">
             {lang === 'bn' 
               ? `© ${CURRENT_YEAR} ${schoolInfo.nameBn} (EIIN: ${schoolInfo.eiin})। সর্বস্বত্ব সংরক্ষিত।`
               : `© ${CURRENT_YEAR} ${schoolInfo.nameEn} (EIIN: ${schoolInfo.eiin}). All rights reserved.`}
           </p>
-          <div className="flex items-center gap-2 text-[11px] text-emerald-400">
+
+          {/* Developer Credit - Designed and Developed by Md Jaker Ullah Chowdhury Nahin */}
+          <div className="flex flex-wrap items-center justify-center gap-1.5 font-sans text-xs">
+            <span className="text-emerald-300/80 font-medium">Designed and Developed by</span>
+            <a
+              href="https://github.com/nahincodezzi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-1 font-bold text-amber-400 hover:text-amber-300 px-2 py-0.5 rounded-md hover:bg-emerald-900/60 border border-transparent hover:border-amber-400/40 transition-all duration-300 shadow-xs"
+              title="Visit Md Jaker Ullah Chowdhury Nahin's Portfolio"
+            >
+              <span className="relative">
+                Md Jaker Ullah Chowdhury Nahin
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-amber-400 group-hover:w-full transition-all duration-300"></span>
+              </span>
+              <ExternalLink className="w-3.5 h-3.5 text-amber-400 group-hover:text-amber-300 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </a>
+          </div>
+
+          {/* Institutional / Digital Bangladesh Note */}
+          <div className="flex items-center gap-2 text-[11px] text-emerald-400/90">
             <span>
               {lang === 'bn' 
                 ? 'ডিজিটাল বাংলাদেশ বিনির্মাণে স্মার্ট স্কুলিং সফটওয়্যার' 
