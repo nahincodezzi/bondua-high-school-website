@@ -106,18 +106,18 @@ export default function AcademicPrograms() {
   ];
 
   return (
-    <section className="py-12 bg-slate-50 min-h-[700px]">
+    <section className="py-14 text-white relative z-10 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full mb-2">
-            <BookOpen className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-1.5 glass-pill text-amber-300 text-xs font-bold px-4 py-1.5 rounded-full mb-3 shadow-md border border-amber-400/20">
+            <BookOpen className="w-3.5 h-3.5 text-amber-400" />
             <span>{lang === 'bn' ? 'পাঠ্যক্রম ও শিক্ষাদান' : 'Curriculum & Academic Structure'}</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold font-bangla text-slate-900">
+          <h2 className="text-2xl sm:text-4xl font-extrabold font-bangla text-white drop-shadow-md">
             {lang === 'bn' ? 'অ্যাকাডেমিক পাঠ্যক্রম ও গ্রুপ পরিচিতি' : 'Academic Disciplines & Disciplines Offered'}
           </h2>
-          <p className="text-sm text-slate-600 font-bangla mt-1">
+          <p className="text-xs sm:text-sm text-slate-300 font-bangla mt-2">
             {lang === 'bn'
               ? 'জাতীয় শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড (NCTB) অনুমোদিত আধুনিক শিক্ষাদান পদ্ধতি'
               : 'Affiliated with the Comilla Board following the national standard secondary curriculum.'}
@@ -125,34 +125,37 @@ export default function AcademicPrograms() {
         </div>
 
         {/* Classes Overview 6 to 10 */}
-        <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 mb-12">
-          <h3 className="text-lg font-bold font-bangla text-slate-900 mb-4 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-amber-500" />
+        <div className="glass-card rounded-3xl p-6 sm:p-8 border border-white/15 mb-12 backdrop-blur-xl shadow-2xl">
+          <h3 className="text-lg font-bold font-bangla text-white mb-6 flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-amber-400" />
             <span>{lang === 'bn' ? 'শ্রেণিভিত্তিক শিক্ষা কাঠামো (৬ষ্ঠ - ১০ম)' : 'Class Structure (VI - X)'}</span>
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {['৬ষ্ঠ শ্রেণি (Class VI)', '৭ম শ্রেণি (Class VII)', '৮ম শ্রেণি (Class VIII)', '৯ম শ্রেণি (Class IX)', '১০ম শ্রেণি (Class X)'].map((cls, idx) => (
-              <div key={idx} className="bg-slate-50 hover:bg-emerald-50/50 p-4 rounded-xl border border-slate-200 transition text-center">
-                <span className="w-8 h-8 rounded-full bg-emerald-800 text-white font-mono font-bold text-xs flex items-center justify-center mx-auto mb-2">
+              <div 
+                key={idx} 
+                className="glass-card glass-card-hover p-4 rounded-2xl border border-white/10 text-center relative group"
+              >
+                <span className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 text-slate-950 font-mono font-extrabold text-sm flex items-center justify-center mx-auto mb-3 shadow-md">
                   {idx + 6}
                 </span>
-                <h4 className="text-xs sm:text-sm font-bold font-bangla text-slate-800">{cls}</h4>
-                <p className="text-[11px] text-slate-500 mt-1 font-bangla">
+                <h4 className="text-xs sm:text-sm font-bold font-bangla text-white group-hover:text-amber-300 transition">{cls}</h4>
+                <p className="text-[11px] text-slate-300 mt-1 font-bangla">
                   {idx >= 3 ? 'বিজ্ঞান / মানবিক / ব্যবসায় শিক্ষা' : 'সাধারণ সমন্বিত পাঠ্যক্রম'}
                 </p>
               </div>
             ))}
           </div>
 
-          <div className="mt-6 p-4 bg-emerald-50 rounded-xl border border-emerald-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2 text-emerald-900 font-bangla font-semibold">
-              <Clock className="w-4 h-4 text-emerald-700 shrink-0" />
+          <div className="mt-6 p-4 glass-pill rounded-2xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2 text-slate-200 font-bangla font-semibold">
+              <Clock className="w-4 h-4 text-amber-400 shrink-0" />
               <span>{lang === 'bn' ? 'বিদ্যালয় সময়সূচি: প্রতিদিন সকাল ৯:৩০ মি. হতে বিকাল ৪:০০ টা পর্যন্ত (শুক্রবার ও শনিবার ছুটি)' : 'School Hours: Daily 9:30 AM to 4:00 PM (Friday & Saturday Closed)'}</span>
             </div>
             <button
               onClick={() => setActiveTab('routines')}
-              className="bg-emerald-800 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg font-bangla transition shrink-0"
+              className="btn-gold font-bold px-4 py-2 rounded-full font-bangla shrink-0 cursor-pointer text-xs"
             >
               {lang === 'bn' ? 'ক্লাস রুটিন দেখুন' : 'View Class Routines'}
             </button>
@@ -162,7 +165,7 @@ export default function AcademicPrograms() {
         {/* Group Tab Switcher (Science, Commerce, Arts) */}
         <div className="mb-12">
           <div className="flex justify-center mb-6">
-            <div className="bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-2">
+            <div className="glass-capsule p-1.5 rounded-full border border-white/15 shadow-xl flex items-center gap-1 sm:gap-2">
               {groups.map((grp) => {
                 const IconComponent = grp.icon;
                 const isActive = activeGroupTab === grp.id;
@@ -170,13 +173,13 @@ export default function AcademicPrograms() {
                   <button
                     key={grp.id}
                     onClick={() => setActiveGroupTab(grp.id)}
-                    className={`px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 font-bangla ${
+                    className={`px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-2 font-bangla cursor-pointer ${
                       isActive
-                        ? 'bg-emerald-800 text-white shadow-md'
-                        : 'text-slate-600 hover:bg-slate-100'
+                        ? 'btn-gold shadow-lg'
+                        : 'text-slate-300 hover:text-white hover:bg-white/10'
                     }`}
                   >
-                    <IconComponent className={`w-4 h-4 ${isActive ? 'text-amber-300' : 'text-slate-500'}`} />
+                    <IconComponent className={`w-4 h-4 ${isActive ? 'text-slate-950' : 'text-amber-400'}`} />
                     <span>{lang === 'bn' ? grp.titleBn : grp.titleEn}</span>
                   </button>
                 );
@@ -186,23 +189,24 @@ export default function AcademicPrograms() {
 
           {/* Active Group Details Card */}
           {groups.filter(g => g.id === activeGroupTab).map(grp => (
-            <div key={grp.id} className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 animate-in fade-in duration-300">
+            <div key={grp.id} className="glass-card rounded-3xl p-6 sm:p-10 border border-white/15 shadow-2xl backdrop-blur-xl animate-in fade-in duration-300">
               <div className="max-w-3xl">
-                <h3 className="text-xl sm:text-2xl font-bold font-bangla text-emerald-950 mb-2">
-                  {lang === 'bn' ? grp.titleBn : grp.titleEn}
+                <h3 className="text-xl sm:text-3xl font-extrabold font-bangla text-white mb-2 flex items-center gap-2.5">
+                  <span className="text-amber-400">❖</span>
+                  <span>{lang === 'bn' ? grp.titleBn : grp.titleEn}</span>
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-bangla leading-relaxed mb-6">
+                <p className="text-xs sm:text-sm text-slate-300 font-bangla leading-relaxed mb-6">
                   {grp.descriptionBn}
                 </p>
 
-                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+                <h4 className="text-xs font-bold text-amber-300 uppercase tracking-wider mb-4 font-mono">
                   {lang === 'bn' ? 'অন্তর্ভুক্ত আবশ্যিক ও ঐচ্ছিক বিষয়সমূহ:' : 'Core & Elective Subjects:'}
                 </h4>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {grp.subjectsBn.map((subj, i) => (
-                    <div key={i} className="flex items-center gap-2 bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-xs font-bangla text-slate-800">
-                      <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <div key={i} className="flex items-center gap-2.5 glass-pill p-3 rounded-xl border border-white/10 text-xs font-bangla text-slate-200">
+                      <CheckCircle className="w-4 h-4 text-amber-400 shrink-0" />
                       <span className="font-medium">{subj}</span>
                     </div>
                   ))}
@@ -215,29 +219,30 @@ export default function AcademicPrograms() {
         {/* School Facilities Grid */}
         <div>
           <div className="text-center max-w-xl mx-auto mb-8">
-            <h3 className="text-xl sm:text-2xl font-bold font-bangla text-slate-900">
+            <h3 className="text-xl sm:text-3xl font-extrabold font-bangla text-white drop-shadow-md">
               {lang === 'bn' ? 'আমাদের অত্যাধুনিক সুবিধাসমূহ' : 'School Infrastructure & Campus Facilities'}
             </h3>
-            <p className="text-xs text-slate-500 font-bangla mt-1">
+            <p className="text-xs text-slate-300 font-bangla mt-1">
               শিক্ষার্থীদের মানসম্মত শিক্ষার জন্য রয়েছে প্রয়োজনীয় আধুনিক পরিকাঠামো।
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {facilities.map((fac, idx) => (
-              <div key={idx} className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-2xs hover:shadow-lg transition group">
-                <div className="h-44 w-full overflow-hidden bg-slate-100">
+              <div key={idx} className="glass-card glass-card-hover rounded-2xl overflow-hidden border border-white/15 shadow-xl transition group">
+                <div className="h-44 w-full overflow-hidden bg-slate-900 relative">
                   <img
                     src={fac.image}
                     alt={fac.titleEn}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                    className="w-full h-full object-cover group-hover:scale-110 transition duration-500 opacity-90 group-hover:opacity-100"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
                 </div>
-                <div className="p-4 space-y-1.5">
-                  <h4 className="text-sm font-bold font-bangla text-slate-900 group-hover:text-emerald-800 transition">
+                <div className="p-5 space-y-2">
+                  <h4 className="text-sm font-bold font-bangla text-white group-hover:text-amber-300 transition">
                     {fac.titleBn}
                   </h4>
-                  <p className="text-xs text-slate-600 font-bangla leading-relaxed line-clamp-3">
+                  <p className="text-xs text-slate-300 font-bangla leading-relaxed line-clamp-3">
                     {fac.descBn}
                   </p>
                 </div>

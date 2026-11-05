@@ -18,14 +18,14 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-emerald-950 text-white border-t-4 border-amber-400 no-print">
+    <footer className="glass-capsule text-white border-t border-white/15 no-print relative z-10 mt-16 rounded-t-[2.5rem] backdrop-blur-2xl">
       {/* Upper Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 py-12 sm:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
           {/* Col 1: School Identity */}
           <div className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-white p-1 ring-2 ring-amber-400">
+              <div className="w-12 h-12 rounded-full bg-white p-1 ring-2 ring-amber-400 shrink-0">
                 <SchoolLogo logo={schoolInfo.logo} />
               </div>
               <div>
@@ -38,7 +38,7 @@ export default function Footer() {
               </div>
             </div>
 
-            <p className="text-xs text-emerald-200/90 font-bangla leading-relaxed">
+            <p className="text-xs text-slate-300 font-bangla leading-relaxed">
               {lang === 'bn'
                 ? '১৯৯০ সাল থেকে ফেনী জেলার ফুলগাজী উপজেলার প্রত্যন্ত অঞ্চলে আদর্শ ও নৈতিকতাসম্পন্ন সুনাগরিক গড়ে তুলতে প্রতিশ্রুতিবদ্ধ এক ঐতিহ্যবাহী বিদ্যাপীঠ।'
                 : 'A dedicated secondary educational seat in Anandapur, Fulgazi, Feni inspiring young generations with knowledge and moral values since 1990.'}
@@ -49,48 +49,48 @@ export default function Footer() {
                 href={schoolInfo.facebookGroupUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow"
+                className="btn-gold inline-flex items-center gap-2 text-xs font-bold px-5 py-2.5 rounded-full shadow-lg cursor-pointer"
               >
                 <Share2 className="w-3.5 h-3.5" />
                 <span>{lang === 'bn' ? 'অফিসিয়াল ফেসবুক গ্রুপে যুক্ত হোন' : 'Join Official Facebook Group'}</span>
-                <ExternalLink className="w-3 h-3 text-blue-200" />
+                <ExternalLink className="w-3 h-3 text-slate-950" />
               </a>
             </div>
           </div>
 
           {/* Col 2: Quick Links */}
           <div className="lg:col-span-2 space-y-3">
-            <h4 className="text-sm font-bold text-amber-400 uppercase tracking-wider font-bangla">
+            <h4 className="text-sm font-bold text-amber-300 uppercase tracking-wider font-mono">
               {lang === 'bn' ? 'প্রয়োজনীয় লিংক' : 'Quick Links'}
             </h4>
-            <ul className="space-y-2 text-xs font-bangla text-emerald-100/80">
+            <ul className="space-y-2 text-xs font-bangla text-slate-300">
               <li>
-                <button onClick={() => handleNav('admission')} className="hover:text-amber-300 transition text-left">
+                <button onClick={() => handleNav('admission')} className="hover:text-amber-300 transition text-left cursor-pointer">
                   {lang === 'bn' ? 'অনলাইন ভর্তি ২০২৬' : 'Online Admission'}
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('results')} className="hover:text-amber-300 transition text-left">
+                <button onClick={() => handleNav('results')} className="hover:text-amber-300 transition text-left cursor-pointer">
                   {lang === 'bn' ? 'অনলাইন ফলাফল ও মার্কশিট' : 'Check Results'}
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('notices')} className="hover:text-amber-300 transition text-left">
+                <button onClick={() => handleNav('notices')} className="hover:text-amber-300 transition text-left cursor-pointer">
                   {lang === 'bn' ? 'নোটিশ ও বিজ্ঞপ্তি' : 'Notice Board'}
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('faculty')} className="hover:text-amber-300 transition text-left">
+                <button onClick={() => handleNav('faculty')} className="hover:text-amber-300 transition text-left cursor-pointer">
                   {lang === 'bn' ? 'শিক্ষকমণ্ডলীর তালিকা' : 'Faculty Roster'}
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('routines')} className="hover:text-amber-300 transition text-left">
+                <button onClick={() => handleNav('routines')} className="hover:text-amber-300 transition text-left cursor-pointer">
                   {lang === 'bn' ? 'ক্লাস ও পরীক্ষার রুটিন' : 'Class Routines'}
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('gallery')} className="hover:text-amber-300 transition text-left">
+                <button onClick={() => handleNav('gallery')} className="hover:text-amber-300 transition text-left cursor-pointer">
                   {lang === 'bn' ? 'ফটো ও ভিডিও গ্যালারি' : 'Photo Gallery'}
                 </button>
               </li>
@@ -99,37 +99,37 @@ export default function Footer() {
 
           {/* Col 3: Government Educational Links */}
           <div className="lg:col-span-3 space-y-3">
-            <h4 className="text-sm font-bold text-amber-400 uppercase tracking-wider font-bangla">
+            <h4 className="text-sm font-bold text-amber-300 uppercase tracking-wider font-mono">
               {lang === 'bn' ? 'সরকারি গুরুত্বপূর্ণ লিংক' : 'Govt. Education Portals'}
             </h4>
-            <ul className="space-y-2 text-xs font-bangla text-emerald-100/80">
+            <ul className="space-y-2 text-xs font-bangla text-slate-300">
               <li>
                 <a href="https://moedu.gov.bd" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition flex items-center gap-1.5">
-                  <ExternalLink className="w-3 h-3 text-emerald-400" />
+                  <ExternalLink className="w-3 h-3 text-amber-400" />
                   <span>{lang === 'bn' ? 'শিক্ষা মন্ত্রণালয় (MoEdu)' : 'Ministry of Education (MoEdu)'}</span>
                 </a>
               </li>
               <li>
                 <a href="https://comillaboard.gov.bd" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition flex items-center gap-1.5">
-                  <ExternalLink className="w-3 h-3 text-emerald-400" />
+                  <ExternalLink className="w-3 h-3 text-amber-400" />
                   <span>{lang === 'bn' ? 'মাধ্যমিক ও উচ্চমাধ্যমিক শিক্ষা বোর্ড, কুমিল্লা' : 'BISE, Comilla Education Board'}</span>
                 </a>
               </li>
               <li>
                 <a href="https://dshe.gov.bd" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition flex items-center gap-1.5">
-                  <ExternalLink className="w-3 h-3 text-emerald-400" />
+                  <ExternalLink className="w-3 h-3 text-amber-400" />
                   <span>{lang === 'bn' ? 'মাধ্যমিক ও উচ্চশিক্ষা অধিদপ্তর (DSHE)' : 'Directorate of Secondary & Higher Education (DSHE)'}</span>
                 </a>
               </li>
               <li>
                 <a href="https://nctb.gov.bd" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition flex items-center gap-1.5">
-                  <ExternalLink className="w-3 h-3 text-emerald-400" />
+                  <ExternalLink className="w-3 h-3 text-amber-400" />
                   <span>{lang === 'bn' ? 'জাতীয় শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড (NCTB)' : 'National Curriculum & Textbook Board (NCTB)'}</span>
                 </a>
               </li>
               <li>
                 <a href="https://teachers.gov.bd" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition flex items-center gap-1.5">
-                  <ExternalLink className="w-3 h-3 text-emerald-400" />
+                  <ExternalLink className="w-3 h-3 text-amber-400" />
                   <span>{lang === 'bn' ? 'শিক্ষক বাতায়ন (Teachers Portal)' : 'Teachers Portal (Shikkhok Batayon)'}</span>
                 </a>
               </li>
@@ -137,17 +137,17 @@ export default function Footer() {
           </div>
 
           {/* Col 4: Contact & Location */}
-          <div className="lg:col-span-3 space-y-3 text-xs text-emerald-100/90 font-bangla">
-            <h4 className="text-sm font-bold text-amber-400 uppercase tracking-wider">
+          <div className="lg:col-span-3 space-y-3 text-xs text-slate-300 font-bangla">
+            <h4 className="text-sm font-bold text-amber-300 uppercase tracking-wider font-mono">
               {lang === 'bn' ? 'যোগাযোগের ঠিকানা' : 'School Address'}
             </h4>
             <p className="leading-relaxed">
               {lang === 'bn' ? schoolInfo.addressBn : (schoolInfo.addressEn || 'Along Feni-Parshuram Road, Bandua Daulatpur, Anandapur Union, Fulgazi, Feni, Bangladesh')}
             </p>
-            <p className="font-mono text-emerald-300">
+            <p className="font-mono text-amber-300">
               {lang === 'bn' ? `ফোন: ${schoolInfo.phone}` : `Phone: ${schoolInfo.phone}`}
             </p>
-            <p className="font-mono text-emerald-300">
+            <p className="font-mono text-amber-300">
               {lang === 'bn' ? `ইমেইল: ${schoolInfo.email}` : `Email: ${schoolInfo.email}`}
             </p>
 
@@ -155,17 +155,17 @@ export default function Footer() {
               {authUser ? (
                 <button
                   onClick={() => handleNav('admin')}
-                  className="bg-emerald-800 hover:bg-emerald-700 text-amber-300 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1"
+                  className="btn-gold px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-md"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-slate-950" />
                   <span>{lang === 'bn' ? 'ম্যানেজমেন্ট ড্যাশবোর্ড' : 'Management ERP'}</span>
                 </button>
               ) : (
                 <button
                   onClick={() => setAuthModalOpen(true)}
-                  className="bg-emerald-900 hover:bg-emerald-800 text-amber-400 border border-emerald-700 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1"
+                  className="glass-pill hover:bg-white/15 text-amber-300 px-4 py-2 rounded-full text-xs font-bold transition flex items-center gap-1.5 border border-amber-400/30 cursor-pointer shadow-md"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
                   <span>{lang === 'bn' ? 'অ্যাডমিন / শিক্ষক পোর্টাল লগইন' : 'Staff Portal Login'}</span>
                 </button>
               )}
@@ -175,23 +175,23 @@ export default function Footer() {
       </div>
 
       {/* Bottom Sub-footer */}
-      <div className="bg-emerald-950/95 border-t border-emerald-900 py-4 px-4 sm:px-8 text-xs text-emerald-300/80">
+      <div className="glass-capsule border-t border-white/10 py-4 px-4 sm:px-8 text-xs text-slate-400">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left font-bangla">
           {/* Copyright Notice */}
-          <p className="text-emerald-300/80">
+          <p className="text-slate-400">
             {lang === 'bn' 
               ? `© ${CURRENT_YEAR} ${schoolInfo.nameBn} (EIIN: ${schoolInfo.eiin})। সর্বস্বত্ব সংরক্ষিত।`
               : `© ${CURRENT_YEAR} ${schoolInfo.nameEn} (EIIN: ${schoolInfo.eiin}). All rights reserved.`}
           </p>
 
           {/* Developer Credit - Designed and Developed by Md Jaker Ullah Chowdhury Nahin */}
-          <div className="font-sans text-xs text-emerald-300/80 flex items-center justify-center">
+          <div className="font-sans text-xs text-slate-400 flex items-center justify-center">
             <span>Designed and Developed by</span>
             <a
               href="https://mdjakerullahchowdhurynahin.vercel.app"
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-1.5 inline-flex items-center gap-1 font-bold text-amber-400 hover:text-amber-300 transition-colors group"
+              className="ml-1.5 inline-flex items-center gap-1 font-bold text-amber-400 hover:text-amber-300 transition-colors group cursor-pointer"
               title="Visit Md Jaker Ullah Chowdhury Nahin's Portfolio"
             >
               <span className="border-b border-amber-400/50 group-hover:border-amber-300 pb-0.5 transition-colors">
@@ -202,7 +202,7 @@ export default function Footer() {
           </div>
 
           {/* Institutional / Digital Bangladesh Note */}
-          <div className="flex items-center gap-2 text-[11px] text-emerald-400/90">
+          <div className="flex items-center gap-2 text-[11px] text-amber-300/80">
             <span>
               {lang === 'bn' 
                 ? 'ডিজিটাল বাংলাদেশ বিনির্মাণে স্মার্ট স্কুলিং সফটওয়্যার' 

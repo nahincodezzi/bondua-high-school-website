@@ -63,16 +63,22 @@ export default function AdminLayout() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col no-print">
-      {/* Admin Top Header */}
-      <header className="bg-emerald-950 text-white border-b border-emerald-900 sticky top-0 z-30">
-        <div className="px-4 sm:px-6 py-3 flex items-center justify-between">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col no-print relative overflow-x-hidden font-sans admin-portal">
+      {/* Ambient Mesh Lighting for Admin CMS */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute top-10 left-1/4 w-[600px] h-[500px] bg-emerald-600/10 blur-[140px] rounded-full"></div>
+        <div className="absolute bottom-10 right-1/4 w-[600px] h-[500px] bg-amber-500/10 blur-[140px] rounded-full"></div>
+      </div>
+
+      {/* Admin Top Header - Floating Glass Capsule */}
+      <header className="sticky top-0 z-30 px-3 sm:px-6 pt-3 pb-2">
+        <div className="glass-capsule rounded-2xl px-4 sm:px-6 py-3 flex items-center justify-between border border-white/15 shadow-2xl backdrop-blur-2xl">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-1.5 rounded-lg bg-emerald-900 text-white hover:bg-emerald-800"
+              className="lg:hidden p-2 rounded-xl glass-pill text-white hover:bg-white/15 cursor-pointer"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-5 h-5 text-amber-300" />
             </button>
 
             <div className="flex items-center gap-3">
@@ -95,7 +101,7 @@ export default function AdminLayout() {
             {/* Language Switcher in Admin Header */}
             <button
               onClick={toggleLanguage}
-              className="bg-emerald-900/90 hover:bg-emerald-800 text-emerald-100 px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 border border-emerald-800"
+              className="glass-pill hover:bg-white/15 text-slate-200 px-3 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 border border-white/15 cursor-pointer"
               title="Switch Language"
             >
               <Globe className="w-3.5 h-3.5 text-amber-300" />
@@ -103,19 +109,19 @@ export default function AdminLayout() {
             </button>
 
             {/* User Profile Badge */}
-            <div className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl border text-[11px] sm:text-xs font-bangla ${
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-bangla shadow-md ${
               authUser?.role === 'superadmin' 
-                ? 'bg-purple-900/90 border-purple-500 shadow-xs' 
-                : 'bg-emerald-900/80 border-emerald-800'
+                ? 'glass-card border-purple-400/40 text-purple-200' 
+                : 'glass-card border-amber-400/30 text-amber-200'
             }`}>
               {authUser?.role === 'superadmin' ? (
-                <Key className="w-4 h-4 text-amber-300" />
+                <Key className="w-3.5 h-3.5 text-amber-300" />
               ) : (
-                <ShieldCheck className="w-4 h-4 text-amber-400" />
+                <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
               )}
               <div>
-                <span className="font-bold text-white block truncate max-w-[90px] sm:max-w-none">{lang === 'bn' ? (authUser?.nameBn || authUser?.name || 'অ্যাডমিন') : (authUser?.nameEn || authUser?.name || 'Admin')}</span>
-                <span className="text-[10px] text-amber-300 font-mono capitalize">
+                <span className="font-bold text-white block truncate max-w-[80px] sm:max-w-none">{lang === 'bn' ? (authUser?.nameBn || authUser?.name || 'অ্যাডমিন') : (authUser?.nameEn || authUser?.name || 'Admin')}</span>
+                <span className="text-[9px] text-amber-300 font-mono capitalize">
                   {authUser?.role === 'superadmin' ? '👑 SUPER ADMIN' : (authUser?.designationBn || authUser?.role || 'Principal')}
                 </span>
               </div>
@@ -124,34 +130,34 @@ export default function AdminLayout() {
             {/* Back to Public Web */}
             <button
               onClick={() => setActiveTab('home')}
-              className="bg-emerald-800 hover:bg-emerald-700 text-emerald-100 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 font-bangla"
+              className="btn-gold px-3.5 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 font-bangla cursor-pointer shadow-md"
             >
-              <Globe className="w-3.5 h-3.5 text-amber-300" />
+              <Globe className="w-3.5 h-3.5 text-slate-950" />
               <span>{lang === 'bn' ? 'মূল ওয়েবসাইট' : 'Public Website'}</span>
             </button>
 
             {/* Logout */}
             <button
               onClick={logout}
-              className="bg-rose-700 hover:bg-rose-600 text-white p-2 rounded-lg text-xs font-bold transition"
+              className="glass-pill hover:bg-rose-600 text-white p-2 rounded-full text-xs font-bold transition border border-rose-500/30 cursor-pointer"
               title="Logout"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <LogOut className="w-3.5 h-3.5 text-rose-300" />
             </button>
           </div>
         </div>
       </header>
 
       {/* Main Admin Workspace */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative z-10">
         {/* Left Sidebar */}
         <aside
-          className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-slate-900 text-slate-200 transform ${
+          className={`fixed lg:static inset-y-0 left-0 z-40 w-64 glass-card text-slate-200 transform ${
             sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          } lg:translate-x-0 transition-transform duration-200 ease-in-out flex flex-col justify-between shadow-xl lg:shadow-none border-r border-slate-800 pt-16 lg:pt-0`}
+          } lg:translate-x-0 transition-transform duration-200 ease-in-out flex flex-col justify-between shadow-2xl lg:shadow-none border-r border-white/10 pt-20 lg:pt-0 backdrop-blur-2xl`}
         >
-          <div className="p-4 space-y-1 overflow-y-auto">
-            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-3 py-2 font-bangla">
+          <div className="p-4 space-y-1.5 overflow-y-auto">
+            <div className="text-[11px] font-bold text-amber-300 uppercase tracking-wider px-3 py-2 font-mono">
               {lang === 'bn' ? 'ম্যানেজমেন্ট ও সিএমএস মেনু' : 'CMS & ERP MODULES'}
             </div>
 
@@ -167,35 +173,35 @@ export default function AdminLayout() {
                     setActiveModule(item.id);
                     setSidebarOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold font-bangla transition ${
+                  className={`w-full flex items-center justify-between px-4 py-2.5 rounded-2xl text-xs font-semibold font-bangla transition cursor-pointer ${
                     isActive
                       ? isSuperItem 
-                        ? 'bg-purple-900 text-white font-bold shadow' 
-                        : 'bg-emerald-800 text-white font-bold shadow'
+                        ? 'bg-purple-900/80 text-white font-bold shadow-lg border border-purple-400/50' 
+                        : 'btn-gold shadow-lg'
                       : isSuperItem 
-                        ? 'text-purple-300 hover:bg-purple-950 hover:text-white' 
-                        : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                        ? 'text-purple-300 hover:bg-purple-950/60 hover:text-white' 
+                        : 'text-slate-300 hover:bg-white/10 hover:text-white'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-amber-300' : isSuperItem ? 'text-purple-400' : 'text-slate-400'}`} />
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-slate-950' : isSuperItem ? 'text-purple-400' : 'text-amber-400'}`} />
                     <span>{lang === 'bn' ? item.labelBn : item.labelEn}</span>
                   </div>
                   {item.badge && (
-                    <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded font-mono ${
-                      isSuperItem ? 'bg-amber-400 text-purple-950' : 'bg-amber-400 text-emerald-950'
+                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full font-mono ${
+                      isSuperItem ? 'bg-amber-400 text-purple-950' : 'bg-slate-950 text-amber-300'
                     }`}>
                       {item.badge}
                     </span>
                   )}
-                  {isActive && !item.badge && <ChevronRight className="w-3.5 h-3.5 text-amber-300" />}
+                  {isActive && !item.badge && <ChevronRight className="w-3.5 h-3.5 text-slate-950" />}
                 </button>
               );
             })}
           </div>
 
           {/* Bottom Sidebar Info */}
-          <div className="p-4 bg-slate-950 border-t border-slate-800 text-xs text-slate-400 font-mono">
+          <div className="p-4 glass-capsule border-t border-white/10 text-xs text-slate-400 font-mono">
             <div className="flex justify-between items-center text-[10px]">
               <span>CMS System Status:</span>
               <span className="text-emerald-400 font-bold flex items-center gap-1">
@@ -210,60 +216,60 @@ export default function AdminLayout() {
         {sidebarOpen && (
           <div
             onClick={() => setSidebarOpen(false)}
-            className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+            className="fixed inset-0 z-30 bg-black/70 backdrop-blur-sm lg:hidden"
           ></div>
         )}
 
         {/* Active Module Content Canvas */}
-                {/* Active Module Content Canvas */}
         <main className="flex-1 p-3 sm:p-6 lg:p-8 overflow-y-auto">
           <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6">
             {/* Personalized Welcome Card for Logged In User */}
-            <div className="bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-900 text-white p-3.5 sm:p-4 rounded-2xl shadow-sm border border-emerald-700/60 flex flex-wrap items-center justify-between gap-3 text-xs font-bangla">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-amber-400 text-emerald-950 font-bold flex items-center justify-center shrink-0 shadow text-sm font-sans">
+            <div className="glass-card text-white p-4 sm:p-5 rounded-3xl shadow-xl border border-white/15 flex flex-wrap items-center justify-between gap-4 text-xs font-bangla backdrop-blur-xl">
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-full btn-gold font-extrabold flex items-center justify-center shrink-0 shadow-md text-sm font-sans">
                   {authUser?.nameBn ? authUser.nameBn.charAt(0) : 'অ'}
                 </div>
                 <div>
-                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="font-bold text-white text-xs sm:text-sm">
                       {lang === 'bn' 
                         ? `স্বাগতম, ${authUser?.nameBn || authUser?.name || 'ব্যবহারকারী'}` 
                         : `Welcome, ${authUser?.nameEn || authUser?.name || 'User'}`
                       }
                     </span>
-                    <span className="bg-amber-400 text-emerald-950 text-[10px] font-bold px-2 py-0.2 rounded-full font-mono">
+                    <span className="btn-gold text-[10px] font-bold px-2.5 py-0.5 rounded-full font-mono shadow-xs">
                       {authUser?.role === 'superadmin' ? '👑 SUPER ADMIN' : (authUser?.designationBn || authUser?.role || 'Staff')}
                     </span>
                   </div>
-                  <p className="text-[11px] text-emerald-200 mt-0.5">
+                  <p className="text-[11px] text-slate-300 mt-0.5">
                     {lang === 'bn' 
                       ? 'ডিজিটাল ম্যানেজমেন্ট ও সিএমএস পোর্টালে আপনার সেশন সফলভাবে সক্রিয় হয়েছে।' 
                       : 'You are authenticated with full access to authorized modules.'}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-[10px] sm:text-xs text-emerald-300 font-mono ml-auto sm:ml-0">
+              <div className="flex items-center gap-2 text-[10px] sm:text-xs text-amber-300 font-mono ml-auto sm:ml-0 glass-pill px-3 py-1 rounded-full border border-white/10">
                 <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span>Active Session</span>
               </div>
             </div>
+
             {activeModule === 'overview' && <DashboardOverview onNavigate={setActiveModule} />}
             {activeModule === 'users' && (
               authUser?.role === 'superadmin' ? (
                 <UserManager />
               ) : (
-                <div className="bg-white p-8 rounded-2xl border border-rose-200 text-center max-w-lg mx-auto font-bangla space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center mx-auto">
+                <div className="glass-card p-8 rounded-3xl border border-rose-500/30 text-center max-w-lg mx-auto font-bangla space-y-3 shadow-xl backdrop-blur-xl">
+                  <div className="w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto border border-rose-500/30">
                     <ShieldAlert className="w-6 h-6" />
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900">অননুমোদিত অ্যাক্সেস (Unauthorized Access)</h3>
-                  <p className="text-xs text-slate-600">
+                  <h3 className="text-lg font-bold text-white">অননুমোদিত অ্যাক্সেস (Unauthorized Access)</h3>
+                  <p className="text-xs text-slate-300">
                     এই মডিউলে প্রবেশের অধিকার শুধুমাত্র প্রধান সিস্টেম অ্যাডমিনের (Super Admin) রয়েছে।
                   </p>
                   <button
                     onClick={() => setActiveModule('overview')}
-                    className="bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-bold"
+                    className="btn-gold px-5 py-2 rounded-full text-xs font-bold cursor-pointer"
                   >
                     ড্যাশবোর্ড ওভারভিউতে ফিরে যান
                   </button>

@@ -5,11 +5,12 @@ import {
   FileCheck, 
   DollarSign, 
   ChevronRight,
-  School
+  School,
+  Sparkles
 } from 'lucide-react';
 
 export default function DashboardOverview({ onNavigate }) {
-  const { lang, students, teachers, admissions, fees, authUser } = useSchool();
+  const { lang, students, teachers, admissions, fees, authUser, updateAdmissionStatus } = useSchool();
 
   const pendingAdmissions = admissions.filter(a => a.status === 'Pending');
   const totalFeeCollected = fees.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
@@ -36,7 +37,7 @@ export default function DashboardOverview({ onNavigate }) {
       value: teachers.length,
       subtextBn: 'নিয়মিত ও অভিজ্ঞ শিক্ষক-কর্মচারী',
       icon: School,
-      action: 'students'
+      action: 'teachers'
     },
     {
       titleBn: 'অপেক্ষমাণ ভর্তি আবেদন',
@@ -57,23 +58,23 @@ export default function DashboardOverview({ onNavigate }) {
   ];
 
   return (
-    <div className="space-y-6">
-            {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white p-5 sm:p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="space-y-6 text-white font-sans">
+      {/* Welcome Banner */}
+      <div className="glass-card text-white p-6 sm:p-8 rounded-3xl shadow-2xl border border-white/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 backdrop-blur-xl">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-amber-400 text-xs font-bold font-mono">SYSTEM DASHBOARD</span>
-            <span className="bg-amber-400/20 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-400/30 font-bangla">
+            <span className="glass-pill text-amber-300 text-[10px] font-bold px-3 py-1 rounded-full border border-amber-400/30 font-bangla">
               {lang === 'bn' ? greeting.bn : greeting.en}
             </span>
           </div>
-          <h2 className="text-lg sm:text-2xl font-bold font-bangla text-white mt-1">
+          <h2 className="text-lg sm:text-2xl font-bold font-bangla text-white mt-1.5">
             {lang === 'bn' 
               ? `স্বাগতম, ${authUser?.nameBn || authUser?.name || 'সম্মানিত ব্যবহারকারী'} (${authUser?.designationBn || authUser?.designation || authUser?.role || 'প্রশাসক'})` 
               : `Welcome, ${authUser?.nameEn || authUser?.name || 'Authorized User'} (${authUser?.designationEn || authUser?.designation || authUser?.role || 'Administrator'})`
             }
           </h2>
-          <p className="text-xs text-emerald-200 font-bangla mt-0.5">
+          <p className="text-xs text-slate-300 font-bangla mt-1">
             {lang === 'bn'
               ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় ডিজিটাল ম্যানেজমেন্ট সফটওয়্যারে আপনাকে স্বাগতম।'
               : 'Welcome to Bandua Daulatpur High School Digital Management ERP.'
@@ -81,16 +82,16 @@ export default function DashboardOverview({ onNavigate }) {
           </p>
         </div>
 
-        <div className="flex flex-wrap sm:flex-nowrap gap-2 w-full sm:w-auto">
+        <div className="flex flex-wrap sm:flex-nowrap gap-2.5 w-full sm:w-auto">
           <button
             onClick={() => onNavigate('admissions')}
-            className="flex-1 sm:flex-initial bg-amber-400 hover:bg-amber-500 text-emerald-950 font-bold px-4 py-2 rounded-xl text-xs font-bangla transition shadow-sm text-center active:scale-95 cursor-pointer"
+            className="flex-1 sm:flex-initial btn-gold px-4 py-2.5 rounded-full text-xs font-bangla shadow-md text-center cursor-pointer font-bold"
           >
             ভর্তি আবেদন যাচাই ({pendingAdmissions.length})
           </button>
           <button
             onClick={() => onNavigate('notices')}
-            className="flex-1 sm:flex-initial bg-emerald-800 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs font-bangla transition border border-emerald-600 text-center"
+            className="flex-1 sm:flex-initial glass-pill hover:bg-white/15 text-white font-bold px-4 py-2.5 rounded-full text-xs font-bangla transition border border-white/15 text-center cursor-pointer"
           >
             নতুন নোটিশ দিন
           </button>
@@ -105,21 +106,21 @@ export default function DashboardOverview({ onNavigate }) {
             <div
               key={idx}
               onClick={() => onNavigate(kpi.action)}
-              className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs hover:shadow-md transition cursor-pointer flex flex-col justify-between"
+              className="glass-card glass-card-hover p-5 rounded-3xl border border-white/15 shadow-xl transition cursor-pointer flex flex-col justify-between backdrop-blur-xl"
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-slate-500 font-bangla">
+                <span className="text-xs font-bold text-slate-300 font-bangla">
                   {lang === 'bn' ? kpi.titleBn : kpi.titleEn}
                 </span>
-                <span className="p-2 rounded-xl bg-slate-100 text-slate-700">
+                <span className="p-2 rounded-xl glass-pill text-amber-400 border border-white/10">
                   <Icon className="w-4 h-4" />
                 </span>
               </div>
               <div>
-                <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-mono">
+                <span className="text-2xl sm:text-3xl font-extrabold text-amber-300 font-mono">
                   {kpi.value}
                 </span>
-                <p className="text-[11px] text-slate-400 font-bangla mt-1">{kpi.subtextBn}</p>
+                <p className="text-[11px] text-slate-300 font-bangla mt-1">{kpi.subtextBn}</p>
               </div>
             </div>
           );
@@ -129,55 +130,55 @@ export default function DashboardOverview({ onNavigate }) {
       {/* Two Column Section: Recent Admission Applications & Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Recent Online Admission Applications */}
-        <div className="lg:col-span-8 bg-white rounded-2xl p-6 border border-slate-200 shadow-2xs space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="lg:col-span-8 glass-card rounded-3xl p-6 border border-white/15 shadow-2xl backdrop-blur-xl space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-white/10">
             <div>
-              <h3 className="text-sm sm:text-base font-bold font-bangla text-slate-900 flex items-center gap-2">
-                <FileCheck className="w-4 h-4 text-emerald-700" />
+              <h3 className="text-sm sm:text-base font-bold font-bangla text-white flex items-center gap-2">
+                <FileCheck className="w-4 h-4 text-amber-400" />
                 <span>সাম্প্রতিক অনলাইন ভর্তি আবেদন সমূহ</span>
               </h3>
               <p className="text-[11px] text-slate-400 font-bangla">ওয়েবসাইটের মাধ্যমে শিক্ষার্থীদের পাঠানো আবেদন</p>
             </div>
             <button
               onClick={() => onNavigate('admissions')}
-              className="text-xs font-bold text-emerald-800 hover:underline flex items-center gap-1 font-bangla"
+              className="text-xs font-bold text-amber-300 hover:underline flex items-center gap-1 font-bangla cursor-pointer"
             >
               <span>সকল দেখুন</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto rounded-2xl border border-white/10">
             <table className="w-full text-left text-xs font-bangla">
-              <thead className="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+              <thead className="bg-slate-950/80 text-amber-300 font-bold border-b border-white/10">
                 <tr>
-                  <th className="py-2.5 px-3">ট্র্যাকিং আইডি</th>
-                  <th className="py-2.5 px-3">শিক্ষার্থীর নাম</th>
-                  <th className="py-2.5 px-3">শ্রেণি</th>
-                  <th className="py-2.5 px-3">অভিভাবকের মোবাইল</th>
-                  <th className="py-2.5 px-3 text-center">স্ট্যাটাস</th>
-                  <th className="py-2.5 px-3 text-center">কার্যক্রম</th>
+                  <th className="py-3 px-3">ট্র্যাকিং আইডি</th>
+                  <th className="py-3 px-3">শিক্ষার্থীর নাম</th>
+                  <th className="py-3 px-3">শ্রেণি</th>
+                  <th className="py-3 px-3">অভিভাবকের মোবাইল</th>
+                  <th className="py-3 px-3 text-center">স্ট্যাটাস</th>
+                  <th className="py-3 px-3 text-center">কার্যক্রম</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-white/5">
                 {admissions.slice(0, 5).map((app) => (
-                  <tr key={app.id} className="hover:bg-slate-50">
-                    <td className="py-2.5 px-3 font-mono font-bold text-slate-700">{app.trackingId}</td>
-                    <td className="py-2.5 px-3 font-semibold text-slate-900">{app.studentNameBn || app.studentNameEn}</td>
-                    <td className="py-2.5 px-3 font-medium text-emerald-800">{app.applyingClass} শ্রেণি</td>
-                    <td className="py-2.5 px-3 font-mono text-slate-600">{app.guardianPhone}</td>
-                    <td className="py-2.5 px-3 text-center">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        app.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                  <tr key={app.id} className="hover:bg-white/5 transition-colors">
+                    <td className="py-3 px-3 font-mono font-bold text-amber-300">{app.trackingId}</td>
+                    <td className="py-3 px-3 font-semibold text-white">{app.studentNameBn || app.studentNameEn}</td>
+                    <td className="py-3 px-3 font-medium text-emerald-300">{app.applyingClass} শ্রেণি</td>
+                    <td className="py-3 px-3 font-mono text-slate-300">{app.guardianPhone}</td>
+                    <td className="py-3 px-3 text-center">
+                      <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                        app.status === 'Approved' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-400/20 text-amber-300 border border-amber-400/30'
                       }`}>
                         {app.status}
                       </span>
                     </td>
-                    <td className="py-2.5 px-3 text-center">
+                    <td className="py-3 px-3 text-center">
                       {app.status === 'Pending' ? (
                         <button
-                          onClick={() => updateAdmissionStatus(app.id, 'Approved')}
-                          className="bg-emerald-700 hover:bg-emerald-600 text-white px-2 py-0.5 rounded text-[10px] font-bold transition"
+                          onClick={() => updateAdmissionStatus && updateAdmissionStatus(app.id, 'Approved')}
+                          className="btn-gold px-2.5 py-0.5 rounded-full text-[10px] font-bold transition cursor-pointer"
                         >
                           অনুমোদন
                         </button>
@@ -194,53 +195,54 @@ export default function DashboardOverview({ onNavigate }) {
 
         {/* Right Column: Quick ERP Navigation Tiles */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-2xs space-y-3">
-            <h3 className="text-sm font-bold font-bangla text-slate-900 pb-2 border-b border-slate-100">
-              ⚡ দ্রুত কার্যক্রম
+          <div className="glass-card rounded-3xl p-6 border border-white/15 shadow-2xl backdrop-blur-xl space-y-3">
+            <h3 className="text-sm font-bold font-bangla text-white pb-2 border-b border-white/10 flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-amber-400" />
+              <span>দ্রুত কার্যক্রম</span>
             </h3>
 
             <div className="space-y-2 text-xs font-bangla">
               <button
                 onClick={() => onNavigate('students')}
-                className="w-full p-2.5 bg-slate-50 hover:bg-emerald-50 rounded-xl text-left font-semibold text-slate-700 hover:text-emerald-900 transition flex items-center justify-between border border-slate-100"
+                className="w-full p-3 glass-pill hover:bg-white/15 rounded-2xl text-left font-semibold text-slate-200 hover:text-white transition flex items-center justify-between border border-white/10 cursor-pointer"
               >
                 <span>➕ নতুন শিক্ষার্থী ভর্তি করুন</span>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                <ChevronRight className="w-3.5 h-3.5 text-amber-400" />
               </button>
 
               <button
                 onClick={() => onNavigate('results')}
-                className="w-full p-2.5 bg-slate-50 hover:bg-emerald-50 rounded-xl text-left font-semibold text-slate-700 hover:text-emerald-900 transition flex items-center justify-between border border-slate-100"
+                className="w-full p-3 glass-pill hover:bg-white/15 rounded-2xl text-left font-semibold text-slate-200 hover:text-white transition flex items-center justify-between border border-white/10 cursor-pointer"
               >
                 <span>📝 পরীক্ষার মার্কস এন্ট্রি ও প্রকাশ</span>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                <ChevronRight className="w-3.5 h-3.5 text-amber-400" />
               </button>
 
               <button
                 onClick={() => onNavigate('fees')}
-                className="w-full p-2.5 bg-slate-50 hover:bg-emerald-50 rounded-xl text-left font-semibold text-slate-700 hover:text-emerald-900 transition flex items-center justify-between border border-slate-100"
+                className="w-full p-3 glass-pill hover:bg-white/15 rounded-2xl text-left font-semibold text-slate-200 hover:text-white transition flex items-center justify-between border border-white/10 cursor-pointer"
               >
                 <span>💳 ফি কালেকশন ও মানি রিসিট</span>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                <ChevronRight className="w-3.5 h-3.5 text-amber-400" />
               </button>
 
               <button
                 onClick={() => onNavigate('notices')}
-                className="w-full p-2.5 bg-slate-50 hover:bg-emerald-50 rounded-xl text-left font-semibold text-slate-700 hover:text-emerald-900 transition flex items-center justify-between border border-slate-100"
+                className="w-full p-3 glass-pill hover:bg-white/15 rounded-2xl text-left font-semibold text-slate-200 hover:text-white transition flex items-center justify-between border border-white/10 cursor-pointer"
               >
                 <span>📢 নোটিশ ও সার্কুলার তৈরি</span>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                <ChevronRight className="w-3.5 h-3.5 text-amber-400" />
               </button>
             </div>
           </div>
 
           {/* School Contact Card */}
-          <div className="bg-emerald-950 text-white rounded-2xl p-5 text-xs space-y-2">
-            <span className="text-amber-400 font-bold block">প্রাতিষ্ঠানিক হেল্পডেস্ক</span>
-            <p className="text-emerald-200 font-bangla">
+          <div className="glass-card rounded-3xl p-5 text-xs space-y-2 border border-white/15 backdrop-blur-xl">
+            <span className="text-amber-300 font-bold block">প্রাতিষ্ঠানিক হেল্পডেস্ক</span>
+            <p className="text-slate-300 font-bangla leading-relaxed">
               কারিগরি সহায়তা ও সার্ভার রক্ষণাবেক্ষণ সংক্রান্ত তথ্যের জন্য বিদ্যালয়ের আইসিটি ল্যাবে যোগাযোগ করুন।
             </p>
-            <p className="font-mono text-emerald-300">হটলাইন: +880 1819-204561</p>
+            <p className="font-mono text-amber-300 font-bold">হটলাইন: +880 1819-204561</p>
           </div>
         </div>
       </div>
