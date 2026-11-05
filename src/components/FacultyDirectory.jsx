@@ -179,14 +179,14 @@ export default function FacultyDirectory() {
                     <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
                       <span className={`text-[11px] font-bold px-3 py-1 rounded-full font-bangla shadow-md flex items-center gap-1 ${
                         isHead
-                          ? 'bg-amber-400 text-slate-950 font-extrabold'
+                          ? 'bg-amber-400 text-emerald-950 font-extrabold'
                           : isAsstHead
                             ? 'bg-emerald-800 text-amber-300'
                             : isStaff
                               ? 'bg-slate-800 text-slate-200'
                               : 'bg-emerald-900 text-white'
                       }`}>
-                        {isHead && <ShieldCheck className="w-3 h-3 text-slate-950" />}
+                        {isHead && <ShieldCheck className="w-3 h-3 text-emerald-950" />}
                         {isAsstHead && <Award className="w-3 h-3 text-amber-300" />}
                         <span>{lang === 'bn' ? teacher.designationBn : teacher.designationEn}</span>
                       </span>

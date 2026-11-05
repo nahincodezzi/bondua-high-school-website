@@ -286,7 +286,7 @@ export default function TeacherManager() {
                 <div className="space-y-0.5 flex-1 min-w-0">
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full font-bangla inline-block ${
                     isHead 
-                      ? 'bg-amber-400 text-slate-950 font-extrabold' 
+                      ? 'bg-amber-400 text-emerald-950 font-extrabold' 
                       : isStaff 
                         ? 'bg-slate-100 text-slate-700' 
                         : 'bg-emerald-100 text-emerald-800'

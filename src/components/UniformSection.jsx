@@ -210,7 +210,7 @@ export default function UniformSection() {
             <div className="md:col-span-4 flex flex-col gap-2">
               <button
                 onClick={() => setActiveTab('admission')}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold py-3 px-4 rounded-xl text-xs transition shadow text-center"
+                className="bg-amber-400 hover:bg-amber-500 text-emerald-950 font-bold py-3 px-4 rounded-xl text-xs transition shadow-sm text-center active:scale-95 cursor-pointer"
               >
                 {lang === 'bn' ? 'ভর্তি আবেদন নির্দেশিকা দেখুন' : 'View Admission Guidelines'}
               </button>

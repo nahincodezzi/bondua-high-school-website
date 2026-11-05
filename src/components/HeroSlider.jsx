@@ -58,8 +58,8 @@ export default function HeroSlider() {
                 <div className="max-w-2xl space-y-4">
                   {/* Tag Pill & Location Indicator */}
                   <div className="flex flex-wrap items-center gap-2">
-                    <div className="inline-flex items-center gap-1.5 bg-amber-400 text-slate-950 text-xs sm:text-sm font-bold px-3 py-1 rounded-full shadow-md font-bangla">
-                      <Sparkles className="w-4 h-4 text-emerald-900" />
+                    <div className="inline-flex items-center gap-1.5 bg-amber-400 text-emerald-950 text-xs sm:text-sm font-bold px-3 py-1 rounded-full shadow-md font-bangla">
+                      <Sparkles className="w-4 h-4 text-emerald-950" />
                       <span>{lang === 'bn' ? slide.tagBn : slide.tagEn}</span>
                     </div>
 
@@ -92,7 +92,7 @@ export default function HeroSlider() {
                   <div className="pt-2 flex flex-wrap items-center gap-2 sm:gap-3">
                     <button
                       onClick={() => setActiveTab('admission')}
-                      className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-xl text-xs sm:text-base shadow-lg hover:shadow-amber-400/20 transition transform hover:-translate-y-0.5 flex items-center gap-1.5 sm:gap-2 font-bangla"
+                      className="bg-amber-400 hover:bg-amber-500 text-emerald-950 font-bold px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-xl text-xs sm:text-base shadow-lg hover:shadow-amber-400/20 transition transform hover:-translate-y-0.5 flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer active:scale-95"
                     >
                       <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-950" />
                       <span>{lang === 'bn' ? 'অনলাইন ভর্তি আবেদন ২০২৬' : 'Apply for Admission'}</span>
@@ -100,7 +100,7 @@ export default function HeroSlider() {
 
                     <button
                       onClick={() => setActiveTab('results')}
-                      className="bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-xl text-xs sm:text-base border border-emerald-500 shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-1.5 sm:gap-2 font-bangla"
+                      className="bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-xl text-xs sm:text-base border border-emerald-500 shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer active:scale-95"
                     >
                       <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-amber-300" />
                       <span>{lang === 'bn' ? 'ফলাফল অনুসন্ধান' : 'Check Results'}</span>
@@ -108,7 +108,7 @@ export default function HeroSlider() {
 
                     <button
                       onClick={() => setActiveTab('uniform')}
-                      className="bg-slate-800/80 hover:bg-slate-800 text-amber-300 border border-slate-700 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 sm:gap-2 font-bangla"
+                      className="bg-slate-800/80 hover:bg-slate-800 text-amber-300 border border-slate-700 hover:border-amber-400/50 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer"
                     >
                       <Shirt className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       <span>{lang === 'bn' ? 'পোশাক নীতিমালা' : 'Dress Code Policy'}</span>

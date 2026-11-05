@@ -33,7 +33,7 @@ export default function HeadmasterMessage() {
                 
                 {/* Overlay Name on Card */}
                 <div className="absolute bottom-4 left-4 right-4 text-white text-left">
-                  <span className="bg-amber-400 text-slate-950 text-[10px] font-bold px-2 py-0.5 rounded uppercase">
+                  <span className="bg-amber-400 text-emerald-950 text-[10px] font-bold px-2 py-0.5 rounded uppercase">
                     {lang === 'bn' ? schoolInfo.headmasterDesignationBn : schoolInfo.headmasterDesignationEn}
                   </span>
                   <h3 className="text-lg font-bold font-bangla mt-1 text-white">

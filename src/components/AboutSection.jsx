@@ -93,7 +93,7 @@ export default function AboutSection() {
         {/* Mission & Vision Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
           <div className="bg-emerald-900 text-white p-6 sm:p-8 rounded-2xl shadow-sm space-y-3">
-            <div className="w-12 h-12 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center font-bold">
+            <div className="w-12 h-12 rounded-xl bg-amber-400 text-emerald-950 flex items-center justify-center font-bold">
               <Target className="w-6 h-6" />
             </div>
             <h3 className="text-lg font-bold font-bangla text-amber-300">
@@ -120,14 +120,14 @@ export default function AboutSection() {
             </p>
           </div>
 
-          <div className="bg-amber-500 text-slate-950 p-6 sm:p-8 rounded-2xl shadow-sm space-y-3">
-            <div className="w-12 h-12 rounded-xl bg-slate-950 text-amber-400 flex items-center justify-center font-bold">
+          <div className="bg-amber-400 text-emerald-950 p-6 sm:p-8 rounded-2xl shadow-sm space-y-3">
+            <div className="w-12 h-12 rounded-xl bg-emerald-950 text-amber-400 flex items-center justify-center font-bold">
               <Compass className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-bold font-bangla text-slate-950">
+            <h3 className="text-lg font-bold font-bangla text-emerald-950">
               {lang === 'bn' ? 'মূল আদর্শ (Core Values)' : 'Core Values'}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-900 font-bangla leading-relaxed font-medium">
+            <p className="text-xs sm:text-sm text-emerald-950/90 font-bangla leading-relaxed font-semibold">
               {lang === 'bn'
                 ? (schoolInfo.coreValuesBn || 'শৃঙ্খলা, সততা, সহমর্মিতা, বিজ্ঞানচেতনা এবং মাতৃভূমির সার্বিক উন্নয়নে অবদান রাখার চিরন্তন ব্রত।')
                 : (schoolInfo.coreValuesEn || 'Discipline, integrity, empathy, inquiry-based learning, and selfless service to the nation.')}

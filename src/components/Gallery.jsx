@@ -84,7 +84,7 @@ export default function Gallery() {
                 href={schoolInfo.facebookGroupUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white text-blue-900 hover:bg-amber-300 hover:text-slate-950 font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow"
+                className="bg-white text-blue-900 hover:bg-amber-400 hover:text-emerald-950 font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow"
               >
                 <span>{lang === 'bn' ? 'ফেসবুক গ্রুপ দেখুন' : 'Visit Group'}</span>
                 <ExternalLink className="w-3.5 h-3.5" />

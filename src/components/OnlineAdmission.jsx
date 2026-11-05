@@ -97,7 +97,7 @@ export default function OnlineAdmission() {
                 </button>
                 <button
                   onClick={handlePrintSlip}
-                  className="px-3.5 py-1 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded text-xs font-bold transition flex items-center gap-1.5 shadow"
+                  className="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-emerald-950 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs active:scale-95 cursor-pointer"
                 >
                   <Printer className="w-3.5 h-3.5" />
                   <span>{lang === 'bn' ? 'স্লিপ প্রিন্ট করুন' : 'Print Slip'}</span>
@@ -223,7 +223,7 @@ export default function OnlineAdmission() {
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             {/* Form Top Banner */}
             <div className="bg-gradient-to-r from-emerald-900 to-teal-900 text-white p-6 sm:p-8">
-              <div className="inline-flex items-center gap-1.5 bg-amber-400 text-slate-950 text-xs font-bold px-3 py-1 rounded-full mb-3">
+              <div className="inline-flex items-center gap-1.5 bg-amber-400 text-emerald-950 text-xs font-bold px-3 py-1 rounded-full mb-3 shadow-xs">
                 <School className="w-3.5 h-3.5" />
                 <span>২০২৬ শিক্ষাবর্ষ ভর্তি ফরম</span>
               </div>

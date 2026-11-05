@@ -102,7 +102,7 @@ export default function AuthModal() {
               type="button"
               onClick={() => handlePresetSelect('operator', 'office_assistant', 'office123')}
               className={`py-2 px-1.5 rounded-lg transition text-center ${
-                role === 'operator' ? 'bg-amber-800 text-white shadow font-extrabold' : 'text-slate-600 hover:text-slate-900'
+                role === 'operator' ? 'bg-amber-400 text-emerald-950 shadow font-extrabold' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               🏢 অফিস সহকারী

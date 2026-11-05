@@ -84,7 +84,7 @@ export default function DashboardOverview({ onNavigate }) {
         <div className="flex flex-wrap sm:flex-nowrap gap-2 w-full sm:w-auto">
           <button
             onClick={() => onNavigate('admissions')}
-            className="flex-1 sm:flex-initial bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs font-bangla transition shadow text-center"
+            className="flex-1 sm:flex-initial bg-amber-400 hover:bg-amber-500 text-emerald-950 font-bold px-4 py-2 rounded-xl text-xs font-bangla transition shadow-sm text-center active:scale-95 cursor-pointer"
           >
             ভর্তি আবেদন যাচাই ({pendingAdmissions.length})
           </button>
