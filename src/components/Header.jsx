@@ -8,7 +8,8 @@ import {
   X, 
   Bell, 
   ShieldCheck, 
-  ChevronRight
+  ChevronRight,
+  ChevronDown
 } from 'lucide-react';
 
 export default function Header() {
@@ -16,15 +17,54 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
-  const navContainerRef = useRef(null);
+  const [isNavHidden, setIsNavHidden] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isFocusedInside, setIsFocusedInside] = useState(false);
+  const [mobileExpandedSection, setMobileExpandedSection] = useState(null);
+  const [hasUnreadNotice, setHasUnreadNotice] = useState(true);
 
+  const navContainerRef = useRef(null);
+  const lastScrollYRef = useRef(0);
+  const tickingRef = useRef(false);
+
+  // Passive, throttled scroll listener for performance
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+    const updateScroll = () => {
+      const currentScrollY = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? Math.min(100, Math.max(0, (currentScrollY / docHeight) * 100)) : 0;
+      setScrollProgress(progress);
+
+      // State A vs State B threshold at 20px
+      const scrolled = currentScrollY >= 20;
+      setIsScrolled(scrolled);
+
+      // Smart hide / show:
+      // Scrolling down past 300px slides navbar up out of view
+      // Scrolling up any amount slides navbar back in immediately
+      const scrollingDown = currentScrollY > lastScrollYRef.current + 4;
+      const scrollingUp = currentScrollY < lastScrollYRef.current - 2;
+
+      if (currentScrollY > 300 && scrollingDown && !mobileMenuOpen) {
+        setIsNavHidden(true);
+      } else if (scrollingUp || currentScrollY <= 20) {
+        setIsNavHidden(false);
+      }
+
+      lastScrollYRef.current = currentScrollY;
+      tickingRef.current = false;
     };
+
+    const handleScroll = () => {
+      if (!tickingRef.current) {
+        window.requestAnimationFrame(updateScroll);
+        tickingRef.current = true;
+      }
+    };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [mobileMenuOpen]);
 
   // Close desktop dropdown when clicking outside
   useEffect(() => {
@@ -36,6 +76,30 @@ export default function Header() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Keyboard navigation: Escape key closes menus
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+        setActiveDropdown(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
   const navItems = [
     {
@@ -107,39 +171,71 @@ export default function Header() {
     return activeTab === item.directTab;
   };
 
+  const toggleMobileSection = (id) => {
+    setMobileExpandedSection(prev => prev === id ? null : id);
+  };
+
+  const shouldHideNavbar = isNavHidden && !isFocusedInside && !mobileMenuOpen;
+
   return (
-    <header className="fixed top-2 sm:top-3 left-0 right-0 z-50 px-3 sm:px-6 pointer-events-none no-print transition-all duration-300">
-      <div className="max-w-[1240px] mx-auto pointer-events-auto">
-        {/* Floating Glass Capsule Navbar */}
-        <nav 
-          ref={navContainerRef}
-          className={`glass-capsule rounded-full px-3.5 sm:px-6 transition-all duration-300 flex items-center justify-between gap-2 sm:gap-4 shadow-2xl ${
-            isScrolled 
-              ? 'py-1.5 sm:py-2 bg-[rgba(4,30,22,0.98)] shadow-2xl ring-1 ring-white/20' 
-              : 'py-2 sm:py-2.5 bg-[rgba(4,30,22,0.94)]'
-          }`}
-        >
-          {/* Left Brand Identity: Circular Emblem + 2-Line Name */}
+    <>
+      {/* FLOATING GLASS CAPSULE NAVBAR */}
+      <header
+        ref={navContainerRef}
+        data-scrolled={isScrolled ? "true" : "false"}
+        data-hidden={shouldHideNavbar ? "true" : "false"}
+        onFocus={() => setIsFocusedInside(true)}
+        onBlur={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget)) {
+            setIsFocusedInside(false);
+          }
+        }}
+        className={`fixed left-1/2 z-50 no-print rounded-full overflow-hidden floating-glass-pill ${
+          shouldHideNavbar 
+            ? '-translate-x-1/2 -translate-y-[135%]' 
+            : '-translate-x-1/2 translate-y-0'
+        } ${
+          isScrolled
+            ? 'top-[10px] w-[calc(100%-1.5rem)] max-w-[1100px] h-[58px] bg-[rgba(20,83,45,0.88)] backdrop-blur-[14px] backdrop-saturate-[140%] border border-white/[0.14] shadow-[0_12px_32px_rgba(0,0,0,0.18)] floating-glass-scrolled'
+            : 'top-[16px] w-[calc(100%-2rem)] max-w-[1200px] h-[72px] bg-[#14532D] border border-white/[0.12] shadow-[0_10px_30px_rgba(20,83,45,0.18)]'
+        }`}
+      >
+        <nav className="w-full h-full px-3.5 sm:px-6 flex items-center justify-between gap-2 sm:gap-4 select-none">
+          {/* LEFT BRAND IDENTITY: CIRCULAR EMBLEM + NAME (C5 fix for mobile screens) */}
           <div 
             onClick={() => handleNavClick('home')}
-            className="flex items-center gap-2.5 sm:gap-3 cursor-pointer group shrink-0"
+            className="flex items-center gap-2 sm:gap-3 cursor-pointer group min-w-0"
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleNavClick('home')}
+            aria-label="হোমপেজে ফিরে যান"
           >
-            <div className="w-10 h-10 sm:w-11 sm:h-11 bg-white rounded-full p-1 ring-2 ring-amber-400 shrink-0 shadow-md transition-transform duration-300 group-hover:scale-105">
+            <div 
+              className={`bg-white rounded-full p-1 ring-2 ring-[#F59E0B] shrink-0 shadow-md transition-all duration-300 group-hover:scale-105 ${
+                isScrolled ? 'w-9 h-9 scale-[0.88]' : 'w-11 h-11 scale-100'
+              }`}
+            >
               <SchoolLogo logo={schoolInfo.logo} />
             </div>
 
-            <div className="hidden min-[420px]:block">
-              <h1 className="text-white font-bold font-bangla text-xs sm:text-sm md:text-base leading-tight tracking-wide drop-shadow-sm group-hover:text-amber-300 transition-colors whitespace-nowrap">
-                {lang === 'bn' ? schoolInfo.nameBn : schoolInfo.nameEn}
+            <div className="hidden sm:block min-w-0 max-w-[140px] sm:max-w-[200px] md:max-w-xs transition-all duration-300">
+              <h1 className={`text-white font-bold font-bangla truncate leading-tight tracking-normal transition-all duration-300 group-hover:text-amber-300 ${
+                isScrolled ? 'text-xs sm:text-sm' : 'text-xs sm:text-base'
+              }`}>
+                {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || 'Bandua Daulatpur High School')}
               </h1>
-              <p className="text-amber-300/90 font-medium text-[9px] sm:text-[11px] font-sans tracking-wide">
-                {schoolInfo.nameEn || 'Bondua Doulatpur High School'}
+              <p className={`text-white/70 font-sans tracking-wide truncate transition-all duration-300 overflow-hidden ${
+                isScrolled 
+                  ? 'opacity-0 max-h-0 -translate-y-1' 
+                  : 'opacity-100 max-h-4 text-[10px] sm:text-[11px] mt-0.5 translate-y-0'
+              }`}>
+                {schoolInfo.nameEn || 'Bandua Daulatpur High School'}
               </p>
             </div>
           </div>
 
-          {/* Center: 7 Dual-Line Navigation Items (Bangla on Top, English below) */}
-          <ul className="hidden lg:flex items-center gap-1.5 xl:gap-3 flex-nowrap">
+          {/* CENTER: DESKTOP NAVIGATION ITEMS */}
+          <ul className="hidden lg:flex items-center gap-1 xl:gap-2 flex-nowrap h-full">
             {navItems.map((item) => {
               const active = isItemActive(item);
               const hasChildren = Boolean(item.children && item.children.length > 0);
@@ -148,36 +244,47 @@ export default function Header() {
               return (
                 <li 
                   key={item.id} 
-                  className="relative"
+                  className="relative h-full flex items-center"
                   onMouseEnter={() => hasChildren && setActiveDropdown(item.id)}
                   onMouseLeave={() => hasChildren && setActiveDropdown(null)}
                 >
                   <button
                     onClick={() => handleNavClick(item.directTab)}
-                    className={`px-2.5 xl:px-3 py-1 rounded-xl transition-all duration-200 flex flex-col items-center justify-center text-center group cursor-pointer ${
-                      active ? 'text-amber-400' : 'text-white/85 hover:text-white'
+                    aria-label={lang === 'bn' ? item.labelBn : item.labelEn}
+                    className={`px-3 xl:px-3.5 py-1.5 rounded-full transition-all duration-200 flex flex-col items-center justify-center text-center cursor-pointer focus-visible:outline-2 focus-visible:outline-[#F59E0B] focus-visible:outline-offset-2 ${
+                      active 
+                        ? 'bg-white/[0.12] text-white shadow-xs' 
+                        : 'text-white/90 hover:text-white hover:bg-white/[0.08]'
                     }`}
                   >
                     {/* Top Bangla Label */}
-                    <span className="font-bangla text-xs xl:text-sm font-bold tracking-wide leading-tight">
-                      {item.labelBn}
+                    <span className="font-bangla text-xs xl:text-sm font-bold tracking-normal leading-tight flex items-center gap-1">
+                      <span>{item.labelBn}</span>
+                      {hasChildren && <ChevronDown className="w-3 h-3 opacity-60" />}
                     </span>
-                    {/* Bottom English Subtitle */}
-                    <span className={`text-[9px] xl:text-[10px] font-sans tracking-wide transition-opacity ${
-                      active ? 'text-amber-300 font-semibold' : 'text-white/60 group-hover:text-white/90'
-                    }`}>
+
+                    {/* Bottom English Sub-label: collapses and fades out smoothly on scroll (L4 fix) */}
+                    <span 
+                      aria-hidden="true"
+                      className={`text-[11px] font-sans tracking-wide text-white/70 transition-all duration-300 overflow-hidden ${
+                        isScrolled 
+                          ? 'opacity-0 max-h-0' 
+                          : 'opacity-100 max-h-4 mt-0.5'
+                      }`}
+                    >
                       {item.labelEn}
                     </span>
-                    {/* Active State Indicator Dot */}
+
+                    {/* Active State Amber Dot */}
                     {active && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-white shadow-xs mx-auto mt-0.5 animate-in fade-in zoom-in duration-200"></span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-xs mt-0.5 animate-in fade-in zoom-in duration-200"></span>
                     )}
                   </button>
 
-                  {/* Frosted Glass Dropdown Menu */}
+                  {/* Dropdown Menu for Subpages */}
                   {hasChildren && isDropdownOpen && (
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
-                      <div className="glass-capsule rounded-2xl p-1.5 min-w-[210px] space-y-1 shadow-2xl border border-white/20">
+                    <div className="absolute top-[85%] left-1/2 -translate-x-1/2 pt-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                      <div className="bg-[#14532D]/95 backdrop-blur-md rounded-2xl p-1.5 min-w-[210px] space-y-1 shadow-2xl border border-white/15">
                         {item.children.map((child) => {
                           const isChildActive = activeTab === child.id;
                           return (
@@ -187,14 +294,18 @@ export default function Header() {
                                 e.stopPropagation();
                                 handleNavClick(child.id);
                               }}
-                              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition-all flex items-center justify-between font-bangla cursor-pointer ${
+                              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition-all flex items-center justify-between font-bangla cursor-pointer focus-visible:outline-2 focus-visible:outline-[#F59E0B] ${
                                 isChildActive
-                                  ? 'bg-amber-400 text-slate-950 font-bold shadow-sm'
-                                  : 'text-white/90 hover:text-white hover:bg-white/10'
+                                  ? 'bg-white/[0.15] text-white font-bold shadow-xs'
+                                  : 'text-white/85 hover:text-white hover:bg-white/[0.08]'
                               }`}
                             >
                               <span>{lang === 'bn' ? child.labelBn : child.labelEn}</span>
-                              <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+                              {isChildActive ? (
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+                              ) : (
+                                <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+                              )}
                             </button>
                           );
                         })}
@@ -206,23 +317,30 @@ export default function Header() {
             })}
           </ul>
 
-          {/* Right Action Icons & Golden Pill Login Button */}
-          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-            {/* Primary Action Button: Golden Capsule Pill */}
+          {/* RIGHT ACTION BUTTONS */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+            {/* Primary Action Button: "পোর্টাল লগইন" in Amber */}
             {authUser ? (
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => handleNavClick('admin')}
-                  className="btn-gold px-3.5 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm font-extrabold flex items-center gap-1.5 active:scale-95 cursor-pointer"
+                  className={`bg-[#F59E0B] hover:bg-[#D97706] text-[#1F2937] font-bold rounded-full transition-all duration-300 flex items-center gap-1.5 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-[0_4px_14px_rgba(245,158,11,0.35)] active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-[#F59E0B] focus-visible:outline-offset-2 ${
+                    isScrolled 
+                      ? 'px-3.5 sm:px-4 py-1.5 text-xs' 
+                      : 'px-4 sm:px-5 py-2 text-xs sm:text-sm'
+                  }`}
                   title="Open CMS Dashboard"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#1F2937]" />
                   <span>{lang === 'bn' ? 'ড্যাশবোর্ড' : 'Dashboard'}</span>
                 </button>
                 <button
                   onClick={logout}
-                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white flex items-center justify-center transition active:scale-95 cursor-pointer"
-                  title="Logout"
+                  className={`rounded-full bg-white/10 hover:bg-red-500/20 hover:text-red-300 border border-white/15 text-white/90 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-[#F59E0B] ${
+                    isScrolled ? 'w-9 h-9' : 'w-10 h-10'
+                  }`}
+                  title="লগআউট (Logout)"
+                  aria-label="লগআউট"
                 >
                   <LogOut className="w-3.5 h-3.5 text-white/80" />
                 </button>
@@ -230,101 +348,212 @@ export default function Header() {
             ) : (
               <button
                 onClick={() => setAuthModalOpen(true)}
-                className="btn-gold px-4 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm font-extrabold flex items-center gap-1.5 active:scale-95 cursor-pointer"
+                className={`bg-[#F59E0B] hover:bg-[#D97706] text-[#1F2937] font-bold rounded-full transition-all duration-300 flex items-center gap-1.5 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-[0_4px_14px_rgba(245,158,11,0.35)] active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-[#F59E0B] focus-visible:outline-offset-2 ${
+                  isScrolled 
+                    ? 'px-3.5 sm:px-4 py-1.5 text-xs' 
+                    : 'px-4 sm:px-5 py-2 text-xs sm:text-sm'
+                }`}
                 title="School Portal Login"
               >
                 <span>{lang === 'bn' ? 'পোর্টাল লগইন' : 'Portal Login'}</span>
               </button>
             )}
 
-            {/* Language Switcher - Glass Circle Button */}
+            {/* Language Switcher - 40px Round Icon Button */}
             <button
               onClick={toggleLanguage}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white flex items-center justify-center transition active:scale-95 cursor-pointer"
-              title="Toggle Bengali / English"
+              className={`rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-[#F59E0B] focus-visible:outline-offset-2 ${
+                isScrolled ? 'w-9 h-9' : 'w-10 h-10'
+              }`}
+              title="ভাষা পরিবর্তন (Toggle Language)"
+              aria-label="ভাষা পরিবর্তন (Toggle Language)"
             >
               <Globe className="w-4 h-4 text-white" />
             </button>
 
-            {/* Notice Bell Indicator - Glass Circle Button */}
+            {/* Notice Bell Indicator - 40px Round Icon Button (L8 fix: clears unread dot on click) */}
             <button
-              onClick={() => handleNavClick('notices')}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white flex items-center justify-center transition active:scale-95 cursor-pointer relative"
-              title="Notice Board"
+              onClick={() => {
+                setHasUnreadNotice(false);
+                handleNavClick('notices');
+              }}
+              className={`rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-[#F59E0B] focus-visible:outline-offset-2 ${
+                isScrolled ? 'w-9 h-9' : 'w-10 h-10'
+              }`}
+              title="নোটিফিকেশন (Notification)"
+              aria-label="নোটিফিকেশন (Notification)"
             >
               <Bell className="w-4 h-4 text-white" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-amber-400 ring-2 ring-slate-950"></span>
+              {hasUnreadNotice && (
+                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-[#F59E0B] ring-2 ring-[#14532D]"></span>
+              )}
             </button>
 
             {/* Mobile Hamburger Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white flex items-center justify-center transition active:scale-95 cursor-pointer"
-              aria-label="Toggle Navigation"
+              className={`lg:hidden rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 ${
+                isScrolled ? 'w-9 h-9' : 'w-10 h-10'
+              }`}
+              aria-label="মেনু খুলুন / বন্ধ করুন"
+              aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
           </div>
         </nav>
 
-        {/* Mobile Navigation Drawer - Frosted Glass Card */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden glass-capsule rounded-3xl p-4 mt-2 max-h-[80vh] overflow-y-auto space-y-3 shadow-2xl border border-white/20 animate-in slide-in-from-top-2 duration-200 pointer-events-auto">
-            {/* Quick Actions */}
-            <div className="grid grid-cols-2 gap-2 pb-2 border-b border-white/10">
-              <button
-                onClick={() => handleNavClick('admission')}
-                className="btn-gold py-2 px-3 text-xs font-bold text-center flex items-center justify-center gap-1.5 shadow-sm"
-              >
-                <span>{lang === 'bn' ? 'অনলাইন ভর্তি' : 'Admission'}</span>
-              </button>
-              <button
-                onClick={() => handleNavClick('results')}
-                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white py-2 px-3 rounded-full text-xs font-bold text-center flex items-center justify-center gap-1.5"
-              >
-                <span>{lang === 'bn' ? 'ফলাফল' : 'Results'}</span>
-              </button>
+        {/* THIN 2.5px AMBER SCROLL PROGRESS LINE (CLIPPED BY PILL RADIUS) */}
+        <div 
+          className="absolute bottom-0 left-0 h-[2.5px] bg-[#F59E0B] rounded-full pointer-events-none transition-all duration-75 ease-out"
+          style={{ width: `${scrollProgress}%` }}
+          role="progressbar"
+          aria-valuenow={Math.round(scrollProgress)}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        />
+      </header>
+
+      {/* MOBILE SLIDE-IN DRAWER FROM RIGHT */}
+      {mobileMenuOpen && (
+        <>
+          {/* Backdrop Fade */}
+          <div 
+            onClick={() => setMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity duration-300 no-print"
+            aria-hidden="true"
+          />
+
+          {/* Full-Height Right Drawer */}
+          <aside 
+            className="fixed top-0 right-0 bottom-0 w-[290px] sm:w-[320px] bg-[#14532D] z-50 shadow-2xl border-l border-white/15 p-5 flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-300 no-print"
+            role="dialog"
+            aria-modal="true"
+            aria-label="মোবাইল নেভিগেশন মেনু"
+          >
+            <div>
+              {/* Drawer Top Header with Close Button */}
+              <div className="flex items-center justify-between pb-4 border-b border-white/15">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 bg-white rounded-full p-1 ring-2 ring-[#F59E0B]">
+                    <SchoolLogo logo={schoolInfo.logo} />
+                  </div>
+                  <div>
+                    <h2 className="text-white font-bold text-xs font-bangla leading-tight">
+                      {lang === 'bn' ? schoolInfo.nameBn : schoolInfo.nameEn}
+                    </h2>
+                    <p className="text-white/60 text-[10px]">
+                      EIIN: {schoolInfo.eiin || '106644'}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer"
+                  aria-label="মেনু বন্ধ করুন"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Navigation Links List */}
+              <nav className="mt-5 space-y-1.5 font-bangla">
+                {navItems.map((item) => {
+                  const active = isItemActive(item);
+                  const hasChildren = Boolean(item.children && item.children.length > 0);
+                  const isExpanded = mobileExpandedSection === item.id;
+
+                  return (
+                    <div key={item.id} className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <button
+                          onClick={() => handleNavClick(item.directTab)}
+                          className={`flex-1 text-left px-3.5 py-2.5 rounded-xl text-sm font-bold transition flex items-center justify-between ${
+                            active 
+                              ? 'bg-white/[0.14] text-white shadow-xs' 
+                              : 'text-white/85 hover:text-white hover:bg-white/[0.08]'
+                          }`}
+                        >
+                          <span className="flex items-center gap-2">
+                            {active && <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>}
+                            <span>{lang === 'bn' ? item.labelBn : item.labelEn}</span>
+                          </span>
+                        </button>
+
+                        {hasChildren && (
+                          <button
+                            onClick={() => toggleMobileSection(item.id)}
+                            className="p-2.5 text-white/70 hover:text-white transition cursor-pointer"
+                            aria-label="সাব-মেনু খুলুন"
+                          >
+                            <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-[#F59E0B]' : ''}`} />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Mobile Sub-items */}
+                      {hasChildren && isExpanded && (
+                        <div className="pl-6 space-y-1 py-1 border-l-2 border-white/15 ml-3 animate-in fade-in duration-200">
+                          {item.children.map((child) => {
+                            const isChildActive = activeTab === child.id;
+                            return (
+                              <button
+                                key={child.id}
+                                onClick={() => handleNavClick(child.id)}
+                                className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center justify-between ${
+                                  isChildActive 
+                                    ? 'bg-white/[0.12] text-white font-bold' 
+                                    : 'text-white/75 hover:text-white hover:bg-white/[0.06]'
+                                }`}
+                              >
+                                <span>{lang === 'bn' ? child.labelBn : child.labelEn}</span>
+                                {isChildActive && <span className="w-1 h-1 rounded-full bg-[#F59E0B]"></span>}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </nav>
             </div>
 
-            {/* Nav Links */}
-            <div className="grid grid-cols-2 gap-1.5">
-              {navItems.map((item) => {
-                const active = isItemActive(item);
-                return (
+            {/* Drawer Bottom Actions */}
+            <div className="pt-4 border-t border-white/15 space-y-3 font-bangla">
+              {authUser ? (
+                <div className="space-y-2">
                   <button
-                    key={item.id}
-                    onClick={() => handleNavClick(item.directTab)}
-                    className={`px-3 py-2.5 rounded-2xl text-xs font-bold transition flex items-center justify-between font-bangla border ${
-                      active
-                        ? 'bg-amber-400 text-slate-950 border-amber-300 shadow'
-                        : 'bg-white/5 border-white/10 text-white/90 hover:bg-white/15'
-                    }`}
+                    onClick={() => handleNavClick('admin')}
+                    className="w-full bg-[#F59E0B] hover:bg-[#D97706] text-[#1F2937] font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
                   >
-                    <span>{lang === 'bn' ? item.labelBn : item.labelEn}</span>
-                    <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>{lang === 'bn' ? 'ড্যাশবোর্ড প্রবেশ করুন' : 'Open Dashboard'}</span>
                   </button>
-                );
-              })}
+                  <button
+                    onClick={logout}
+                    className="w-full bg-white/10 hover:bg-red-500/20 text-white hover:text-red-300 font-semibold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>{lang === 'bn' ? 'লগআউট' : 'Logout'}</span>
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setAuthModalOpen(true);
+                  }}
+                  className="w-full bg-[#F59E0B] hover:bg-[#D97706] text-[#1F2937] font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                >
+                  <span>{lang === 'bn' ? 'পোর্টাল লগইন' : 'Portal Login'}</span>
+                </button>
+              )}
             </div>
-
-            {/* Sub-items for mobile */}
-            <div className="pt-2 border-t border-white/10 flex flex-wrap gap-1.5 text-[11px] font-bangla">
-              <button onClick={() => handleNavClick('faculty')} className="px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/15 text-white/80">
-                👨‍🏫 {lang === 'bn' ? 'শিক্ষক ও কর্মচারী' : 'Faculty'}
-              </button>
-              <button onClick={() => handleNavClick('uniform')} className="px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/15 text-white/80">
-                👕 {lang === 'bn' ? 'পোশাক ও ইউনিফর্ম' : 'Dress Code'}
-              </button>
-              <button onClick={() => handleNavClick('routines')} className="px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/15 text-white/80">
-                📅 {lang === 'bn' ? 'রুটিন ও সিলেবাস' : 'Routines'}
-              </button>
-              <button onClick={() => handleNavClick('gallery')} className="px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/15 text-white/80">
-                📸 {lang === 'bn' ? 'ফটো গ্যালারি' : 'Gallery'}
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-    </header>
+          </aside>
+        </>
+      )}
+    </>
   );
 }

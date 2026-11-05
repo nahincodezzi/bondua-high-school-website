@@ -80,24 +80,24 @@ export default function FacebookMediaHub() {
   const facebookGroupPhotos = gallery.filter(item => item.facebookGroupOrigin);
 
   return (
-    <section className="py-14 text-slate-800 relative z-10 font-sans min-h-[750px]">
+    <section className="py-14 text-[#1F2937] relative z-10 font-sans min-h-[750px]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Header Hero Banner for Facebook Group */}
-        <div className="glass-card rounded-3xl p-6 sm:p-10 shadow-xs mb-10 border border-slate-200">
+        <div className="bg-white rounded-2xl p-6 sm:p-10 shadow-xs mb-10 border border-[#E5E7EB]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-8 space-y-4">
-              <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-800 text-xs font-bold px-4 py-1.5 rounded-full border border-blue-200">
-                <Share2 className="w-3.5 h-3.5 text-blue-700" />
+              <div className="inline-flex items-center gap-2 bg-[#F3F4F6] text-[#374151] text-xs font-bold px-4 py-1.5 rounded-full border border-[#D1D5DB]">
+                <Share2 className="w-3.5 h-3.5 text-[#166534]" />
                 <span>Group ID: {schoolInfo.facebookGroupId}</span>
               </div>
 
-              <h2 className="text-2xl sm:text-4xl font-extrabold font-bangla text-slate-900 leading-tight">
+              <h2 className="text-2xl sm:text-4xl font-extrabold font-bangla text-[#1F2937] leading-tight">
                 {lang === 'bn' 
                   ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় ফেসবুক গ্রুপ ও মিডিয়া হাব' 
                   : 'Official Facebook Group & Media Sync Hub'}
               </h2>
 
-              <p className="text-slate-600 text-sm sm:text-base font-bangla max-w-2xl leading-relaxed">
+              <p className="text-[#4B5563] text-sm sm:text-base font-bangla max-w-2xl leading-relaxed">
                 {lang === 'bn'
                   ? 'আমাদের ফেসবুক কমিউনিটি গ্রুপে প্রাক্তন ও বর্তমান শিক্ষার্থীদের তোলা প্রাঙ্গণ, ক্রীড়া, সাংস্কৃতিক উৎসব ও ক্লাস রুটিনের আকর্ষণীয় ছবিগুলো এখানে যুক্ত করুন।'
                   : 'Connect with alumni & students. Import community photos into the institutional portal gallery.'}
@@ -108,7 +108,7 @@ export default function FacebookMediaHub() {
                   href={schoolInfo.facebookGroupUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-gold font-bold px-5 py-2.5 rounded-full text-xs transition flex items-center gap-2 shadow-xs cursor-pointer"
+                  className="btn-accent font-bold px-5 py-2.5 rounded-lg text-xs transition flex items-center gap-2 shadow-xs cursor-pointer"
                 >
                   <span>{lang === 'bn' ? 'অফিসিয়াল ফেসবুক গ্রুপ ভিজিট করুন' : 'Visit Official Facebook Group'}</span>
                   <ExternalLink className="w-4 h-4" />
@@ -116,7 +116,7 @@ export default function FacebookMediaHub() {
 
                 <button
                   onClick={() => setActiveTab('gallery')}
-                  className="bg-white hover:bg-slate-100 text-slate-700 font-bold px-4 py-2.5 rounded-full text-xs transition border border-slate-300 cursor-pointer"
+                  className="btn-secondary font-bold px-4 py-2.5 text-xs transition cursor-pointer"
                 >
                   {lang === 'bn' ? 'মূল গ্যালারি দেখুন' : 'View Full Gallery'}
                 </button>

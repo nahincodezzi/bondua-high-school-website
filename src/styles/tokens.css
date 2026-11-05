@@ -1,0 +1,49 @@
+/* ==========================================================================
+   Design Tokens - Bandua Doulatpur High School (CMS + ERP)
+   Brand Identity: Forest Green + Amber (60-30-10 Rule)
+   Flat, Trustworthy, Modern Bangladeshi Institutional Theme
+   ========================================================================== */
+
+:root {
+  /* Brand Colors */
+  --color-primary: #166534;        /* Buttons, links, icons, focus ring */
+  --color-primary-hover: #14532D;  /* Hover state for primary */
+  --color-primary-dark: #14532D;   /* Header, footer, stats bar backgrounds */
+  --color-primary-soft: #DCFCE7;   /* Active menu item, selected states, soft tags */
+  --color-accent: #F59E0B;         /* ONLY main call-to-action buttons */
+  --color-accent-hover: #D97706;   /* Accent hover */
+
+  /* Neutral Colors */
+  --color-page-bg: #F7F9F8;        /* Page background (~60%) */
+  --color-surface: #FFFFFF;        /* Cards, sidebar, tables, modals */
+  --color-surface-muted: #F3F4F6;  /* Neutral badges, chips, input backgrounds */
+  --color-border: #E5E7EB;         /* Soft borders */
+  --color-border-strong: #D1D5DB;  /* Stronger borders for chips / inputs */
+  --color-text: #1F2937;           /* Main high-contrast text */
+  --color-text-muted: #4B5563;     /* Labels and helper text (never lighter than this) */
+
+  /* Semantic Colors (Functional Only) */
+  --color-success: #15803D;        /* Active status */
+  --color-success-soft: #DCFCE7;   /* Active status background */
+  --color-danger: #DC2626;         /* Delete, deactivate, errors, "নতুন" badge */
+  --color-danger-soft: #FEE2E2;    /* Danger background */
+  --color-warning: #B45309;        /* Special badges like "SUPER" */
+  --color-warning-soft: #FEF3C7;   /* Warning background */
+  --color-info: #1D4ED8;           /* Info state */
+  --color-info-soft: #DBEAFE;      /* Info background */
+
+  /* Typography */
+  --font-ui: 'Hind Siliguri', 'Noto Sans Bengali', system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Shape & Radius */
+  --radius-btn: 8px;
+  --radius-input: 8px;
+  --radius-card: 12px;
+  --radius-badge: 9999px;
+
+  /* Shadow (Flat & simple: single light shadow) */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+}
+

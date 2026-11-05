@@ -18,11 +18,14 @@ import {
 } from 'lucide-react';
 
 export default function SchoolSettings() {
-  const { schoolInfo, setSchoolInfo, resetToDefaults } = useSchool();
+  const { schoolInfo, setSchoolInfo, resetToDefaults, authUser } = useSchool();
   const [formData, setFormData] = useState({ ...schoolInfo });
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [logoUploadStatus, setLogoUploadStatus] = useState('');
   const [campusUploadStatus, setCampusUploadStatus] = useState('');
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [resetConfirmText, setResetConfirmText] = useState('');
+  const [resetError, setResetError] = useState('');
   const logoInputRef = useRef(null);
   const campusInputRef = useRef(null);
 
@@ -611,28 +614,101 @@ export default function SchoolSettings() {
           )}
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t">
-            <button
-              type="button"
-              onClick={() => {
-                if (confirm('সতর্কতা: আপনি কি নিশ্চিত যে সকল কাস্টম ডেটা মুছে ডিফল্ট সেটিংসে ফিরে যেতে চান?')) {
-                  resetToDefaults();
-                }
-              }}
-              className="text-rose-600 hover:text-rose-800 font-bold text-xs flex items-center gap-1.5 transition"
-            >
-              <AlertTriangle className="w-4 h-4" />
-              <span>সকল ডেটা ফ্যাক্টরি রিসেট করুন (Reset to Defaults)</span>
-            </button>
+            {/* Factory Reset only available to SuperAdmin (A9) */}
+            {authUser?.role === 'superadmin' ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setResetConfirmText('');
+                  setResetError('');
+                  setShowResetModal(true);
+                }}
+                className="text-[#DC2626] hover:text-red-700 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
+              >
+                <AlertTriangle className="w-4 h-4 text-[#DC2626]" />
+                <span>সকল ডেটা ফ্যাক্টরি রিসেট করুন (Reset to Defaults)</span>
+              </button>
+            ) : (
+              <div className="text-xs text-[#4B5563]">
+                * ফ্যাক্টরি রিসেটের অনুমতি শুধুমাত্র সুপার অ্যাডমিনের রয়েছে।
+              </div>
+            )}
 
             <button
               type="submit"
-              className="w-full sm:w-auto bg-emerald-800 hover:bg-emerald-700 text-white font-bold py-3.5 px-8 rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2"
+              className="w-full sm:w-auto btn-primary py-3.5 px-8 rounded-lg text-xs font-bold transition shadow-xs flex items-center justify-center gap-2 cursor-pointer"
             >
-              <Save className="w-4 h-4 text-amber-300" />
+              <Save className="w-4 h-4 text-white" />
               <span>পরিবর্তন সংরক্ষণ ও ওয়েবসাইটে প্রকাশ করুন</span>
             </button>
           </div>
         </form>
+
+        {/* SuperAdmin Factory Reset Security Modal (A9) */}
+        {showResetModal && (
+          <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl max-w-md w-full p-6 border border-red-300 shadow-2xl space-y-4">
+              <div className="flex items-center gap-3 text-[#DC2626]">
+                <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+                  <AlertTriangle className="w-5 h-5 text-[#DC2626]" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[#1F2937]">ফ্যাক্টরি রিসেট নিশ্চিতকরণ</h3>
+                  <p className="text-xs text-[#4B5563]">এটি আপনার সকল কাস্টম তথ্য চিরতরে মুছে দেবে</p>
+                </div>
+              </div>
+
+              <div className="bg-[#FEF3C7] p-3 rounded-lg border border-[#F59E0B] text-xs text-[#92400E] leading-relaxed">
+                সতর্কতা: ফ্যাক্টরি রিসেট সম্পন্ন হলে সকল শিক্ষার্থী, ফলাফল, ভর্তি আবেদন এবং সেটিংস ডিফল্ট অবস্থায় ফিরে যাবে।
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#1F2937] mb-1">
+                  নিশ্চিত করতে নিচে ইংরেজিতে <strong>RESET</strong> লিখুন:
+                </label>
+                <input
+                  type="text"
+                  value={resetConfirmText}
+                  onChange={(e) => {
+                    setResetConfirmText(e.target.value);
+                    setResetError('');
+                  }}
+                  placeholder="RESET"
+                  className="w-full rounded-lg border border-[#D1D5DB] p-2.5 font-mono text-xs font-bold text-[#1F2937] bg-[#F7F9F8] uppercase"
+                />
+                {resetError && (
+                  <p className="text-[#DC2626] text-xs mt-1 font-semibold">{resetError}</p>
+                )}
+              </div>
+
+              <div className="flex gap-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowResetModal(false)}
+                  className="flex-1 bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#1F2937] py-2 rounded-lg text-xs font-bold transition border border-[#D1D5DB] cursor-pointer"
+                >
+                  বাতিল করুন
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (resetConfirmText.trim() !== 'RESET') {
+                      setResetError('দয়া করে সঠিকভাবে "RESET" লিখুন।');
+                      return;
+                    }
+                    const success = resetToDefaults('RESET');
+                    if (success) {
+                      setShowResetModal(false);
+                    }
+                  }}
+                  className="flex-1 btn-danger py-2 rounded-lg text-xs font-bold transition cursor-pointer"
+                >
+                  রিসেট সম্পন্ন করুন
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

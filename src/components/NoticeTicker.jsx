@@ -28,22 +28,18 @@ export default function NoticeTicker() {
 
   const currentNotice = latestNotices[currentIdx] || latestNotices[0];
 
-  // If scrolled or on subpages where user is reading specific content, do not float over headings
-  const shouldShow = activeTab === 'home' && !isScrolled;
+  // Completely remove from render when scrolled or on any subpage, avoiding any collision with headings
+  if (activeTab !== 'home' || isScrolled) return null;
 
   return (
     <div 
-      className={`fixed top-18 sm:top-20 left-0 right-0 z-40 px-3 sm:px-6 pointer-events-none no-print transition-all duration-300 ${
-        shouldShow 
-          ? 'opacity-100 translate-y-0' 
-          : 'opacity-0 -translate-y-6 pointer-events-none'
-      }`}
+      className="fixed top-24 left-0 right-0 z-40 px-3 sm:px-6 pointer-events-none no-print transition-all duration-300"
     >
       <div className="max-w-fit mx-auto pointer-events-auto">
         {/* Floating Frosted Notice Pill */}
         <div 
           onClick={() => setActiveTab('notices')}
-          className="glass-capsule rounded-full px-3.5 sm:px-5 py-1 sm:py-1.5 text-xs text-white shadow-xl flex items-center gap-2 sm:gap-2.5 font-bangla cursor-pointer hover:border-amber-400/50 transition-all duration-300 group border border-white/20"
+          className="rounded-full px-3.5 sm:px-5 py-1 sm:py-1.5 text-xs text-white shadow-xl flex items-center gap-2 sm:gap-2.5 font-bangla cursor-pointer hover:border-amber-400/50 transition-all duration-300 group border border-white/20 bg-[#14532D]"
           title="Click to view all notices"
         >
           {/* Pulsing Red Dot & Urgent Tag */}

@@ -137,8 +137,8 @@ export default function AcademicPrograms() {
                 key={idx} 
                 className="bg-slate-50 hover:bg-emerald-50/60 p-4 rounded-2xl border border-slate-200 text-center transition group hover:shadow-xs"
               >
-                <span className="w-9 h-9 rounded-full bg-emerald-800 text-white font-mono font-extrabold text-sm flex items-center justify-center mx-auto mb-3 shadow-sm group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">
-                  {idx + 6}
+                <span className="w-9 h-9 rounded-full bg-emerald-800 text-white font-extrabold text-sm flex items-center justify-center mx-auto mb-3 shadow-sm group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">
+                  {lang === 'bn' ? ['৬', '৭', '৮', '৯', '১০'][idx] : (idx + 6)}
                 </span>
                 <h4 className="text-xs sm:text-sm font-bold font-bangla text-slate-900 group-hover:text-emerald-900 transition">{cls}</h4>
                 <p className="text-[11px] text-slate-500 mt-1 font-bangla">
@@ -189,24 +189,24 @@ export default function AcademicPrograms() {
 
           {/* Active Group Details Card */}
           {groups.filter(g => g.id === activeGroupTab).map(grp => (
-            <div key={grp.id} className="glass-card rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-md animate-in fade-in duration-300">
-              <div className="max-w-3xl">
-                <h3 className="text-xl sm:text-2xl font-extrabold font-bangla text-slate-900 mb-2 flex items-center gap-2.5">
-                  <span className="text-amber-500">❖</span>
+            <div key={grp.id} className="bg-white rounded-2xl p-6 sm:p-10 border border-[#E5E7EB] shadow-xs animate-in fade-in duration-300">
+              <div className="w-full">
+                <h3 className="text-xl sm:text-2xl font-extrabold font-bangla text-[#1F2937] mb-2 flex items-center gap-2.5">
+                  <span className="text-[#F59E0B]">❖</span>
                   <span>{lang === 'bn' ? grp.titleBn : grp.titleEn}</span>
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 font-bangla leading-relaxed mb-6">
+                <p className="text-xs sm:text-sm text-[#4B5563] font-bangla leading-relaxed mb-6">
                   {grp.descriptionBn}
                 </p>
 
-                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 font-mono">
+                <h4 className="text-sm font-bold text-[#1F2937] mb-3 font-bangla">
                   {lang === 'bn' ? 'অন্তর্ভুক্ত আবশ্যিক ও ঐচ্ছিক বিষয়সমূহ:' : 'Core & Elective Subjects:'}
                 </h4>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {grp.subjectsBn.map((subj, i) => (
-                    <div key={i} className="flex items-center gap-2.5 bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs font-bangla text-slate-800">
-                      <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <div key={i} className="flex items-center gap-2.5 bg-[#F7F9F8] p-3 rounded-xl border border-[#E5E7EB] text-xs font-bangla text-[#1F2937]">
+                      <CheckCircle className="w-4 h-4 text-[#166534] shrink-0" />
                       <span className="font-medium">{subj}</span>
                     </div>
                   ))}

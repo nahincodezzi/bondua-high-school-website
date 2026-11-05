@@ -1,17 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useSchool } from '../../context/useSchool';
+import { toBanglaNumerals } from '../../utils/dateFormatter';
 import { 
   Search, 
   CheckCircle2, 
   Eye, 
-  X
+  X,
+  UserCheck
 } from 'lucide-react';
 
 export default function AdmissionManager() {
-  const { admissions, updateAdmissionStatus } = useSchool();
+  const { admissions, updateAdmissionStatus, approveAdmissionAndCreateStudent } = useSchool();
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewModalApp, setViewModalApp] = useState(null);
+  const [actionSuccess, setActionSuccess] = useState('');
+
+  // Close modal on Escape
+  useEffect(() => {
+    if (!viewModalApp) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setViewModalApp(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [viewModalApp]);
+
+  const handleApprove = (app) => {
+    if (confirm(`আপনি কি "${app.studentNameBn || app.studentNameEn}"-এর ভর্তি আবেদন অনুমোদন করে শিক্ষার্থী ডাটাবেজে রেকর্ড তৈরি করতে চান?`)) {
+      const createdStudent = approveAdmissionAndCreateStudent(app);
+      setActionSuccess(`আবেদন সফলভাবে অনুমোদিত হয়েছে! ${createdStudent.nameBn}-কে শ্রেণি ${createdStudent.class}, রোল ${createdStudent.roll} ও স্টুডেন্ট আইডি ${createdStudent.studentId} বরাদ্দ করা হয়েছে।`);
+      setTimeout(() => setActionSuccess(''), 6000);
+    }
+  };
 
   const filtered = admissions.filter(app => {
     const matchesStatus = filterStatus === 'all' || app.status === filterStatus;
@@ -26,13 +48,21 @@ export default function AdmissionManager() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl sm:text-2xl font-bold font-bangla text-slate-900">
+        <h2 className="text-xl sm:text-2xl font-bold font-bangla text-[#1F2937]">
           ভর্তি আবেদন যাচাই ও অনুমোদন (Admission Review)
         </h2>
-        <p className="text-xs text-slate-500 font-bangla">
-          ২০২৬ শিক্ষাবর্ষে ৬ষ্ঠ থেকে ৯ম শ্রেণিতে ভর্তির আবেদনসমূহ পর্যবেক্ষণ ও অনুমোদন
+        <p className="text-xs text-[#4B5563] font-bangla">
+          ২০২৭ শিক্ষাবর্ষে ৬ষ্ঠ থেকে ৯ম শ্রেণিতে ভর্তির আবেদনসমূহ পর্যবেক্ষণ ও অনুমোদন
         </p>
       </div>
+
+      {/* Success Alert Banner (A10) */}
+      {actionSuccess && (
+        <div className="p-4 bg-[#DCFCE7] text-[#14532D] rounded-xl text-xs font-bold flex items-center gap-2 border border-emerald-300">
+          <UserCheck className="w-5 h-5 text-[#166534] shrink-0" />
+          <span>{actionSuccess}</span>
+        </div>
+      )}
 
       {/* Filter and Search Bar */}
       <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -115,16 +145,16 @@ export default function AdmissionManager() {
 
                         {app.status === 'Pending' ? (
                           <button
-                            onClick={() => updateAdmissionStatus(app.id, 'Approved')}
-                            className="p-1.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-lg text-xs font-bold"
-                            title="Approve"
+                            onClick={() => handleApprove(app)}
+                            className="p-1.5 bg-[#166534] hover:bg-[#14532D] text-white rounded-lg text-xs font-bold cursor-pointer"
+                            title="অনুমোদন ও শিক্ষার্থী তৈরি করুন"
                           >
-                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            <CheckCircle2 className="w-3.5 h-3.5 text-white" />
                           </button>
                         ) : (
                           <button
                             onClick={() => updateAdmissionStatus(app.id, 'Pending')}
-                            className="p-1.5 bg-amber-100 text-amber-800 hover:bg-amber-200 rounded-lg text-[10px] font-bold"
+                            className="p-1.5 bg-[#FEF3C7] text-[#92400E] hover:bg-amber-200 rounded-lg text-[10px] font-bold cursor-pointer"
                             title="Set Pending"
                           >
                             রিভার্ট
@@ -146,70 +176,78 @@ export default function AdmissionManager() {
         </div>
       </div>
 
-      {/* View Application Modal */}
-      {viewModalApp && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white max-w-lg w-full rounded-2xl overflow-hidden shadow-2xl border border-slate-200 p-6 space-y-4 font-bangla">
-            <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="font-bold text-slate-900 text-base">
+      {/* View Application Modal (M6 - createPortal) */}
+      {viewModalApp && typeof document !== 'undefined' && createPortal(
+        <div 
+          className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="bg-white max-w-lg w-full rounded-2xl overflow-hidden shadow-2xl border border-[#E5E7EB] p-6 space-y-4 font-bangla">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
+              <h3 className="font-bold text-[#1F2937] text-base">
                 ভর্তি আবেদন পত্র বিস্তারিত
               </h3>
-              <button onClick={() => setViewModalApp(null)} className="text-slate-400 hover:text-slate-700">
+              <button 
+                onClick={() => setViewModalApp(null)} 
+                className="text-[#4B5563] hover:text-[#1F2937] p-1 rounded-lg hover:bg-[#F3F4F6] cursor-pointer"
+                aria-label="বন্ধ করুন"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="space-y-3 text-xs">
-              <div className="p-3 bg-slate-50 rounded-xl space-y-1">
+              <div className="p-3 bg-[#F7F9F8] rounded-xl space-y-1.5 border border-[#E5E7EB]">
                 <div className="flex justify-between">
-                  <span className="text-slate-500">ট্র্যাকিং আইডি:</span>
-                  <span className="font-mono font-bold text-slate-900">{viewModalApp.trackingId}</span>
+                  <span className="text-[#4B5563]">ট্র্যাকিং আইডি:</span>
+                  <span className="font-mono font-bold text-[#1F2937]">{viewModalApp.trackingId}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">শিক্ষার্থীর নাম:</span>
-                  <span className="font-bold text-slate-900">{viewModalApp.studentNameBn} ({viewModalApp.studentNameEn})</span>
+                  <span className="text-[#4B5563]">শিক্ষার্থীর নাম:</span>
+                  <span className="font-bold text-[#1F2937]">{viewModalApp.studentNameBn} ({viewModalApp.studentNameEn})</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">আবেদনকৃত শ্রেণি:</span>
-                  <span className="font-bold text-emerald-800">{viewModalApp.applyingClass} শ্রেণি</span>
+                  <span className="text-[#4B5563]">আবেদনকৃত শ্রেণি:</span>
+                  <span className="font-bold text-[#14532D]">{toBanglaNumerals(viewModalApp.applyingClass)} শ্রেণি</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">লিঙ্গ ও রক্তের গ্রুপ:</span>
+                  <span className="text-[#4B5563]">লিঙ্গ ও রক্তের গ্রুপ:</span>
                   <span>{viewModalApp.gender} • {viewModalApp.bloodGroup}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">পিতার নাম:</span>
+                  <span className="text-[#4B5563]">পিতার নাম:</span>
                   <span>{viewModalApp.fatherName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">মাতার নাম:</span>
+                  <span className="text-[#4B5563]">মাতার নাম:</span>
                   <span>{viewModalApp.motherName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">অভিভাবকের মোবাইল:</span>
-                  <span className="font-mono font-bold text-slate-900">{viewModalApp.guardianPhone}</span>
+                  <span className="text-[#4B5563]">অভিভাবকের মোবাইল:</span>
+                  <span className="font-mono font-bold text-[#1F2937]">{viewModalApp.guardianPhone}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">পূর্ববর্তী বিদ্যালয়:</span>
+                  <span className="text-[#4B5563]">পূর্ববর্তী বিদ্যালয়:</span>
                   <span>{viewModalApp.previousSchool} (GPA: {viewModalApp.previousGpa})</span>
                 </div>
                 <div className="pt-1">
-                  <span className="text-slate-500 block">ঠিকানা:</span>
-                  <span className="text-slate-700">{viewModalApp.address}</span>
+                  <span className="text-[#4B5563] block">ঠিকানা:</span>
+                  <span className="text-[#1F2937]">{viewModalApp.address}</span>
                 </div>
               </div>
 
               <div className="flex items-center justify-between pt-2">
-                <span className="font-semibold text-slate-700">বর্তমান স্ট্যাটাস: {viewModalApp.status}</span>
+                <span className="font-semibold text-[#1F2937]">বর্তমান স্ট্যাটাস: {viewModalApp.status}</span>
                 {viewModalApp.status === 'Pending' ? (
                   <button
                     onClick={() => {
-                      updateAdmissionStatus(viewModalApp.id, 'Approved');
+                      approveAdmissionAndCreateStudent(viewModalApp);
                       setViewModalApp(null);
                     }}
-                    className="bg-emerald-800 text-white px-4 py-2 rounded-xl text-xs font-bold"
+                    className="bg-[#14532D] hover:bg-[#166534] text-white px-4 py-2 rounded-xl text-xs font-bold cursor-pointer"
                   >
-                    আবেদন অনুমোদন করুন
+                    অনুমোদন ও শিক্ষার্থী হিসেবে ভর্তি
                   </button>
                 ) : (
                   <button
@@ -217,7 +255,7 @@ export default function AdmissionManager() {
                       updateAdmissionStatus(viewModalApp.id, 'Pending');
                       setViewModalApp(null);
                     }}
-                    className="bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold"
+                    className="bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#1F2937] px-4 py-2 rounded-xl text-xs font-bold cursor-pointer"
                   >
                     অপেক্ষমাণ রাখুন
                   </button>
@@ -225,7 +263,8 @@ export default function AdmissionManager() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

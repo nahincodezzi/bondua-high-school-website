@@ -31,178 +31,172 @@ export default function UniformSection() {
         {/* Two Main Uniform Cards: Boys & Girls */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
           {/* BOYS UNIFORM CARD */}
-          <div className="relative glass-card rounded-3xl p-6 sm:p-8 border-2 border-blue-200/90 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden group">
-            {/* Top Color Accent Ribbon */}
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 to-indigo-800"></div>
-
+          <div className="bg-white rounded-2xl p-6 sm:p-8 border border-[#E5E7EB] shadow-xs hover:border-[#166534] transition-all duration-200 flex flex-col justify-between">
             <div className="space-y-6">
               {/* Card Title & Icon */}
-              <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 pb-4 border-b border-blue-100">
+              <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 pb-4 border-b border-[#E5E7EB]">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-900 text-white flex items-center justify-center font-bold shadow-md">
-                    <Users className="w-6 h-6" />
+                  <div className="w-11 h-11 rounded-xl bg-[#DCFCE7] text-[#166534] flex items-center justify-center font-bold shadow-xs">
+                    <Users className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider font-mono">BOYS DRESS CODE</span>
-                    <h3 className="text-xl sm:text-2xl font-bold font-bangla text-slate-900">
+                    <span className="text-[10px] font-bold text-[#4B5563] uppercase tracking-wider font-mono">BOYS DRESS CODE</span>
+                    <h3 className="text-xl sm:text-2xl font-bold font-bangla text-[#1F2937]">
                       {lang === 'bn' ? 'ছাত্রদের স্কুল পোশাক' : "Boys' School Uniform"}
                     </h3>
                   </div>
                 </div>
 
-                {/* Color Swatch Badge */}
-                <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-blue-200 shadow-xs">
-                  <span className="w-4 h-4 rounded-full bg-white border border-slate-300 shadow-xs" title="White Shirt"></span>
-                  <span className="w-4 h-4 rounded-full bg-blue-900 border border-blue-950 shadow-xs" title="Blue Pant"></span>
-                  <span className="text-[11px] font-bold text-slate-700 font-bangla ml-1">{lang === 'bn' ? 'সাদা ও নীল' : 'White & Blue'}</span>
+                {/* Color Swatch Badge: Neutral */}
+                <div className="flex items-center gap-1.5 bg-[#F3F4F6] px-3 py-1.5 rounded-full border border-[#D1D5DB] shadow-xs">
+                  <span className="w-3.5 h-3.5 rounded-full bg-white border border-[#D1D5DB]" title="White Shirt"></span>
+                  <span className="w-3.5 h-3.5 rounded-full bg-slate-800 border border-slate-900" title="Blue Pant"></span>
+                  <span className="text-xs font-bold text-[#374151] font-bangla ml-1">{lang === 'bn' ? 'সাদা ও নীল' : 'White & Blue'}</span>
                 </div>
               </div>
 
               {/* Items List */}
               <div className="space-y-3 font-bangla text-xs sm:text-sm">
-                <div className="flex items-start gap-3 bg-white p-3.5 rounded-2xl border border-blue-100 shadow-xs">
-                  <div className="w-6 h-6 rounded-lg bg-blue-100 text-blue-900 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                <div className="flex items-start gap-3 bg-[#F7F9F8] p-3.5 rounded-xl border border-[#E5E7EB]">
+                  <div className="w-6 h-6 rounded-md bg-[#F3F4F6] text-[#166534] border border-[#E5E7EB] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
                     ১
                   </div>
                   <div>
-                    <span className="font-bold text-slate-900 block text-sm">শার্ট (Shirt):</span>
-                    <span className="text-blue-950 font-semibold text-xs sm:text-sm">{uniformInfo.boys.shirtBn}</span>
-                    <p className="text-[11px] text-slate-500 mt-0.5">কলারযুক্ত পরিপাটি ধবধবে সাদা হাফ অথবা ফুল হাতা শার্ট।</p>
+                    <span className="font-bold text-[#1F2937] block text-sm">শার্ট (Shirt):</span>
+                    <span className="text-[#1F2937] font-semibold text-xs sm:text-sm">{uniformInfo.boys.shirtBn}</span>
+                    <p className="text-xs text-[#4B5563] mt-0.5">কলারযুক্ত পরিপাটি ধবধবে সাদা হাফ অথবা ফুল হাতা শার্ট।</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 bg-white p-3.5 rounded-2xl border border-blue-100 shadow-xs">
-                  <div className="w-6 h-6 rounded-lg bg-blue-100 text-blue-900 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                <div className="flex items-start gap-3 bg-[#F7F9F8] p-3.5 rounded-xl border border-[#E5E7EB]">
+                  <div className="w-6 h-6 rounded-md bg-[#F3F4F6] text-[#166534] border border-[#E5E7EB] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
                     ২
                   </div>
                   <div>
-                    <span className="font-bold text-slate-900 block text-sm">প্যান্ট (Pants):</span>
-                    <span className="text-blue-950 font-semibold text-xs sm:text-sm">{uniformInfo.boys.pantBn}</span>
-                    <p className="text-[11px] text-slate-500 mt-0.5">ফরমাল কাটিংয়ের নেভি ব্লু / গাঢ় নীল রঙের ফুল প্যান্ট।</p>
+                    <span className="font-bold text-[#1F2937] block text-sm">প্যান্ট (Pants):</span>
+                    <span className="text-[#1F2937] font-semibold text-xs sm:text-sm">{uniformInfo.boys.pantBn}</span>
+                    <p className="text-xs text-[#4B5563] mt-0.5">ফরমাল কাটিংয়ের নেভি ব্লু / গাঢ় নীল রঙের ফুল প্যান্ট।</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 bg-white p-3.5 rounded-2xl border border-blue-100 shadow-xs">
-                  <div className="w-6 h-6 rounded-lg bg-blue-100 text-blue-900 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                <div className="flex items-start gap-3 bg-[#F7F9F8] p-3.5 rounded-xl border border-[#E5E7EB]">
+                  <div className="w-6 h-6 rounded-md bg-[#F3F4F6] text-[#166534] border border-[#E5E7EB] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
                     ৩
                   </div>
                   <div>
-                    <span className="font-bold text-slate-900 block text-sm">জুতা ও মোজা (Footwear):</span>
-                    <span className="text-slate-800 font-medium">{uniformInfo.boys.shoesBn}</span>
+                    <span className="font-bold text-[#1F2937] block text-sm">জুতা ও মোজা (Footwear):</span>
+                    <span className="text-[#1F2937] font-medium">{uniformInfo.boys.shoesBn}</span>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 bg-white p-3.5 rounded-2xl border border-blue-100 shadow-xs">
-                  <div className="w-6 h-6 rounded-lg bg-blue-100 text-blue-900 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                <div className="flex items-start gap-3 bg-[#F7F9F8] p-3.5 rounded-xl border border-[#E5E7EB]">
+                  <div className="w-6 h-6 rounded-md bg-[#F3F4F6] text-[#166534] border border-[#E5E7EB] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
                     ৪
                   </div>
                   <div>
-                    <span className="font-bold text-slate-900 block text-sm">ব্যাজ ও বেল্ট (Accessories):</span>
-                    <span className="text-slate-800 font-medium">{uniformInfo.boys.badgeBn} এবং {uniformInfo.boys.beltBn}</span>
+                    <span className="font-bold text-[#1F2937] block text-sm">ব্যাজ ও বেল্ট (Accessories):</span>
+                    <span className="text-[#1F2937] font-medium">{uniformInfo.boys.badgeBn} এবং {uniformInfo.boys.beltBn}</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-blue-100 flex items-center justify-between text-xs text-blue-900 font-semibold font-bangla">
+            <div className="mt-6 pt-4 border-t border-[#E5E7EB] flex items-center justify-between text-xs text-[#4B5563] font-semibold font-bangla">
               <span>{lang === 'bn' ? 'প্রতিদিন নির্ধারিত পোশাক পরা আবশ্যক' : 'Mandatory to wear prescribed uniform daily'}</span>
-              <span className="bg-blue-100 px-3 py-1 rounded-full text-[11px] text-blue-900 font-bold">{lang === 'bn' ? 'ছাত্রদের পোশাক কোড' : 'Boys Dress Code'}</span>
+              <span className="badge-neutral text-[11px]">{lang === 'bn' ? 'ছাত্রদের পোশাক কোড' : 'Boys Dress Code'}</span>
             </div>
           </div>
 
           {/* GIRLS UNIFORM CARD */}
-          <div className="relative glass-card rounded-3xl p-6 sm:p-8 border-2 border-rose-200/90 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden group">
-            {/* Top Color Accent Ribbon */}
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-rose-600 to-red-700"></div>
-
+          <div className="bg-white rounded-2xl p-6 sm:p-8 border border-[#E5E7EB] shadow-xs hover:border-[#166534] transition-all duration-200 flex flex-col justify-between">
             <div className="space-y-6">
               {/* Card Title & Icon */}
-              <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 pb-4 border-b border-rose-100">
+              <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 pb-4 border-b border-[#E5E7EB]">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-rose-600 text-white flex items-center justify-center font-bold shadow-md">
-                    <Users className="w-6 h-6" />
+                  <div className="w-11 h-11 rounded-xl bg-[#DCFCE7] text-[#166534] flex items-center justify-center font-bold shadow-xs">
+                    <Users className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold text-rose-700 uppercase tracking-wider font-mono">GIRLS DRESS CODE</span>
-                    <h3 className="text-xl sm:text-2xl font-bold font-bangla text-slate-900">
+                    <span className="text-[10px] font-bold text-[#4B5563] uppercase tracking-wider font-mono">GIRLS DRESS CODE</span>
+                    <h3 className="text-xl sm:text-2xl font-bold font-bangla text-[#1F2937]">
                       {lang === 'bn' ? 'ছাত্রীদের স্কুল পোশাক' : "Girls' School Uniform"}
                     </h3>
                   </div>
                 </div>
 
-                {/* Color Swatch Badge */}
-                <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-rose-200 shadow-xs">
-                  <span className="w-4 h-4 rounded-full bg-rose-600 border border-rose-700 shadow-xs" title="Red Dress"></span>
-                  <span className="w-4 h-4 rounded-full bg-white border border-slate-300 shadow-xs" title="White Salwar"></span>
-                  <span className="text-[11px] font-bold text-slate-700 font-bangla ml-1">{lang === 'bn' ? 'লাল ও সাদা' : 'Red & White'}</span>
+                {/* Color Swatch Badge: Neutral */}
+                <div className="flex items-center gap-1.5 bg-[#F3F4F6] px-3 py-1.5 rounded-full border border-[#D1D5DB] shadow-xs">
+                  <span className="w-3.5 h-3.5 rounded-full bg-red-700 border border-red-800" title="Red Dress"></span>
+                  <span className="w-3.5 h-3.5 rounded-full bg-white border border-[#D1D5DB]" title="White Salwar"></span>
+                  <span className="text-xs font-bold text-[#374151] font-bangla ml-1">{lang === 'bn' ? 'লাল ও সাদা' : 'Red & White'}</span>
                 </div>
               </div>
 
               {/* Items List */}
               <div className="space-y-3 font-bangla text-xs sm:text-sm">
-                <div className="flex items-start gap-3 bg-white p-3.5 rounded-2xl border border-rose-100 shadow-xs">
-                  <div className="w-6 h-6 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                <div className="flex items-start gap-3 bg-[#F7F9F8] p-3.5 rounded-xl border border-[#E5E7EB]">
+                  <div className="w-6 h-6 rounded-md bg-[#F3F4F6] text-[#166534] border border-[#E5E7EB] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
                     ১
                   </div>
                   <div>
-                    <span className="font-bold text-slate-900 block text-sm">পোশাক / কামিজ (Dress):</span>
-                    <span className="text-rose-900 font-bold text-xs sm:text-sm">{uniformInfo.girls.dressBn}</span>
-                    <p className="text-[11px] text-slate-500 mt-0.5">নির্ধারিত শেডের মার্জিত ও পরিপাটি লাল ফ্রক অথবা কামিজ।</p>
+                    <span className="font-bold text-[#1F2937] block text-sm">পোশাক / কামিজ (Dress):</span>
+                    <span className="text-[#1F2937] font-semibold text-xs sm:text-sm">{uniformInfo.girls.dressBn}</span>
+                    <p className="text-xs text-[#4B5563] mt-0.5">নির্ধারিত শেডের মার্জিত ও পরিপাটি লাল ফ্রক অথবা কামিজ।</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 bg-white p-3.5 rounded-2xl border border-rose-100 shadow-xs">
-                  <div className="w-6 h-6 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                <div className="flex items-start gap-3 bg-[#F7F9F8] p-3.5 rounded-xl border border-[#E5E7EB]">
+                  <div className="w-6 h-6 rounded-md bg-[#F3F4F6] text-[#166534] border border-[#E5E7EB] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
                     ২
                   </div>
                   <div>
-                    <span className="font-bold text-slate-900 block text-sm">পায়জামা ও ওড়না (Salwar & Scarf):</span>
-                    <span className="text-slate-800 font-semibold">{uniformInfo.girls.salwarBn} এবং {uniformInfo.girls.ornaBn}</span>
-                    <p className="text-[11px] text-slate-500 mt-0.5">ধবধবে সাদা রঙের সালোয়ার এবং পরিচ্ছন্ন সাদা ওড়না/স্কার্ফ।</p>
+                    <span className="font-bold text-[#1F2937] block text-sm">পায়জামা ও ওড়না (Salwar & Scarf):</span>
+                    <span className="text-[#1F2937] font-medium">{uniformInfo.girls.salwarBn} এবং {uniformInfo.girls.ornaBn}</span>
+                    <p className="text-xs text-[#4B5563] mt-0.5">ধবধবে সাদা রঙের সালোয়ার এবং পরিচ্ছন্ন সাদা ওড়না/স্কার্ফ।</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 bg-white p-3.5 rounded-2xl border border-rose-100 shadow-xs">
-                  <div className="w-6 h-6 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                <div className="flex items-start gap-3 bg-[#F7F9F8] p-3.5 rounded-xl border border-[#E5E7EB]">
+                  <div className="w-6 h-6 rounded-md bg-[#F3F4F6] text-[#166534] border border-[#E5E7EB] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
                     ৩
                   </div>
                   <div>
-                    <span className="font-bold text-slate-900 block text-sm">চুলের ফিতা (Hair Ribbon):</span>
-                    <span className="text-slate-800 font-medium">{uniformInfo.girls.hairBn}</span>
+                    <span className="font-bold text-[#1F2937] block text-sm">চুলের ফিতা (Hair Ribbon):</span>
+                    <span className="text-[#1F2937] font-medium">{uniformInfo.girls.hairBn}</span>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 bg-white p-3.5 rounded-2xl border border-rose-100 shadow-xs">
-                  <div className="w-6 h-6 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                <div className="flex items-start gap-3 bg-[#F7F9F8] p-3.5 rounded-xl border border-[#E5E7EB]">
+                  <div className="w-6 h-6 rounded-md bg-[#F3F4F6] text-[#166534] border border-[#E5E7EB] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
                     ৪
                   </div>
                   <div>
-                    <span className="font-bold text-slate-900 block text-sm">জুতা ও প্রাতিষ্ঠানিক ব্যাজ:</span>
-                    <span className="text-slate-800 font-medium">{uniformInfo.girls.shoesBn} ও {uniformInfo.girls.badgeBn}</span>
+                    <span className="font-bold text-[#1F2937] block text-sm">জুতা ও প্রাতিষ্ঠানিক ব্যাজ:</span>
+                    <span className="text-[#1F2937] font-medium">{uniformInfo.girls.shoesBn} ও {uniformInfo.girls.badgeBn}</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-rose-100 flex items-center justify-between text-xs text-rose-900 font-semibold font-bangla">
+            <div className="mt-6 pt-4 border-t border-[#E5E7EB] flex items-center justify-between text-xs text-[#4B5563] font-semibold font-bangla">
               <span>{lang === 'bn' ? 'শালীনতা ও পরিচ্ছন্নতা বজায় রাখা আবশ্যিক' : 'Modesty and cleanliness must be maintained'}</span>
-              <span className="bg-rose-100 px-3 py-1 rounded-full text-[11px] text-rose-900 font-bold">{lang === 'bn' ? 'ছাত্রীদের পোশাক কোড' : 'Girls Dress Code'}</span>
+              <span className="badge-neutral text-[11px]">{lang === 'bn' ? 'ছাত্রীদের পোশাক কোড' : 'Girls Dress Code'}</span>
             </div>
           </div>
         </div>
 
         {/* Winter Uniform & Rules Banner */}
-        <div className="glass-card rounded-3xl p-6 sm:p-8 shadow-md border border-slate-200">
+        <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-xs border border-[#E5E7EB]">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center font-bangla">
             <div className="md:col-span-8 space-y-2">
-              <div className="inline-flex items-center gap-2 text-emerald-800 font-bold text-xs bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                <Sparkles className="w-4 h-4 text-amber-500" />
+              <div className="inline-flex items-center gap-2 text-[#14532D] font-bold text-xs bg-[#DCFCE7] px-3 py-1 rounded-full border border-emerald-300">
+                <Sparkles className="w-4 h-4 text-[#166534]" />
                 <span>{lang === 'bn' ? 'শীতকালীন ইউনিফর্ম ও শৃঙ্খলামূলক নীতিমালা' : 'Winter Uniform & Disciplinary Guidelines'}</span>
               </div>
-              <h3 className="text-lg sm:text-2xl font-bold text-slate-900">
+              <h3 className="text-lg sm:text-2xl font-bold text-[#1F2937]">
                 {lang === 'bn' ? uniformInfo.winterBn : uniformInfo.winterEn}
               </h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line">
+              <p className="text-xs sm:text-sm text-[#4B5563] leading-relaxed whitespace-pre-line">
                 {lang === 'bn' ? uniformInfo.guidelinesBn : uniformInfo.guidelinesEn}
               </p>
             </div>
@@ -210,13 +204,13 @@ export default function UniformSection() {
             <div className="md:col-span-4 flex flex-col gap-3">
               <button
                 onClick={() => setActiveTab('admission')}
-                className="btn-gold font-bold py-3 px-5 rounded-full text-xs transition text-center cursor-pointer shadow-md"
+                className="btn-accent font-bold py-3 px-5 text-xs text-center cursor-pointer shadow-xs"
               >
                 {lang === 'bn' ? 'ভর্তি আবেদন নির্দেশিকা দেখুন' : 'View Admission Guidelines'}
               </button>
               <button
                 onClick={() => setActiveTab('notices')}
-                className="bg-white hover:bg-slate-50 text-slate-800 font-semibold py-3 px-5 rounded-full text-xs transition text-center border border-slate-300 cursor-pointer shadow-xs"
+                className="btn-secondary font-semibold py-3 px-5 text-xs text-center cursor-pointer shadow-xs"
               >
                 {lang === 'bn' ? 'পোশাক সংক্রান্ত নোটিশ দেখুন' : 'View Dress Code Circulars'}
               </button>

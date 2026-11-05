@@ -1,7 +1,7 @@
 // Scratch test for avatar generator
 export function createEducatorAvatar({
   _nameEn = "Teacher",
-  initials = "BD",
+  _initials = "BD",
   designation = "Faculty Member",
   gender = "male",
   role = "faculty"
@@ -92,10 +92,13 @@ export function createEducatorAvatar({
       <circle cx="40" cy="31" r="2.5" fill="${accentColor}"/>
     </g>
 
-    <!-- Initials Typography -->
-    <text x="200" y="222" text-anchor="middle" font-family="'Times New Roman', Georgia, serif" font-size="36" font-weight="bold" fill="#ffffff" letter-spacing="2">
-      ${initials}
-    </text>
+    <!-- Educator Emblem Watermark -->
+    <g transform="translate(168, 172) scale(1.3)" opacity="0.85">
+      <circle cx="24" cy="24" r="22" fill="none" stroke="${accentColor}" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <path d="M 12 18 L 24 12 L 36 18 L 24 24 Z" fill="${accentColor}"/>
+      <path d="M 16 21 L 16 28 C 16 32 32 32 32 28 L 32 21" fill="none" stroke="${accentColor}" stroke-width="1.5"/>
+      <line x1="33" y1="19" x2="35" y2="27" stroke="${accentColor}" stroke-width="1.2"/>
+    </g>
   </g>
 
   <!-- Bottom Institutional Bar -->

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useSchool } from '../context/useSchool';
 import { 
   LogIn, 
@@ -6,207 +7,241 @@ import {
   User, 
   Lock,
   Key,
-  AlertCircle
+  AlertCircle,
+  Eye,
+  EyeOff,
+  Shield,
+  GraduationCap,
+  BookOpen,
+  Building2
 } from 'lucide-react';
 
 export default function AuthModal() {
   const { authModalOpen, setAuthModalOpen, authenticate, login, lang } = useSchool();
-  const [role, setRole] = useState('superadmin');
-  const [username, setUsername] = useState('superadmin');
-  const [password, setPassword] = useState('admin123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+
+  // Close on Escape key press
+  useEffect(() => {
+    if (!authModalOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setAuthModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [authModalOpen, setAuthModalOpen]);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (authModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [authModalOpen]);
 
   if (!authModalOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrorMsg('');
-    const result = authenticate(username, password);
+    if (!username.trim()) {
+      setErrorMsg(lang === 'bn' ? 'ইউজারনেম পূরণ করা আবশ্যক।' : 'Username is required.');
+      return;
+    }
+    if (!password) {
+      setErrorMsg(lang === 'bn' ? 'পাসওয়ার্ড পূরণ করা আবশ্যক।' : 'Password is required.');
+      return;
+    }
+    const result = authenticate(username.trim(), password);
     if (!result.success) {
       setErrorMsg(result.message);
     }
   };
 
-  const handlePresetSelect = (presetRole, presetUser, presetPass) => {
-    setRole(presetRole);
-    setUsername(presetUser);
-    setPassword(presetPass);
-    setErrorMsg('');
-  };
-
-  const handleInstantLogin = (presetRole, presetUser, presetPass) => {
+  const handleDevLogin = (presetRole, presetUser, presetPass) => {
     setErrorMsg('');
     const result = authenticate(presetUser, presetPass);
     if (!result.success) {
-      // Fallback
       login(presetRole, presetUser);
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4">
-      <div className="glass-card max-w-lg w-full rounded-3xl shadow-2xl overflow-hidden border border-white/20 animate-in fade-in duration-200">
+  const modalContent = (
+    <div 
+      className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="auth-modal-title"
+    >
+      {/* Backdrop click to close */}
+      <div 
+        className="fixed inset-0 -z-10" 
+        onClick={() => setAuthModalOpen(false)} 
+        aria-hidden="true" 
+      />
+
+      <div className="bg-white max-w-lg w-full rounded-2xl shadow-2xl overflow-hidden border border-[#E5E7EB] animate-in zoom-in-95 duration-200">
         {/* Top Header */}
-        <div className="glass-capsule p-6 relative border-b border-white/10">
+        <div className="bg-[#14532D] text-white p-6 relative border-b border-[#166534]">
           <button
             onClick={() => setAuthModalOpen(false)}
-            className="absolute top-5 right-5 p-1.5 rounded-full glass-pill hover:bg-white/20 text-white/80 hover:text-white transition cursor-pointer"
+            className="absolute top-5 right-5 p-1.5 rounded-full hover:bg-white/10 text-white/80 hover:text-white transition cursor-pointer"
+            aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
 
-          <div className="flex items-center gap-2 text-amber-300 text-xs font-bold uppercase tracking-wider mb-1 font-mono">
-            <Key className="w-4 h-4 text-amber-400" />
+          <div className="flex items-center gap-2 text-[#F59E0B] text-xs font-bold uppercase tracking-wider mb-1 font-mono">
+            <Key className="w-4 h-4 text-[#F59E0B]" />
             <span>{lang === 'bn' ? 'সফটওয়্যার লগইন ও এক্সেস কন্ট্রোল' : 'Secure Portal Access'}</span>
           </div>
 
-          <h3 className="text-xl font-bold font-bangla text-white">
-            {lang === 'bn' ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়' : 'Bondua Doulatpur High School'}
+          <h3 id="auth-modal-title" className="text-xl font-bold font-bangla text-white">
+            {lang === 'bn' ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়' : 'Bandua Daulatpur High School'}
           </h3>
-          <p className="text-xs text-amber-200/90 font-mono mt-0.5">
+          <p className="text-xs text-emerald-100 font-mono mt-0.5">
             EIIN: 106644 • Management ERP & CMS System
           </p>
         </div>
 
-        {/* Role Presets Selector Tabs */}
-        <div className="p-6 sm:p-7 space-y-6">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 glass-pill p-1.5 rounded-2xl border border-white/10 text-[11px] font-bold font-bangla">
-            <button
-              type="button"
-              onClick={() => handlePresetSelect('superadmin', 'superadmin', 'admin123')}
-              className={`py-2 px-1.5 rounded-xl transition text-center cursor-pointer ${
-                role === 'superadmin' ? 'btn-gold shadow-md' : 'text-slate-300 hover:text-white'
-              }`}
-            >
-              👑 সুপার অ্যাডমিন
-            </button>
-            <button
-              type="button"
-              onClick={() => handlePresetSelect('headmaster', 'headmaster', 'headmaster123')}
-              className={`py-2 px-1.5 rounded-xl transition text-center cursor-pointer ${
-                role === 'headmaster' ? 'btn-gold shadow-md' : 'text-slate-300 hover:text-white'
-              }`}
-            >
-              👨‍💼 প্রধান শিক্ষক
-            </button>
-            <button
-              type="button"
-              onClick={() => handlePresetSelect('teacher', 'teacher', 'teacher123')}
-              className={`py-2 px-1.5 rounded-xl transition text-center cursor-pointer ${
-                role === 'teacher' ? 'btn-gold shadow-md' : 'text-slate-300 hover:text-white'
-              }`}
-            >
-              👨‍🏫 সহকারী শিক্ষক
-            </button>
-            <button
-              type="button"
-              onClick={() => handlePresetSelect('operator', 'office_assistant', 'office123')}
-              className={`py-2 px-1.5 rounded-xl transition text-center cursor-pointer ${
-                role === 'operator' ? 'btn-gold shadow-md' : 'text-slate-300 hover:text-white'
-              }`}
-            >
-              🏢 অফিস সহকারী
-            </button>
-          </div>
-
-          {/* Error Message Alert */}
+        {/* Modal Content */}
+        <div className="p-6 sm:p-7 space-y-5 bg-white">
+          {/* Error Alert */}
           {errorMsg && (
-            <div className="p-3.5 glass-card border border-rose-500/30 text-rose-300 text-xs rounded-2xl flex items-center gap-2 font-bangla">
-              <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
-              <span>{errorMsg}</span>
+            <div className="p-3.5 bg-[#FEE2E2] border border-red-200 text-[#DC2626] text-xs rounded-xl flex items-center gap-2 font-bangla">
+              <AlertCircle className="w-4 h-4 shrink-0 text-[#DC2626]" />
+              <span className="font-medium">{errorMsg}</span>
             </div>
           )}
 
-          {/* Form */}
+          {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-4 text-xs font-bangla">
             <div>
-              <label className="block font-bold text-slate-200 mb-1.5">
+              <label htmlFor="auth-username" className="block font-bold text-[#1F2937] mb-1.5">
                 {lang === 'bn' ? 'ব্যবহারকারীর নাম / ইউজার আইডি (Username)' : 'Username / User ID'}
               </label>
               <div className="relative">
-                <User className="w-4 h-4 text-amber-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <User className="w-4 h-4 text-[#166534] absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
+                  id="auth-username"
+                  name="username"
                   type="text"
                   required
+                  autoComplete="username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="glass-input w-full pl-10 pr-4 py-3 rounded-xl font-mono text-xs font-semibold text-white"
+                  placeholder={lang === 'bn' ? 'ইউজারনেম লিখুন' : 'Enter username'}
+                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#D1D5DB] bg-[#F7F9F8] text-[#1F2937] font-mono text-xs font-semibold focus:ring-2 focus:ring-[#166534] focus:outline-none"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block font-bold text-slate-200 mb-1.5">
+              <label htmlFor="auth-password" className="block font-bold text-[#1F2937] mb-1.5">
                 {lang === 'bn' ? 'গোপন পাসওয়ার্ড (Password)' : 'Password'}
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-amber-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Lock className="w-4 h-4 text-[#166534] absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
-                  type="password"
+                  id="auth-password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="glass-input w-full pl-10 pr-4 py-3 rounded-xl font-mono text-xs font-semibold text-white"
+                  placeholder={lang === 'bn' ? 'পাসওয়ার্ড লিখুন' : 'Enter password'}
+                  className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-[#D1D5DB] bg-[#F7F9F8] text-[#1F2937] font-mono text-xs font-semibold focus:ring-2 focus:ring-[#166534] focus:outline-none"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 
             <button
               type="submit"
-              className="w-full btn-gold py-3.5 rounded-full text-xs font-bold transition shadow-lg flex items-center justify-center gap-2 cursor-pointer mt-2"
+              className="w-full btn-accent py-3 rounded-lg text-xs font-bold shadow-md flex items-center justify-center gap-2 cursor-pointer mt-2"
             >
-              <LogIn className="w-4 h-4 text-slate-950" />
+              <LogIn className="w-4 h-4 text-[#1F2937]" />
               <span>{lang === 'bn' ? 'সফটওয়্যার ড্যাশবোর্ডে প্রবেশ করুন' : 'Sign In to Portal'}</span>
             </button>
           </form>
 
-          {/* 1-Click Quick Demo Login Buttons */}
-          <div className="pt-4 border-t border-white/10">
-            <span className="text-[11px] font-bold text-slate-300 block mb-2.5 font-bangla">
-              ⚡ তাৎক্ষণিক ১-ক্লিকে টেস্ট করতে নিচের যেকোনো বাটনে ক্লিক করুন:
-            </span>
-            <div className="grid grid-cols-2 gap-2.5 text-xs font-bangla">
-              <button
-                type="button"
-                onClick={() => handleInstantLogin('superadmin', 'superadmin', 'admin123')}
-                className="glass-card hover:border-amber-400/40 p-2.5 rounded-2xl text-left transition border border-white/10 cursor-pointer"
-              >
-                <div className="font-bold text-white flex items-center gap-1">
-                  <span>👑 সুপার অ্যাডমিন</span>
-                </div>
-                <div className="text-[10px] text-amber-300 font-mono mt-0.5">ID: superadmin</div>
-              </button>
+          {/* Development Environment Quick-Fill Helper (Only shown in DEV mode) */}
+          {import.meta.env.DEV && (
+            <div className="pt-4 border-t border-[#E5E7EB]">
+              <span className="text-[11px] font-bold text-[#4B5563] block mb-2 font-bangla">
+                🛠️ ডেভেলপার টেস্টিং টুল (লোকাল ডেভ মোডে সক্রিয়):
+              </span>
+              <div className="grid grid-cols-2 gap-2 text-xs font-bangla">
+                <button
+                  type="button"
+                  onClick={() => handleDevLogin('superadmin', 'superadmin', 'admin123')}
+                  className="bg-[#F7F9F8] hover:bg-[#DCFCE7]/40 hover:border-[#166534] p-2.5 rounded-xl text-left transition border border-[#E5E7EB] cursor-pointer"
+                >
+                  <div className="font-bold text-[#1F2937] flex items-center gap-1.5">
+                    <Shield className="w-3.5 h-3.5 text-[#166534]" />
+                    <span>সুপার অ্যাডমিন</span>
+                  </div>
+                  <div className="text-[10px] text-[#166534] font-mono mt-0.5">superadmin</div>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => handleInstantLogin('headmaster', 'headmaster', 'headmaster123')}
-                className="glass-card hover:border-amber-400/40 p-2.5 rounded-2xl text-left transition border border-white/10 cursor-pointer"
-              >
-                <div className="font-bold text-white">👨‍💼 প্রধান শিক্ষক</div>
-                <div className="text-[10px] text-amber-300 font-mono mt-0.5">ID: headmaster</div>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => handleDevLogin('headmaster', 'headmaster', 'headmaster123')}
+                  className="bg-[#F7F9F8] hover:bg-[#DCFCE7]/40 hover:border-[#166534] p-2.5 rounded-xl text-left transition border border-[#E5E7EB] cursor-pointer"
+                >
+                  <div className="font-bold text-[#1F2937] flex items-center gap-1.5">
+                    <GraduationCap className="w-3.5 h-3.5 text-[#166534]" />
+                    <span>প্রধান শিক্ষক</span>
+                  </div>
+                  <div className="text-[10px] text-[#166534] font-mono mt-0.5">headmaster</div>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => handleInstantLogin('teacher', 'teacher', 'teacher123')}
-                className="glass-card hover:border-amber-400/40 p-2.5 rounded-2xl text-left transition border border-white/10 cursor-pointer"
-              >
-                <div className="font-bold text-white">👨‍🏫 সহকারী শিক্ষক</div>
-                <div className="text-[10px] text-amber-300 font-mono mt-0.5">ID: teacher</div>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => handleDevLogin('teacher', 'teacher', 'teacher123')}
+                  className="bg-[#F7F9F8] hover:bg-[#DCFCE7]/40 hover:border-[#166534] p-2.5 rounded-xl text-left transition border border-[#E5E7EB] cursor-pointer"
+                >
+                  <div className="font-bold text-[#1F2937] flex items-center gap-1.5">
+                    <BookOpen className="w-3.5 h-3.5 text-[#166534]" />
+                    <span>সহকারী শিক্ষক</span>
+                  </div>
+                  <div className="text-[10px] text-[#166534] font-mono mt-0.5">teacher</div>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => handleInstantLogin('operator', 'office_assistant', 'office123')}
-                className="glass-card hover:border-amber-400/40 p-2.5 rounded-2xl text-left transition border border-white/10 cursor-pointer"
-              >
-                <div className="font-bold text-white">🏢 অফিস সহকারী</div>
-                <div className="text-[10px] text-amber-300 font-mono mt-0.5">ID: office_assistant</div>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => handleDevLogin('operator', 'office_assistant', 'office123')}
+                  className="bg-[#F7F9F8] hover:bg-[#DCFCE7]/40 hover:border-[#166534] p-2.5 rounded-xl text-left transition border border-[#E5E7EB] cursor-pointer"
+                >
+                  <div className="font-bold text-[#1F2937] flex items-center gap-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-[#166534]" />
+                    <span>অফিস সহকারী</span>
+                  </div>
+                  <div className="text-[10px] text-[#166534] font-mono mt-0.5">office_assistant</div>
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
   );
+
+  return typeof document !== 'undefined' ? createPortal(modalContent, document.body) : modalContent;
 }

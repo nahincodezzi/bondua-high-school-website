@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { SchoolContext } from './SchoolContextInstance';
 import { storeVideoFile, getVideoFile, deleteVideoFile } from '../utils/mediaStorage';
+import { getDhakaDateString } from '../utils/dateFormatter';
 import {
   initialSchoolInfo,
   initialUniformInfo,
@@ -228,10 +229,34 @@ export function SchoolProvider({ children }) {
 
   const [routines] = useState(initialRoutines);
 
-  // Sync to LocalStorage on updates
+  // Sync to LocalStorage on updates & update html lang attribute (M3)
   useEffect(() => {
     localStorage.setItem('bdhs_lang', lang);
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = lang;
+    }
   }, [lang]);
+
+  // URL Hash routing synchronization (H4)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && activeTab) {
+      const currentHash = window.location.hash.replace('#', '');
+      if (currentHash !== activeTab) {
+        window.history.replaceState(null, '', `#${activeTab}`);
+      }
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && hash !== activeTab) {
+        setActiveTab(hash);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [activeTab]);
 
   useEffect(() => {
     if (authUser) {
@@ -465,12 +490,30 @@ export function SchoolProvider({ children }) {
   };
 
   const addNotice = (notice) => {
+    const today = getDhakaDateString();
     const newNotice = {
       ...notice,
       id: `not-${Date.now()}`,
-      date: new Date().toISOString().split('T')[0]
+      date: notice.date || today,
+      publishDate: notice.publishDate || notice.date || today
     };
     setNotices(prev => [newNotice, ...prev]);
+    return newNotice;
+  };
+
+  const updateNotice = (id, updatedNotice) => {
+    setNotices(prev => prev.map(n => {
+      if (n.id === id) {
+        const dateVal = updatedNotice.date || n.date;
+        return {
+          ...n,
+          ...updatedNotice,
+          date: dateVal,
+          publishDate: updatedNotice.publishDate || dateVal
+        };
+      }
+      return n;
+    }));
   };
 
   const deleteNotice = (id) => {
@@ -512,12 +555,14 @@ export function SchoolProvider({ children }) {
   };
 
   const submitAdmission = (formData) => {
-    const trackingId = `BDHS-ADM-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    const nextSeq = admissions.length + 1;
+    const trackingId = `BDHS-ADM-2027-${String(nextSeq).padStart(3, '0')}`;
     const newApplication = {
       ...formData,
+      studentNameEn: (formData.studentNameEn || '').trim().toUpperCase(),
       id: `adm-${Date.now()}`,
       trackingId,
-      submissionDate: new Date().toISOString().split('T')[0],
+      submissionDate: getDhakaDateString(),
       status: 'Pending'
     };
     setAdmissions(prev => [newApplication, ...prev]);
@@ -526,6 +571,41 @@ export function SchoolProvider({ children }) {
 
   const updateAdmissionStatus = (id, status) => {
     setAdmissions(prev => prev.map(a => a.id === id ? { ...a, status } : a));
+  };
+
+  const approveAdmissionAndCreateStudent = (admissionApp) => {
+    // 1. Mark status as Approved
+    setAdmissions(prev => prev.map(a => a.id === admissionApp.id ? { ...a, status: 'Approved' } : a));
+
+    // 2. Find next roll in target class
+    const targetClass = admissionApp.applyingClass || '6';
+    const sameClassStudents = students.filter(s => s.class === targetClass);
+    const maxRoll = sameClassStudents.reduce((max, s) => {
+      const r = Number(s.roll);
+      return !isNaN(r) && r > max ? r : max;
+    }, 100);
+    const newRoll = maxRoll + 1;
+
+    // 3. Create student record
+    const createdStudent = {
+      id: `stu-${Date.now()}`,
+      studentId: `BDHS-2027-${newRoll}`,
+      roll: newRoll,
+      nameBn: admissionApp.studentNameBn || admissionApp.studentNameEn,
+      nameEn: (admissionApp.studentNameEn || '').toUpperCase(),
+      class: targetClass,
+      section: 'A',
+      group: admissionApp.group || 'General',
+      gender: admissionApp.gender || 'Male',
+      dob: admissionApp.dob || '2012-01-01',
+      bloodGroup: admissionApp.bloodGroup || '',
+      guardianName: admissionApp.fatherName || admissionApp.motherName || '',
+      guardianPhone: admissionApp.guardianPhone || '',
+      address: admissionApp.address || ''
+    };
+
+    setStudents(prev => [createdStudent, ...prev]);
+    return createdStudent;
   };
 
   const addResult = (resultData) => {
@@ -539,19 +619,44 @@ export function SchoolProvider({ children }) {
     const newFee = {
       ...feeData,
       id: `fee-${Date.now()}`,
-      receiptNo: `REC-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-      paidDate: new Date().toISOString().split('T')[0],
+      receiptNo: `REC-2027-${Math.floor(1000 + Math.random() * 9000)}`,
+      paidDate: getDhakaDateString(),
       status: 'Paid'
     };
     setFees(prev => [newFee, ...prev]);
     return newFee;
   };
 
+  // Contact form persistence (C4)
+  const [contactMessages, setContactMessages] = useState(() => {
+    try {
+      const saved = localStorage.getItem('bdhs_contact_messages');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const submitContactMessage = (msg) => {
+    const newMsg = {
+      id: `msg-${Date.now()}`,
+      ...msg,
+      submittedAt: getDhakaDateString(),
+      status: 'New'
+    };
+    setContactMessages(prev => {
+      const updated = [newMsg, ...prev];
+      localStorage.setItem('bdhs_contact_messages', JSON.stringify(updated));
+      return updated;
+    });
+    return newMsg;
+  };
+
   const addGalleryItem = (item) => {
     const newItem = {
       ...item,
       id: `gal-${Date.now()}`,
-      date: new Date().toISOString().split('T')[0]
+      date: getDhakaDateString()
     };
     setGallery(prev => [newItem, ...prev]);
   };
@@ -578,7 +683,15 @@ export function SchoolProvider({ children }) {
     setVideos(prev => prev.filter(v => v.id !== id));
   };
 
-  const resetToDefaults = () => {
+  const resetToDefaults = (confirmCode) => {
+    if (authUser?.role !== 'superadmin') {
+      alert('অননুমোদিত এক্সেস: শুধুমাত্র সুপার অ্যাডমিন ফ্যাক্টরি রিসেট করতে পারবেন।');
+      return false;
+    }
+    if (confirmCode !== 'RESET') {
+      alert('ফ্যাক্টরি রিসেট নিশ্চিত করতে বক্সে "RESET" টাইপ করুন।');
+      return false;
+    }
     localStorage.clear();
     setSchoolInfo(initialSchoolInfo);
     setUniformInfo(initialUniformInfo);
@@ -592,7 +705,9 @@ export function SchoolProvider({ children }) {
     setAdmissions(initialAdmissions);
     setFees(initialFees);
     setSystemUsers(initialUsers);
-    alert('সকল তথ্য সফলভাবে ডিফল্ট অবস্থায় ফিরিয়ে আনা হয়েছে!');
+    setContactMessages([]);
+    alert('সকল তথ্য সফলভাবে ফ্যাক্টরি ডিফল্ট অবস্থায় ফিরিয়ে আনা হয়েছে!');
+    return true;
   };
 
   return (
@@ -625,6 +740,7 @@ export function SchoolProvider({ children }) {
         setHeroSlides,
         notices,
         addNotice,
+        updateNotice,
         deleteNotice,
         teachers,
         addTeacher,
@@ -645,8 +761,11 @@ export function SchoolProvider({ children }) {
         admissions,
         submitAdmission,
         updateAdmissionStatus,
+        approveAdmissionAndCreateStudent,
         fees,
         addFee,
+        contactMessages,
+        submitContactMessage,
         routines,
         resetToDefaults
       }}

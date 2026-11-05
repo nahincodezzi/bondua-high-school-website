@@ -16,7 +16,9 @@ import {
   Bell,
   School,
   FileCheck,
-  Settings
+  Settings,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 export default function UserManager() {
@@ -37,6 +39,7 @@ export default function UserManager() {
   const [editingUser, setEditingUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
+  const [showUserPassword, setShowUserPassword] = useState(false);
 
   // Form State
   const initialFormState = {
@@ -125,8 +128,14 @@ export default function UserManager() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.username || !formData.password || !formData.nameBn) {
+    if (!formData.username.trim() || !formData.password || !formData.nameBn.trim()) {
       alert('অনুগ্রহ করে নাম, ইউজারনেম এবং পাসওয়ার্ড পূরণ করুন!');
+      return;
+    }
+
+    // Minimum 8 characters password check (A7)
+    if (formData.password.length < 8) {
+      alert('নিরাপত্তার স্বার্থে পাসওয়ার্ড অবশ্যই কমপক্ষে ৮ অক্ষরের হতে হবে!');
       return;
     }
 
@@ -163,27 +172,27 @@ export default function UserManager() {
   return (
     <div className="space-y-6">
       {/* Top Banner / Actions */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 font-bangla">
+      <div className="bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 font-bangla">
         <div>
-          <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-900 text-xs font-bold px-3 py-1 rounded-full mb-1">
-            <Key className="w-3.5 h-3.5 text-purple-700" />
+          <div className="inline-flex items-center gap-2 bg-[#DCFCE7] text-[#14532D] text-xs font-bold px-3 py-1 rounded-full mb-1 border border-emerald-200">
+            <Key className="w-3.5 h-3.5 text-[#166534]" />
             <span>সুপার অ্যাডমিন এক্সেস কন্ট্রোল (RBAC)</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#1F2937]">
             {lang === 'bn' ? 'ইউজার ও এক্সেস পারমিশন ব্যবস্থাপনা' : 'User Accounts & Access Control'}
           </h2>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-[#4B5563] mt-1">
             অন্যান্য সকল রোল (প্রধান শিক্ষক, সহকারী শিক্ষক, হিসাবরক্ষক, অপারেটর)-এর অ্যাকাউন্ট তৈরি করুন এবং কার কী অ্যাক্সেস থাকবে তা নির্ধারণ করুন।
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Tab Switcher */}
-          <div className="flex bg-slate-100 p-1 rounded-xl text-xs font-bold">
+          <div className="flex bg-[#F3F4F6] p-1 rounded-xl text-xs font-bold border border-[#E5E7EB]">
             <button
               onClick={() => setActiveTab('list')}
               className={`px-3 py-1.5 rounded-lg transition ${
-                activeTab === 'list' ? 'bg-purple-900 text-white shadow' : 'text-slate-600 hover:text-slate-900'
+                activeTab === 'list' ? 'bg-[#166534] text-white shadow-xs' : 'text-[#4B5563] hover:text-[#1F2937]'
               }`}
             >
               অ্যাকাউন্ট তালিকা ({systemUsers.length})
@@ -191,17 +200,17 @@ export default function UserManager() {
             <button
               onClick={() => setActiveTab('guide')}
               className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1 ${
-                activeTab === 'guide' ? 'bg-purple-900 text-white shadow' : 'text-slate-600 hover:text-slate-900'
+                activeTab === 'guide' ? 'bg-[#166534] text-white shadow-xs' : 'text-[#4B5563] hover:text-[#1F2937]'
               }`}
             >
               <HelpCircle className="w-3.5 h-3.5" />
-              <span>কারে কী অ্যাক্সেস গাইড</span>
+              <span>কার কী অ্যাক্সেস গাইড</span>
             </button>
           </div>
 
           <button
             onClick={handleOpenAdd}
-            className="bg-purple-900 hover:bg-purple-800 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow"
+            className="btn-primary px-4 py-2 text-xs font-bold flex items-center gap-2 shadow-xs cursor-pointer"
           >
             <UserPlus className="w-4 h-4" />
             <span>নতুন অ্যাকাউন্ট তৈরি করুন</span>
@@ -213,19 +222,19 @@ export default function UserManager() {
       {activeTab === 'list' && (
         <div className="space-y-4">
           {/* Search & Filter Bar */}
-          <div className="bg-white p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row gap-3 items-center justify-between font-bangla text-xs">
+          <div className="bg-white p-4 rounded-xl border border-[#E5E7EB] flex flex-col sm:flex-row gap-3 items-center justify-between font-bangla text-xs shadow-xs">
             <div className="relative w-full sm:w-72">
               <input
                 type="text"
                 placeholder="নাম, পদবী বা ইউজারনেম দিয়ে খুঁজুন..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-3 pr-8 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500"
+                className="w-full pl-3 pr-8 py-2 rounded-lg border border-[#D1D5DB] focus:ring-2 focus:ring-[#166534] focus:outline-none bg-[#F7F9F8] text-[#1F2937]"
               />
               {searchQuery && (
                 <button 
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#4B5563] hover:text-[#1F2937]"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -233,11 +242,11 @@ export default function UserManager() {
             </div>
 
             <div className="flex items-center gap-2 w-full sm:w-auto">
-              <span className="text-slate-500 font-semibold shrink-0">রোল ফিল্টার:</span>
+              <span className="text-[#4B5563] font-semibold shrink-0">রোল ফিল্টার:</span>
               <select
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
-                className="w-full sm:w-auto bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 font-medium"
+                className="w-full sm:w-auto bg-[#F7F9F8] border border-[#D1D5DB] rounded-lg px-3 py-1.5 font-medium text-[#1F2937] focus:ring-2 focus:ring-[#166534] focus:outline-none"
               >
                 <option value="all">সকল রোল ({systemUsers.length})</option>
                 {Object.keys(ROLE_DEFINITIONS).map(key => (
@@ -247,7 +256,7 @@ export default function UserManager() {
             </div>
           </div>
 
-          {/* User Cards Grid */}
+          {/* User Cards Grid: 3 cols desktop, 2 cols tablet, 1 col mobile */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredUsers.map((user) => {
               const roleDef = ROLE_DEFINITIONS[user.role] || ROLE_DEFINITIONS.teacher;
@@ -257,70 +266,75 @@ export default function UserManager() {
               return (
                 <div
                   key={user.id}
-                  className={`bg-white rounded-2xl border-2 transition-all duration-200 shadow-xs hover:shadow-md flex flex-col justify-between p-5 ${
-                    user.status === 'inactive' ? 'border-slate-300 bg-slate-50/70 opacity-75' : isSuper ? 'border-purple-300 bg-gradient-to-br from-purple-50/20 via-white to-white' : 'border-slate-200'
+                  className={`bg-white rounded-xl border border-[#E5E7EB] hover:border-[#166534] transition-all duration-200 shadow-xs flex flex-col justify-between p-5 ${
+                    user.status === 'inactive' ? 'opacity-70 bg-[#F7F9F8]' : ''
                   }`}
                 >
                   <div className="space-y-4">
                     {/* Header */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-3">
-                        <div className={`w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-white shadow-xs shrink-0 ${
-                          isSuper ? 'bg-purple-900' : 'bg-emerald-800'
-                        }`}>
-                          {isSuper ? <Key className="w-5 h-5 text-amber-300" /> : <Users className="w-5 h-5" />}
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white shadow-xs shrink-0 bg-[#166534]">
+                          {isSuper ? <Key className="w-5 h-5 text-[#F59E0B]" /> : <Users className="w-5 h-5" />}
                         </div>
                         <div>
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border font-bangla ${roleDef.badgeColor}`}>
+                            <span className="badge-neutral text-[10px]">
                               {roleDef.nameBn.split('(')[0]}
                             </span>
+                            {isSuper && (
+                              <span className="badge-warning text-[10px]">
+                                SUPER
+                              </span>
+                            )}
                             {user.status === 'inactive' ? (
-                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-800">
-                                নিষ্ক্রিয়
+                              <span className="badge-status-inactive text-[10px]">
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626]"></span>
+                                <span>নিষ্ক্রিয়</span>
                               </span>
                             ) : (
-                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                                সক্রিয়
+                              <span className="badge-status-active text-[10px]">
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#15803D]"></span>
+                                <span>সক্রিয়</span>
                               </span>
                             )}
                           </div>
-                          <h4 className="text-sm font-bold font-bangla text-slate-900 mt-1 line-clamp-1">
+                          <h4 className="text-sm font-bold font-bangla text-[#1F2937] mt-1 line-clamp-1">
                             {user.nameBn}
                           </h4>
                         </div>
                       </div>
                     </div>
 
-                    {/* Metadata Details */}
-                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs font-bangla">
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-500">পদবী:</span>
-                        <span className="font-semibold text-slate-800">{user.designationBn}</span>
+                    {/* Metadata Details: 2-column label/value grid */}
+                    <div className="bg-[#F7F9F8] p-3 rounded-xl border border-[#E5E7EB] space-y-2 text-xs font-bangla">
+                      <div className="grid grid-cols-12 gap-1 items-center">
+                        <span className="col-span-5 text-[#4B5563] text-xs">পদবী:</span>
+                        <span className="col-span-7 font-semibold text-[#1F2937] text-sm truncate">{user.designationBn}</span>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-500">ইউজার আইডি:</span>
-                        <span className="font-mono font-bold text-purple-950 bg-purple-100/70 px-1.5 py-0.5 rounded text-[11px]">{user.username}</span>
+                      <div className="grid grid-cols-12 gap-1 items-center">
+                        <span className="col-span-5 text-[#4B5563] text-xs">ইউজার আইডি:</span>
+                        <span className="col-span-7 font-mono font-medium text-[#1F2937] bg-[#F3F4F6] border border-[#E5E7EB] px-2 py-0.5 rounded text-xs inline-block w-fit">{user.username}</span>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-500">পাসওয়ার্ড:</span>
-                        <span className="font-mono text-slate-600 bg-white px-1.5 py-0.2 rounded border text-[11px]">•••••••• ({user.password})</span>
+                      <div className="grid grid-cols-12 gap-1 items-center">
+                        <span className="col-span-5 text-[#4B5563] text-xs">পাসওয়ার্ড:</span>
+                        <span className="col-span-7 font-mono text-[#4B5563] bg-white px-2 py-0.5 rounded border border-[#E5E7EB] text-xs inline-block w-fit">•••••••• ({user.password})</span>
                       </div>
                       {user.phone && (
-                        <div className="flex items-center justify-between text-[11px]">
-                          <span className="text-slate-500">ফোন:</span>
-                          <span className="font-mono text-slate-700">{user.phone}</span>
+                        <div className="grid grid-cols-12 gap-1 items-center">
+                          <span className="col-span-5 text-[#4B5563] text-xs">ফোন:</span>
+                          <span className="col-span-7 font-mono text-[#1F2937] text-xs">{user.phone}</span>
                         </div>
                       )}
                     </div>
 
-                    {/* Permitted Modules Pills */}
+                    {/* Permitted Modules: 14px chips with subtle green icons */}
                     <div>
-                      <div className="text-[11px] font-bold text-slate-600 font-bangla mb-1.5 flex items-center justify-between">
+                      <div className="text-xs font-bold text-[#4B5563] font-bangla mb-1.5 flex items-center justify-between">
                         <span>অনুমোদিত অ্যাক্সেস ({user.permissions?.length || 0}):</span>
-                        {isSuper && <span className="text-[10px] text-purple-700 font-bold">সকল মডিউল</span>}
+                        {isSuper && <span className="text-[10px] text-[#166534] font-bold">সকল মডিউল</span>}
                       </div>
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex flex-wrap gap-1.5">
                         {user.permissions && user.permissions.length > 0 ? (
                           user.permissions.map(permId => {
                             const mod = SYSTEM_MODULES.find(m => m.id === permId);
@@ -328,31 +342,29 @@ export default function UserManager() {
                             return (
                               <span
                                 key={permId}
-                                className="inline-flex items-center gap-1 bg-slate-100 text-slate-800 border border-slate-200 px-2 py-0.5 rounded text-[10px] font-semibold font-bangla"
+                                className="inline-flex items-center gap-1.5 bg-[#F3F4F6] text-[#1F2937] border border-[#E5E7EB] px-2.5 py-1 rounded-md text-xs font-medium font-bangla"
                               >
-                                <IconComponent className="w-2.5 h-2.5 text-purple-700" />
+                                <IconComponent className="w-3.5 h-3.5 text-[#166534] shrink-0" />
                                 <span>{mod ? mod.labelBn.split('(')[0] : permId}</span>
                               </span>
                             );
                           })
                         ) : (
-                          <span className="text-[10px] text-rose-500 italic font-bangla">কোনো মডিউল অ্যাক্সেস নেই</span>
+                          <span className="text-xs text-[#DC2626] italic font-bangla">কোনো মডিউল অ্যাক্সেস নেই</span>
                         )}
                       </div>
                     </div>
                   </div>
 
                   {/* Actions Bar */}
-                  <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bangla">
+                  <div className="mt-5 pt-3 border-t border-[#E5E7EB] flex items-center justify-between text-xs font-bangla">
                     <button
                       onClick={() => toggleUserStatus(user.id)}
                       disabled={isCurrentUser}
-                      className={`text-[11px] font-semibold transition px-2 py-1 rounded-lg ${
-                        user.status === 'active' 
-                          ? 'text-amber-800 hover:bg-amber-50' 
-                          : 'text-emerald-800 hover:bg-emerald-50'
-                      } ${isCurrentUser ? 'opacity-40 cursor-not-allowed' : ''}`}
-                      title={isCurrentUser ? 'নিজের স্ট্যাটাস পরিবর্তন করা যাবে না' : ''}
+                      className={`btn-danger px-2.5 py-1 text-xs cursor-pointer ${
+                        isCurrentUser ? 'opacity-40 cursor-not-allowed' : ''
+                      }`}
+                      title={isCurrentUser ? 'নিজের অ্যাকাউন্ট নিষ্ক্রিয় করা যাবে না' : (user.status === 'active' ? 'অ্যাকাউন্ট নিষ্ক্রিয় করুন' : 'অ্যাকাউন্ট সক্রিয় করুন')}
                     >
                       {user.status === 'active' ? 'নিষ্ক্রিয় করুন' : 'সক্রিয় করুন'}
                     </button>
@@ -360,7 +372,7 @@ export default function UserManager() {
                     <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => handleOpenEdit(user)}
-                        className="p-1.5 text-purple-900 bg-purple-50 hover:bg-purple-100 rounded-lg transition"
+                        className="p-1.5 text-[#166534] bg-[#DCFCE7] hover:bg-[#bbf7d0] rounded-lg transition cursor-pointer"
                         title="সম্পাদনা ও পারমিশন পরিবর্তন"
                       >
                         <Edit className="w-3.5 h-3.5" />
@@ -377,10 +389,10 @@ export default function UserManager() {
                           }
                         }}
                         disabled={isCurrentUser}
-                        className={`p-1.5 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition ${
+                        className={`p-1.5 text-[#DC2626] bg-[#FEE2E2] hover:bg-[#fecaca] rounded-lg transition cursor-pointer ${
                           isCurrentUser ? 'opacity-30 cursor-not-allowed' : ''
                         }`}
-                        title={isCurrentUser ? 'নিজের অ্যাকাউন্ট মুছে ফেলা যাবে না' : 'অ্যাকাউন্ট মুছুন'}
+                        title={isCurrentUser ? 'নিজের অ্যাকাউন্ট মুছে ফেলা যাবে না' : 'অ্যাকাউন্ট স্থায়ীভাবে মুছুন'}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -397,15 +409,15 @@ export default function UserManager() {
       {activeTab === 'guide' && (
         <div className="space-y-6 font-bangla">
           {/* Guide Header Banner */}
-          <div className="bg-gradient-to-r from-purple-900 to-indigo-950 text-white p-6 sm:p-8 rounded-3xl shadow-md border border-purple-800">
-            <div className="flex items-center gap-2 text-amber-300 font-bold text-xs uppercase mb-2">
+          <div className="bg-[#14532D] text-white p-6 sm:p-8 rounded-2xl shadow-xs border border-emerald-800">
+            <div className="flex items-center gap-2 text-[#F59E0B] font-bold text-xs uppercase mb-2">
               <ShieldCheck className="w-4 h-4" />
               <span>কার কী অ্যাক্সেস থাকবে তার নির্দেশিকা (RBAC Guide)</span>
             </div>
             <h3 className="text-xl sm:text-2xl font-bold">
               সিস্টেম রোলভিত্তিক দায়িত্ব ও অ্যাক্সেস পলিসি
             </h3>
-            <p className="text-xs sm:text-sm text-purple-200 mt-1 max-w-3xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-emerald-100 mt-1 max-w-3xl leading-relaxed">
               সুপার অ্যাডমিন প্রতিটি অ্যাকাউন্টের জন্য নির্দিষ্ট মডিউলের অ্যাক্সেস নিয়ন্ত্রণ করতে পারেন। নিচে কোন রোলের কী কী অনুমতি থাকা বাঞ্ছনীয় তার একটি প্রমিত চার্ট দেওয়া হলো:
             </p>
           </div>
@@ -415,27 +427,27 @@ export default function UserManager() {
             {Object.keys(ROLE_DEFINITIONS).map(roleKey => {
               const r = ROLE_DEFINITIONS[roleKey];
               return (
-                <div key={roleKey} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
-                  <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                    <span className={`text-xs font-bold px-3 py-1 rounded-full border ${r.badgeColor}`}>
+                <div key={roleKey} className="bg-white p-5 rounded-xl border border-[#E5E7EB] shadow-xs space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB]">
+                    <span className="badge-neutral text-xs font-bold">
                       {r.nameBn}
                     </span>
-                    <span className="font-mono text-[11px] text-slate-400 font-semibold">{r.id}</span>
+                    <span className="font-mono text-xs text-[#4B5563] font-semibold">{r.id}</span>
                   </div>
 
-                  <p className="text-xs text-slate-700 leading-relaxed">
+                  <p className="text-xs text-[#1F2937] leading-relaxed">
                     {r.descriptionBn}
                   </p>
 
                   <div className="pt-2">
-                    <span className="text-[11px] font-bold text-slate-900 block mb-1.5">অনুমোদিত ডিফল্ট মডিউলসমূহ:</span>
+                    <span className="text-xs font-bold text-[#1F2937] block mb-1.5">অনুমোদিত ডিফল্ট মডিউলসমূহ:</span>
                     <div className="flex flex-wrap gap-1.5">
                       {r.defaultPermissions.map(pId => {
                         const m = SYSTEM_MODULES.find(mod => mod.id === pId);
                         return (
                           <span 
                             key={pId}
-                            className="bg-purple-50 text-purple-900 border border-purple-200 px-2 py-0.5 rounded text-[11px] font-semibold"
+                            className="bg-[#F3F4F6] text-[#1F2937] border border-[#E5E7EB] px-2 py-0.5 rounded text-xs font-medium"
                           >
                             ✓ {m ? m.labelBn.split('(')[0] : pId}
                           </span>
@@ -449,17 +461,17 @@ export default function UserManager() {
           </div>
 
           {/* Full Access Matrix Table */}
-          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-            <div className="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
-              <h4 className="text-sm font-bold text-slate-900">
+          <div className="bg-white rounded-xl border border-[#E5E7EB] overflow-hidden shadow-xs">
+            <div className="p-4 bg-[#F7F9F8] border-b border-[#E5E7EB] flex items-center justify-between">
+              <h4 className="text-sm font-bold text-[#1F2937]">
                 সকল রোল ও মডিউলের বিস্তারিত এক্সেস ম্যাট্রিক্স (Visual Matrix)
               </h4>
-              <span className="text-[11px] text-slate-500">✓ = অ্যাক্সেস আছে | ✕ = অ্যাক্সেস নেই</span>
+              <span className="text-xs text-[#4B5563]">✓ = অ্যাক্সেস আছে | ✕ = অ্যাক্সেস নেই</span>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left">
-                <thead className="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider border-b">
+                <thead className="bg-[#14532D] text-white font-bold uppercase tracking-wider">
                   <tr>
                     <th className="py-3 px-4">সফটওয়্যার মডিউল</th>
                     <th className="py-3 px-3 text-center">সুপার অ্যাডমিন</th>
@@ -470,51 +482,51 @@ export default function UserManager() {
                     <th className="py-3 px-3 text-center">অপারেটর</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-[#E5E7EB]">
                   {SYSTEM_MODULES.map(mod => (
-                    <tr key={mod.id} className="hover:bg-slate-50/70">
-                      <td className="py-2.5 px-4 font-semibold text-slate-800">
+                    <tr key={mod.id} className="hover:bg-[#F7F9F8]">
+                      <td className="py-2.5 px-4 font-semibold text-[#1F2937]">
                         <div>
                           <span>{mod.labelBn}</span>
-                          <span className="text-[10px] text-slate-400 block font-normal">{mod.descBn}</span>
+                          <span className="text-[10px] text-[#4B5563] block font-normal">{mod.descBn}</span>
                         </div>
                       </td>
                       <td className="py-2.5 px-3 text-center">
-                        <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold inline-flex items-center justify-center text-xs">✓</span>
+                        <span className="w-5 h-5 rounded-full bg-[#DCFCE7] text-[#15803D] font-bold inline-flex items-center justify-center text-xs">✓</span>
                       </td>
                       <td className="py-2.5 px-3 text-center">
                         {ROLE_DEFINITIONS.headmaster.defaultPermissions.includes(mod.id) ? (
-                          <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold inline-flex items-center justify-center text-xs">✓</span>
+                          <span className="w-5 h-5 rounded-full bg-[#DCFCE7] text-[#15803D] font-bold inline-flex items-center justify-center text-xs">✓</span>
                         ) : (
-                          <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-400 font-bold inline-flex items-center justify-center text-xs">✕</span>
+                          <span className="w-5 h-5 rounded-full bg-[#F3F4F6] text-[#4B5563] font-bold inline-flex items-center justify-center text-xs">✕</span>
                         )}
                       </td>
                       <td className="py-2.5 px-3 text-center">
                         {ROLE_DEFINITIONS.asst_headmaster.defaultPermissions.includes(mod.id) ? (
-                          <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold inline-flex items-center justify-center text-xs">✓</span>
+                          <span className="w-5 h-5 rounded-full bg-[#DCFCE7] text-[#15803D] font-bold inline-flex items-center justify-center text-xs">✓</span>
                         ) : (
-                          <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-400 font-bold inline-flex items-center justify-center text-xs">✕</span>
+                          <span className="w-5 h-5 rounded-full bg-[#F3F4F6] text-[#4B5563] font-bold inline-flex items-center justify-center text-xs">✕</span>
                         )}
                       </td>
                       <td className="py-2.5 px-3 text-center">
                         {ROLE_DEFINITIONS.teacher.defaultPermissions.includes(mod.id) ? (
-                          <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold inline-flex items-center justify-center text-xs">✓</span>
+                          <span className="w-5 h-5 rounded-full bg-[#DCFCE7] text-[#15803D] font-bold inline-flex items-center justify-center text-xs">✓</span>
                         ) : (
-                          <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-400 font-bold inline-flex items-center justify-center text-xs">✕</span>
+                          <span className="w-5 h-5 rounded-full bg-[#F3F4F6] text-[#4B5563] font-bold inline-flex items-center justify-center text-xs">✕</span>
                         )}
                       </td>
                       <td className="py-2.5 px-3 text-center">
                         {ROLE_DEFINITIONS.accountant.defaultPermissions.includes(mod.id) ? (
-                          <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold inline-flex items-center justify-center text-xs">✓</span>
+                          <span className="w-5 h-5 rounded-full bg-[#DCFCE7] text-[#15803D] font-bold inline-flex items-center justify-center text-xs">✓</span>
                         ) : (
-                          <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-400 font-bold inline-flex items-center justify-center text-xs">✕</span>
+                          <span className="w-5 h-5 rounded-full bg-[#F3F4F6] text-[#4B5563] font-bold inline-flex items-center justify-center text-xs">✕</span>
                         )}
                       </td>
                       <td className="py-2.5 px-3 text-center">
                         {ROLE_DEFINITIONS.operator.defaultPermissions.includes(mod.id) ? (
-                          <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold inline-flex items-center justify-center text-xs">✓</span>
+                          <span className="w-5 h-5 rounded-full bg-[#DCFCE7] text-[#15803D] font-bold inline-flex items-center justify-center text-xs">✓</span>
                         ) : (
-                          <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-400 font-bold inline-flex items-center justify-center text-xs">✕</span>
+                          <span className="w-5 h-5 rounded-full bg-[#F3F4F6] text-[#4B5563] font-bold inline-flex items-center justify-center text-xs">✕</span>
                         )}
                       </td>
                     </tr>
@@ -529,23 +541,23 @@ export default function UserManager() {
       {/* ADD / EDIT USER MODAL */}
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white max-w-2xl w-full rounded-2xl overflow-hidden shadow-2xl border border-slate-200 my-8 font-bangla text-xs">
+          <div className="bg-white max-w-2xl w-full rounded-2xl overflow-hidden shadow-2xl border border-[#E5E7EB] my-8 font-bangla text-xs">
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-purple-950 to-indigo-950 text-white p-5 flex items-center justify-between">
+            <div className="bg-[#14532D] text-white p-5 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Key className="w-5 h-5 text-amber-300" />
+                <Key className="w-5 h-5 text-[#F59E0B]" />
                 <div>
                   <h3 className="text-base font-bold text-white">
                     {editingUser ? 'ব্যবহারকারীর তথ্য ও পারমিশন পরিবর্তন' : 'নতুন ব্যবহারকারী অ্যাকাউন্ট তৈরি করুন'}
                   </h3>
-                  <p className="text-[11px] text-purple-200">
+                  <p className="text-xs text-emerald-100">
                     ইউজার তথ্য এবং মডিউলভিত্তিক এক্সেস পারমিশন নির্ধারণ করুন
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setShowModal(false)}
-                className="p-1 rounded-full hover:bg-white/20 text-white/80 hover:text-white"
+                className="p-1 rounded-full hover:bg-white/20 text-white/80 hover:text-white cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -556,8 +568,8 @@ export default function UserManager() {
               {/* Basic Info Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
-                    পূর্ণ নাম (বাংলা): <span className="text-rose-500">*</span>
+                  <label className="block font-bold text-[#1F2937] mb-1">
+                    পূর্ণ নাম (বাংলা): <span className="text-[#DC2626]">*</span>
                   </label>
                   <input
                     type="text"
@@ -565,12 +577,12 @@ export default function UserManager() {
                     placeholder="যেমন: জনাব বাহার উদ্দিন ভূঁইয়া"
                     value={formData.nameBn}
                     onChange={(e) => setFormData({ ...formData, nameBn: e.target.value })}
-                    className="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-purple-500"
+                    className="w-full rounded-lg border border-[#D1D5DB] p-2.5 focus:ring-2 focus:ring-[#166534] focus:outline-none bg-[#F7F9F8] text-[#1F2937]"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
+                  <label className="block font-bold text-[#1F2937] mb-1">
                     ব্যবহারকারীর পদবী:
                   </label>
                   <input
@@ -578,13 +590,13 @@ export default function UserManager() {
                     placeholder="যেমন: সহকারী প্রধান শিক্ষক / সহকারী শিক্ষক"
                     value={formData.designationBn}
                     onChange={(e) => setFormData({ ...formData, designationBn: e.target.value })}
-                    className="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-purple-500"
+                    className="w-full rounded-lg border border-[#D1D5DB] p-2.5 focus:ring-2 focus:ring-[#166534] focus:outline-none bg-[#F7F9F8] text-[#1F2937]"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
-                    ইউজার আইডি / ইউজারনেম: <span className="text-rose-500">*</span>
+                  <label className="block font-bold text-[#1F2937] mb-1">
+                    ইউজার আইডি / ইউজারনেম: <span className="text-[#DC2626]">*</span>
                   </label>
                   <input
                     type="text"
@@ -592,32 +604,43 @@ export default function UserManager() {
                     placeholder="যেমন: asst_headmaster"
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value.toLowerCase().replace(/\s+/g, '_') })}
-                    className="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-purple-500 font-mono"
+                    className="w-full rounded-lg border border-[#D1D5DB] p-2.5 focus:ring-2 focus:ring-[#166534] focus:outline-none font-mono bg-[#F7F9F8] text-[#1F2937]"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
-                    পাসওয়ার্ড: <span className="text-rose-500">*</span>
+                  <label className="block font-bold text-[#1F2937] mb-1">
+                    পাসওয়ার্ড: <span className="text-[#DC2626]">*</span>
                   </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-purple-500 font-mono"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showUserPassword ? 'text' : 'password'}
+                      required
+                      placeholder="কমপক্ষে ৮ অক্ষরের শক্তিশালী পাসওয়ার্ড"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      className="w-full rounded-lg border border-[#D1D5DB] p-2.5 pr-10 focus:ring-2 focus:ring-[#166534] focus:outline-none font-mono bg-[#F7F9F8] text-[#1F2937]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowUserPassword(!showUserPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#4B5563] hover:text-[#166534] transition-colors"
+                      title={showUserPassword ? 'পাসওয়ার্ড লুকান' : 'পাসওয়ার্ড দেখুন'}
+                    >
+                      {showUserPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  <p className="text-xs text-[#4B5563] mt-1">পাসওয়ার্ডে অন্তত ৮টি অক্ষর রাখুন।</p>
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
-                    ভূমিকা (Role নির্বাচন): <span className="text-rose-500">*</span>
+                  <label className="block font-bold text-[#1F2937] mb-1">
+                    ভূমিকা (Role নির্বাচন): <span className="text-[#DC2626]">*</span>
                   </label>
                   <select
                     value={formData.role}
                     onChange={(e) => handleRoleChange(e.target.value)}
-                    className="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-purple-500 font-semibold bg-purple-50/50"
+                    className="w-full rounded-lg border border-[#D1D5DB] p-2.5 focus:ring-2 focus:ring-[#166534] focus:outline-none font-semibold bg-[#F7F9F8] text-[#1F2937]"
                   >
                     {Object.keys(ROLE_DEFINITIONS).map(key => (
                       <option key={key} value={key}>{ROLE_DEFINITIONS[key].nameBn}</option>
@@ -626,13 +649,13 @@ export default function UserManager() {
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
+                  <label className="block font-bold text-[#1F2937] mb-1">
                     অ্যাকাউন্ট স্ট্যাটাস:
                   </label>
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-purple-500 font-semibold"
+                    className="w-full rounded-lg border border-[#D1D5DB] p-2.5 focus:ring-2 focus:ring-[#166534] focus:outline-none font-semibold bg-[#F7F9F8] text-[#1F2937]"
                   >
                     <option value="active">সক্রিয় (Active - লগইন করতে পারবে)</option>
                     <option value="inactive">নিষ্ক্রিয় (Inactive - লগইন সাময়িক বন্ধ)</option>
@@ -640,7 +663,7 @@ export default function UserManager() {
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
+                  <label className="block font-bold text-[#1F2937] mb-1">
                     মোবাইল নম্বর:
                   </label>
                   <input
@@ -648,12 +671,12 @@ export default function UserManager() {
                     placeholder="+880 1819-XXXXXX"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-purple-500 font-mono"
+                    className="w-full rounded-lg border border-[#D1D5DB] p-2.5 focus:ring-2 focus:ring-[#166534] focus:outline-none font-mono bg-[#F7F9F8] text-[#1F2937]"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
+                  <label className="block font-bold text-[#1F2937] mb-1">
                     ইমেইল ঠিকানা:
                   </label>
                   <input
@@ -661,19 +684,19 @@ export default function UserManager() {
                     placeholder="user@bdhs.edu.bd"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-purple-500 font-mono"
+                    className="w-full rounded-lg border border-[#D1D5DB] p-2.5 focus:ring-2 focus:ring-[#166534] focus:outline-none font-mono bg-[#F7F9F8] text-[#1F2937]"
                   />
                 </div>
               </div>
 
               {/* PERMISSION SELECTION SECTION */}
-              <div className="pt-3 border-t border-slate-200">
+              <div className="pt-3 border-t border-[#E5E7EB]">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <h4 className="text-sm font-bold text-slate-900">
+                    <h4 className="text-sm font-bold text-[#1F2937]">
                       মডিউলভিত্তিক এক্সেস পারমিশন নির্ধারণ (Select Permissions)
                     </h4>
-                    <p className="text-[11px] text-slate-500">
+                    <p className="text-xs text-[#4B5563]">
                       এই ব্যবহারকারী ড্যাশবোর্ডে যে যে মডিউল দেখতে ও সম্পাদনা করতে পারবে তা টিক দিন
                     </p>
                   </div>
@@ -682,15 +705,15 @@ export default function UserManager() {
                     <button
                       type="button"
                       onClick={handleSelectAllPermissions}
-                      className="text-[11px] font-bold text-purple-700 hover:underline"
+                      className="text-xs font-bold text-[#166534] hover:underline cursor-pointer"
                     >
                       সব নির্বাচন করুন
                     </button>
-                    <span className="text-slate-300">|</span>
+                    <span className="text-[#D1D5DB]">|</span>
                     <button
                       type="button"
                       onClick={handleClearPermissions}
-                      className="text-[11px] font-bold text-slate-500 hover:underline"
+                      className="text-xs font-bold text-[#4B5563] hover:underline cursor-pointer"
                     >
                       সব মুছুন
                     </button>
@@ -708,8 +731,8 @@ export default function UserManager() {
                         key={mod.id}
                         className={`flex items-start gap-3 p-3 rounded-xl border transition cursor-pointer select-none ${
                           isChecked 
-                            ? 'bg-purple-50/60 border-purple-300' 
-                            : 'bg-white border-slate-200 hover:bg-slate-50'
+                            ? 'bg-[#DCFCE7]/50 border-emerald-300' 
+                            : 'bg-white border-[#E5E7EB] hover:bg-[#F7F9F8]'
                         } ${isSuperOnly ? 'opacity-40 cursor-not-allowed' : ''}`}
                       >
                         <input
@@ -717,19 +740,19 @@ export default function UserManager() {
                           disabled={isSuperOnly}
                           checked={isChecked}
                           onChange={() => handlePermissionToggle(mod.id)}
-                          className="mt-0.5 rounded text-purple-900 focus:ring-purple-500 w-4 h-4"
+                          className="mt-0.5 rounded text-[#166534] focus:ring-[#166534] w-4 h-4 cursor-pointer"
                         />
                         <div className="flex-1">
-                          <div className="flex items-center gap-1.5 font-bold text-slate-800">
-                            <IconComponent className="w-3.5 h-3.5 text-purple-700" />
+                          <div className="flex items-center gap-1.5 font-bold text-[#1F2937]">
+                            <IconComponent className="w-3.5 h-3.5 text-[#166534]" />
                             <span>{mod.labelBn}</span>
                             {mod.superadminOnly && (
-                              <span className="text-[9px] bg-amber-100 text-amber-900 px-1.5 rounded font-mono">
+                              <span className="badge-warning text-[9px] px-1.5 py-0 font-mono">
                                 Super Only
                               </span>
                             )}
                           </div>
-                          <p className="text-[10px] text-slate-500 mt-0.5 leading-snug">
+                          <p className="text-[10px] text-[#4B5563] mt-0.5 leading-snug">
                             {mod.descBn}
                           </p>
                         </div>
@@ -740,17 +763,17 @@ export default function UserManager() {
               </div>
 
               {/* Submit Buttons */}
-              <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
+              <div className="pt-4 border-t border-[#E5E7EB] flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 font-bold"
+                  className="btn-secondary px-4 py-2 cursor-pointer"
                 >
                   বাতিল
                 </button>
                 <button
                   type="submit"
-                  className="bg-purple-900 hover:bg-purple-800 text-white px-6 py-2.5 rounded-xl font-bold transition shadow flex items-center gap-2"
+                  className="btn-primary px-6 py-2.5 flex items-center gap-2 cursor-pointer"
                 >
                   <Check className="w-4 h-4" />
                   <span>{editingUser ? 'তথ্য ও পারমিশন সংরক্ষণ করুন' : 'অ্যাকাউন্ট তৈরি নিশ্চিত করুন'}</span>
