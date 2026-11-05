@@ -14,7 +14,8 @@ import {
   Upload,
   X,
   ExternalLink,
-  Film
+  Film,
+  Play
 } from 'lucide-react';
 
 export default function CmsContentManager() {
@@ -47,8 +48,7 @@ export default function CmsContentManager() {
   const [photoUploadStatus, setPhotoUploadStatus] = useState('');
   const photoInputRef = useRef(null);
 
-  // Gallery Video Upload States (Supports both YouTube link & Direct Video File Upload)
-  const [videoSourceType, setVideoSourceType] = useState('link'); // 'link' or 'file'
+  // Gallery Video Upload States (Supports both YouTube link & Direct Video File Upload side-by-side)
   const [videoTitleBn, setVideoTitleBn] = useState('');
   const [videoTitleEn, setVideoTitleEn] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
@@ -58,6 +58,7 @@ export default function CmsContentManager() {
   const [uploadedVideoThumbnail, setUploadedVideoThumbnail] = useState('');
   const [videoProcessing, setVideoProcessing] = useState(false);
   const [videoUploadStatus, setVideoUploadStatus] = useState('');
+  const [previewModalVideo, setPreviewModalVideo] = useState(null);
   const videoFileInputRef = useRef(null);
 
   // Slide Image Upload Ref
@@ -238,7 +239,7 @@ export default function CmsContentManager() {
     }
   };
 
-  // Gallery Video Submit (Supports YouTube Embed & Direct Uploaded MP4/WebM Video Files)
+  // Gallery Video Submit (Supports YouTube Embed & Direct Uploaded MP4/WebM Video Files Side-by-Side)
   const handleAddVideoSubmit = async (e) => {
     e.preventDefault();
     if (!videoTitleBn.trim()) {
@@ -246,12 +247,25 @@ export default function CmsContentManager() {
       return;
     }
 
-    if (videoSourceType === 'link') {
-      if (!videoUrl.trim()) {
-        alert('ভিডিওর YouTube লিংক প্রদান করুন।');
-        return;
-      }
+    const hasFile = Boolean(uploadedVideoFile || uploadedVideoPreviewUrl);
+    const hasLink = Boolean(videoUrl && videoUrl.trim());
 
+    if (!hasFile && !hasLink) {
+      alert('অনুগ্রহ করে ১ নম্বরে YouTube ভিডিও লিংক দিন অথবা ২ নম্বরে সরাসরি ভিডিও ফাইল আপলোড করুন।');
+      return;
+    }
+
+    if (hasFile) {
+      await addVideoItem({
+        titleBn: videoTitleBn.trim(),
+        titleEn: videoTitleEn.trim() || videoTitleBn.trim(),
+        videoUrl: uploadedVideoPreviewUrl,
+        videoFile: uploadedVideoFile,
+        duration: videoDuration || '03:15',
+        thumbnail: uploadedVideoThumbnail || 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=600&auto=format&fit=crop&q=80',
+        source: 'Uploaded Video'
+      });
+    } else {
       let finalEmbedUrl = videoUrl.trim();
       let thumbnail = 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=600&auto=format&fit=crop&q=80';
       let vidId = '';
@@ -272,28 +286,12 @@ export default function CmsContentManager() {
       }
 
       await addVideoItem({
-        titleBn: videoTitleBn,
-        titleEn: videoTitleEn || videoTitleBn,
+        titleBn: videoTitleBn.trim(),
+        titleEn: videoTitleEn.trim() || videoTitleBn.trim(),
         videoUrl: finalEmbedUrl,
         duration: videoDuration || '05:30',
         thumbnail: thumbnail,
         source: 'YouTube'
-      });
-    } else {
-      // Direct File Upload
-      if (!uploadedVideoFile && !uploadedVideoPreviewUrl) {
-        alert('অনুগ্রহ করে মোবাইল বা কম্পিউটার থেকে একটি ভিডিও ফাইল (MP4/WebM) নির্বাচন করুন।');
-        return;
-      }
-
-      await addVideoItem({
-        titleBn: videoTitleBn,
-        titleEn: videoTitleEn || videoTitleBn,
-        videoUrl: uploadedVideoPreviewUrl,
-        videoFile: uploadedVideoFile,
-        duration: videoDuration || '03:15',
-        thumbnail: uploadedVideoThumbnail || 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=600&auto=format&fit=crop&q=80',
-        source: 'Uploaded Video'
       });
     }
 
@@ -490,142 +488,173 @@ export default function CmsContentManager() {
               </form>
             </div>
 
-            {/* Video Embed Form (Supports YouTube Link AND Direct Video Upload) */}
+            {/* Video Manager Card (Dual Mode: YouTube Link & Direct Video File Upload Side-by-Side) */}
             <div className="lg:col-span-6 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-2 border-b">
-                <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
-                  <Video className="w-4 h-4 text-emerald-800" />
-                  <span>নতুন ভিডিও যুক্ত করুন</span>
-                </h3>
-
-                {/* Video Mode Switcher */}
-                <div className="bg-slate-100 p-1 rounded-xl flex items-center gap-1 text-[11px] font-bold">
-                  <button
-                    type="button"
-                    onClick={() => setVideoSourceType('link')}
-                    className={`px-2.5 py-1 rounded-lg transition cursor-pointer ${
-                      videoSourceType === 'link'
-                        ? 'bg-emerald-800 text-white shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                  >
-                    YouTube লিংক
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setVideoSourceType('file')}
-                    className={`px-2.5 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer ${
-                      videoSourceType === 'file'
-                        ? 'bg-emerald-800 text-white shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                  >
-                    <Upload className="w-3 h-3 text-amber-300" />
-                    <span>ভিডিও আপলোড</span>
-                  </button>
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+                    <Video className="w-4 h-4 text-emerald-800" />
+                    <span>নতুন ভিডিও যুক্ত ও সরাসরি আপলোড</span>
+                  </h3>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    ইউটিউব ভিডিও লিংকের পাশাপাশি সরাসরি ডিভাইস থেকে ভিডিও ফাইল আপলোড করুন
+                  </p>
                 </div>
+                <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+                  Dual Video Engine
+                </span>
               </div>
 
-              <form onSubmit={handleAddVideoSubmit} className="space-y-3.5 text-xs">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">ভিডিওর শিরোনাম (বাংলায়) *</label>
-                  <input
-                    type="text"
-                    required
-                    value={videoTitleBn}
-                    onChange={(e) => setVideoTitleBn(e.target.value)}
-                    placeholder="যেমন: বার্ষিক পুরস্কার বিতরণী ও সাংস্কৃতিক অনুষ্ঠান"
-                    className="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-emerald-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">ভিডিওর শিরোনাম (ইংরেজিতে)</label>
-                  <input
-                    type="text"
-                    value={videoTitleEn}
-                    onChange={(e) => setVideoTitleEn(e.target.value)}
-                    placeholder="Video title in English"
-                    className="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-emerald-500"
-                  />
-                </div>
-
-                {videoSourceType === 'link' ? (
+              <form onSubmit={handleAddVideoSubmit} className="space-y-4 text-xs">
+                {/* Video Title Inputs */}
+                <div className="space-y-3">
                   <div>
-                    <label className="block font-bold text-slate-700 mb-1">ইউটিউব ভিডিওর লিংক (YouTube Link) *</label>
+                    <label className="block font-bold text-slate-700 mb-1">ভিডিওর শিরোনাম (বাংলায়) *</label>
                     <input
-                      type="url"
+                      type="text"
                       required
-                      value={videoUrl}
-                      onChange={(e) => setVideoUrl(e.target.value)}
-                      placeholder="https://www.youtube.com/watch?v=... বা Shorts লিংক"
-                      className="w-full rounded-lg border border-slate-300 p-2.5 font-mono text-[11px]"
+                      value={videoTitleBn}
+                      onChange={(e) => setVideoTitleBn(e.target.value)}
+                      placeholder="যেমন: বার্ষিক পুরস্কার বিতরণী ও সাংস্কৃতিক অনুষ্ঠান"
+                      className="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-emerald-500"
                     />
-                    <p className="text-[10px] text-slate-500 mt-1">
-                      ইউটিউবের সাধারণ লিংক অথবা শেয়ার লিংক পেস্ট করলেই সিস্টেম স্বয়ংক্রিয়ভাবে প্লেয়ারে রূপান্তর করবে।
-                    </p>
                   </div>
-                ) : (
-                  <div className="p-3 bg-slate-50 rounded-xl border border-dashed border-slate-300 space-y-2">
-                    <span className="font-bold text-slate-700 block">মোবাইল / কম্পিউটার থেকে ভিডিও ফাইল নির্বাচন করুন *</span>
-                    
-                    <input
-                      type="file"
-                      ref={videoFileInputRef}
-                      accept="video/mp4,video/webm,video/ogg,video/quicktime"
-                      onChange={handleVideoFileChange}
-                      className="hidden"
-                      id="cms-video-file-input"
-                    />
 
-                    {uploadedVideoPreviewUrl ? (
-                      <div className="space-y-2">
-                        <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-black border border-slate-300 shadow-xs">
-                          <video
-                            src={uploadedVideoPreviewUrl}
-                            controls
-                            className="w-full h-full object-contain"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setUploadedVideoFile(null);
-                              setUploadedVideoPreviewUrl('');
-                              setUploadedVideoThumbnail('');
-                              setVideoUploadStatus('');
-                              if (videoFileInputRef.current) videoFileInputRef.current.value = '';
-                            }}
-                            className="absolute top-2 right-2 bg-rose-600 text-white p-1 rounded-full shadow hover:bg-rose-700 cursor-pointer"
-                            title="মুছে ফেলুন"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                        <div className="flex items-center justify-between text-[11px]">
-                          <span className="text-emerald-700 font-bold flex items-center gap-1">
-                            <CheckCircle className="w-3.5 h-3.5" />
-                            <span>{videoUploadStatus || 'ভিডিও সফলভাবে লোড হয়েছে'}</span>
-                          </span>
-                          {uploadedVideoThumbnail && (
-                            <span className="text-slate-500 text-[10px]">স্বয়ংক্রিয় থাম্বনেইল তৈরি সম্পন্ন</span>
-                          )}
-                        </div>
-                      </div>
-                    ) : (
-                      <label
-                        htmlFor="cms-video-file-input"
-                        className="cursor-pointer flex flex-col items-center justify-center p-6 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl text-slate-600 transition"
-                      >
-                        <Film className="w-8 h-8 text-emerald-800 mb-1" />
-                        <span className="font-bold text-slate-800">
-                          {videoProcessing ? 'প্রসেসিং হচ্ছে...' : 'ভিডিও ফাইল আপলোড করতে ক্লিক করুন'}
-                        </span>
-                        <span className="text-[10px] text-slate-400 mt-0.5">MP4, WebM বা OGG ভিডিও ফরম্যাট (সর্বোচ্চ 100 MB)</span>
-                      </label>
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">ভিডিওর শিরোনাম (ইংরেজিতে)</label>
+                    <input
+                      type="text"
+                      value={videoTitleEn}
+                      onChange={(e) => setVideoTitleEn(e.target.value)}
+                      placeholder="Video title in English"
+                      className="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Option 1: YouTube Video Link */}
+                <div className={`p-3.5 rounded-xl border transition ${
+                  videoUrl.trim() ? 'bg-emerald-50/70 border-emerald-400' : 'bg-slate-50 border-slate-200'
+                }`}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="font-bold text-slate-800 flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-rose-600 text-white flex items-center justify-center text-[10px] font-bold">1</span>
+                      <span className="text-slate-900 font-bold">ইউটিউব ভিডিও লিংক (YouTube Video Link)</span>
+                    </label>
+                    {videoUrl.trim() && (
+                      <span className="text-[10px] text-emerald-800 font-bold bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300">
+                        ✓ লিংক সক্রিয়
+                      </span>
                     )}
                   </div>
-                )}
+                  <input
+                    type="url"
+                    value={videoUrl}
+                    onChange={(e) => {
+                      setVideoUrl(e.target.value);
+                      if (e.target.value.trim()) {
+                        setUploadedVideoFile(null);
+                        setUploadedVideoPreviewUrl('');
+                        setUploadedVideoThumbnail('');
+                        setVideoUploadStatus('');
+                        if (videoFileInputRef.current) videoFileInputRef.current.value = '';
+                      }
+                    }}
+                    placeholder="https://www.youtube.com/watch?v=... অথবা Shorts লিংক পেস্ট করুন"
+                    className="w-full rounded-lg border border-slate-300 p-2.5 font-mono text-[11px] bg-white focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <p className="text-[10px] text-slate-500 mt-1">
+                    ইউটিউব ওয়াচ লিংক বা শর্টস লিংক পেস্ট করলে প্লেয়ার এবং থাম্বনেইল স্বয়ংক্রিয়ভাবে জেনারেট হবে।
+                  </p>
+                </div>
 
+                {/* Divider Between Video Link and Direct Video File Upload */}
+                <div className="relative flex py-1 items-center">
+                  <div className="flex-grow border-t border-slate-300"></div>
+                  <span className="flex-shrink mx-3 text-slate-700 text-[10px] font-extrabold uppercase tracking-wider bg-slate-100 px-3 py-1 rounded-full border border-slate-300 shadow-2xs">
+                    অথবা সরাসরি ফাইল আপলোড (OR DIRECT VIDEO UPLOAD)
+                  </span>
+                  <div className="flex-grow border-t border-slate-300"></div>
+                </div>
+
+                {/* Option 2: Direct Video File Upload */}
+                <div className={`p-3.5 rounded-xl border transition ${
+                  uploadedVideoPreviewUrl ? 'bg-emerald-50/70 border-emerald-400' : 'bg-slate-50 border-slate-200'
+                }`}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="font-bold text-slate-800 flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-emerald-800 text-white flex items-center justify-center text-[10px] font-bold">2</span>
+                      <span className="text-slate-900 font-bold">ডিভাইস থেকে সরাসরি ভিডিও ফাইল আপলোড (Direct File Upload)</span>
+                    </label>
+                    {uploadedVideoPreviewUrl && (
+                      <span className="text-[10px] text-emerald-800 font-bold bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300">
+                        ✓ ভিডিও ফাইল লোড হয়েছে
+                      </span>
+                    )}
+                  </div>
+
+                  <input
+                    type="file"
+                    ref={videoFileInputRef}
+                    accept="video/mp4,video/webm,video/ogg,video/quicktime"
+                    onChange={(e) => {
+                      setVideoUrl('');
+                      handleVideoFileChange(e);
+                    }}
+                    className="hidden"
+                    id="cms-video-file-input"
+                  />
+
+                  {uploadedVideoPreviewUrl ? (
+                    <div className="space-y-2 mt-2">
+                      <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-black border border-slate-300 shadow-xs">
+                        <video
+                          src={uploadedVideoPreviewUrl}
+                          controls
+                          className="w-full h-full object-contain"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUploadedVideoFile(null);
+                            setUploadedVideoPreviewUrl('');
+                            setUploadedVideoThumbnail('');
+                            setVideoUploadStatus('');
+                            if (videoFileInputRef.current) videoFileInputRef.current.value = '';
+                          }}
+                          className="absolute top-2 right-2 bg-rose-600 text-white p-1 rounded-full shadow hover:bg-rose-700 cursor-pointer"
+                          title="মুছে ফেলুন"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="text-emerald-800 font-bold flex items-center gap-1">
+                          <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>{videoUploadStatus || 'ভিডিও সফলভাবে লোড হয়েছে'}</span>
+                        </span>
+                        {uploadedVideoThumbnail && (
+                          <span className="text-slate-600 text-[10px] bg-slate-200/70 px-2 py-0.5 rounded-full font-bold">
+                            ফ্রেম থাম্বনেইল প্রস্তুত
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <label
+                      htmlFor="cms-video-file-input"
+                      className="cursor-pointer flex flex-col items-center justify-center p-6 bg-white hover:bg-emerald-50/40 border-2 border-dashed border-emerald-300 hover:border-emerald-500 rounded-xl text-slate-600 transition"
+                    >
+                      <Film className="w-8 h-8 text-emerald-800 mb-1" />
+                      <span className="font-bold text-slate-800 text-xs">
+                        {videoProcessing ? 'ভিডিও প্রসেসিং হচ্ছে...' : 'মোবাইল বা পিসি থেকে ভিডিও ফাইল সিলেক্ট করুন'}
+                      </span>
+                      <span className="text-[10px] text-slate-400 mt-0.5">MP4, WebM বা OGG ফরম্যাট (সর্বোচ্চ ১০০ মেগাবাইট / 100 MB)</span>
+                    </label>
+                  )}
+                </div>
+
+                {/* Duration */}
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">ভিডিওর ব্যপ্তিকাল (Duration)</label>
                   <input
@@ -633,16 +662,16 @@ export default function CmsContentManager() {
                     value={videoDuration}
                     onChange={(e) => setVideoDuration(e.target.value)}
                     placeholder="যেমন: 05:30"
-                    className="w-full rounded-lg border border-slate-300 p-2.5 font-mono"
+                    className="w-full rounded-lg border border-slate-300 p-2.5 font-mono bg-white"
                   />
-                  <p className="text-[10px] text-slate-400 mt-0.5">ফাইল আপলোড করলে ব্যপ্তিকাল স্বয়ংক্রিয়ভাবে নির্ধারিত হবে</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">ফাইল আপলোড করলে ব্যপ্তিকাল স্বয়ংক্রিয়ভাবে গণনা করা হবে</p>
                 </div>
 
-                <div className="pt-2">
+                <div className="pt-1">
                   <button
                     type="submit"
                     disabled={videoProcessing}
-                    className="w-full bg-emerald-800 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold py-2.5 rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full bg-emerald-800 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold py-3 rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Plus className="w-4 h-4 text-amber-300" />
                     <span>ভিডিওটি গ্যালারিতে প্রকাশ করুন</span>
@@ -715,6 +744,14 @@ export default function CmsContentManager() {
                         }`}>
                           {vid.source === 'Uploaded Video' ? 'Direct Upload' : 'YouTube'}
                         </span>
+                        <button
+                          type="button"
+                          onClick={() => setPreviewModalVideo(vid)}
+                          className="text-emerald-800 hover:text-emerald-950 font-bold flex items-center gap-1 text-[11px] bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200 cursor-pointer"
+                        >
+                          <Play className="w-2.5 h-2.5 fill-current" />
+                          <span>প্লেয়ার প্রিভিউ</span>
+                        </button>
                         {vid.videoUrl?.startsWith('http') && (
                           <a href={vid.videoUrl} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline flex items-center gap-1 text-[11px] font-mono">
                             <span>লিংক</span>
@@ -740,6 +777,49 @@ export default function CmsContentManager() {
               ))}
             </div>
           </div>
+
+          {/* In-CMS Video Player Modal */}
+          {previewModalVideo && (
+            <div
+              onClick={() => setPreviewModalVideo(null)}
+              className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 font-bangla"
+            >
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="bg-slate-900 rounded-2xl overflow-hidden max-w-2xl w-full border border-slate-700 shadow-2xl"
+              >
+                <div className="p-3.5 bg-slate-950 flex items-center justify-between text-white border-b border-slate-800">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] bg-emerald-700 text-white font-mono px-2 py-0.5 rounded font-bold">
+                      {previewModalVideo.source === 'Uploaded Video' ? 'DIRECT FILE' : 'YOUTUBE'}
+                    </span>
+                    <h4 className="font-bold text-xs sm:text-sm line-clamp-1">{previewModalVideo.titleBn}</h4>
+                  </div>
+                  <button
+                    onClick={() => setPreviewModalVideo(null)}
+                    className="p-1 hover:bg-rose-600 rounded-full transition text-white cursor-pointer"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="aspect-video w-full bg-black flex items-center justify-center">
+                  {previewModalVideo.source === 'Uploaded Video' ||
+                   previewModalVideo.videoUrl?.startsWith('blob:') ||
+                   previewModalVideo.videoUrl?.startsWith('data:') ? (
+                    <video src={previewModalVideo.videoUrl} controls autoPlay className="w-full h-full object-contain" />
+                  ) : (
+                    <iframe
+                      src={previewModalVideo.videoUrl}
+                      title={previewModalVideo.titleBn}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full border-0"
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
