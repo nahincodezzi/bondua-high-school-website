@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SchoolContext } from './SchoolContextInstance';
+import { storeVideoFile, getVideoFile, deleteVideoFile } from '../utils/mediaStorage';
 import {
   initialSchoolInfo,
   initialUniformInfo,
@@ -273,8 +274,57 @@ export function SchoolProvider({ children }) {
   }, [gallery]);
 
   useEffect(() => {
-    localStorage.setItem('bdhs_videos', JSON.stringify(videos));
+    try {
+      localStorage.setItem('bdhs_videos', JSON.stringify(videos));
+    } catch (e) {
+      console.warn('LocalStorage limit for videos reached, storing light references:', e);
+      try {
+        const lightweight = videos.map(v => {
+          if (v.videoUrl && v.videoUrl.length > 150000) {
+            return { ...v, videoUrl: `idb://${v.id}`, isIndexedDb: true };
+          }
+          return v;
+        });
+        localStorage.setItem('bdhs_videos', JSON.stringify(lightweight));
+      } catch (err2) {
+        console.error('Critical quota error:', err2);
+      }
+    }
   }, [videos]);
+
+  // Rehydrate IndexedDB stored videos into object URLs if needed
+  useEffect(() => {
+    let isMounted = true;
+    const rehydrateVideos = () => {
+      try {
+        setVideos(prevVideos => {
+          Promise.all(
+            prevVideos.map(async (vid) => {
+              if (vid.isIndexedDb || vid.videoUrl?.startsWith('idb://') || !vid.videoUrl) {
+                const fileBlob = await getVideoFile(vid.id);
+                if (fileBlob) {
+                  return { ...vid, videoUrl: URL.createObjectURL(fileBlob) };
+                }
+              }
+              return vid;
+            })
+          ).then(updated => {
+            if (isMounted) {
+              const hasDiff = updated.some((v, idx) => v.videoUrl !== prevVideos[idx]?.videoUrl);
+              if (hasDiff) {
+                setVideos(updated);
+              }
+            }
+          }).catch(err => console.warn('Error in video rehydration promise:', err));
+          return prevVideos;
+        });
+      } catch (err) {
+        console.warn('Error rehydrating videos from IndexedDB:', err);
+      }
+    };
+    rehydrateVideos();
+    return () => { isMounted = false; };
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('bdhs_admissions', JSON.stringify(admissions));
@@ -510,15 +560,21 @@ export function SchoolProvider({ children }) {
     setGallery(prev => prev.filter(g => g.id !== id));
   };
 
-  const addVideoItem = (video) => {
+  const addVideoItem = async (video) => {
+    const newVidId = `vid-${Date.now()}`;
+    if (video.videoFile) {
+      await storeVideoFile(newVidId, video.videoFile);
+    }
     const newVid = {
       ...video,
-      id: `vid-${Date.now()}`
+      id: newVidId
     };
+    delete newVid.videoFile;
     setVideos(prev => [newVid, ...prev]);
   };
 
   const deleteVideoItem = (id) => {
+    deleteVideoFile(id);
     setVideos(prev => prev.filter(v => v.id !== id));
   };
 

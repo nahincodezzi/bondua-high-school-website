@@ -15,7 +15,16 @@ export default function Header() {
   const { lang, toggleLanguage, activeTab, setActiveTab, schoolInfo, authUser, logout, setAuthModalOpen } = useSchool();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
   const navContainerRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Close desktop dropdown when clicking outside
   useEffect(() => {
@@ -99,12 +108,16 @@ export default function Header() {
   };
 
   return (
-    <header className="fixed top-3 sm:top-4 left-0 right-0 z-50 px-3 sm:px-6 pointer-events-none no-print">
+    <header className="fixed top-2 sm:top-3 left-0 right-0 z-50 px-3 sm:px-6 pointer-events-none no-print transition-all duration-300">
       <div className="max-w-[1240px] mx-auto pointer-events-auto">
         {/* Floating Glass Capsule Navbar */}
         <nav 
           ref={navContainerRef}
-          className="glass-capsule rounded-full px-3.5 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-4 shadow-2xl transition-all duration-300"
+          className={`glass-capsule rounded-full px-3.5 sm:px-6 transition-all duration-300 flex items-center justify-between gap-2 sm:gap-4 shadow-2xl ${
+            isScrolled 
+              ? 'py-1.5 sm:py-2 bg-[rgba(4,30,22,0.98)] shadow-2xl ring-1 ring-white/20' 
+              : 'py-2 sm:py-2.5 bg-[rgba(4,30,22,0.94)]'
+          }`}
         >
           {/* Left Brand Identity: Circular Emblem + 2-Line Name */}
           <div 

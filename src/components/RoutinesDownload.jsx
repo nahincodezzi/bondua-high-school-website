@@ -28,18 +28,18 @@ export default function RoutinesDownload() {
   };
 
   return (
-    <section className="py-14 text-white relative z-10 font-sans min-h-[700px]">
+    <section className="py-12 sm:py-16 text-slate-800 relative z-10 font-sans min-h-[700px]">
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-10 no-print">
-          <div className="inline-flex items-center gap-1.5 glass-pill text-amber-300 text-xs font-bold px-4 py-1.5 rounded-full mb-3 shadow-md border border-amber-400/20">
-            <Calendar className="w-3.5 h-3.5 text-amber-400" />
+          <div className="inline-flex items-center gap-1.5 bg-emerald-100/80 text-emerald-900 text-xs font-bold px-4 py-1.5 rounded-full mb-3 shadow-xs border border-emerald-200">
+            <Calendar className="w-3.5 h-3.5 text-emerald-700" />
             <span>{lang === 'bn' ? 'একাডেমিক সময়সূচি' : 'Academic Schedule & Routines'}</span>
           </div>
-          <h2 className="text-2xl sm:text-4xl font-extrabold font-bangla text-white drop-shadow-md">
+          <h2 className="text-2xl sm:text-4xl font-extrabold font-bangla text-slate-900 leading-tight">
             {lang === 'bn' ? 'ক্লাস রুটিন, পরীক্ষার সময়সূচি ও পাঠ্যসূচি' : 'Class Routines & Examination Schedules'}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-300 font-bangla mt-2">
+          <p className="text-xs sm:text-sm text-slate-600 font-bangla mt-2">
             {lang === 'bn'
               ? 'ষষ্ঠ থেকে দশম শ্রেণির সাপ্তাহিক ক্লাস রুটিন এবং বার্ষিক পরীক্ষার সময়সূচি ডাউনলোড করুন'
               : 'Official weekly routines and exam calendars for all classes.'}
@@ -51,40 +51,40 @@ export default function RoutinesDownload() {
           {routines.map((item) => (
             <div
               key={item.id}
-              className="glass-card glass-card-hover rounded-3xl p-6 border border-white/15 shadow-xl transition flex flex-col justify-between backdrop-blur-xl"
+              className="glass-card glass-card-hover rounded-3xl p-6 border border-slate-200 shadow-sm transition flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <span className="w-11 h-11 rounded-2xl bg-amber-400/20 text-amber-300 border border-amber-400/30 flex items-center justify-center font-bold">
+                  <span className="w-11 h-11 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
                     <FileText className="w-5 h-5" />
                   </span>
-                  <span className="text-xs font-mono font-bold text-amber-300 glass-pill px-3 py-1 rounded-full border border-white/10">
+                  <span className="text-xs font-mono font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
                     {item.type} • {item.fileSize}
                   </span>
                 </div>
 
-                <h3 className="text-base font-bold font-bangla text-white mb-2 line-clamp-2">
+                <h3 className="text-base font-bold font-bangla text-slate-900 mb-2 line-clamp-2">
                   {lang === 'bn' ? item.titleBn : item.titleEn}
                 </h3>
-                <p className="text-xs text-slate-300 font-mono">
+                <p className="text-xs text-slate-500 font-mono">
                   {lang === 'bn' ? `কার্যকরী তারিখ: ${item.effectiveDate}` : `Effective: ${item.effectiveDate}`}
                 </p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-white/10 flex items-center gap-2.5">
+              <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2.5">
                 <button
                   onClick={() => setActiveRoutineModal(item)}
-                  className="flex-1 btn-gold py-2.5 px-4 rounded-full text-xs font-bold font-bangla transition flex items-center justify-center gap-2 cursor-pointer shadow-md"
+                  className="flex-1 btn-gold py-2.5 px-4 rounded-full text-xs font-bold font-bangla transition flex items-center justify-center gap-2 cursor-pointer shadow-sm"
                 >
                   <Eye className="w-4 h-4 text-slate-950" />
                   <span>{lang === 'bn' ? 'অনলাইনে দেখুন' : 'View Online'}</span>
                 </button>
                 <button
                   onClick={() => alert('ডাউনলোড শুরু হয়েছে...')}
-                  className="p-2.5 glass-pill hover:bg-white/15 text-white rounded-full text-xs transition border border-white/15 cursor-pointer"
+                  className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-xs transition border border-slate-200 cursor-pointer"
                   title="Download File"
                 >
-                  <Download className="w-4 h-4 text-amber-300" />
+                  <Download className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -92,29 +92,29 @@ export default function RoutinesDownload() {
         </div>
 
         {/* Live Weekly Class Routine Table (Interactive & Print-Friendly) */}
-        <div className="glass-card rounded-3xl p-6 sm:p-8 border border-white/15 shadow-2xl backdrop-blur-xl" id="weekly-routine">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/10">
+        <div className="glass-card rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm" id="weekly-routine">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-200">
             <div>
-              <span className="text-xs font-bold text-amber-300 uppercase tracking-wider block font-bangla">
+              <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider block font-bangla">
                 {lang === 'bn' ? 'সাপ্তাহিক ক্লাস রুটিন ২০২৬ (নমুনা: দশম শ্রেণি)' : 'Weekly Routine 2026 (Class 10)'}
               </span>
-              <h3 className="text-lg sm:text-xl font-bold font-bangla text-white mt-1">
+              <h3 className="text-lg sm:text-xl font-bold font-bangla text-slate-900 mt-1">
                 {lang === 'bn' ? 'বিজ্ঞান ও মানবিক শাখা সময়সূচি' : 'Science & Humanities Routine'}
               </h3>
             </div>
 
             <button
               onClick={handlePrint}
-              className="btn-gold px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 cursor-pointer shadow-md no-print"
+              className="btn-gold px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 cursor-pointer shadow-sm no-print"
             >
               <Printer className="w-4 h-4 text-slate-950" />
               <span>{lang === 'bn' ? 'রুটিন প্রিন্ট করুন' : 'Print Schedule'}</span>
             </button>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-white/10">
+          <div className="overflow-x-auto rounded-2xl border border-slate-200">
             <table className="w-full text-left text-xs font-bangla">
-              <thead className="bg-slate-950/80 text-amber-300 border-b border-white/10 font-bold uppercase text-[11px]">
+              <thead className="bg-slate-100 text-slate-800 border-b border-slate-200 font-bold uppercase text-[11px]">
                 <tr>
                   <th className="py-3 px-3">পিরিয়ড / সময়</th>
                   <th className="py-3 px-3">রবিবার</th>
@@ -124,15 +124,15 @@ export default function RoutinesDownload() {
                   <th className="py-3 px-3">বৃহস্পতিবার</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-slate-100">
                 {scheduleData.map((row, idx) => (
-                  <tr key={idx} className="hover:bg-white/5 transition-colors">
-                    <td className="py-3 px-3 font-mono font-bold text-amber-300">{row.period}</td>
-                    <td className="py-3 px-3 text-slate-200">{row.sun}</td>
-                    <td className="py-3 px-3 text-slate-200">{row.mon}</td>
-                    <td className="py-3 px-3 text-slate-200">{row.tue}</td>
-                    <td className="py-3 px-3 text-slate-200">{row.wed}</td>
-                    <td className="py-3 px-3 text-slate-200">{row.thu}</td>
+                  <tr key={idx} className="hover:bg-slate-50 transition-colors">
+                    <td className="py-3 px-3 font-mono font-bold text-emerald-800">{row.period}</td>
+                    <td className="py-3 px-3 text-slate-700">{row.sun}</td>
+                    <td className="py-3 px-3 text-slate-700">{row.mon}</td>
+                    <td className="py-3 px-3 text-slate-700">{row.tue}</td>
+                    <td className="py-3 px-3 text-slate-700">{row.wed}</td>
+                    <td className="py-3 px-3 text-slate-700">{row.thu}</td>
                   </tr>
                 ))}
               </tbody>
@@ -142,34 +142,34 @@ export default function RoutinesDownload() {
 
         {/* Modal for Routine View */}
         {activeRoutineModal && (
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="glass-card rounded-3xl max-w-lg w-full p-6 border border-white/20 shadow-2xl relative">
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl max-w-lg w-full p-6 border border-slate-200 shadow-2xl relative">
               <button
                 onClick={() => setActiveRoutineModal(null)}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 text-white cursor-pointer"
+                className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-900 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
-              <h3 className="text-lg font-bold font-bangla text-white mb-2">
+              <h3 className="text-lg font-bold font-bangla text-slate-900 mb-2">
                 {lang === 'bn' ? activeRoutineModal.titleBn : activeRoutineModal.titleEn}
               </h3>
-              <p className="text-xs text-amber-300 font-mono mb-4">
+              <p className="text-xs text-emerald-800 font-mono mb-4 font-bold">
                 Effective: {activeRoutineModal.effectiveDate}
               </p>
-              <div className="glass-pill p-8 rounded-2xl text-center border border-white/10 mb-6">
-                <FileText className="w-12 h-12 text-amber-400 mx-auto mb-2" />
-                <p className="text-xs text-slate-300">পিডিএফ ডকুমেন্টটি সম্পূর্ণ আকারে প্রস্তুত রয়েছে।</p>
+              <div className="bg-slate-50 p-8 rounded-2xl text-center border border-slate-200 mb-6">
+                <FileText className="w-12 h-12 text-emerald-700 mx-auto mb-2" />
+                <p className="text-xs text-slate-600 font-bangla">পিডিএফ ডকুমেন্টটি সম্পূর্ণ আকারে প্রস্তুত রয়েছে।</p>
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => setActiveRoutineModal(null)}
-                  className="flex-1 glass-pill py-2.5 rounded-full text-xs text-white border border-white/10 cursor-pointer"
+                  className="flex-1 bg-slate-100 hover:bg-slate-200 py-2.5 rounded-full text-xs text-slate-700 border border-slate-200 cursor-pointer font-bold"
                 >
                   বন্ধ করুন
                 </button>
                 <button
                   onClick={() => alert('ডাউনলোড শুরু হয়েছে...')}
-                  className="flex-1 btn-gold py-2.5 rounded-full text-xs font-bold cursor-pointer"
+                  className="flex-1 btn-gold py-2.5 rounded-full text-xs font-bold cursor-pointer shadow-sm"
                 >
                   ডাউনলোড করুন
                 </button>

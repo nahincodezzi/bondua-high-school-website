@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useSchool } from '../../context/useSchool';
+import { extractVideoMeta } from '../../utils/mediaStorage';
 import { 
   Save, 
   CheckCircle, 
@@ -12,7 +13,8 @@ import {
   Trash2,
   Upload,
   X,
-  ExternalLink
+  ExternalLink,
+  Film
 } from 'lucide-react';
 
 export default function CmsContentManager() {
@@ -45,11 +47,18 @@ export default function CmsContentManager() {
   const [photoUploadStatus, setPhotoUploadStatus] = useState('');
   const photoInputRef = useRef(null);
 
-  // Gallery Video Upload States
+  // Gallery Video Upload States (Supports both YouTube link & Direct Video File Upload)
+  const [videoSourceType, setVideoSourceType] = useState('link'); // 'link' or 'file'
   const [videoTitleBn, setVideoTitleBn] = useState('');
   const [videoTitleEn, setVideoTitleEn] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [videoDuration, setVideoDuration] = useState('05:30');
+  const [uploadedVideoFile, setUploadedVideoFile] = useState(null);
+  const [uploadedVideoPreviewUrl, setUploadedVideoPreviewUrl] = useState('');
+  const [uploadedVideoThumbnail, setUploadedVideoThumbnail] = useState('');
+  const [videoProcessing, setVideoProcessing] = useState(false);
+  const [videoUploadStatus, setVideoUploadStatus] = useState('');
+  const videoFileInputRef = useRef(null);
 
   // Slide Image Upload Ref
   const slideFileRef = useRef(null);
@@ -196,44 +205,106 @@ export default function CmsContentManager() {
     setTimeout(() => setSavedMessage(false), 3000);
   };
 
-  // Gallery Video Submit (High Quality YouTube Embed & Thumbnail Extraction)
-  const handleAddVideoSubmit = (e) => {
-    e.preventDefault();
-    if (!videoTitleBn || !videoUrl) {
-      alert('ভিডিওর শিরোনাম ও লিংক প্রদান করুন।');
+  // Gallery Video File Upload & Metadata Auto-Detection
+  const handleVideoFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 100 * 1024 * 1024) {
+      alert('ভিডিওর সর্বোচ্চ আকার ১০০ মেগাবাইট (100 MB) হতে পারবে।');
       return;
     }
 
-    let finalEmbedUrl = videoUrl.trim();
-    let thumbnail = 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=600&auto=format&fit=crop&q=80';
-    let vidId = '';
+    setVideoProcessing(true);
+    setVideoUploadStatus('ভিডিও প্রসেসিং ও থাম্বনেইল তৈরি হচ্ছে...');
+    try {
+      const previewUrl = URL.createObjectURL(file);
+      setUploadedVideoFile(file);
+      setUploadedVideoPreviewUrl(previewUrl);
 
-    if (finalEmbedUrl.includes('watch?v=')) {
-      vidId = finalEmbedUrl.split('watch?v=')[1]?.split('&')[0];
-    } else if (finalEmbedUrl.includes('youtu.be/')) {
-      vidId = finalEmbedUrl.split('youtu.be/')[1]?.split('?')[0];
-    } else if (finalEmbedUrl.includes('youtube.com/shorts/')) {
-      vidId = finalEmbedUrl.split('youtube.com/shorts/')[1]?.split('?')[0];
-    } else if (finalEmbedUrl.includes('youtube.com/embed/')) {
-      vidId = finalEmbedUrl.split('youtube.com/embed/')[1]?.split('?')[0];
+      const meta = await extractVideoMeta(file);
+      if (meta.thumbnail) {
+        setUploadedVideoThumbnail(meta.thumbnail);
+      }
+      if (meta.durationStr && meta.durationStr !== '00:00') {
+        setVideoDuration(meta.durationStr);
+      }
+      setVideoUploadStatus(`ভিডিও লোড হয়েছে (${(file.size / (1024 * 1024)).toFixed(1)} MB)`);
+    } catch (err) {
+      console.warn('Failed to extract video meta:', err);
+      setVideoUploadStatus('ভিডিও লোড সম্পন্ন হয়েছে');
+    } finally {
+      setVideoProcessing(false);
+    }
+  };
+
+  // Gallery Video Submit (Supports YouTube Embed & Direct Uploaded MP4/WebM Video Files)
+  const handleAddVideoSubmit = async (e) => {
+    e.preventDefault();
+    if (!videoTitleBn.trim()) {
+      alert('অনুগ্রহ করে ভিডিওর শিরোনাম বাংলায় লিখুন।');
+      return;
     }
 
-    if (vidId) {
-      finalEmbedUrl = `https://www.youtube.com/embed/${vidId}`;
-      thumbnail = `https://img.youtube.com/vi/${vidId}/hqdefault.jpg`;
-    }
+    if (videoSourceType === 'link') {
+      if (!videoUrl.trim()) {
+        alert('ভিডিওর YouTube লিংক প্রদান করুন।');
+        return;
+      }
 
-    addVideoItem({
-      titleBn: videoTitleBn,
-      titleEn: videoTitleEn || videoTitleBn,
-      videoUrl: finalEmbedUrl,
-      duration: videoDuration || '05:30',
-      thumbnail: thumbnail
-    });
+      let finalEmbedUrl = videoUrl.trim();
+      let thumbnail = 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=600&auto=format&fit=crop&q=80';
+      let vidId = '';
+
+      if (finalEmbedUrl.includes('watch?v=')) {
+        vidId = finalEmbedUrl.split('watch?v=')[1]?.split('&')[0];
+      } else if (finalEmbedUrl.includes('youtu.be/')) {
+        vidId = finalEmbedUrl.split('youtu.be/')[1]?.split('?')[0];
+      } else if (finalEmbedUrl.includes('youtube.com/shorts/')) {
+        vidId = finalEmbedUrl.split('youtube.com/shorts/')[1]?.split('?')[0];
+      } else if (finalEmbedUrl.includes('youtube.com/embed/')) {
+        vidId = finalEmbedUrl.split('youtube.com/embed/')[1]?.split('?')[0];
+      }
+
+      if (vidId) {
+        finalEmbedUrl = `https://www.youtube.com/embed/${vidId}`;
+        thumbnail = `https://img.youtube.com/vi/${vidId}/hqdefault.jpg`;
+      }
+
+      await addVideoItem({
+        titleBn: videoTitleBn,
+        titleEn: videoTitleEn || videoTitleBn,
+        videoUrl: finalEmbedUrl,
+        duration: videoDuration || '05:30',
+        thumbnail: thumbnail,
+        source: 'YouTube'
+      });
+    } else {
+      // Direct File Upload
+      if (!uploadedVideoFile && !uploadedVideoPreviewUrl) {
+        alert('অনুগ্রহ করে মোবাইল বা কম্পিউটার থেকে একটি ভিডিও ফাইল (MP4/WebM) নির্বাচন করুন।');
+        return;
+      }
+
+      await addVideoItem({
+        titleBn: videoTitleBn,
+        titleEn: videoTitleEn || videoTitleBn,
+        videoUrl: uploadedVideoPreviewUrl,
+        videoFile: uploadedVideoFile,
+        duration: videoDuration || '03:15',
+        thumbnail: uploadedVideoThumbnail || 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=600&auto=format&fit=crop&q=80',
+        source: 'Uploaded Video'
+      });
+    }
 
     setVideoTitleBn('');
     setVideoTitleEn('');
     setVideoUrl('');
+    setUploadedVideoFile(null);
+    setUploadedVideoPreviewUrl('');
+    setUploadedVideoThumbnail('');
+    setVideoUploadStatus('');
+    if (videoFileInputRef.current) videoFileInputRef.current.value = '';
     setSavedMessage(true);
     setTimeout(() => setSavedMessage(false), 3000);
   };
@@ -419,12 +490,41 @@ export default function CmsContentManager() {
               </form>
             </div>
 
-            {/* Video Embed Form */}
+            {/* Video Embed Form (Supports YouTube Link AND Direct Video Upload) */}
             <div className="lg:col-span-6 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-              <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2 pb-2 border-b">
-                <Video className="w-4 h-4 text-emerald-800" />
-                <span>নতুন ভিডিও যুক্ত করুন (YouTube Link)</span>
-              </h3>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-2 border-b">
+                <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+                  <Video className="w-4 h-4 text-emerald-800" />
+                  <span>নতুন ভিডিও যুক্ত করুন</span>
+                </h3>
+
+                {/* Video Mode Switcher */}
+                <div className="bg-slate-100 p-1 rounded-xl flex items-center gap-1 text-[11px] font-bold">
+                  <button
+                    type="button"
+                    onClick={() => setVideoSourceType('link')}
+                    className={`px-2.5 py-1 rounded-lg transition cursor-pointer ${
+                      videoSourceType === 'link'
+                        ? 'bg-emerald-800 text-white shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    YouTube লিংক
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setVideoSourceType('file')}
+                    className={`px-2.5 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer ${
+                      videoSourceType === 'file'
+                        ? 'bg-emerald-800 text-white shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    <Upload className="w-3 h-3 text-amber-300" />
+                    <span>ভিডিও আপলোড</span>
+                  </button>
+                </div>
+              </div>
 
               <form onSubmit={handleAddVideoSubmit} className="space-y-3.5 text-xs">
                 <div>
@@ -450,20 +550,81 @@ export default function CmsContentManager() {
                   />
                 </div>
 
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">ইউটিউব ভিডিওর লিংক (YouTube Link) *</label>
-                  <input
-                    type="url"
-                    required
-                    value={videoUrl}
-                    onChange={(e) => setVideoUrl(e.target.value)}
-                    placeholder="https://www.youtube.com/watch?v=..."
-                    className="w-full rounded-lg border border-slate-300 p-2.5 font-mono text-[11px]"
-                  />
-                  <p className="text-[10px] text-slate-500 mt-1">
-                    ইউটিউবের সাধারণ লিংক অথবা শেয়ার লিংক পেস্ট করলেই সিস্টেম স্বয়ংক্রিয়ভাবে প্লেয়ারে রূপান্তর করবে।
-                  </p>
-                </div>
+                {videoSourceType === 'link' ? (
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">ইউটিউব ভিডিওর লিংক (YouTube Link) *</label>
+                    <input
+                      type="url"
+                      required
+                      value={videoUrl}
+                      onChange={(e) => setVideoUrl(e.target.value)}
+                      placeholder="https://www.youtube.com/watch?v=... বা Shorts লিংক"
+                      className="w-full rounded-lg border border-slate-300 p-2.5 font-mono text-[11px]"
+                    />
+                    <p className="text-[10px] text-slate-500 mt-1">
+                      ইউটিউবের সাধারণ লিংক অথবা শেয়ার লিংক পেস্ট করলেই সিস্টেম স্বয়ংক্রিয়ভাবে প্লেয়ারে রূপান্তর করবে।
+                    </p>
+                  </div>
+                ) : (
+                  <div className="p-3 bg-slate-50 rounded-xl border border-dashed border-slate-300 space-y-2">
+                    <span className="font-bold text-slate-700 block">মোবাইল / কম্পিউটার থেকে ভিডিও ফাইল নির্বাচন করুন *</span>
+                    
+                    <input
+                      type="file"
+                      ref={videoFileInputRef}
+                      accept="video/mp4,video/webm,video/ogg,video/quicktime"
+                      onChange={handleVideoFileChange}
+                      className="hidden"
+                      id="cms-video-file-input"
+                    />
+
+                    {uploadedVideoPreviewUrl ? (
+                      <div className="space-y-2">
+                        <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-black border border-slate-300 shadow-xs">
+                          <video
+                            src={uploadedVideoPreviewUrl}
+                            controls
+                            className="w-full h-full object-contain"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setUploadedVideoFile(null);
+                              setUploadedVideoPreviewUrl('');
+                              setUploadedVideoThumbnail('');
+                              setVideoUploadStatus('');
+                              if (videoFileInputRef.current) videoFileInputRef.current.value = '';
+                            }}
+                            className="absolute top-2 right-2 bg-rose-600 text-white p-1 rounded-full shadow hover:bg-rose-700 cursor-pointer"
+                            title="মুছে ফেলুন"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="flex items-center justify-between text-[11px]">
+                          <span className="text-emerald-700 font-bold flex items-center gap-1">
+                            <CheckCircle className="w-3.5 h-3.5" />
+                            <span>{videoUploadStatus || 'ভিডিও সফলভাবে লোড হয়েছে'}</span>
+                          </span>
+                          {uploadedVideoThumbnail && (
+                            <span className="text-slate-500 text-[10px]">স্বয়ংক্রিয় থাম্বনেইল তৈরি সম্পন্ন</span>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <label
+                        htmlFor="cms-video-file-input"
+                        className="cursor-pointer flex flex-col items-center justify-center p-6 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl text-slate-600 transition"
+                      >
+                        <Film className="w-8 h-8 text-emerald-800 mb-1" />
+                        <span className="font-bold text-slate-800">
+                          {videoProcessing ? 'প্রসেসিং হচ্ছে...' : 'ভিডিও ফাইল আপলোড করতে ক্লিক করুন'}
+                        </span>
+                        <span className="text-[10px] text-slate-400 mt-0.5">MP4, WebM বা OGG ভিডিও ফরম্যাট (সর্বোচ্চ 100 MB)</span>
+                      </label>
+                    )}
+                  </div>
+                )}
 
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">ভিডিওর ব্যপ্তিকাল (Duration)</label>
@@ -471,15 +632,17 @@ export default function CmsContentManager() {
                     type="text"
                     value={videoDuration}
                     onChange={(e) => setVideoDuration(e.target.value)}
-                    placeholder="যেমন: 08:45"
+                    placeholder="যেমন: 05:30"
                     className="w-full rounded-lg border border-slate-300 p-2.5 font-mono"
                   />
+                  <p className="text-[10px] text-slate-400 mt-0.5">ফাইল আপলোড করলে ব্যপ্তিকাল স্বয়ংক্রিয়ভাবে নির্ধারিত হবে</p>
                 </div>
 
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full bg-emerald-800 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow flex items-center justify-center gap-2"
+                    disabled={videoProcessing}
+                    className="w-full bg-emerald-800 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold py-2.5 rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Plus className="w-4 h-4 text-amber-300" />
                     <span>ভিডিওটি গ্যালারিতে প্রকাশ করুন</span>
@@ -534,17 +697,33 @@ export default function CmsContentManager() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {videos.map((vid) => (
                 <div key={vid.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-start justify-between gap-3 text-xs">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="bg-rose-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded font-mono">
-                        {vid.duration}
-                      </span>
-                      <a href={vid.videoUrl} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline flex items-center gap-1 text-[11px] font-mono">
-                        <span>প্লেয়ার লিংক</span>
-                        <ExternalLink className="w-2.5 h-2.5" />
-                      </a>
+                  <div className="flex items-start gap-3">
+                    {vid.thumbnail && (
+                      <div className="relative w-16 h-10 rounded-lg overflow-hidden bg-slate-800 shrink-0 border border-slate-300">
+                        <img src={vid.thumbnail} alt={vid.titleBn} className="w-full h-full object-cover" />
+                        <span className="absolute bottom-0 right-0 bg-black/80 text-white text-[8px] font-mono px-1">
+                          {vid.duration}
+                        </span>
+                      </div>
+                    )}
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded font-mono ${
+                          vid.source === 'Uploaded Video' || vid.videoUrl?.startsWith('blob:') || vid.videoUrl?.startsWith('data:')
+                            ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                            : 'bg-rose-100 text-rose-800 border border-rose-200'
+                        }`}>
+                          {vid.source === 'Uploaded Video' ? 'Direct Upload' : 'YouTube'}
+                        </span>
+                        {vid.videoUrl?.startsWith('http') && (
+                          <a href={vid.videoUrl} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline flex items-center gap-1 text-[11px] font-mono">
+                            <span>লিংক</span>
+                            <ExternalLink className="w-2.5 h-2.5" />
+                          </a>
+                        )}
+                      </div>
+                      <h4 className="font-bold text-slate-900 line-clamp-1">{vid.titleBn}</h4>
                     </div>
-                    <h4 className="font-bold text-slate-900 line-clamp-1">{vid.titleBn}</h4>
                   </div>
                   <button
                     onClick={() => {
@@ -552,7 +731,7 @@ export default function CmsContentManager() {
                         deleteVideoItem(vid.id);
                       }
                     }}
-                    className="p-1.5 text-rose-600 hover:bg-rose-50 rounded transition shrink-0"
+                    className="p-1.5 text-rose-600 hover:bg-rose-50 rounded transition shrink-0 cursor-pointer"
                     title="Delete Video"
                   >
                     <Trash2 className="w-4 h-4" />

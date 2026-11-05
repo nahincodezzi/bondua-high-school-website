@@ -52,28 +52,28 @@ export default function Gallery() {
   };
 
   return (
-    <section className="py-14 text-white relative z-10 font-sans min-h-[700px]">
+    <section className="py-12 sm:py-16 text-slate-800 relative z-10 font-sans min-h-[700px]">
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-8">
-          <div className="inline-flex items-center gap-1.5 glass-pill text-amber-300 text-xs font-bold px-4 py-1.5 rounded-full mb-3 shadow-md border border-amber-400/20">
-            <ImageIcon className="w-3.5 h-3.5 text-amber-400" />
+          <div className="inline-flex items-center gap-1.5 bg-emerald-100/80 text-emerald-900 text-xs font-bold px-4 py-1.5 rounded-full mb-3 shadow-xs border border-emerald-200">
+            <ImageIcon className="w-3.5 h-3.5 text-emerald-700" />
             <span>{lang === 'bn' ? 'স্মৃতি ও কার্যক্রম' : 'Moments & Memories'}</span>
           </div>
-          <h2 className="text-2xl sm:text-4xl font-extrabold font-bangla text-white drop-shadow-md">
+          <h2 className="text-2xl sm:text-4xl font-extrabold font-bangla text-slate-900 leading-tight">
             {lang === 'bn' ? 'ফটো ও ভিডিও গ্যালারি' : 'Photo & Video Gallery'}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-300 font-bangla mt-2">
+          <p className="text-xs sm:text-sm text-slate-600 font-bangla mt-2">
             {lang === 'bn' 
               ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়ের মনোরম ক্যাম্পাস, সহশিক্ষা, ক্রীড়া ও সাংস্কৃতিক উৎসবের স্থিরচিত্র'
               : 'Glimpses of academic life, annual sports, cultural functions, and celebrations.'}
           </p>
 
           {/* Facebook Group Community Banner */}
-          <div className="mt-5 glass-card p-4 rounded-3xl border border-blue-400/30 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs shadow-xl backdrop-blur-xl">
+          <div className="mt-5 bg-gradient-to-r from-blue-900 to-indigo-900 text-white p-4 rounded-3xl border border-blue-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs shadow-md">
             <div className="flex items-center gap-2.5 font-bangla text-left">
               <Share2 className="w-5 h-5 text-amber-300 shrink-0" />
-              <span className="text-slate-200">
+              <span className="text-blue-100">
                 {lang === 'bn' 
                   ? 'বিদ্যালয়ের ফেসবুক গ্রুপে যুক্ত হয়ে আপনার কাছে থাকা ছবি ও ভিডিও শেয়ার করুন।' 
                   : 'Join our Facebook Community to share & browse alumni memories.'}
@@ -91,7 +91,7 @@ export default function Gallery() {
               </a>
               <button
                 onClick={() => setActiveTab('facebookHub')}
-                className="glass-pill hover:bg-white/15 text-white font-bold px-4 py-2 rounded-full transition border border-white/15 text-xs cursor-pointer"
+                className="bg-blue-800 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-full transition border border-blue-700 text-xs cursor-pointer"
               >
                 {lang === 'bn' ? 'মিডিয়া সিঙ্ক হাব' : 'Media Hub'}
               </button>
@@ -101,18 +101,18 @@ export default function Gallery() {
 
         {/* Media Type Switcher (Photos vs Videos) */}
         <div className="flex justify-center mb-8">
-          <div className="glass-capsule p-1.5 rounded-full border border-white/15 shadow-xl flex items-center gap-1 sm:gap-2">
+          <div className="bg-slate-100 p-1.5 rounded-full border border-slate-200 shadow-xs flex items-center gap-1 sm:gap-2">
             <button
               onClick={() => setActiveTabType('photos')}
               className={`px-5 py-2 rounded-full text-xs font-bold transition flex items-center gap-2 font-bangla cursor-pointer ${
                 activeTabType === 'photos'
                   ? 'btn-gold shadow-md'
-                  : 'text-slate-300 hover:text-white hover:bg-white/10'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white'
               }`}
             >
               <ImageIcon className="w-4 h-4" />
               <span>{lang === 'bn' ? 'ছবি সমূহ (Photos)' : 'Photos'}</span>
-              <span className="bg-slate-950/40 text-slate-950 px-2 py-0.5 rounded-full text-[10px] font-bold">{gallery.length}</span>
+              <span className="bg-slate-900/10 text-slate-800 px-2 py-0.5 rounded-full text-[10px] font-bold">{gallery.length}</span>
             </button>
 
             <button
@@ -120,12 +120,12 @@ export default function Gallery() {
               className={`px-5 py-2 rounded-full text-xs font-bold transition flex items-center gap-2 font-bangla cursor-pointer ${
                 activeTabType === 'videos'
                   ? 'btn-gold shadow-md'
-                  : 'text-slate-300 hover:text-white hover:bg-white/10'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white'
               }`}
             >
               <Video className="w-4 h-4" />
               <span>{lang === 'bn' ? 'ভিডিও সমূহ (Videos)' : 'Videos'}</span>
-              <span className="bg-slate-950/40 text-slate-950 px-2 py-0.5 rounded-full text-[10px] font-bold">{videos.length}</span>
+              <span className="bg-slate-900/10 text-slate-800 px-2 py-0.5 rounded-full text-[10px] font-bold">{videos.length}</span>
             </button>
           </div>
         </div>
@@ -142,7 +142,7 @@ export default function Gallery() {
                   className={`px-4 py-2 rounded-full text-xs font-semibold font-bangla transition cursor-pointer ${
                     filterCategory === cat.id
                       ? 'btn-gold shadow-md'
-                      : 'glass-pill text-slate-300 hover:text-white border border-white/10'
+                      : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
                   }`}
                 >
                   {lang === 'bn' ? cat.labelBn : cat.labelEn}
@@ -156,38 +156,38 @@ export default function Gallery() {
                 <div
                   key={item.id}
                   onClick={() => openLightbox(item, idx)}
-                  className="group glass-card glass-card-hover rounded-3xl overflow-hidden shadow-xl border border-white/15 cursor-pointer flex flex-col backdrop-blur-xl"
+                  className="group glass-card glass-card-hover rounded-3xl overflow-hidden shadow-xs hover:shadow-xl border border-slate-200 cursor-pointer flex flex-col"
                 >
                   {/* Image Container with Zoom effect */}
-                  <div className="relative h-52 sm:h-56 w-full overflow-hidden bg-slate-900">
+                  <div className="relative h-52 sm:h-56 w-full overflow-hidden bg-slate-100">
                     <img
                       src={item.image}
                       alt={item.titleEn}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <div className="w-11 h-11 rounded-full btn-gold flex items-center justify-center shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform">
                         <Eye className="w-5 h-5 text-slate-950" />
                       </div>
                     </div>
 
                     {item.facebookGroupOrigin && (
-                      <span className="absolute top-2.5 right-2.5 glass-pill text-blue-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-blue-400/30 flex items-center gap-1 shadow">
-                        <Share2 className="w-2.5 h-2.5 text-blue-400" />
+                      <span className="absolute top-2.5 right-2.5 bg-blue-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
+                        <Share2 className="w-2.5 h-2.5" />
                         <span>FB Group</span>
                       </span>
                     )}
                   </div>
 
                   <div className="p-4 space-y-1 font-bangla">
-                    <span className="text-[10px] font-mono text-amber-300 flex items-center gap-1">
-                      <Calendar className="w-3 h-3 text-amber-400" />
+                    <span className="text-[10px] font-mono text-emerald-800 flex items-center gap-1 font-bold">
+                      <Calendar className="w-3 h-3 text-emerald-700" />
                       <span>{item.date}</span>
                     </span>
-                    <h3 className="text-sm font-bold text-white group-hover:text-amber-300 transition line-clamp-1">
+                    <h3 className="text-sm font-bold text-slate-900 group-hover:text-emerald-800 transition line-clamp-1">
                       {lang === 'bn' ? item.titleBn : item.titleEn}
                     </h3>
-                    <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
                       {item.description}
                     </p>
                   </div>
@@ -204,7 +204,7 @@ export default function Gallery() {
               <div
                 key={vid.id}
                 onClick={() => setActiveVideoModal(vid)}
-                className="group glass-card glass-card-hover rounded-3xl overflow-hidden shadow-xl border border-white/15 cursor-pointer backdrop-blur-xl"
+                className="group glass-card glass-card-hover rounded-3xl overflow-hidden shadow-xs hover:shadow-xl border border-slate-200 cursor-pointer"
               >
                 <div className="relative h-52 w-full overflow-hidden bg-slate-900">
                   <img
@@ -220,12 +220,12 @@ export default function Gallery() {
                 </div>
 
                 <div className="p-5 space-y-2 font-bangla">
-                  <h3 className="text-base font-bold text-white group-hover:text-amber-300 transition line-clamp-1">
+                  <h3 className="text-base font-bold text-slate-900 group-hover:text-emerald-800 transition line-clamp-1">
                     {lang === 'bn' ? vid.titleBn : vid.titleEn}
                   </h3>
-                  <div className="flex items-center justify-between text-xs text-slate-300">
-                    <span className="text-amber-300 font-mono">{vid.duration}</span>
-                    <span className="glass-pill px-2.5 py-0.5 rounded-full border border-white/10 text-[11px] text-slate-300 font-sans">{vid.source}</span>
+                  <div className="flex items-center justify-between text-xs text-slate-500">
+                    <span className="text-emerald-800 font-mono font-bold">{vid.duration}</span>
+                    <span className="bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200 text-[11px] font-sans">{vid.source || 'Video'}</span>
                   </div>
                 </div>
               </div>
@@ -237,16 +237,16 @@ export default function Gallery() {
         {activeImageModal && (
           <div 
             onClick={() => setActiveImageModal(null)}
-            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xl flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4"
           >
             <div 
               onClick={(e) => e.stopPropagation()}
-              className="relative max-w-4xl w-full glass-card rounded-3xl overflow-hidden shadow-2xl border border-white/20"
+              className="relative max-w-4xl w-full bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-700"
             >
               {/* Close Button */}
               <button
                 onClick={() => setActiveImageModal(null)}
-                className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full glass-pill hover:bg-rose-600 text-white flex items-center justify-center transition border border-white/20 cursor-pointer"
+                className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/60 hover:bg-rose-600 text-white flex items-center justify-center transition border border-white/20 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -254,19 +254,19 @@ export default function Gallery() {
               {/* Prev / Next Buttons */}
               <button
                 onClick={prevImage}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full glass-pill hover:bg-amber-400 hover:text-slate-950 text-white flex items-center justify-center transition border border-white/20 cursor-pointer"
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/60 hover:bg-amber-400 hover:text-slate-950 text-white flex items-center justify-center transition border border-white/20 cursor-pointer"
               >
                 <ChevronLeft className="w-6 h-6" />
               </button>
               <button
                 onClick={nextImage}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full glass-pill hover:bg-amber-400 hover:text-slate-950 text-white flex items-center justify-center transition border border-white/20 cursor-pointer"
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/60 hover:bg-amber-400 hover:text-slate-950 text-white flex items-center justify-center transition border border-white/20 cursor-pointer"
               >
                 <ChevronRight className="w-6 h-6" />
               </button>
 
               {/* Image */}
-              <div className="max-h-[70vh] flex items-center justify-center bg-slate-950">
+              <div className="max-h-[70vh] flex items-center justify-center bg-black">
                 <img
                   src={activeImageModal.image}
                   alt={activeImageModal.titleEn}
@@ -275,7 +275,7 @@ export default function Gallery() {
               </div>
 
               {/* Caption Bar */}
-              <div className="p-5 glass-capsule text-white border-t border-white/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="p-5 bg-slate-900 text-white border-t border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
                   <h3 className="text-base font-bold font-bangla text-amber-300">
                     {lang === 'bn' ? activeImageModal.titleBn : activeImageModal.titleEn}
@@ -302,36 +302,48 @@ export default function Gallery() {
           </div>
         )}
 
-        {/* Video Player Modal */}
+        {/* Video Player Modal (Supports BOTH YouTube / Embed and Direct Uploaded Video Files) */}
         {activeVideoModal && (
           <div 
             onClick={() => setActiveVideoModal(null)}
-            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xl flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4"
           >
             <div 
               onClick={(e) => e.stopPropagation()}
-              className="relative max-w-3xl w-full glass-card rounded-3xl overflow-hidden shadow-2xl border border-white/20"
+              className="relative max-w-3xl w-full bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-700"
             >
-              <div className="glass-capsule px-5 py-3.5 flex items-center justify-between text-white border-b border-white/15">
+              <div className="bg-slate-950 px-5 py-3.5 flex items-center justify-between text-white border-b border-slate-800">
                 <h4 className="text-xs sm:text-sm font-bold font-bangla line-clamp-1">
                   {lang === 'bn' ? activeVideoModal.titleBn : activeVideoModal.titleEn}
                 </h4>
                 <button
                   onClick={() => setActiveVideoModal(null)}
-                  className="p-1.5 glass-pill hover:bg-rose-600 rounded-full transition cursor-pointer"
+                  className="p-1.5 hover:bg-rose-600 rounded-full transition cursor-pointer text-white"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="relative aspect-video w-full bg-slate-950">
-                <iframe
-                  src={activeVideoModal.videoUrl}
-                  title="School Video"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full border-0"
-                ></iframe>
+              <div className="relative aspect-video w-full bg-black flex items-center justify-center">
+                {activeVideoModal.videoUrl?.startsWith('data:video') || 
+                 activeVideoModal.videoUrl?.startsWith('blob:') || 
+                 activeVideoModal.videoUrl?.endsWith('.mp4') || 
+                 activeVideoModal.videoUrl?.endsWith('.webm') ? (
+                  <video
+                    src={activeVideoModal.videoUrl}
+                    controls
+                    autoPlay
+                    className="w-full h-full object-contain"
+                  ></video>
+                ) : (
+                  <iframe
+                    src={activeVideoModal.videoUrl}
+                    title="School Video"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full border-0"
+                  ></iframe>
+                )}
               </div>
             </div>
           </div>

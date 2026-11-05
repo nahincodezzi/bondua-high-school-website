@@ -42,18 +42,18 @@ export default function FacultyDirectory() {
   const staffCount = teachers.filter(t => t.category === 'staff' || (t.category ? false : (t.designationEn?.includes('Peon') || t.designationEn?.includes('Guard') || t.designationEn?.includes('Aya') || t.designationEn?.includes('Assistant')))).length;
 
   return (
-    <section className="py-14 text-white relative z-10 font-sans">
+    <section className="py-12 sm:py-16 text-slate-800 relative z-10 font-sans min-h-[700px]">
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-1.5 glass-pill text-amber-300 text-xs font-bold px-4 py-1.5 rounded-full mb-3 font-bangla border border-amber-400/20 shadow-md">
-            <Users className="w-3.5 h-3.5 text-amber-400" />
+          <div className="inline-flex items-center gap-1.5 bg-emerald-100/80 text-emerald-900 text-xs font-bold px-4 py-1.5 rounded-full mb-3 font-bangla border border-emerald-200 shadow-xs">
+            <Users className="w-3.5 h-3.5 text-emerald-700" />
             <span>{lang === 'bn' ? 'শিক্ষক ও কর্মচারী পরিষদ' : 'Faculty & Staff Directory'}</span>
           </div>
-          <h2 className="text-2xl sm:text-4xl font-extrabold font-bangla text-white leading-tight drop-shadow-md">
+          <h2 className="text-2xl sm:text-4xl font-extrabold font-bangla text-slate-900 leading-tight">
             {lang === 'bn' ? 'আমাদের দক্ষ ও নিবেদিতপ্রাণ শিক্ষক ও কর্মকর্তা-কর্মচারী' : 'Dedicated Faculty, Teachers & Staff'}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-300 font-bangla mt-2 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 font-bangla mt-2 max-w-2xl mx-auto leading-relaxed">
             {lang === 'bn'
               ? 'অভিজ্ঞ, উচ্চশিক্ষিত ও স্নেহশীল শিক্ষকদের নিবিড় তত্ত্বাবধানে বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়ের পাঠদান ও প্রশাসনিক কার্যক্রম পরিচালিত হয়।'
               : 'Our experienced and compassionate educators and administrative staff are dedicated to academic, moral, and institutional excellence.'}
@@ -61,15 +61,15 @@ export default function FacultyDirectory() {
         </div>
 
         {/* Filter and Search Bar */}
-        <div className="glass-card p-3 sm:p-4 rounded-3xl border border-white/15 mb-8 flex flex-col md:flex-row items-center justify-between gap-4 font-bangla shadow-2xl backdrop-blur-xl">
+        <div className="glass-card p-3 sm:p-4 rounded-3xl border border-slate-200 mb-8 flex flex-col md:flex-row items-center justify-between gap-4 font-bangla shadow-sm">
           {/* Category Tabs */}
-          <div className="flex glass-pill p-1 rounded-full border border-white/10 text-xs font-bold w-full md:w-auto">
+          <div className="flex bg-slate-100 p-1 rounded-full border border-slate-200 text-xs font-bold w-full md:w-auto">
             <button
               onClick={() => setActiveCategory('all')}
               className={`flex-1 md:flex-initial px-4 py-2 rounded-full transition cursor-pointer ${
                 activeCategory === 'all' 
                   ? 'btn-gold shadow-md' 
-                  : 'text-slate-300 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               {lang === 'bn' ? `সকল সদস্য (${teachers.length})` : `All Members (${teachers.length})`}
@@ -79,10 +79,10 @@ export default function FacultyDirectory() {
               className={`flex-1 md:flex-initial px-4 py-2 rounded-full transition flex items-center justify-center gap-1.5 cursor-pointer ${
                 activeCategory === 'faculty' 
                   ? 'btn-gold shadow-md' 
-                  : 'text-slate-300 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Award className="w-3.5 h-3.5 text-slate-950" />
+              <Award className="w-3.5 h-3.5" />
               <span>{lang === 'bn' ? `শিক্ষক পরিষদ (${facultyCount})` : `Faculty (${facultyCount})`}</span>
             </button>
             <button
@@ -90,28 +90,28 @@ export default function FacultyDirectory() {
               className={`flex-1 md:flex-initial px-4 py-2 rounded-full transition flex items-center justify-center gap-1.5 cursor-pointer ${
                 activeCategory === 'staff' 
                   ? 'btn-gold shadow-md' 
-                  : 'text-slate-300 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Briefcase className="w-3.5 h-3.5 text-slate-950" />
+              <Briefcase className="w-3.5 h-3.5" />
               <span>{lang === 'bn' ? `কর্মচারীবৃন্দ (${staffCount})` : `Staff (${staffCount})`}</span>
             </button>
           </div>
 
           {/* Search Box */}
           <div className="relative w-full md:w-80">
-            <Search className="w-4 h-4 text-amber-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder={lang === 'bn' ? 'নাম, পদবী বা বিষয় দিয়ে খুঁজুন...' : 'Search by name, subject, designation...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="glass-input w-full pl-10 pr-9 py-2.5 rounded-full text-xs font-medium placeholder-slate-400"
+              className="w-full pl-10 pr-9 py-2.5 rounded-full border border-slate-300 bg-white text-xs font-medium text-slate-900 focus:ring-2 focus:ring-amber-400 focus:outline-none"
             />
             {searchQuery && (
               <button 
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-0.5"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
                 title="Clear"
               >
                 <X className="w-3.5 h-3.5" />
@@ -122,13 +122,13 @@ export default function FacultyDirectory() {
 
         {/* Empty State */}
         {filteredTeachers.length === 0 && (
-          <div className="text-center py-16 glass-card rounded-3xl border border-white/15 font-bangla">
+          <div className="text-center py-16 glass-card rounded-3xl border border-slate-200 font-bangla">
             <Users className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-            <h4 className="text-base font-bold text-white">কোনো তথ্য পাওয়া যায়নি</h4>
-            <p className="text-xs text-slate-400 mt-1">অনুগ্রহ করে ভিন্ন কোনো নাম বা পদবী দিয়ে অনুসন্ধান করুন।</p>
+            <h4 className="text-base font-bold text-slate-800">কোনো তথ্য পাওয়া যায়নি</h4>
+            <p className="text-xs text-slate-500 mt-1">অনুগ্রহ করে ভিন্ন কোনো নাম বা পদবী দিয়ে অনুসন্ধান করুন।</p>
             <button
               onClick={() => { setSearchQuery(''); setActiveCategory('all'); }}
-              className="mt-4 px-5 py-2 btn-gold text-xs font-bold rounded-full cursor-pointer"
+              className="mt-4 px-5 py-2 btn-gold text-xs font-bold rounded-full cursor-pointer shadow-md"
             >
               সবগুলো দেখুন
             </button>
@@ -145,21 +145,21 @@ export default function FacultyDirectory() {
             return (
               <div
                 key={teacher.id || index}
-                className={`glass-card glass-card-hover rounded-3xl overflow-hidden border transition-all duration-300 flex flex-col justify-between group shadow-xl backdrop-blur-xl ${
+                className={`glass-card glass-card-hover rounded-3xl overflow-hidden border transition-all duration-300 flex flex-col justify-between group shadow-xs hover:shadow-xl ${
                   isHead 
-                    ? 'border-amber-400/80 ring-2 ring-amber-400/30' 
+                    ? 'border-amber-400 ring-2 ring-amber-400/30' 
                     : isAsstHead 
-                      ? 'border-emerald-400/50' 
-                      : 'border-white/15 hover:border-amber-400/40'
+                      ? 'border-emerald-300' 
+                      : 'border-slate-200 hover:border-emerald-300'
                 }`}
               >
                 <div>
                   {/* Photo & Badge Container */}
-                  <div className="relative h-60 w-full overflow-hidden bg-slate-900">
+                  <div className="relative h-60 w-full overflow-hidden bg-slate-100">
                     <img
                       src={teacher.image}
                       alt={teacher.nameEn}
-                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                       onError={(e) => {
                         e.currentTarget.src = createEducatorAvatar({
                           initials: (teacher.nameEn || 'BD').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(),
@@ -168,10 +168,10 @@ export default function FacultyDirectory() {
                         });
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/25 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
 
                     {/* Serial Number */}
-                    <span className="absolute top-3 left-3 glass-pill text-amber-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full font-mono border border-white/10">
+                    <span className="absolute top-3 left-3 bg-black/60 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full font-mono backdrop-blur-xs">
                       #{index + 1}
                     </span>
 
@@ -181,10 +181,10 @@ export default function FacultyDirectory() {
                         isHead
                           ? 'btn-gold'
                           : isAsstHead
-                            ? 'glass-pill text-amber-300 border border-amber-400/40'
+                            ? 'bg-emerald-800 text-amber-300'
                             : isStaff
-                              ? 'glass-pill text-slate-300'
-                              : 'glass-pill text-emerald-300 border border-emerald-400/30'
+                              ? 'bg-slate-800 text-slate-100'
+                              : 'bg-emerald-900 text-white'
                       }`}>
                         {isHead && <ShieldCheck className="w-3 h-3 text-slate-950" />}
                         {isAsstHead && <Award className="w-3 h-3 text-amber-300" />}
@@ -196,14 +196,14 @@ export default function FacultyDirectory() {
                   {/* Info Content */}
                   <div className="p-5 space-y-3 font-bangla">
                     <div>
-                      <h3 className="text-base font-bold font-bangla text-white group-hover:text-amber-300 transition line-clamp-1">
+                      <h3 className="text-base font-bold font-bangla text-slate-900 group-hover:text-emerald-800 transition line-clamp-1">
                         {lang === 'bn' ? teacher.nameBn : teacher.nameEn}
                       </h3>
                     </div>
 
                     {/* Subject / Department */}
-                    <div className="flex items-start gap-2 glass-pill p-2.5 rounded-xl border border-white/10 text-xs text-slate-200 font-semibold">
-                      <BookOpen className="w-3.5 h-3.5 shrink-0 text-amber-400 mt-0.5" />
+                    <div className="flex items-start gap-2 bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-100 text-xs text-emerald-950 font-semibold">
+                      <BookOpen className="w-3.5 h-3.5 shrink-0 text-emerald-700 mt-0.5" />
                       <span className="line-clamp-2 leading-snug">
                         {lang === 'bn' ? teacher.subjectBn : teacher.subjectEn}
                       </span>
@@ -211,8 +211,8 @@ export default function FacultyDirectory() {
 
                     {/* Qualification */}
                     {teacher.qualification && (
-                      <div className="flex items-center gap-2 text-[11px] text-slate-300 glass-pill p-2 rounded-lg border border-white/5">
-                        <GraduationCap className="w-3.5 h-3.5 shrink-0 text-amber-300" />
+                      <div className="flex items-center gap-2 text-[11px] text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-200">
+                        <GraduationCap className="w-3.5 h-3.5 shrink-0 text-slate-500" />
                         <span className="font-medium line-clamp-1">{teacher.qualification}</span>
                       </div>
                     )}
@@ -220,20 +220,20 @@ export default function FacultyDirectory() {
                 </div>
 
                 {/* Contact Footer */}
-                <div className="px-5 py-3 glass-pill rounded-b-3xl border-t border-white/10 flex items-center justify-between text-xs text-slate-300 font-mono">
+                <div className="px-5 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600 font-mono">
                   <a
                     href={`tel:${teacher.phone}`}
-                    className="flex items-center gap-1.5 hover:text-amber-300 transition font-semibold"
+                    className="flex items-center gap-1.5 hover:text-emerald-700 transition font-semibold"
                     title="Call"
                   >
-                    <Phone className="w-3.5 h-3.5 text-amber-400" />
+                    <Phone className="w-3.5 h-3.5 text-emerald-600" />
                     <span className="text-[11px]">{teacher.phone}</span>
                   </a>
 
                   {teacher.email && (
                     <a
                       href={`mailto:${teacher.email}`}
-                      className="p-1.5 text-slate-400 hover:text-amber-300 hover:bg-white/10 rounded-full transition"
+                      className="p-1.5 text-slate-400 hover:text-emerald-700 hover:bg-emerald-50 rounded-full transition"
                       title={teacher.email}
                     >
                       <Mail className="w-3.5 h-3.5" />
