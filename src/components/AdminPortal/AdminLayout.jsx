@@ -28,6 +28,7 @@ import SchoolSettings from './SchoolSettings';
 import CmsContentManager from './CmsContentManager';
 import TeacherManager from './TeacherManager';
 import UserManager from './UserManager';
+import ErrorBoundary from '../common/ErrorBoundary';
 
 export default function AdminLayout() {
   const { authUser, logout, setActiveTab, lang, toggleLanguage, schoolInfo, hasPermission } = useSchool();
@@ -273,36 +274,38 @@ export default function AdminLayout() {
               </div>
             </div>
 
-            {activeModule === 'overview' && <DashboardOverview onNavigate={setActiveModule} />}
-            {activeModule === 'users' && (
-              authUser?.role === 'superadmin' ? (
-                <UserManager />
-              ) : (
-                <div className="bg-white p-8 rounded-3xl border border-rose-200 text-center max-w-lg mx-auto font-bangla space-y-3 shadow-xs">
-                  <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto border border-rose-200">
-                    <ShieldAlert className="w-6 h-6" />
+            <ErrorBoundary key={activeModule} onReset={() => setActiveModule('overview')}>
+              {activeModule === 'overview' && <DashboardOverview onNavigate={setActiveModule} />}
+              {activeModule === 'users' && (
+                authUser?.role === 'superadmin' ? (
+                  <UserManager />
+                ) : (
+                  <div className="bg-white p-8 rounded-3xl border border-rose-200 text-center max-w-lg mx-auto font-bangla space-y-3 shadow-xs">
+                    <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto border border-rose-200">
+                      <ShieldAlert className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900">অননুমোদিত অ্যাক্সেস (Unauthorized Access)</h3>
+                    <p className="text-xs text-slate-600">
+                      এই মডিউলে প্রবেশের অধিকার শুধুমাত্র প্রধান সিস্টেম অ্যাডমিনের (Super Admin) রয়েছে।
+                    </p>
+                    <button
+                      onClick={() => setActiveModule('overview')}
+                      className="btn-gold px-5 py-2 rounded-full text-xs font-bold cursor-pointer"
+                    >
+                      ড্যাশবোর্ড ওভারভিউতে ফিরে যান
+                    </button>
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900">অননুমোদিত অ্যাক্সেস (Unauthorized Access)</h3>
-                  <p className="text-xs text-slate-600">
-                    এই মডিউলে প্রবেশের অধিকার শুধুমাত্র প্রধান সিস্টেম অ্যাডমিনের (Super Admin) রয়েছে।
-                  </p>
-                  <button
-                    onClick={() => setActiveModule('overview')}
-                    className="btn-gold px-5 py-2 rounded-full text-xs font-bold cursor-pointer"
-                  >
-                    ড্যাশবোর্ড ওভারভিউতে ফিরে যান
-                  </button>
-                </div>
-              )
-            )}
-            {activeModule === 'cms' && <CmsContentManager />}
-            {activeModule === 'teachers' && <TeacherManager />}
-            {activeModule === 'students' && <StudentManager />}
-            {activeModule === 'admissions' && <AdmissionManager />}
-            {activeModule === 'results' && <ResultManager />}
-            {activeModule === 'notices' && <NoticeManager />}
-            {activeModule === 'fees' && <FeeManager />}
-            {activeModule === 'settings' && <SchoolSettings />}
+                )
+              )}
+              {activeModule === 'cms' && <CmsContentManager />}
+              {activeModule === 'teachers' && <TeacherManager />}
+              {activeModule === 'students' && <StudentManager />}
+              {activeModule === 'admissions' && <AdmissionManager />}
+              {activeModule === 'results' && <ResultManager />}
+              {activeModule === 'notices' && <NoticeManager />}
+              {activeModule === 'fees' && <FeeManager />}
+              {activeModule === 'settings' && <SchoolSettings />}
+            </ErrorBoundary>
           </div>
         </main>
       </div>

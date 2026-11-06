@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 
 export default function ResultManager() {
-  const { results, addResult, students } = useSchool();
+  const { results, addResult, students, lang } = useSchool();
   const [examName, setExamName] = useState('SSC Test Examination 2026');
   const [selectedClass, setSelectedClass] = useState('10');
   const [selectedStudentRoll, setSelectedStudentRoll] = useState('');

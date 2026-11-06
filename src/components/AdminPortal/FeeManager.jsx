@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 
 export default function FeeManager() {
-  const { fees, addFee, schoolInfo, students } = useSchool();
+  const { fees, addFee, schoolInfo, students, lang } = useSchool();
   const [studentRoll, setStudentRoll] = useState('');
   const [targetClass, setTargetClass] = useState('10');
   const [feeType, setFeeType] = useState('Monthly Tuition Fee (November)');

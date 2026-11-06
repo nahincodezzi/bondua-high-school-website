@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 export default function NoticeManager() {
-  const { notices, addNotice, updateNotice, deleteNotice } = useSchool();
+  const { notices, addNotice, updateNotice, deleteNotice, lang } = useSchool();
 
   const [editingNoticeId, setEditingNoticeId] = useState(null);
   const [titleBn, setTitleBn] = useState('');
