@@ -133,6 +133,16 @@ export default function TeacherManager() {
     e.preventDefault();
     if (!formData.nameBn) return;
 
+    // Mobile Phone Validation (M3: Bangladeshi 11-digit mobile)
+    const rawPhone = (formData.phone || '').trim().replace(/[-\s]/g, '');
+    if (rawPhone) {
+      const normalizedPhone = rawPhone.replace(/^(\+88|88)/, '');
+      if (!/^01[3-9]\d{8}$/.test(normalizedPhone)) {
+        alert('অনুগ্রহ করে সঠিক ১১ ডিজিটের বাংলাদেশী মোবাইল নম্বর প্রদান করুন (যেমন: 01819204561 বা +8801819204561)');
+        return;
+      }
+    }
+
     if (editingTeacher) {
       updateTeacher(editingTeacher.id, formData);
     } else {

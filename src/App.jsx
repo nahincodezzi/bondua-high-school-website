@@ -18,6 +18,7 @@ import AboutSection from './components/AboutSection';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
+import ErrorBoundary from './components/common/ErrorBoundary';
 
 // Lazy-load Admin Portal so public visitors don't load admin chunks (H2)
 const AdminLayout = lazy(() => import('./components/AdminPortal/AdminLayout'));
@@ -64,29 +65,31 @@ function MainApp() {
 
       {/* Main Page Content based on activeTab */}
       <main id="main-content" className={`flex-1 relative z-10 ${activeTab === 'home' ? '' : 'pt-24 sm:pt-28'}`}>
-        {activeTab === 'home' && (
-          <>
-            <HeroSlider />
-            <HeadmasterMessage />
-            <UniformSection />
-            <NoticeBoard />
-            <AcademicPrograms />
-            <Gallery />
-            <ContactSection />
-          </>
-        )}
+        <ErrorBoundary key={activeTab}>
+          {activeTab === 'home' && (
+            <>
+              <HeroSlider />
+              <HeadmasterMessage />
+              <UniformSection />
+              <NoticeBoard />
+              <AcademicPrograms />
+              <Gallery />
+              <ContactSection />
+            </>
+          )}
 
-        {activeTab === 'uniform' && <UniformSection />}
-        {activeTab === 'about' && <AboutSection />}
-        {activeTab === 'notices' && <NoticeBoard />}
-        {activeTab === 'academics' && <AcademicPrograms />}
-        {activeTab === 'faculty' && <FacultyDirectory />}
-        {activeTab === 'admission' && <OnlineAdmission />}
-        {activeTab === 'results' && <ResultSearch />}
-        {activeTab === 'gallery' && <Gallery />}
-        {activeTab === 'facebookHub' && <FacebookMediaHub />}
-        {activeTab === 'routines' && <RoutinesDownload />}
-        {activeTab === 'contact' && <ContactSection />}
+          {activeTab === 'uniform' && <UniformSection />}
+          {activeTab === 'about' && <AboutSection />}
+          {activeTab === 'notices' && <NoticeBoard />}
+          {activeTab === 'academics' && <AcademicPrograms />}
+          {activeTab === 'faculty' && <FacultyDirectory />}
+          {activeTab === 'admission' && <OnlineAdmission />}
+          {activeTab === 'results' && <ResultSearch />}
+          {activeTab === 'gallery' && <Gallery />}
+          {activeTab === 'facebookHub' && <FacebookMediaHub />}
+          {activeTab === 'routines' && <RoutinesDownload />}
+          {activeTab === 'contact' && <ContactSection />}
+        </ErrorBoundary>
       </main>
 
       {/* Institutional Footer */}

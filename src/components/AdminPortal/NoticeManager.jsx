@@ -227,6 +227,7 @@ export default function NoticeManager() {
                   <option value="exam">পরীক্ষা ও ফলাফল (Examinations)</option>
                   <option value="admission">ভর্তি সংক্রান্ত (Admission)</option>
                   <option value="event">অনুষ্ঠান ও ছুটি (Events & Holidays)</option>
+                  <option value="sports">খেলাধুলা ও সহপাঠ্য (Sports & Co-curricular)</option>
                 </select>
               </div>
 

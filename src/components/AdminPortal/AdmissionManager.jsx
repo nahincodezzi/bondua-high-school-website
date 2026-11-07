@@ -40,7 +40,8 @@ export default function AdmissionManager() {
     const matchesSearch = 
       (app.studentNameBn && app.studentNameBn.includes(searchQuery)) ||
       (app.studentNameEn && app.studentNameEn.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      app.trackingId.toLowerCase().includes(searchQuery.toLowerCase());
+      (app.trackingId && app.trackingId.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (app.id && app.id.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesStatus && matchesSearch;
   });
 

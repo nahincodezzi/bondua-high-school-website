@@ -24,8 +24,10 @@ export default function CmsContentManager() {
     setUniformInfo, 
     heroSlides, 
     setHeroSlides, 
+    updateHeroSlides,
     schoolInfo, 
     setSchoolInfo,
+    updateSchoolSettings,
     gallery,
     addGalleryItem,
     deleteGalleryItem,
@@ -74,14 +76,22 @@ export default function CmsContentManager() {
 
   const handleSlidesSave = (e) => {
     e.preventDefault();
-    setHeroSlides(slidesForm);
+    if (updateHeroSlides) {
+      updateHeroSlides(slidesForm);
+    } else {
+      setHeroSlides(slidesForm);
+    }
     setSavedMessage(true);
     setTimeout(() => setSavedMessage(false), 3000);
   };
 
   const handleInfoSave = (e) => {
     e.preventDefault();
-    setSchoolInfo(infoForm);
+    if (updateSchoolSettings) {
+      updateSchoolSettings(infoForm);
+    } else {
+      setSchoolInfo(infoForm);
+    }
     setSavedMessage(true);
     setTimeout(() => setSavedMessage(false), 3000);
   };

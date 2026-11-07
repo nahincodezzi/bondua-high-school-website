@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 
 export default function SchoolSettings() {
-  const { schoolInfo, setSchoolInfo, resetToDefaults, authUser } = useSchool();
+  const { schoolInfo, setSchoolInfo, updateSchoolSettings, resetToDefaults, authUser } = useSchool();
   const [formData, setFormData] = useState({ ...schoolInfo });
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [logoUploadStatus, setLogoUploadStatus] = useState('');
@@ -146,7 +146,11 @@ export default function SchoolSettings() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSchoolInfo(formData);
+    if (updateSchoolSettings) {
+      updateSchoolSettings(formData);
+    } else {
+      setSchoolInfo(formData);
+    }
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3500);
   };

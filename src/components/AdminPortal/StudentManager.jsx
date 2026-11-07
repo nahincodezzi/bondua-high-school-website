@@ -34,10 +34,10 @@ export default function StudentManager() {
   const filteredStudents = students.filter(s => {
     const matchesClass = selectedClass === 'all' || s.class === selectedClass;
     const matchesSearch = 
-      s.nameBn.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.nameEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.roll.toString().includes(searchQuery) ||
-      s.studentId.toLowerCase().includes(searchQuery.toLowerCase());
+      (s.nameBn && s.nameBn.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (s.nameEn && s.nameEn.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (s.roll && s.roll.toString().includes(searchQuery)) ||
+      (s.studentId && s.studentId.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesClass && matchesSearch;
   });
 

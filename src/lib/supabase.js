@@ -29,52 +29,75 @@ export const mappers = {
   notice: {
     fromDb: (row) => ({
       id: row.id,
-      titleBn: row.title_bn,
+      titleBn: row.title_bn || '',
       titleEn: row.title_en || '',
       category: row.category || 'academic',
-      date: row.date,
-      publishDate: row.date,
-      urgent: Boolean(row.urgent),
-      descriptionBn: row.description_bn || '',
+      date: row.date || (row.created_at ? row.created_at.split('T')[0] : ''),
+      publishDate: row.date || (row.created_at ? row.created_at.split('T')[0] : ''),
+      urgent: Boolean(row.is_urgent ?? row.urgent),
+      isUrgent: Boolean(row.is_urgent ?? row.urgent),
+      contentBn: row.content_bn || row.description_bn || '',
+      descriptionBn: row.description_bn || row.content_bn || '',
+      contentEn: row.content_en || '',
       fileUrl: row.file_url || null,
-      author: row.author || 'প্রধান শিক্ষক',
+      author: row.author || 'ভারপ্রাপ্ত প্রধান শিক্ষক',
     }),
     toDb: (n) => ({
       id: String(n.id),
       title_bn: n.titleBn || '',
       title_en: n.titleEn || null,
       category: n.category || 'academic',
-      date: n.date || new Date().toISOString().split('T')[0],
-      urgent: Boolean(n.urgent),
-      description_bn: n.descriptionBn || '',
+      date: n.publishDate || n.date || new Date().toISOString().split('T')[0],
+      urgent: Boolean(n.isUrgent ?? n.urgent),
+      is_urgent: Boolean(n.isUrgent ?? n.urgent),
+      description_bn: n.contentBn || n.descriptionBn || '',
+      content_bn: n.contentBn || n.descriptionBn || '',
+      content_en: n.contentEn || null,
       file_url: n.fileUrl || null,
-      author: n.author || 'প্রধান শিক্ষক',
+      author: n.author || 'ভারপ্রাপ্ত প্রধান শিক্ষক',
     }),
   },
 
   teacher: {
-    fromDb: (row) => ({
-      id: row.id,
-      nameBn: row.name_bn,
-      nameEn: row.name_en || '',
-      designationBn: row.designation_bn,
-      designationEn: row.designation_en || '',
-      subjectBn: row.subject_bn || '',
-      phone: row.phone || '',
-      email: row.email || '',
-      education: row.education || '',
-      image: row.image || null,
-      order: row.order ?? 10,
-    }),
+    fromDb: (row) => {
+      const isStaff = row.category === 'staff' ||
+        row.designation_bn?.includes('অফিস সহকারী') ||
+        row.designation_bn?.includes('পিয়ন') ||
+        row.designation_bn?.includes('আয়া') ||
+        row.designation_en?.includes('Staff') ||
+        row.designation_en?.includes('Peon') ||
+        row.designation_en?.includes('Aya');
+
+      return {
+        id: row.id,
+        nameBn: row.name_bn || '',
+        nameEn: row.name_en || '',
+        designationBn: row.designation_bn || '',
+        designationEn: row.designation_en || '',
+        subjectBn: row.subject_bn || '',
+        subjectEn: row.subject_en || '',
+        qualification: row.qualification || row.education || '',
+        category: row.category || (isStaff ? 'staff' : 'faculty'),
+        phone: row.phone || '',
+        email: row.email || '',
+        education: row.qualification || row.education || '',
+        image: row.image || null,
+        order: row.order ?? 10,
+      };
+    },
     toDb: (t) => ({
       id: String(t.id),
       name_bn: t.nameBn || '',
       name_en: t.nameEn || null,
       designation_bn: t.designationBn || '',
+      designation_en: t.designationEn || null,
       subject_bn: t.subjectBn || '',
+      subject_en: t.subjectEn || null,
       phone: t.phone || '',
       email: t.email || '',
-      education: t.education || '',
+      education: t.qualification || t.education || '',
+      qualification: t.qualification || t.education || '',
+      category: t.category || 'faculty',
       image: t.image || null,
       order: Number(t.order) || 10,
     }),
@@ -84,27 +107,39 @@ export const mappers = {
     fromDb: (row) => ({
       id: row.id,
       roll: row.roll,
-      nameBn: row.name_bn,
+      studentId: row.student_id || row.studentId || `BDHS-2026-${row.roll}`,
+      nameBn: row.name_bn || '',
       nameEn: row.name_en || '',
-      class: row.class,
-      section: row.section || 'ক',
+      class: String(row.class || '10'),
+      section: row.section || 'A',
       shift: row.shift || 'দিবা',
-      gender: row.gender || 'ছাত্র',
-      fatherName: row.father_name || '',
+      group: row.group || 'General',
+      gender: row.gender || 'Male',
+      dob: row.dob || '',
+      bloodGroup: row.blood_group || row.bloodGroup || '',
+      fatherName: row.father_name || row.guardian_name || '',
+      guardianName: row.guardian_name || row.father_name || '',
       guardianPhone: row.guardian_phone || '',
+      address: row.address || '',
       status: row.status || 'নিয়মিত',
     }),
     toDb: (s) => ({
       id: String(s.id),
       roll: String(s.roll || ''),
+      student_id: s.studentId || null,
       name_bn: s.nameBn || '',
       name_en: s.nameEn || null,
       class: String(s.class || ''),
-      section: s.section || 'ক',
+      section: s.section || 'A',
       shift: s.shift || 'দিবা',
-      gender: s.gender || 'ছাত্র',
+      gender: s.gender || 'Male',
+      group: s.group || 'General',
+      dob: s.dob || null,
+      blood_group: s.bloodGroup || null,
       father_name: s.fatherName || s.guardianName || null,
+      guardian_name: s.guardianName || s.fatherName || null,
       guardian_phone: s.guardianPhone || '',
+      address: s.address || null,
       status: s.status || 'নিয়মিত',
     }),
   },
@@ -112,54 +147,100 @@ export const mappers = {
   admission: {
     fromDb: (row) => ({
       id: row.id,
-      studentNameBn: row.applicant_name_bn,
+      trackingId: row.tracking_id || row.id,
+      studentNameBn: row.applicant_name_bn || '',
+      applicantNameBn: row.applicant_name_bn || '',
       studentNameEn: row.applicant_name_en || '',
-      applyingClass: row.desired_class,
-      gender: row.gender || '',
-      guardianName: row.guardian_name,
-      guardianPhone: row.guardian_phone,
+      applicantNameEn: row.applicant_name_en || '',
+      applyingClass: String(row.desired_class || '6'),
+      group: row.group_name || row.group || 'General',
+      gender: row.gender || 'Male',
+      dob: row.dob || '',
+      bloodGroup: row.blood_group || '',
+      fatherName: row.father_name || row.guardian_name || '',
+      motherName: row.mother_name || '',
+      guardianName: row.guardian_name || row.father_name || '',
+      guardianPhone: row.guardian_phone || '',
       previousSchool: row.previous_school || '',
+      previousGpa: row.previous_gpa || '',
+      address: row.address || '',
       status: row.status || 'Pending',
       submissionDate: row.applied_date ? row.applied_date.split('T')[0] : '',
     }),
     toDb: (a) => ({
-      id: String(a.id),
+      id: String(a.id || a.trackingId),
+      tracking_id: a.trackingId || a.id || null,
       applicant_name_bn: a.studentNameBn || a.applicantNameBn || '',
       applicant_name_en: a.studentNameEn || a.applicantNameEn || null,
       desired_class: String(a.applyingClass || a.desiredClass || '6'),
-      gender: a.gender || null,
-      guardian_name: a.guardianName || '',
+      gender: a.gender || 'Male',
+      guardian_name: a.guardianName || a.fatherName || '',
       guardian_phone: a.guardianPhone || '',
       previous_school: a.previousSchool || null,
-      status: a.status || 'pending',
+      status: a.status || 'Pending',
+      dob: a.dob || null,
+      blood_group: a.bloodGroup || null,
+      father_name: a.fatherName || a.guardianName || null,
+      mother_name: a.motherName || null,
+      previous_gpa: a.previousGpa ? String(a.previousGpa) : null,
+      address: a.address || null,
     }),
   },
 
   result: {
-    fromDb: (row) => ({
-      id: row.id,
-      exam: row.exam,
-      year: row.year,
-      class: row.class,
-      roll: row.roll,
-      studentName: row.student_name,
-      gpa: Number(row.gpa) || 0,
-      grade: row.grade || 'A',
-      status: row.status || 'PASSED',
-      marksheet: row.marksheet || {},
-    }),
-    toDb: (r) => ({
-      id: String(r.id || `${r.roll}-${r.exam}-${r.year}`),
-      exam: r.exam || '',
-      year: String(r.year || '2026'),
-      class: String(r.class || '10'),
-      roll: String(r.roll || ''),
-      student_name: r.studentName || '',
-      gpa: Number(r.gpa) || 0,
-      grade: r.grade || 'A',
-      status: r.status || 'PASSED',
-      marksheet: r.marksheet || {},
-    }),
+    fromDb: (row) => {
+      const marksheet = (row.marksheet && typeof row.marksheet === 'object') ? row.marksheet : {};
+      const subjects = Array.isArray(marksheet.subjects) ? marksheet.subjects : [];
+      return {
+        id: row.id,
+        exam: row.exam || '',
+        year: String(row.year || '2026'),
+        class: String(row.class || '10'),
+        roll: String(row.roll || ''),
+        studentNameBn: row.student_name || marksheet.studentNameBn || '',
+        studentNameEn: marksheet.studentNameEn || '',
+        studentName: row.student_name || '',
+        studentId: marksheet.studentId || `BDHS-2026-${row.roll}`,
+        group: marksheet.group || 'Science',
+        section: marksheet.section || 'A',
+        gpa: row.gpa != null ? Number(row.gpa).toFixed(2) : (marksheet.gpa || '0.00'),
+        letterGrade: row.grade || marksheet.letterGrade || 'A',
+        grade: row.grade || 'A',
+        resultStatus: row.status || marksheet.resultStatus || 'PASSED',
+        status: row.status || 'PASSED',
+        subjects,
+        marksheet,
+      };
+    },
+    toDb: (r) => {
+      const classVal = String(r.class || '10');
+      const rollVal = String(r.roll || '');
+      const examVal = r.exam || 'SSC Test Examination 2026';
+      const yearVal = String(r.year || '2026');
+      const resultId = String(r.id || `${classVal}-${rollVal}-${examVal}-${yearVal}`);
+      const subjectsArray = Array.isArray(r.subjects) ? r.subjects : (r.marksheet?.subjects || []);
+      return {
+        id: resultId,
+        exam: examVal,
+        year: yearVal,
+        class: classVal,
+        roll: rollVal,
+        student_name: r.studentNameBn || r.studentName || r.studentNameEn || '',
+        gpa: Number(r.gpa) || 0,
+        grade: r.letterGrade || r.grade || 'A',
+        status: r.resultStatus || r.status || 'PASSED',
+        marksheet: {
+          subjects: subjectsArray,
+          studentNameBn: r.studentNameBn || r.studentName || '',
+          studentNameEn: r.studentNameEn || '',
+          studentId: r.studentId || '',
+          group: r.group || 'Science',
+          section: r.section || 'A',
+          letterGrade: r.letterGrade || r.grade || 'A',
+          gpa: r.gpa || '0.00'
+        },
+      };
+    },
   },
 
   fee: {
@@ -167,12 +248,14 @@ export const mappers = {
       id: row.id,
       receiptNo: row.receipt_no,
       studentId: row.student_id || '',
-      studentName: row.student_name,
-      class: row.class,
-      roll: row.roll,
-      feeType: row.fee_type,
+      studentRoll: String(row.roll || ''),
+      roll: String(row.roll || ''),
+      studentName: row.student_name || '',
+      class: String(row.class || ''),
+      feeType: row.fee_type || 'বেতন',
       amount: Number(row.amount) || 0,
       paidDate: row.paid_date ? row.paid_date.split('T')[0] : '',
+      method: row.method || 'Cash',
       status: 'Paid',
     }),
     toDb: (f) => ({
@@ -181,9 +264,10 @@ export const mappers = {
       student_id: f.studentId || null,
       student_name: f.studentName || '',
       class: String(f.class || ''),
-      roll: String(f.roll || ''),
+      roll: String(f.studentRoll || f.roll || ''),
       fee_type: f.feeType || 'বেতন',
       amount: Number(f.amount) || 0,
+      paid_date: f.paidDate || new Date().toISOString().split('T')[0],
     }),
   },
 
@@ -212,16 +296,61 @@ export const mappers = {
     fromDb: (row) => ({
       id: row.id,
       titleBn: row.title_bn,
+      titleEn: row.title_en || '',
       category: row.category || 'campus',
-      url: row.url,
+      image: row.url || row.image || '',
+      url: row.url || row.image || '',
       type: row.type || 'photo',
+      date: row.date || (row.created_at ? row.created_at.split('T')[0] : ''),
+      description: row.description || '',
     }),
     toDb: (g) => ({
       id: String(g.id),
       title_bn: g.titleBn || '',
       category: g.category || 'campus',
-      url: g.url || '',
+      url: g.image || g.url || '',
       type: g.type || 'photo',
+    }),
+  },
+
+  contact: {
+    fromDb: (row) => ({
+      id: row.id,
+      name: row.name,
+      email: row.email || '',
+      phone: row.phone || '',
+      subject: row.subject || '',
+      message: row.message || '',
+      status: row.status || 'New',
+      submittedAt: row.created_at ? row.created_at.split('T')[0] : '',
+    }),
+    toDb: (c) => ({
+      id: String(c.id),
+      name: c.name || '',
+      email: c.email || null,
+      phone: c.phone || '',
+      subject: c.subject || null,
+      message: c.message || '',
+      status: c.status || 'New',
+    }),
+  },
+
+  video: {
+    fromDb: (row) => ({
+      id: row.id,
+      titleBn: row.title_bn || '',
+      titleEn: row.title_en || '',
+      videoUrl: row.video_url || '',
+      duration: row.duration || '05:00',
+      thumbnail: row.thumbnail || '',
+    }),
+    toDb: (v) => ({
+      id: String(v.id),
+      title_bn: v.titleBn || '',
+      title_en: v.titleEn || null,
+      video_url: v.videoUrl || '',
+      duration: v.duration || '05:00',
+      thumbnail: v.thumbnail || null,
     }),
   },
 };
@@ -256,6 +385,23 @@ export async function fetchAllCloudData() {
       supabase.from('school_info').select('*').eq('id', 'main').single(),
     ]);
 
+    // Optional tables (if created by migration)
+    let contactMessages = null;
+    try {
+      const contactsRes = await supabase.from('contact_messages').select('*').order('created_at', { ascending: false });
+      if (!contactsRes.error && contactsRes.data) {
+        contactMessages = contactsRes.data.map(mappers.contact.fromDb);
+      }
+    } catch {}
+
+    let videos = null;
+    try {
+      const videosRes = await supabase.from('videos').select('*').order('created_at', { ascending: true });
+      if (!videosRes.error && videosRes.data && videosRes.data.length > 0) {
+        videos = videosRes.data.map(mappers.video.fromDb);
+      }
+    } catch {}
+
     return {
       notices: noticesRes.data?.map(mappers.notice.fromDb) || null,
       teachers: teachersRes.data?.map(mappers.teacher.fromDb) || null,
@@ -266,6 +412,8 @@ export async function fetchAllCloudData() {
       heroSlides: slidesRes.data?.map(mappers.slide.fromDb) || null,
       gallery: galleryRes.data?.map(mappers.gallery.fromDb) || null,
       schoolInfo: schoolInfoRes.data?.data || null,
+      contactMessages,
+      videos,
     };
   } catch (err) {
     console.warn('Supabase fetchAllCloudData caught error:', err);

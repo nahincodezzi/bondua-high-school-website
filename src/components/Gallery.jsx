@@ -165,8 +165,8 @@ export default function Gallery() {
                   {/* Image Container with Zoom effect */}
                   <div className="relative h-52 sm:h-56 w-full overflow-hidden bg-bg">
                     <img
-                      src={item.image}
-                      alt={item.titleEn}
+                      src={item.image || item.url}
+                      alt={item.titleEn || item.titleBn}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -272,8 +272,8 @@ export default function Gallery() {
               {/* Image */}
               <div className="max-h-[70vh] flex items-center justify-center bg-black">
                 <img
-                  src={activeImageModal.image}
-                  alt={activeImageModal.titleEn}
+                  src={activeImageModal.image || activeImageModal.url}
+                  alt={activeImageModal.titleEn || activeImageModal.titleBn}
                   className="max-h-[70vh] w-auto object-contain"
                 />
               </div>

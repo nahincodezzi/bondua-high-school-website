@@ -49,6 +49,7 @@ export default function NoticeBoard() {
     { id: 'exam', labelBn: 'পরীক্ষা ও ফলাফল', labelEn: 'Exam & Result' },
     { id: 'academic', labelBn: 'অ্যাকাডেমিক', labelEn: 'Academic' },
     { id: 'event', labelBn: 'অনুষ্ঠান ও ছুটি', labelEn: 'Events & Holidays' },
+    { id: 'sports', labelBn: 'খেলাধুলা ও সহপাঠ্য', labelEn: 'Sports & Co-curricular' },
   ];
 
   // Category translation helper for localized chips (L3)
@@ -59,6 +60,7 @@ export default function NoticeBoard() {
       admission: { bn: 'ভর্তি', en: 'Admission' },
       event: { bn: 'অনুষ্ঠান ও ছুটি', en: 'Events' },
       holiday: { bn: 'ছুটি', en: 'Holiday' },
+      sports: { bn: 'খেলাধুলা ও সহপাঠ্য', en: 'Sports' },
       general: { bn: 'সাধারণ', en: 'General' }
     };
     const key = (cat || '').toLowerCase();

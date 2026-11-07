@@ -12,7 +12,8 @@ import {
   Award,
   Bell,
   CheckCircle2,
-  Clock
+  Clock,
+  MessageSquare
 } from 'lucide-react';
 
 export default function DashboardOverview({ onNavigate }) {
@@ -23,6 +24,7 @@ export default function DashboardOverview({ onNavigate }) {
     admissions, 
     fees, 
     notices,
+    contactMessages,
     authUser, 
     hasPermission,
     approveAdmissionAndCreateStudent
@@ -328,6 +330,40 @@ export default function DashboardOverview({ onNavigate }) {
               </div>
             </>
           )}
+
+          {/* Visitor Messages Section (C4 Fix) */}
+          <div className="pt-4 border-t border-line">
+            <div className="flex items-center justify-between pb-2">
+              <div>
+                <h3 className="text-sm font-bold font-bangla text-ink flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-primary" />
+                  <span>ওয়েবসাইট থেকে আসা বার্তা ও অনুসন্ধান (Visitor Messages)</span>
+                </h3>
+                <p className="text-[11px] text-muted font-bangla">
+                  অভিভাবক ও দর্শনার্থীদের পাঠানো বার্তা ({contactMessages ? (lang === 'bn' ? toBanglaNumerals(contactMessages.length) : contactMessages.length) : 0}টি)
+                </p>
+              </div>
+            </div>
+
+            {(!contactMessages || contactMessages.length === 0) ? (
+              <p className="text-xs text-muted text-center py-4 bg-bg rounded-xl border border-line">
+                বর্তমানে কোনো নতুন বার্তা নেই।
+              </p>
+            ) : (
+              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                {contactMessages.slice(0, 5).map((msg) => (
+                  <div key={msg.id} className="p-3 bg-bg rounded-xl border border-line text-xs font-bangla flex flex-col gap-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-ink">{msg.name}</span>
+                      <span className="font-mono text-primary text-[11px] font-semibold">{msg.phone}</span>
+                    </div>
+                    {msg.subject && <span className="font-semibold text-deep text-[11px]">{msg.subject}</span>}
+                    <p className="text-muted text-[11px] line-clamp-2">{msg.message}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right Column: Quick ERP Navigation Tiles (Filtered by RBAC - A2) */}

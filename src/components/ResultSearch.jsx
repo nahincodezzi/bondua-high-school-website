@@ -300,7 +300,7 @@ export default function ResultSearch() {
                 <div>
                   <span className="text-muted block">{lang === 'bn' ? 'জিপিএ (GPA):' : 'GPA Score:'}</span>
                   <span className="font-mono font-extrabold text-base text-primary">
-                    {lang === 'bn' ? toBanglaNumerals(searchedResult.gpa) : searchedResult.gpa} ({searchedResult.letterGrade})
+                    {lang === 'bn' ? toBanglaNumerals(searchedResult.gpa ?? '0.00') : (searchedResult.gpa ?? '0.00')} ({searchedResult.letterGrade || searchedResult.grade || 'N/A'})
                   </span>
                 </div>
               </div>
@@ -319,26 +319,35 @@ export default function ResultSearch() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-line">
-                    {searchedResult.subjects.map((sub, i) => {
-                      const isICT = sub.code === '154' || sub.name?.toLowerCase().includes('ict');
-                      const fullMark = isICT ? 50 : 100;
-                      return (
-                        <tr key={i} className="hover:bg-bg transition-colors">
-                          <td className="py-3 px-3 text-center font-mono text-muted">{sub.code}</td>
-                          <td className="py-3 px-4 font-medium text-ink font-bangla">{sub.name}</td>
-                          <td className="py-3 px-3 text-center font-mono text-muted">
-                            {lang === 'bn' ? toBanglaNumerals(fullMark) : fullMark}
-                          </td>
-                          <td className="py-3 px-4 text-center font-mono font-bold text-ink">
-                            {lang === 'bn' ? toBanglaNumerals(sub.marks) : sub.marks}
-                          </td>
-                          <td className="py-3 px-4 text-center font-bold text-primary">{sub.grade}</td>
-                          <td className="py-3 px-4 text-center font-mono font-semibold text-ink">
-                            {lang === 'bn' ? toBanglaNumerals(sub.point.toFixed(2)) : sub.point.toFixed(2)}
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    {(searchedResult.subjects && searchedResult.subjects.length > 0) ? (
+                      searchedResult.subjects.map((sub, i) => {
+                        const isICT = sub.code === '154' || sub.name?.toLowerCase().includes('ict');
+                        const fullMark = isICT ? 50 : 100;
+                        const subPoint = Number(sub.point) || 0;
+                        return (
+                          <tr key={i} className="hover:bg-bg transition-colors">
+                            <td className="py-3 px-3 text-center font-mono text-muted">{sub.code || '-'}</td>
+                            <td className="py-3 px-4 font-medium text-ink font-bangla">{sub.name}</td>
+                            <td className="py-3 px-3 text-center font-mono text-muted">
+                              {lang === 'bn' ? toBanglaNumerals(fullMark) : fullMark}
+                            </td>
+                            <td className="py-3 px-4 text-center font-mono font-bold text-ink">
+                              {lang === 'bn' ? toBanglaNumerals(sub.marks) : sub.marks}
+                            </td>
+                            <td className="py-3 px-4 text-center font-bold text-primary">{sub.grade || 'A'}</td>
+                            <td className="py-3 px-4 text-center font-mono font-semibold text-ink">
+                              {lang === 'bn' ? toBanglaNumerals(subPoint.toFixed(2)) : subPoint.toFixed(2)}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    ) : (
+                      <tr>
+                        <td colSpan="6" className="text-center py-6 text-muted font-bangla">
+                          {lang === 'bn' ? 'বিষয়ভিত্তিক প্রাপ্ত নম্বরের বিবরণী প্রক্রিয়াধীন।' : 'Detailed subject marksheet is being processed.'}
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                   <tfoot className="bg-soft/40 border-t-2 border-primary font-bold text-xs sm:text-sm">
                     <tr>
@@ -346,10 +355,10 @@ export default function ResultSearch() {
                         {lang === 'bn' ? 'সর্বমোট গ্রেড পয়েন্ট গড় (GPA):' : 'Grade Point Average (GPA):'}
                       </td>
                       <td className="py-3.5 px-4 text-center text-deep font-extrabold text-base">
-                        {searchedResult.letterGrade}
+                        {searchedResult.letterGrade || searchedResult.grade || 'A'}
                       </td>
                       <td className="py-3.5 px-4 text-center font-mono text-deep font-extrabold text-base">
-                        {lang === 'bn' ? toBanglaNumerals(searchedResult.gpa) : searchedResult.gpa}
+                        {lang === 'bn' ? toBanglaNumerals(searchedResult.gpa ?? '0.00') : (searchedResult.gpa ?? '0.00')}
                       </td>
                     </tr>
                   </tfoot>
@@ -408,7 +417,7 @@ export default function ResultSearch() {
             </h3>
             <p className="text-xs text-muted font-bangla mt-1">
               {lang === 'bn' 
-                ? `রোল নং "${rollInput}" এবং শ্রেণি ${toBanglaNumerals(targetClass)}-এর কোনো ফলাফল রেকর্ড পাওয়া যায়নি। অনুগ্রহ করে রোল নম্বর ও শ্রেণি যাচাই করুন অথবা বিদ্যালয় অফিসে যোগাযোগ করুন।`
+                ? `রোল নং "${toBanglaNumerals(rollInput)}" এবং শ্রেণি ${toBanglaNumerals(targetClass)}-এর কোনো ফলাফল রেকর্ড পাওয়া যায়নি। অনুগ্রহ করে রোল নম্বর ও শ্রেণি যাচাই করুন অথবা বিদ্যালয় অফিসে যোগাযোগ করুন।`
                 : `No academic record found matching Roll "${rollInput}" for Class ${targetClass}. Please verify the roll number or contact the school office.`}
             </p>
           </div>

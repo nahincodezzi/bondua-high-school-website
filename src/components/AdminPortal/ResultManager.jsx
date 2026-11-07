@@ -5,36 +5,79 @@ import {
   Award, 
   CheckCircle,
   AlertCircle,
-  UserCheck
+  UserCheck,
+  Trash2,
+  Edit
 } from 'lucide-react';
 
+const SUBJECT_CONFIGS = {
+  general: [
+    { code: '101', name: 'Bangla', labelBn: 'বাংলা', max: 100 },
+    { code: '107', name: 'English', labelBn: 'ইংরেজি', max: 100 },
+    { code: '109', name: 'Mathematics', labelBn: 'গণিত', max: 100 },
+    { code: '127', name: 'General Science', labelBn: 'সাধারণ বিজ্ঞান', max: 100 },
+    { code: '150', name: 'BGS', labelBn: 'বাংলাদেশ ও বিশ্বপরিচয়', max: 100 },
+    { code: '154', name: 'ICT', labelBn: 'তথ্য ও যোগাযোগ প্রযুক্তি', max: 50 },
+    { code: '111', name: 'Religion', labelBn: 'ধর্ম ও নৈতিক শিক্ষা', max: 100 },
+  ],
+  secondary: {
+    Science: [
+      { code: '101', name: 'Bangla', labelBn: 'বাংলা', max: 100 },
+      { code: '107', name: 'English', labelBn: 'ইংরেজি', max: 100 },
+      { code: '109', name: 'Mathematics', labelBn: 'গণিত', max: 100 },
+      { code: '136', name: 'Physics', labelBn: 'পদার্থবিজ্ঞান', max: 100 },
+      { code: '137', name: 'Chemistry', labelBn: 'রসায়ন', max: 100 },
+      { code: '138', name: 'Biology', labelBn: 'জীববিজ্ঞান', max: 100 },
+      { code: '154', name: 'ICT', labelBn: 'তথ্য ও যোগাযোগ প্রযুক্তি', max: 50 },
+      { code: '111', name: 'Religion', labelBn: 'ধর্ম ও নৈতিক শিক্ষা', max: 100 },
+    ],
+    'Business Studies': [
+      { code: '101', name: 'Bangla', labelBn: 'বাংলা', max: 100 },
+      { code: '107', name: 'English', labelBn: 'ইংরেজি', max: 100 },
+      { code: '109', name: 'Mathematics', labelBn: 'গণিত', max: 100 },
+      { code: '146', name: 'Accounting', labelBn: 'হিসাববিজ্ঞান', max: 100 },
+      { code: '147', name: 'Business Ent.', labelBn: 'ব্যবসায় উদ্যোগ', max: 100 },
+      { code: '148', name: 'Finance & Banking', labelBn: 'ফিন্যান্স ও ব্যাংকিং', max: 100 },
+      { code: '154', name: 'ICT', labelBn: 'তথ্য ও যোগাযোগ প্রযুক্তি', max: 50 },
+      { code: '111', name: 'Religion', labelBn: 'ধর্ম ও নৈতিক শিক্ষা', max: 100 },
+    ],
+    Humanities: [
+      { code: '101', name: 'Bangla', labelBn: 'বাংলা', max: 100 },
+      { code: '107', name: 'English', labelBn: 'ইংরেজি', max: 100 },
+      { code: '109', name: 'Mathematics', labelBn: 'গণিত', max: 100 },
+      { code: '153', name: 'History', labelBn: 'ইতিহাস', max: 100 },
+      { code: '110', name: 'Geography', labelBn: 'ভূগোল', max: 100 },
+      { code: '140', name: 'Civics', labelBn: 'পৌরনীতি ও নাগরিকতা', max: 100 },
+      { code: '154', name: 'ICT', labelBn: 'তথ্য ও যোগাযোগ প্রযুক্তি', max: 50 },
+      { code: '111', name: 'Religion', labelBn: 'ধর্ম ও নৈতিক শিক্ষা', max: 100 },
+    ],
+  },
+};
+
 export default function ResultManager() {
-  const { results, addResult, students, lang } = useSchool();
+  const { results, addResult, deleteResult, students, lang } = useSchool();
   const [examName, setExamName] = useState('SSC Test Examination 2026');
   const [selectedClass, setSelectedClass] = useState('10');
+  const [selectedGroup, setSelectedGroup] = useState('Science');
   const [selectedStudentRoll, setSelectedStudentRoll] = useState('');
   const [year] = useState('2026');
   const [formError, setFormError] = useState('');
   const [savedSuccess, setSavedSuccess] = useState(false);
-
-  // Subject marks state initialized to empty (A4 fix)
-  const initialMarks = {
-    Bangla: '',
-    English: '',
-    Mathematics: '',
-    Physics: '',
-    Chemistry: '',
-    Biology: '',
-    ICT: '',
-    Religion: ''
-  };
-
-  const [marks, setMarks] = useState(initialMarks);
+  const [editingResultId, setEditingResultId] = useState(null);
 
   // Auto student preview
   const activeStudent = students.find(
-    s => s.roll.toString() === toEnglishNumerals(selectedStudentRoll.trim()) && s.class === selectedClass
+    s => String(s.roll) === toEnglishNumerals(selectedStudentRoll.trim()) && String(s.class) === String(selectedClass)
   );
+
+  // Determine active subjects list based on class and group (M2 / H7 Fix)
+  const isSecondary = selectedClass === '9' || selectedClass === '10';
+  const effectiveGroup = isSecondary ? (activeStudent?.group || selectedGroup || 'Science') : 'General';
+  const currentSubjectList = isSecondary 
+    ? (SUBJECT_CONFIGS.secondary[effectiveGroup] || SUBJECT_CONFIGS.secondary.Science)
+    : SUBJECT_CONFIGS.general;
+
+  const [marks, setMarks] = useState({});
 
   const calculateGradePoint = (mark, max = 100) => {
     const num = Number(mark) || 0;
@@ -48,9 +91,40 @@ export default function ResultManager() {
     return { grade: 'F', point: 0.0 };
   };
 
-  const handleMarkChange = (subject, val) => {
-    setMarks(prev => ({ ...prev, [subject]: val }));
+  const handleMarkChange = (subjectName, val) => {
+    setMarks(prev => ({ ...prev, [subjectName]: val }));
     setFormError('');
+  };
+
+  const handleEditResult = (r) => {
+    setEditingResultId(r.id);
+    setSelectedClass(String(r.class));
+    setSelectedStudentRoll(String(r.roll));
+    setExamName(r.exam);
+    if (r.group) setSelectedGroup(r.group);
+    
+    const loadedMarks = {};
+    if (Array.isArray(r.subjects)) {
+      r.subjects.forEach(s => {
+        loadedMarks[s.name] = s.marks != null ? String(s.marks) : '';
+      });
+    }
+    setMarks(loadedMarks);
+    setFormError('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDeleteResult = (id, studentName, roll) => {
+    if (confirm(`আপনি কি রোল ${toBanglaNumerals(roll)} (${studentName})-এর এই পরীক্ষার ফলাফল মুছে ফেলতে চান?`)) {
+      if (deleteResult) {
+        deleteResult(id);
+      }
+      if (editingResultId === id) {
+        setEditingResultId(null);
+        setMarks({});
+        setSelectedStudentRoll('');
+      }
+    }
   };
 
   const handlePublish = (e) => {
@@ -63,9 +137,9 @@ export default function ResultManager() {
       return;
     }
 
-    // Student Lookup Validation (A3 Fix)
+    // Student Lookup Validation
     const matchedStudent = students.find(
-      s => s.roll.toString() === cleanRoll && s.class === selectedClass
+      s => String(s.roll) === cleanRoll && String(s.class) === String(selectedClass)
     );
 
     if (!matchedStudent) {
@@ -73,43 +147,45 @@ export default function ResultManager() {
       return;
     }
 
-    // Validate Marks 0-100 / ICT 0-50 (A4 Fix)
-    for (const [sub, val] of Object.entries(marks)) {
+    // Validate Marks for each subject
+    for (const sub of currentSubjectList) {
+      const val = marks[sub.name];
       if (val === '' || val === null || val === undefined) {
-        setFormError(`অনুগ্রহ করে "${sub}" বিষয়ের নম্বর সঠিকভাবে পূরণ করুন।`);
+        setFormError(`অনুগ্রহ করে "${sub.labelBn || sub.name}" বিষয়ের নম্বর সঠিকভাবে পূরণ করুন।`);
         return;
       }
       const numVal = Number(val);
-      const maxVal = sub === 'ICT' ? 50 : 100;
-      if (isNaN(numVal) || numVal < 0 || numVal > maxVal) {
-        setFormError(`"${sub}" বিষয়ের নম্বর ০ থেকে ${maxVal}-এর মধ্যে হতে হবে।`);
+      if (isNaN(numVal) || numVal < 0 || numVal > sub.max) {
+        setFormError(`"${sub.labelBn || sub.name}" বিষয়ের নম্বর ০ থেকে ${sub.max}-এর মধ্যে হতে হবে।`);
         return;
       }
     }
 
-    const subjectsArray = [
-      { code: '101', name: 'Bangla', marks: Number(marks.Bangla), ...calculateGradePoint(marks.Bangla) },
-      { code: '107', name: 'English', marks: Number(marks.English), ...calculateGradePoint(marks.English) },
-      { code: '109', name: 'Mathematics', marks: Number(marks.Mathematics), ...calculateGradePoint(marks.Mathematics) },
-      { code: '136', name: 'Physics', marks: Number(marks.Physics), ...calculateGradePoint(marks.Physics) },
-      { code: '137', name: 'Chemistry', marks: Number(marks.Chemistry), ...calculateGradePoint(marks.Chemistry) },
-      { code: '138', name: 'Biology', marks: Number(marks.Biology), ...calculateGradePoint(marks.Biology) },
-      { code: '154', name: 'ICT', marks: Number(marks.ICT), ...calculateGradePoint(marks.ICT, 50) },
-      { code: '111', name: 'Religion', marks: Number(marks.Religion), ...calculateGradePoint(marks.Religion) }
-    ];
+    const subjectsArray = currentSubjectList.map(sub => {
+      const markVal = Number(marks[sub.name]) || 0;
+      return {
+        code: sub.code,
+        name: sub.name,
+        labelBn: sub.labelBn,
+        marks: markVal,
+        ...calculateGradePoint(markVal, sub.max)
+      };
+    });
 
     const totalPoints = subjectsArray.reduce((acc, curr) => acc + curr.point, 0);
     const hasFail = subjectsArray.some(s => s.grade === 'F');
     const gpaVal = hasFail ? '0.00' : (totalPoints / subjectsArray.length).toFixed(2);
-    const letterGradeVal = hasFail ? 'F' : Number(gpaVal) >= 5.0 ? 'A+' : Number(gpaVal) >= 4.0 ? 'A' : 'A-';
+    const letterGradeVal = hasFail ? 'F' : Number(gpaVal) >= 5.0 ? 'A+' : Number(gpaVal) >= 4.0 ? 'A' : Number(gpaVal) >= 3.5 ? 'A-' : 'B';
 
+    // Unique ID: Class + Roll + Exam + Year (H1 fix)
     const resultRecord = {
+      id: editingResultId || `${selectedClass}-${cleanRoll}-${examName}-${year}`,
       roll: cleanRoll,
       studentNameBn: matchedStudent.nameBn,
       studentNameEn: matchedStudent.nameEn,
       studentId: matchedStudent.studentId,
       class: selectedClass,
-      group: matchedStudent.group || 'Science',
+      group: effectiveGroup,
       section: matchedStudent.section || 'A',
       exam: examName,
       year: year,
@@ -121,8 +197,9 @@ export default function ResultManager() {
 
     addResult(resultRecord);
     setSavedSuccess(true);
-    setMarks(initialMarks);
+    setMarks({});
     setSelectedStudentRoll('');
+    setEditingResultId(null);
     setTimeout(() => setSavedSuccess(false), 5000);
   };
 
@@ -134,7 +211,7 @@ export default function ResultManager() {
           ফলাফল ও নম্বর প্রদান ব্যবস্থাপনা (Marks Entry & Result Publishing)
         </h2>
         <p className="text-xs text-muted font-bangla">
-          পরীক্ষার নম্বর ইনপুট দিন; জিপিএ এবং লেটার গ্রেড স্বয়ংক্রিয়ভাবে হিসাব হয়ে পাবলিক পোর্টালে যুক্ত হবে
+          পরীক্ষার নম্বর ইনপুট দিন; শ্রেণি ও বিভাগ অনুযায়ী বিষয়সমূহ স্বয়ংক্রিয়ভাবে সাজানো হবে এবং পাবলিক পোর্টালে যুক্ত হবে।
         </p>
       </div>
 
@@ -142,7 +219,24 @@ export default function ResultManager() {
         {/* Entry Form */}
         <div className="lg:col-span-7 card-base bg-white p-6 rounded-2xl border border-line shadow-xs space-y-4">
           <form onSubmit={handlePublish} className="space-y-4 text-xs font-bangla">
-            {/* Unified Exam List (A14) */}
+            {editingResultId && (
+              <div className="p-3 bg-amber-50 text-amber-800 rounded-xl text-xs flex items-center justify-between border border-amber-200">
+                <span className="font-bold">ফলাফল সম্পাদনা মোড সক্রিয় (Edit Mode)</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingResultId(null);
+                    setMarks({});
+                    setSelectedStudentRoll('');
+                  }}
+                  className="text-xs underline cursor-pointer hover:text-amber-950"
+                >
+                  বাতিল করুন
+                </button>
+              </div>
+            )}
+
+            {/* Exam and Class Selectors */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               <div>
                 <label className="block font-bold text-ink mb-1">পরীক্ষার নাম</label>
@@ -192,6 +286,29 @@ export default function ResultManager() {
               </div>
             </div>
 
+            {/* Group selector for Class 9/10 (M2 fix) */}
+            {isSecondary && (
+              <div>
+                <label className="block font-bold text-ink mb-1">বিভাগ (Group)</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {['Science', 'Business Studies', 'Humanities'].map(grp => (
+                    <button
+                      key={grp}
+                      type="button"
+                      onClick={() => setSelectedGroup(grp)}
+                      className={`py-2 px-3 rounded-lg border text-xs font-semibold cursor-pointer transition ${
+                        effectiveGroup === grp
+                          ? 'bg-deep text-white border-deep'
+                          : 'bg-bg text-ink border-line hover:border-primary'
+                      }`}
+                    >
+                      {grp === 'Science' ? 'বিজ্ঞান' : grp === 'Business Studies' ? 'ব্যবসায় শিক্ষা' : 'মানবিক'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Live Student Match Confirmation Pill */}
             {activeStudent ? (
               <div className="p-3 bg-soft text-deep rounded-xl text-xs flex items-center justify-between border border-soft-border">
@@ -208,26 +325,34 @@ export default function ResultManager() {
               </div>
             ) : null}
 
-            {/* Subject Marks Table Inputs (0-100, ICT 0-50) */}
+            {/* Subject Marks Inputs Dynamically Rendered (M2 / H7 Fix) */}
             <div>
-              <span className="font-bold text-ink block mb-2">বিষয়ভিত্তিক প্রাপ্ত নম্বর (পূর্ণমান ১০০, আইসিটি ৫০):</span>
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-bold text-ink block">
+                  {isSecondary ? `${effectiveGroup} বিভাগের নির্ধারিত বিষয়ভিত্তিক নম্বর:` : '৬ষ্ঠ-৮ম শ্রেণির নির্ধারিত বিষয়ভিত্তিক নম্বর:'}
+                </span>
+                <span className="text-[11px] text-muted font-medium">
+                  {currentSubjectList.length}টি বিষয়
+                </span>
+              </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {Object.keys(marks).map((sub) => {
-                  const maxMark = sub === 'ICT' ? 50 : 100;
+                {currentSubjectList.map((sub) => {
                   return (
-                    <div key={sub} className="bg-bg p-2.5 rounded-xl border border-line">
+                    <div key={sub.name} className="bg-bg p-2.5 rounded-xl border border-line">
                       <div className="flex justify-between items-center mb-1">
-                        <label className="block font-bold text-ink text-[11px]">{sub}</label>
-                        <span className="text-[10px] text-muted">/{maxMark}</span>
+                        <label className="block font-bold text-ink text-[11px] truncate" title={sub.labelBn}>
+                          {sub.labelBn || sub.name}
+                        </label>
+                        <span className="text-[10px] text-muted">/{sub.max}</span>
                       </div>
                       <input
                         type="number"
                         min="0"
-                        max={maxMark}
+                        max={sub.max}
                         required
                         placeholder="0"
-                        value={marks[sub]}
-                        onChange={(e) => handleMarkChange(sub, e.target.value)}
+                        value={marks[sub.name] ?? ''}
+                        onChange={(e) => handleMarkChange(sub.name, e.target.value)}
                         className="w-full rounded-lg border border-line p-2 font-mono text-xs font-bold text-ink bg-white focus:ring-2 focus:ring-primary focus:outline-none"
                       />
                     </div>
@@ -248,7 +373,7 @@ export default function ResultManager() {
             {savedSuccess && (
               <div className="p-3 bg-soft text-deep rounded-xl text-xs font-semibold flex items-center gap-2 border border-soft-border">
                 <CheckCircle className="w-4 h-4 text-primary" />
-                <span>ফলাফল সফলভাবে প্রকাশিত ও সংরক্ষিত হয়েছে! শিক্ষার্থী অনলাইনে তা দেখতে পারবে।</span>
+                <span>ফলাফল সফলভাবে সংরক্ষিত ও প্রকাশিত হয়েছে! পাবলিক পোর্টালে দৃশ্যমান হবে।</span>
               </div>
             )}
 
@@ -257,32 +382,66 @@ export default function ResultManager() {
               className="btn-primary py-2.5 px-6 rounded-lg text-xs font-bold transition shadow-xs flex items-center gap-2 cursor-pointer"
             >
               <Award className="w-4 h-4 text-white" />
-              <span>ফলাফল সংরক্ষণ ও প্রকাশ করুন</span>
+              <span>{editingResultId ? 'ফলাফল আপডেট করুন' : 'ফলাফল সংরক্ষণ ও প্রকাশ করুন'}</span>
             </button>
           </form>
         </div>
 
-        {/* Existing Results List */}
+        {/* Existing Results List with Delete / Edit Actions (M1 Fix) */}
         <div className="lg:col-span-5 card-base bg-white p-6 rounded-2xl border border-line shadow-xs space-y-3 font-bangla">
-          <h3 className="font-bold text-ink text-sm pb-2 border-b border-line">
-            প্রকাশিত ফলাফল তালিকা ({lang === 'bn' ? toBanglaNumerals(results.length) : results.length} জন)
-          </h3>
+          <div className="flex justify-between items-center pb-2 border-b border-line">
+            <h3 className="font-bold text-ink text-sm">
+              প্রকাশিত ফলাফল তালিকা ({lang === 'bn' ? toBanglaNumerals(results.length) : results.length} জন)
+            </h3>
+            <span className="text-[11px] text-muted">
+              সম্পাদনা ও মোছার সুবিধা
+            </span>
+          </div>
 
-          <div className="space-y-2 max-h-[440px] overflow-y-auto">
-            {results.map((r, i) => (
-              <div key={i} className="p-3 bg-bg rounded-xl border border-line text-xs flex items-center justify-between">
-                <div>
-                  <span className="font-bold text-ink block">{r.studentNameBn}</span>
-                  <span className="text-[11px] text-muted font-mono">
-                    Roll: {r.roll} • Class: {r.class} ({r.exam})
-                  </span>
+          <div className="space-y-2 max-h-[480px] overflow-y-auto pr-1">
+            {results.length === 0 ? (
+              <p className="text-center py-8 text-muted text-xs">কোনো ফলাফল প্রকাশিত নেই</p>
+            ) : (
+              results.map((r, i) => (
+                <div key={r.id || i} className="p-3 bg-bg rounded-xl border border-line text-xs flex items-center justify-between gap-2 hover:border-line-hover transition">
+                  <div className="min-w-0">
+                    <span className="font-bold text-ink block truncate">{r.studentNameBn || r.studentName}</span>
+                    <span className="text-[11px] text-muted font-mono block">
+                      Roll: {r.roll} • Class: {r.class} ({r.exam})
+                    </span>
+                    <span className="text-[10px] text-muted">
+                      বিভাগ: {r.group || 'Science'}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    <div className="text-right">
+                      <span className="font-mono font-bold text-primary text-sm block">GPA {r.gpa}</span>
+                      <span className="text-[10px] font-semibold text-success">Grade: {r.letterGrade || r.grade}</span>
+                    </div>
+
+                    <div className="flex items-center gap-1 border-l border-line pl-2">
+                      <button
+                        type="button"
+                        onClick={() => handleEditResult(r)}
+                        title="সম্পাদনা করুন"
+                        className="p-1.5 rounded-lg text-primary hover:bg-soft transition cursor-pointer"
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteResult(r.id, r.studentNameBn || r.studentName, r.roll)}
+                        title="মুছে ফেলুন"
+                        className="p-1.5 rounded-lg text-danger hover:bg-danger-soft transition cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <span className="font-mono font-bold text-primary text-sm block">GPA {r.gpa}</span>
-                  <span className="text-[10px] font-semibold text-success">Grade: {r.letterGrade}</span>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>

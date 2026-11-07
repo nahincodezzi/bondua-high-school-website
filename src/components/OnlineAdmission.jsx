@@ -74,7 +74,8 @@ export default function OnlineAdmission() {
 
     // 5. Guardian Mobile Number (TC15: BD Mobile ^01[3-9]\d{8}$)
     const phoneClean = formData.guardianPhone.trim().replace(/[-\s]/g, '');
-    if (!/^01[3-9]\d{8}$/.test(phoneClean)) {
+    const normalizedPhone = phoneClean.replace(/^(\+88|88)/, '');
+    if (!/^01[3-9]\d{8}$/.test(normalizedPhone)) {
       errors.guardianPhone = lang === 'bn' 
         ? 'সঠিক ১১ ডিজিটের বাংলাদেশী মোবাইল নম্বর দিন (যেমন: 01819204561)' 
         : 'Enter a valid 11-digit BD mobile number (e.g. 01819204561)';
@@ -260,13 +261,20 @@ export default function OnlineAdmission() {
                 <div>
                   <span className="text-muted block">{lang === 'bn' ? 'আবেদনকৃত শ্রেণি:' : 'Applied Class:'}</span>
                   <span className="font-bold text-primary">
-                    {lang === 'bn' ? `${submittedApplication.applyingClass} শ্রেণি` : `Class ${submittedApplication.applyingClass}`}
+                    {lang === 'bn' 
+                      ? `${{ '6': '৬ষ্ঠ', '7': '৭ম', '8': '৮ম', '9': '৯ম', '10': '১০ম' }[submittedApplication.applyingClass] || submittedApplication.applyingClass} শ্রেণি` 
+                      : `Class ${submittedApplication.applyingClass}`}
                     {submittedApplication.group && submittedApplication.group !== 'General' && ` (${submittedApplication.group})`}
                   </span>
                 </div>
                 <div>
                   <span className="text-muted block">{lang === 'bn' ? 'লিঙ্গ ও রক্তগ্রুপ:' : 'Gender & Blood Group:'}</span>
-                  <span className="font-semibold text-ink">{submittedApplication.gender} {submittedApplication.bloodGroup && `• ${submittedApplication.bloodGroup}`}</span>
+                  <span className="font-semibold text-ink">
+                    {lang === 'bn'
+                      ? ({ 'Male': 'ছাত্র', 'Female': 'ছাত্রী' }[submittedApplication.gender] || submittedApplication.gender)
+                      : submittedApplication.gender
+                    } {submittedApplication.bloodGroup && `• ${submittedApplication.bloodGroup}`}
+                  </span>
                 </div>
                 <div>
                   <span className="text-muted block">{lang === 'bn' ? 'পিতার নাম:' : "Father's Name:"}</span>
@@ -311,7 +319,7 @@ export default function OnlineAdmission() {
             </div>
 
             {/* Main Form Fields */}
-            <form onSubmit={handleSubmit} className="p-6 sm:p-10 space-y-8 bg-white">
+            <form onSubmit={handleSubmit} noValidate className="p-6 sm:p-10 space-y-8 bg-white">
               {/* Step 1: Student Information */}
               <div>
                 <h3 className="text-sm font-bold font-bangla text-deep border-b border-line pb-2.5 mb-5 flex items-center gap-2">

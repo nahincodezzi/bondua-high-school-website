@@ -333,6 +333,16 @@ export function SchoolProvider({ children }) {
 
   const [routines] = useState(initialRoutines);
 
+  // Contact form persistence (C4 Fix: LocalStorage + Supabase cloud sync)
+  const [contactMessages, setContactMessages] = useState(() => {
+    try {
+      const saved = localStorage.getItem('bdhs_contact_messages');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
   // Idle Session Expiration after 30 minutes of inactivity (N8)
   useEffect(() => {
     if (!authUser) return;
@@ -418,6 +428,8 @@ export function SchoolProvider({ children }) {
         if (cloud.heroSlides && cloud.heroSlides.length > 0) setHeroSlides(cloud.heroSlides);
         if (cloud.gallery && cloud.gallery.length > 0) setGallery(cloud.gallery);
         if (cloud.schoolInfo) setSchoolInfo(cloud.schoolInfo);
+        if (cloud.contactMessages && cloud.contactMessages.length > 0) setContactMessages(cloud.contactMessages);
+        if (cloud.videos && cloud.videos.length > 0) setVideos(cloud.videos);
       } catch (err) {
         console.warn('Supabase cloud synchronization error:', err);
       }
@@ -828,12 +840,13 @@ export function SchoolProvider({ children }) {
   };
 
   const submitAdmission = (formData) => {
-    const nextSeq = admissions.length + 1;
-    const trackingId = `BDHS-ADM-2027-${String(nextSeq).padStart(3, '0')}`;
+    const timestampPart = Date.now().toString().slice(-4);
+    const randomPart = Math.floor(100 + Math.random() * 900);
+    const trackingId = `BDHS-ADM-2027-${timestampPart}${randomPart}`;
     const newApplication = {
       ...formData,
       studentNameEn: (formData.studentNameEn || '').trim().toUpperCase(),
-      id: `adm-${Date.now()}`,
+      id: trackingId,
       trackingId,
       submissionDate: getDhakaDateString(),
       status: 'Pending'
@@ -841,7 +854,23 @@ export function SchoolProvider({ children }) {
     setAdmissions(prev => [newApplication, ...prev]);
     if (supabase) {
       supabase.from('admissions').insert(mappers.admission.toDb(newApplication)).then(({ error }) => {
-        if (error) console.warn('Supabase insert admission warning:', error.message);
+        if (error) {
+          // If extra columns do not exist yet, fallback to base columns
+          const base = {
+            id: newApplication.id,
+            applicant_name_bn: newApplication.studentNameBn || newApplication.applicantNameBn || '',
+            applicant_name_en: newApplication.studentNameEn || newApplication.applicantNameEn || null,
+            desired_class: String(newApplication.applyingClass || '6'),
+            gender: newApplication.gender || 'Male',
+            guardian_name: newApplication.fatherName || newApplication.guardianName || '',
+            guardian_phone: newApplication.guardianPhone || '',
+            previous_school: newApplication.previousSchool || null,
+            status: newApplication.status || 'Pending'
+          };
+          supabase.from('admissions').insert(base).then(({ error: err2 }) => {
+            if (err2) console.warn('Supabase fallback insert admission warning:', err2.message);
+          });
+        }
       });
     }
     return newApplication;
@@ -849,9 +878,9 @@ export function SchoolProvider({ children }) {
 
   const updateAdmissionStatus = (id, status) => {
     setAdmissions(prev => prev.map(a => {
-      if (a.id === id) {
+      if (a.id === id || a.trackingId === id) {
         if (supabase) {
-          supabase.from('admissions').update({ status }).eq('id', id).then(({ error }) => {
+          supabase.from('admissions').update({ status }).or(`id.eq.${id},tracking_id.eq.${id}`).then(({ error }) => {
             if (error) console.warn('Supabase update admission warning:', error.message);
           });
         }
@@ -863,31 +892,32 @@ export function SchoolProvider({ children }) {
 
   const approveAdmissionAndCreateStudent = (admissionApp) => {
     // 1. Mark status as Approved
-    updateAdmissionStatus(admissionApp.id, 'Approved');
+    updateAdmissionStatus(admissionApp.id || admissionApp.trackingId, 'Approved');
 
     // 2. Find next roll in target class
-    const targetClass = admissionApp.applyingClass || '6';
-    const sameClassStudents = students.filter(s => s.class === targetClass);
+    const targetClass = String(admissionApp.applyingClass || '6');
+    const sameClassStudents = students.filter(s => String(s.class) === targetClass);
     const maxRoll = sameClassStudents.reduce((max, s) => {
       const r = Number(s.roll);
       return !isNaN(r) && r > max ? r : max;
     }, 100);
     const newRoll = maxRoll + 1;
 
-    // 3. Create student record
+    // 3. Create student record with authentic preserved data (H3 fix)
     const createdStudent = {
       id: `stu-${Date.now()}`,
-      studentId: `BDHS-2027-${newRoll}`,
+      studentId: `BDHS-2027-C${targetClass}-${newRoll}`,
       roll: newRoll,
-      nameBn: admissionApp.studentNameBn || admissionApp.studentNameEn,
-      nameEn: (admissionApp.studentNameEn || '').toUpperCase(),
+      nameBn: admissionApp.studentNameBn || admissionApp.applicantNameBn || admissionApp.studentNameEn || '',
+      nameEn: (admissionApp.studentNameEn || admissionApp.applicantNameEn || '').toUpperCase(),
       class: targetClass,
       section: 'A',
       group: admissionApp.group || 'General',
       gender: admissionApp.gender || 'Male',
-      dob: admissionApp.dob || '2012-01-01',
+      dob: admissionApp.dob || '',
       bloodGroup: admissionApp.bloodGroup || '',
-      guardianName: admissionApp.fatherName || admissionApp.motherName || '',
+      fatherName: admissionApp.fatherName || admissionApp.guardianName || '',
+      guardianName: admissionApp.fatherName || admissionApp.motherName || admissionApp.guardianName || '',
       guardianPhone: admissionApp.guardianPhone || '',
       address: admissionApp.address || ''
     };
@@ -895,29 +925,68 @@ export function SchoolProvider({ children }) {
     setStudents(prev => [createdStudent, ...prev]);
     if (supabase) {
       supabase.from('students').insert(mappers.student.toDb(createdStudent)).then(({ error }) => {
-        if (error) console.warn('Supabase insert student from admission warning:', error.message);
+        if (error) {
+          const base = {
+            id: createdStudent.id,
+            roll: String(createdStudent.roll),
+            name_bn: createdStudent.nameBn,
+            name_en: createdStudent.nameEn,
+            class: String(createdStudent.class),
+            section: createdStudent.section,
+            shift: 'দিবা',
+            gender: createdStudent.gender,
+            father_name: createdStudent.fatherName,
+            guardian_phone: createdStudent.guardianPhone,
+            status: 'নিয়মিত'
+          };
+          supabase.from('students').insert(base).then(({ error: err2 }) => {
+            if (err2) console.warn('Supabase fallback insert student warning:', err2.message);
+          });
+        }
       });
     }
     return createdStudent;
   };
 
   const addResult = (resultData) => {
+    const classVal = String(resultData.class || '10');
+    const rollVal = String(resultData.roll || '');
+    const examVal = resultData.exam || 'SSC Test Examination 2026';
+    const yearVal = String(resultData.year || '2026');
+    const resultId = resultData.id || `${classVal}-${rollVal}-${examVal}-${yearVal}`;
+    const enriched = { ...resultData, id: resultId, class: classVal, roll: rollVal, exam: examVal, year: yearVal };
+
     setResults(prev => {
-      const filtered = prev.filter(r => !(r.roll === resultData.roll && r.exam === resultData.exam));
-      return [resultData, ...filtered];
+      // H1 Fix: Filter by class + roll + exam + year to prevent cross-class overwriting
+      const filtered = prev.filter(r => !(r.id === resultId || (String(r.roll) === rollVal && String(r.class) === classVal && r.exam === examVal && String(r.year) === yearVal)));
+      return [enriched, ...filtered];
     });
+
     if (supabase) {
-      supabase.from('results').upsert(mappers.result.toDb(resultData)).then(({ error }) => {
+      supabase.from('results').upsert(mappers.result.toDb(enriched)).then(({ error }) => {
         if (error) console.warn('Supabase upsert result warning:', error.message);
       });
     }
   };
 
+  const deleteResult = (id) => {
+    setResults(prev => prev.filter(r => r.id !== id));
+    if (supabase) {
+      supabase.from('results').delete().eq('id', id).then(({ error }) => {
+        if (error) console.warn('Supabase delete result warning:', error.message);
+      });
+    }
+  };
+
   const addFee = (feeData) => {
+    // H4 Fix: Collision-proof receipt number
+    const timestampPart = Date.now().toString().slice(-5);
+    const randomPart = Math.floor(100 + Math.random() * 900);
+    const receiptNo = `REC-${new Date().getFullYear()}-${timestampPart}-${randomPart}`;
     const newFee = {
       ...feeData,
       id: `fee-${Date.now()}`,
-      receiptNo: `REC-2027-${Math.floor(1000 + Math.random() * 9000)}`,
+      receiptNo,
       paidDate: getDhakaDateString(),
       status: 'Paid'
     };
@@ -929,16 +998,6 @@ export function SchoolProvider({ children }) {
     }
     return newFee;
   };
-
-  // Contact form persistence (C4)
-  const [contactMessages, setContactMessages] = useState(() => {
-    try {
-      const saved = localStorage.getItem('bdhs_contact_messages');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
 
   const submitContactMessage = (msg) => {
     const newMsg = {
@@ -952,7 +1011,39 @@ export function SchoolProvider({ children }) {
       localStorage.setItem('bdhs_contact_messages', JSON.stringify(updated));
       return updated;
     });
+
+    if (supabase) {
+      supabase.from('contact_messages').insert({
+        id: newMsg.id,
+        name: newMsg.name,
+        email: newMsg.email || null,
+        phone: newMsg.phone || '',
+        subject: newMsg.subject || null,
+        message: newMsg.message,
+        status: 'New'
+      }).then(({ error }) => {
+        if (error) console.warn('Supabase insert contact message warning:', error.message);
+      });
+    }
     return newMsg;
+  };
+
+  const updateSchoolSettings = (newInfo) => {
+    setSchoolInfo(newInfo);
+    if (supabase) {
+      supabase.from('school_info').upsert({ id: 'main', data: newInfo }).then(({ error }) => {
+        if (error) console.warn('Supabase upsert school_info warning:', error.message);
+      });
+    }
+  };
+
+  const updateHeroSlides = (slides) => {
+    setHeroSlides(slides);
+    if (supabase) {
+      supabase.from('hero_slides').upsert(slides.map(mappers.slide.toDb)).then(({ error }) => {
+        if (error) console.warn('Supabase upsert hero_slides warning:', error.message);
+      });
+    }
   };
 
   const addGalleryItem = (item) => {
@@ -989,11 +1080,22 @@ export function SchoolProvider({ children }) {
     };
     delete newVid.videoFile;
     setVideos(prev => [newVid, ...prev]);
+
+    if (supabase) {
+      supabase.from('videos').insert(mappers.video.toDb(newVid)).then(({ error }) => {
+        if (error) console.warn('Supabase insert video warning:', error.message);
+      });
+    }
   };
 
   const deleteVideoItem = (id) => {
     deleteVideoFile(id);
     setVideos(prev => prev.filter(v => v.id !== id));
+    if (supabase) {
+      supabase.from('videos').delete().eq('id', id).then(({ error }) => {
+        if (error) console.warn('Supabase delete video warning:', error.message);
+      });
+    }
   };
 
   const resetToDefaults = (confirmCode) => {
@@ -1053,10 +1155,12 @@ export function SchoolProvider({ children }) {
         ROLE_DEFINITIONS,
         schoolInfo,
         setSchoolInfo,
+        updateSchoolSettings,
         uniformInfo,
         setUniformInfo,
         heroSlides,
         setHeroSlides,
+        updateHeroSlides,
         notices,
         addNotice,
         updateNotice,
@@ -1071,6 +1175,7 @@ export function SchoolProvider({ children }) {
         deleteStudent,
         results,
         addResult,
+        deleteResult,
         gallery,
         addGalleryItem,
         deleteGalleryItem,
