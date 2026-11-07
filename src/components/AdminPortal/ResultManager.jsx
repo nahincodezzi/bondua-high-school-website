@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSchool } from '../../context/useSchool';
 import { toBanglaNumerals, toEnglishNumerals } from '../../utils/dateFormatter';
+import { calculateSubjectGrade, calculateOverallGrade } from '../../utils/gradeCalculator';
 import { 
   Award, 
   CheckCircle,
@@ -79,18 +80,6 @@ export default function ResultManager() {
 
   const [marks, setMarks] = useState({});
 
-  const calculateGradePoint = (mark, max = 100) => {
-    const num = Number(mark) || 0;
-    const percentage = (num / max) * 100;
-    if (percentage >= 80) return { grade: 'A+', point: 5.0 };
-    if (percentage >= 70) return { grade: 'A', point: 4.0 };
-    if (percentage >= 60) return { grade: 'A-', point: 3.5 };
-    if (percentage >= 50) return { grade: 'B', point: 3.0 };
-    if (percentage >= 40) return { grade: 'C', point: 2.0 };
-    if (percentage >= 33) return { grade: 'D', point: 1.0 };
-    return { grade: 'F', point: 0.0 };
-  };
-
   const handleMarkChange = (subjectName, val) => {
     setMarks(prev => ({ ...prev, [subjectName]: val }));
     setFormError('');
@@ -168,14 +157,14 @@ export default function ResultManager() {
         name: sub.name,
         labelBn: sub.labelBn,
         marks: markVal,
-        ...calculateGradePoint(markVal, sub.max)
+        ...calculateSubjectGrade(markVal, sub.max)
       };
     });
 
     const totalPoints = subjectsArray.reduce((acc, curr) => acc + curr.point, 0);
     const hasFail = subjectsArray.some(s => s.grade === 'F');
     const gpaVal = hasFail ? '0.00' : (totalPoints / subjectsArray.length).toFixed(2);
-    const letterGradeVal = hasFail ? 'F' : Number(gpaVal) >= 5.0 ? 'A+' : Number(gpaVal) >= 4.0 ? 'A' : Number(gpaVal) >= 3.5 ? 'A-' : 'B';
+    const letterGradeVal = calculateOverallGrade(gpaVal, hasFail);
 
     // Unique ID: Class + Roll + Exam + Year (H1 fix)
     const resultRecord = {

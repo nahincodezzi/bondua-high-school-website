@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import SchoolLogo from './common/SchoolLogo';
 import { useSchool } from '../context/useSchool';
 import { toEnglishNumerals, toBanglaNumerals } from '../utils/dateFormatter';
+import { calculateOverallGrade } from '../utils/gradeCalculator';
 import { 
   GraduationCap, 
   Search, 
@@ -47,12 +48,13 @@ export default function ResultSearch() {
     setSearchAttempted(true);
     const found = results.find(
       r => {
+        const matchExam = !examType || r.exam === examType;
         const matchRoll = r.roll.toString() === convertedRoll;
         const matchClass = !targetClass || r.class === targetClass;
         const matchReg = !convertedReg || 
           r.studentId?.toUpperCase().includes(convertedReg) || 
           (r.regNo && r.regNo.toString().includes(convertedReg));
-        return matchRoll && matchClass && matchReg;
+        return matchExam && matchRoll && matchClass && matchReg;
       }
     );
 
@@ -123,7 +125,15 @@ export default function ResultSearch() {
               <select
                 id="class-select"
                 value={targetClass}
-                onChange={(e) => setTargetClass(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setTargetClass(val);
+                  if (val === '10' && examType === 'Half-Yearly Examination 2026') {
+                    setExamType('SSC Test Examination 2026');
+                  } else if (val !== '10' && examType === 'SSC Test Examination 2026') {
+                    setExamType('Half-Yearly Examination 2026');
+                  }
+                }}
                 className="w-full text-xs font-bangla rounded-lg p-3 bg-bg border border-line text-ink focus:ring-2 focus:ring-primary focus:outline-none"
               >
                 <option value="10">দশম শ্রেণি (Class 10)</option>
@@ -300,7 +310,7 @@ export default function ResultSearch() {
                 <div>
                   <span className="text-muted block">{lang === 'bn' ? 'জিপিএ (GPA):' : 'GPA Score:'}</span>
                   <span className="font-mono font-extrabold text-base text-primary">
-                    {lang === 'bn' ? toBanglaNumerals(searchedResult.gpa ?? '0.00') : (searchedResult.gpa ?? '0.00')} ({searchedResult.letterGrade || searchedResult.grade || 'N/A'})
+                    {lang === 'bn' ? toBanglaNumerals(searchedResult.gpa ?? '0.00') : (searchedResult.gpa ?? '0.00')} ({searchedResult.letterGrade || searchedResult.grade || calculateOverallGrade(searchedResult.gpa, searchedResult.resultStatus === 'FAILED')})
                   </span>
                 </div>
               </div>
@@ -355,7 +365,7 @@ export default function ResultSearch() {
                         {lang === 'bn' ? 'সর্বমোট গ্রেড পয়েন্ট গড় (GPA):' : 'Grade Point Average (GPA):'}
                       </td>
                       <td className="py-3.5 px-4 text-center text-deep font-extrabold text-base">
-                        {searchedResult.letterGrade || searchedResult.grade || 'A'}
+                        {searchedResult.letterGrade || searchedResult.grade || calculateOverallGrade(searchedResult.gpa, searchedResult.resultStatus === 'FAILED')}
                       </td>
                       <td className="py-3.5 px-4 text-center font-mono text-deep font-extrabold text-base">
                         {lang === 'bn' ? toBanglaNumerals(searchedResult.gpa ?? '0.00') : (searchedResult.gpa ?? '0.00')}

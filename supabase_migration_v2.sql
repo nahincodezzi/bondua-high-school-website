@@ -1,172 +1,106 @@
--- ==============================================================================
--- Bandua Daulatpur High School (EIIN: 106644) - SQA Comprehensive Migration v2
--- Fixes Critical & High Priority Issues: C1, C2, C3, C4, C5, H1, H2, H3, H4, H5, H8
--- Run this in Supabase SQL Editor: https://supabase.com/dashboard/project/xpzzffxukeisfvuxxyut/sql
--- ==============================================================================
+-- ============================================================================
+-- Bandua Daulatpur High School: Supabase migration v2
+-- Run once in Supabase Dashboard -> SQL Editor -> New query -> Run
+--
+-- Why: the app code (src/lib/supabase.js) now sends extra fields, but the
+-- tables do not have those columns yet. Until this runs, EVERY new notice,
+-- student, admission and teacher saved from the portal fails to reach the
+-- cloud (error: "Could not find the '<column>' column ... in the schema cache").
+-- Safe to run more than once.
+-- ============================================================================
 
--- 1. NOTICES TABLE: Add content_bn, content_en, is_urgent
-ALTER TABLE notices ADD COLUMN IF NOT EXISTS content_bn text;
-ALTER TABLE notices ADD COLUMN IF NOT EXISTS content_en text;
-ALTER TABLE notices ADD COLUMN IF NOT EXISTS is_urgent boolean DEFAULT false;
+-- 1) Missing columns -----------------------------------------------------------
+alter table public.notices    add column if not exists is_urgent   boolean default false;
+alter table public.notices    add column if not exists content_bn  text;
+alter table public.notices    add column if not exists content_en  text;
 
--- Sync existing notices data between columns
-UPDATE notices SET content_bn = description_bn WHERE content_bn IS NULL AND description_bn IS NOT NULL;
-UPDATE notices SET is_urgent = urgent WHERE is_urgent IS NULL AND urgent IS NOT NULL;
+alter table public.teachers   add column if not exists designation_en text;
+alter table public.teachers   add column if not exists subject_en     text;
+alter table public.teachers   add column if not exists qualification  text;
+alter table public.teachers   add column if not exists category       text default 'faculty';
 
--- 2. TEACHERS TABLE: Add qualification, category, designation_en, subject_en
-ALTER TABLE teachers ADD COLUMN IF NOT EXISTS qualification text;
-ALTER TABLE teachers ADD COLUMN IF NOT EXISTS category text DEFAULT 'faculty';
-ALTER TABLE teachers ADD COLUMN IF NOT EXISTS designation_en text;
-ALTER TABLE teachers ADD COLUMN IF NOT EXISTS subject_en text;
+alter table public.students   add column if not exists student_id    text;
+alter table public.students   add column if not exists "group"       text default 'General';
+alter table public.students   add column if not exists dob           date;
+alter table public.students   add column if not exists blood_group   text;
+alter table public.students   add column if not exists guardian_name text;
+alter table public.students   add column if not exists address       text;
 
-UPDATE teachers SET qualification = education WHERE qualification IS NULL AND education IS NOT NULL;
-UPDATE teachers SET category = 'staff' WHERE id LIKE 'stf-%';
-UPDATE teachers SET category = 'faculty' WHERE id LIKE 'tea-%';
+alter table public.admissions add column if not exists tracking_id  text;
+alter table public.admissions add column if not exists dob          date;
+alter table public.admissions add column if not exists blood_group  text;
+alter table public.admissions add column if not exists father_name  text;
+alter table public.admissions add column if not exists mother_name  text;
+alter table public.admissions add column if not exists previous_gpa text;
+alter table public.admissions add column if not exists address      text;
 
--- 3. STUDENTS TABLE: Add student_id, dob, guardian_name, group, address
-ALTER TABLE students ADD COLUMN IF NOT EXISTS student_id text;
-ALTER TABLE students ADD COLUMN IF NOT EXISTS dob text;
-ALTER TABLE students ADD COLUMN IF NOT EXISTS guardian_name text;
-ALTER TABLE students ADD COLUMN IF NOT EXISTS "group" text DEFAULT 'General';
-ALTER TABLE students ADD COLUMN IF NOT EXISTS address text;
+alter table public.fee_receipts add column if not exists method text default 'Cash';
 
-UPDATE students SET guardian_name = father_name WHERE guardian_name IS NULL AND father_name IS NOT NULL;
-
--- 4. ADMISSIONS TABLE: Add tracking_id, dob, blood_group, father_name, mother_name, previous_gpa, address
-ALTER TABLE admissions ADD COLUMN IF NOT EXISTS tracking_id text;
-ALTER TABLE admissions ADD COLUMN IF NOT EXISTS dob text;
-ALTER TABLE admissions ADD COLUMN IF NOT EXISTS blood_group text;
-ALTER TABLE admissions ADD COLUMN IF NOT EXISTS father_name text;
-ALTER TABLE admissions ADD COLUMN IF NOT EXISTS mother_name text;
-ALTER TABLE admissions ADD COLUMN IF NOT EXISTS previous_gpa text;
-ALTER TABLE admissions ADD COLUMN IF NOT EXISTS address text;
-
--- 5. RESULTS TABLE: Add subjects jsonb, student_name_bn, letter_grade, result_status
-ALTER TABLE results ADD COLUMN IF NOT EXISTS subjects jsonb;
-ALTER TABLE results ADD COLUMN IF NOT EXISTS student_name_bn text;
-ALTER TABLE results ADD COLUMN IF NOT EXISTS student_name_en text;
-ALTER TABLE results ADD COLUMN IF NOT EXISTS student_id text;
-ALTER TABLE results ADD COLUMN IF NOT EXISTS section text DEFAULT 'A';
-ALTER TABLE results ADD COLUMN IF NOT EXISTS "group" text DEFAULT 'Science';
-ALTER TABLE results ADD COLUMN IF NOT EXISTS letter_grade text DEFAULT 'A';
-ALTER TABLE results ADD COLUMN IF NOT EXISTS result_status text DEFAULT 'PASSED';
-
-UPDATE results SET student_name_bn = student_name WHERE student_name_bn IS NULL AND student_name IS NOT NULL;
-UPDATE results SET letter_grade = grade WHERE letter_grade IS NULL AND grade IS NOT NULL;
-UPDATE results SET result_status = status WHERE result_status IS NULL AND status IS NOT NULL;
-
--- 6. FEE RECEIPTS TABLE: Add student_roll, method, status
-ALTER TABLE fee_receipts ADD COLUMN IF NOT EXISTS student_roll text;
-ALTER TABLE fee_receipts ADD COLUMN IF NOT EXISTS method text DEFAULT 'Cash';
-ALTER TABLE fee_receipts ADD COLUMN IF NOT EXISTS status text DEFAULT 'Paid';
-
-UPDATE fee_receipts SET student_roll = roll WHERE student_roll IS NULL AND roll IS NOT NULL;
-
--- 7. GALLERY TABLE: Add image, title_en, date, description
-ALTER TABLE gallery ADD COLUMN IF NOT EXISTS image text;
-ALTER TABLE gallery ADD COLUMN IF NOT EXISTS title_en text;
-ALTER TABLE gallery ADD COLUMN IF NOT EXISTS date text;
-ALTER TABLE gallery ADD COLUMN IF NOT EXISTS description text;
-
-UPDATE gallery SET image = url WHERE image IS NULL AND url IS NOT NULL;
-UPDATE gallery SET url = image WHERE url IS NULL AND image IS NOT NULL;
-
--- 8. CONTACT MESSAGES TABLE (C4 Fix: Persist visitor messages to cloud)
-CREATE TABLE IF NOT EXISTS contact_messages (
-  id text PRIMARY KEY,
-  name text NOT NULL,
-  phone text NOT NULL,
-  subject text,
-  message text NOT NULL,
-  status text DEFAULT 'New',
-  created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
+-- 2) Tables the app already writes to but that do not exist ---------------------
+create table if not exists public.videos (
+  id          text primary key,
+  title_bn    text not null,
+  title_en    text,
+  video_url   text,
+  duration    text,
+  thumbnail   text,
+  created_at  timestamptz default now()
 );
 
--- 9. VIDEOS TABLE (H5 Fix: YouTube / School Videos)
-CREATE TABLE IF NOT EXISTS videos (
-  id text PRIMARY KEY,
-  title_bn text NOT NULL,
-  title_en text,
-  video_url text NOT NULL,
-  duration text,
-  thumbnail text,
-  "order" integer DEFAULT 1,
-  created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
+create table if not exists public.contact_messages (
+  id          text primary key,
+  name        text not null,
+  email       text,
+  phone       text,
+  subject     text,
+  message     text not null,
+  status      text default 'New',
+  created_at  timestamptz default now()
 );
 
--- 10. SYSTEM USERS TABLE (Secure Cloud Role-Based Access Control)
-CREATE TABLE IF NOT EXISTS system_users (
-  id text PRIMARY KEY,
-  username text UNIQUE NOT NULL,
-  password_hash text NOT NULL,
-  name_bn text NOT NULL,
-  name_en text,
-  designation_bn text,
-  designation_en text,
-  role text NOT NULL,
-  permissions jsonb DEFAULT '[]'::jsonb,
-  phone text,
-  email text,
-  status text DEFAULT 'active',
-  created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
-);
+-- 3) Copy old notice text into the new column ------------------------------------
+update public.notices set content_bn = description_bn
+ where content_bn is null and description_bn is not null;
+update public.notices set is_urgent = urgent where urgent is true;
 
--- Insert seed users with collision-resistant SHA-256 password hashes
-INSERT INTO system_users (id, username, password_hash, name_bn, name_en, designation_bn, designation_en, role, permissions, phone, email, status)
-VALUES
-  ('usr-superadmin', 'superadmin', '6051fc84a7a0d74c225fb18a496b09952da5642e60723ecae543298edd7d82d6', 'প্রধান সিস্টেম অ্যাডমিনিস্ট্রেটর', 'System Super Administrator', 'সফটওয়্যার সুপার অ্যাডমিন', 'Software Super Administrator', 'superadmin', '["cms","teachers","students","admissions","results","notices","fees","settings","users"]'::jsonb, '+880 1819-204561', 'bonduas106644@gmail.com', 'active'),
-  ('usr-headmaster', 'headmaster', 'b0702ec5f856b9dcc9114f5976cf618af9d90000ef19a1c6aa5cab5f264b2fb4', 'জনাব বাহার উদ্দিন ভূঁইয়া', 'Mr. Bahar Uddin Bhuiyan', 'ভারপ্রাপ্ত প্রধান শিক্ষক', 'Acting Headmaster', 'headmaster', '["cms","teachers","students","admissions","results","notices","fees","settings"]'::jsonb, '+880 1819-204561', 'bonduas106644@gmail.com', 'active'),
-  ('usr-asst-headmaster', 'asst_headmaster', 'e3af47e260baf3c95c85c5d0efc3e62d44ea0bc7d6e81709b50dc206797d3ae1', 'জনাব সলিম উদ্দিন মজুমদার', 'Mr. Solim Uddin Majumder', 'ভারপ্রাপ্ত সহ প্রধান শিক্ষক', 'Acting Assistant Headmaster', 'asst_headmaster', '["cms","students","admissions","results","notices"]'::jsonb, '+880 1818-450123', 'solim.majumder.bdhs@gmail.com', 'active'),
-  ('usr-teacher', 'teacher', '01d58c1ac3df6d023d869e50bf78e2f9185332c281f665fd53f6dbd7592df45e', 'জনাব জাহাঙ্গীর আলম', 'Mr. Jahangir Alam', 'সহকারী শিক্ষক (হিসাব বিজ্ঞান)', 'Assistant Teacher (Accounting)', 'teacher', '["results","notices"]'::jsonb, '+880 1711-234567', 'jahangir.alam.bdhs@gmail.com', 'active'),
-  ('usr-office-asst', 'office_assistant', '5278374f8a2f6c0bcbb4da91e38acadef155ac20964dad6f4d3f6edede34e74e', 'নুরুল কবির ভূঁইয়া', 'Nurul Kabir Bhuiyan', 'অফিস সহকারী', 'Office Assistant', 'operator', '["students","admissions","notices","fees"]'::jsonb, '+880 1712-893042', 'nurul.kabir.bdhs@gmail.com', 'active')
-ON CONFLICT (id) DO UPDATE SET 
-  password_hash = EXCLUDED.password_hash,
-  name_bn = EXCLUDED.name_bn,
-  permissions = EXCLUDED.permissions;
+-- 4) Fill the extra fields of the demo data (ids start with demo- / BDHS-ADM-2027-D)
+update public.students s set
+  student_id    = 'BDHS-2026-' || lpad(s.class, 2, '0') || lpad(s.roll, 2, '0'),
+  "group"       = case when s.class in ('9','10') then
+                    case when s.roll::int <= 4 then 'Science'
+                         when s.roll::int <= 6 then 'Business Studies'
+                         else 'Humanities' end
+                  else 'General' end,
+  dob           = make_date(2026 - (s.class::int + 6), 1 + (s.roll::int * 5 % 12), 1 + (s.roll::int * 7 % 27)),
+  blood_group   = (array['A+','B+','O+','AB+','O+','B+','A-','O-'])[s.roll::int],
+  guardian_name = s.father_name,
+  address       = (array['আনন্দপুর','বন্দুয়া','দৌলতপুর','মুন্সিরহাট','জি এম হাট','দরবারপুর','আমজাদহাট','ফুলগাজী সদর'])[s.roll::int]
+                  || ', ফুলগাজী, ফেনী'
+ where s.id like 'demo-stu-%';
 
--- ==============================================================================
--- SECURITY & RLS POLICIES (C5 Fix)
--- Protect sensitive data while keeping public website operational
--- ==============================================================================
+update public.admissions a set
+  tracking_id  = a.id,
+  father_name  = a.guardian_name,
+  mother_name  = (array['রোকেয়া বেগম','শাহনাজ পারভীন','নাসরিন আক্তার','ফেরদৌসী বেগম','হাসিনা আক্তার',
+                        'জোহরা খাতুন','মমতাজ বেগম','রাশিদা আক্তার','সেলিনা ইয়াসমিন','কুলসুম বেগম'])[right(a.id, 3)::int],
+  dob          = make_date(2026 - (a.desired_class::int + 5), 1 + (right(a.id, 3)::int * 5 % 12), 3 + right(a.id, 3)::int),
+  blood_group  = (array['B+','O+','A+','O+','AB+','B+','A+','O-','B+','O+'])[right(a.id, 3)::int],
+  previous_gpa = (array['4.83','5.00','4.50','4.67','4.25','4.92','3.83','4.58','5.00','4.17'])[right(a.id, 3)::int],
+  address      = (array['বন্দুয়া','দৌলতপুর','আনন্দপুর','বন্দুয়া','ফুলগাজী সদর','মুন্সিরহাট','জি এম হাট',
+                        'দরবারপুর','ফুলগাজী সদর','আমজাদহাট'])[right(a.id, 3)::int] || ', ফুলগাজী, ফেনী'
+ where a.id like 'BDHS-ADM-2027-D%';
 
--- Enable RLS on all tables
-ALTER TABLE notices ENABLE ROW LEVEL SECURITY;
-ALTER TABLE teachers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE students ENABLE ROW LEVEL SECURITY;
-ALTER TABLE admissions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE results ENABLE ROW LEVEL SECURITY;
-ALTER TABLE fee_receipts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE hero_slides ENABLE ROW LEVEL SECURITY;
-ALTER TABLE gallery ENABLE ROW LEVEL SECURITY;
-ALTER TABLE school_info ENABLE ROW LEVEL SECURITY;
-ALTER TABLE contact_messages ENABLE ROW LEVEL SECURITY;
-ALTER TABLE videos ENABLE ROW LEVEL SECURITY;
-ALTER TABLE system_users ENABLE ROW LEVEL SECURITY;
+-- 5) Check: should list the new columns
+select table_name, column_name from information_schema.columns
+ where table_schema = 'public'
+   and column_name in ('is_urgent','content_bn','qualification','category','student_id','group','tracking_id','address')
+ order by table_name, column_name;
 
--- 1. Public Read Policies (Allow anyone to view published site data)
-CREATE POLICY IF NOT EXISTS "Public Read Notices" ON notices FOR SELECT USING (true);
-CREATE POLICY IF NOT EXISTS "Public Read Teachers" ON teachers FOR SELECT USING (true);
-CREATE POLICY IF NOT EXISTS "Public Read Results" ON results FOR SELECT USING (true);
-CREATE POLICY IF NOT EXISTS "Public Read Slides" ON hero_slides FOR SELECT USING (true);
-CREATE POLICY IF NOT EXISTS "Public Read Gallery" ON gallery FOR SELECT USING (true);
-CREATE POLICY IF NOT EXISTS "Public Read School Info" ON school_info FOR SELECT USING (true);
-CREATE POLICY IF NOT EXISTS "Public Read Videos" ON videos FOR SELECT USING (true);
-
--- 2. Public Insert Policies (Visitors can submit admission & contact message)
-CREATE POLICY IF NOT EXISTS "Public Insert Admissions" ON admissions FOR INSERT WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "Public Insert Contact" ON contact_messages FOR INSERT WITH CHECK (true);
-
--- 3. Authenticated / Anon Dev Management Policies (Allows full admin operations via API key)
-CREATE POLICY IF NOT EXISTS "Allow All Notices" ON notices FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "Allow All Teachers" ON teachers FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "Allow All Students" ON students FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "Allow All Admissions" ON admissions FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "Allow All Results" ON results FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "Allow All Fee Receipts" ON fee_receipts FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "Allow All Slides" ON hero_slides FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "Allow All Gallery" ON gallery FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "Allow All School Info" ON school_info FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "Allow All Contact Messages" ON contact_messages FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "Allow All Videos" ON videos FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "Allow All System Users" ON system_users FOR ALL USING (true) WITH CHECK (true);
-
+-- ----------------------------------------------------------------------------
+-- To remove ALL demo data later (run only when you want it gone):
+-- delete from public.results      where id ~ '^(6|7|8|9|10)-[1-8]-';
+-- delete from public.fee_receipts where id like 'demo-fee-%';
+-- delete from public.students     where id like 'demo-stu-%';
+-- delete from public.notices      where id like 'demo-not-%';
+-- delete from public.admissions   where id like 'BDHS-ADM-2027-D%';
+-- ----------------------------------------------------------------------------

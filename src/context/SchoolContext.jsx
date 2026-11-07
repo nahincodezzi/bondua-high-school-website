@@ -779,7 +779,22 @@ export function SchoolProvider({ children }) {
     setNotices(prev => [newNotice, ...prev]);
     if (supabase) {
       supabase.from('notices').insert(mappers.notice.toDb(newNotice)).then(({ error }) => {
-        if (error) console.warn('Supabase insert notice warning:', error.message);
+        if (error) {
+          const base = {
+            id: newNotice.id,
+            title_bn: newNotice.titleBn || '',
+            title_en: newNotice.titleEn || null,
+            category: newNotice.category || 'সাধারণ',
+            date: newNotice.date,
+            urgent: Boolean(newNotice.isUrgent ?? newNotice.urgent),
+            description_bn: newNotice.contentBn || newNotice.descriptionBn || '',
+            file_url: newNotice.fileUrl || null,
+            author: newNotice.author || 'ভারপ্রাপ্ত প্রধান শিক্ষক'
+          };
+          supabase.from('notices').insert(base).then(({ error: err2 }) => {
+            if (err2) console.warn('Supabase fallback insert notice warning:', err2.message);
+          });
+        }
       });
     }
     return newNotice;
@@ -797,7 +812,21 @@ export function SchoolProvider({ children }) {
         };
         if (supabase) {
           supabase.from('notices').update(mappers.notice.toDb(merged)).eq('id', id).then(({ error }) => {
-            if (error) console.warn('Supabase update notice warning:', error.message);
+            if (error) {
+              const base = {
+                title_bn: merged.titleBn || '',
+                title_en: merged.titleEn || null,
+                category: merged.category || 'সাধারণ',
+                date: merged.date,
+                urgent: Boolean(merged.isUrgent ?? merged.urgent),
+                description_bn: merged.contentBn || merged.descriptionBn || '',
+                file_url: merged.fileUrl || null,
+                author: merged.author || 'ভারপ্রাপ্ত প্রধান শিক্ষক'
+              };
+              supabase.from('notices').update(base).eq('id', id).then(({ error: err2 }) => {
+                if (err2) console.warn('Supabase fallback update notice warning:', err2.message);
+              });
+            }
           });
         }
         return merged;
@@ -816,15 +845,35 @@ export function SchoolProvider({ children }) {
   };
 
   const addStudent = (student) => {
+    const classPad = String(student.class || '6').padStart(2, '0');
+    const rollPad = String(student.roll || '1').padStart(2, '0');
+    const studentId = student.studentId || `BDHS-2026-${classPad}${rollPad}`;
     const newStudent = {
       ...student,
-      id: `stu-${Date.now()}`,
-      studentId: `BDHS-2026-${Math.floor(100 + Math.random() * 900)}`
+      id: student.id || `stu-${Date.now()}`,
+      studentId: studentId
     };
     setStudents(prev => [newStudent, ...prev]);
     if (supabase) {
       supabase.from('students').insert(mappers.student.toDb(newStudent)).then(({ error }) => {
-        if (error) console.warn('Supabase insert student warning:', error.message);
+        if (error) {
+          const base = {
+            id: newStudent.id,
+            roll: String(newStudent.roll),
+            name_bn: newStudent.nameBn,
+            name_en: newStudent.nameEn,
+            class: String(newStudent.class),
+            section: newStudent.section || 'A',
+            shift: 'দিবা',
+            gender: newStudent.gender || 'Male',
+            father_name: newStudent.fatherName || newStudent.guardianName || '',
+            guardian_phone: newStudent.guardianPhone || '',
+            status: 'নিয়মিত'
+          };
+          supabase.from('students').insert(base).then(({ error: err2 }) => {
+            if (err2) console.warn('Supabase fallback insert student warning:', err2.message);
+          });
+        }
       });
     }
     return newStudent;
@@ -836,7 +885,21 @@ export function SchoolProvider({ children }) {
         const merged = { ...s, ...updatedData };
         if (supabase) {
           supabase.from('students').update(mappers.student.toDb(merged)).eq('id', id).then(({ error }) => {
-            if (error) console.warn('Supabase update student warning:', error.message);
+            if (error) {
+              const base = {
+                roll: String(merged.roll),
+                name_bn: merged.nameBn,
+                name_en: merged.nameEn,
+                class: String(merged.class),
+                section: merged.section || 'A',
+                gender: merged.gender || 'Male',
+                father_name: merged.fatherName || merged.guardianName || '',
+                guardian_phone: merged.guardianPhone || ''
+              };
+              supabase.from('students').update(base).eq('id', id).then(({ error: err2 }) => {
+                if (err2) console.warn('Supabase fallback update student warning:', err2.message);
+              });
+            }
           });
         }
         return merged;
@@ -862,7 +925,23 @@ export function SchoolProvider({ children }) {
     setTeachers(prev => [...prev, newTeacher]);
     if (supabase) {
       supabase.from('teachers').insert(mappers.teacher.toDb(newTeacher)).then(({ error }) => {
-        if (error) console.warn('Supabase insert teacher warning:', error.message);
+        if (error) {
+          const base = {
+            id: newTeacher.id,
+            name_bn: newTeacher.nameBn || '',
+            name_en: newTeacher.nameEn || null,
+            designation_bn: newTeacher.designationBn || '',
+            subject_bn: newTeacher.subjectBn || '',
+            phone: newTeacher.phone || '',
+            email: newTeacher.email || '',
+            education: newTeacher.qualification || newTeacher.education || '',
+            order: Number(newTeacher.order) || 10,
+            image: newTeacher.image || null
+          };
+          supabase.from('teachers').insert(base).then(({ error: err2 }) => {
+            if (err2) console.warn('Supabase fallback insert teacher warning:', err2.message);
+          });
+        }
       });
     }
   };
@@ -873,7 +952,22 @@ export function SchoolProvider({ children }) {
         const merged = { ...t, ...updatedData };
         if (supabase) {
           supabase.from('teachers').update(mappers.teacher.toDb(merged)).eq('id', id).then(({ error }) => {
-            if (error) console.warn('Supabase update teacher warning:', error.message);
+            if (error) {
+              const base = {
+                name_bn: merged.nameBn || '',
+                name_en: merged.nameEn || null,
+                designation_bn: merged.designationBn || '',
+                subject_bn: merged.subjectBn || '',
+                phone: merged.phone || '',
+                email: merged.email || '',
+                education: merged.qualification || merged.education || '',
+                order: Number(merged.order) || 10,
+                image: merged.image || null
+              };
+              supabase.from('teachers').update(base).eq('id', id).then(({ error: err2 }) => {
+                if (err2) console.warn('Supabase fallback update teacher warning:', err2.message);
+              });
+            }
           });
         }
         return merged;
@@ -952,13 +1046,17 @@ export function SchoolProvider({ children }) {
     const maxRoll = sameClassStudents.reduce((max, s) => {
       const r = Number(s.roll);
       return !isNaN(r) && r > max ? r : max;
-    }, 100);
-    const newRoll = maxRoll + 1;
+    }, 0);
+    const newRoll = maxRoll > 0 ? maxRoll + 1 : 1;
 
-    // 3. Create student record with authentic preserved data (H3 fix)
+    // 3. Create student record with authentic preserved data (H3 & N5 fix)
+    const classPad = targetClass.padStart(2, '0');
+    const rollPad = String(newRoll).padStart(2, '0');
+    const studentId = `BDHS-2026-${classPad}${rollPad}`;
+
     const createdStudent = {
       id: `stu-${Date.now()}`,
-      studentId: `BDHS-2027-C${targetClass}-${newRoll}`,
+      studentId: studentId,
       roll: newRoll,
       nameBn: admissionApp.studentNameBn || admissionApp.applicantNameBn || admissionApp.studentNameEn || '',
       nameEn: (admissionApp.studentNameEn || admissionApp.applicantNameEn || '').toUpperCase(),

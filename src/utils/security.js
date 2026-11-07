@@ -5,10 +5,6 @@
 
 export async function hashPassword(plainPassword) {
   if (!plainPassword) return '';
-  // If it's already a 64-character SHA-256 hex string, return it as-is
-  if (/^[a-f0-9]{64}$/i.test(plainPassword)) {
-    return plainPassword.toLowerCase();
-  }
 
   const cryptoObj = (typeof window !== 'undefined' && window.crypto && window.crypto.subtle)
     ? window.crypto
@@ -34,10 +30,7 @@ export async function hashPassword(plainPassword) {
 export async function verifyPassword(inputPassword, storedCredential) {
   if (!inputPassword || !storedCredential) return false;
   
-  // 1. Direct match (in case stored credential is still legacy plaintext during initial migration)
-  if (inputPassword === storedCredential) return true;
-
-  // 2. Hash comparison
+  // Hash comparison only (N2: direct-match / 64-char hash bypass eliminated)
   const inputHash = await hashPassword(inputPassword);
   return inputHash.toLowerCase() === storedCredential.toLowerCase();
 }

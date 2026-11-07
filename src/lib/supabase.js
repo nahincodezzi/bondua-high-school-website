@@ -512,10 +512,15 @@ export async function seedCloudIfEmpty(initialData) {
       await supabase.from('school_info').upsert({ id: 'main', data: initialData.schoolInfo });
     }
 
-    // 10. Check & Seed System Users (Cloud Sync)
+    // 10. Check & Seed System Users (Cloud Sync - strictly without plaintext passwords)
     const { data: usersRow } = await supabase.from('school_info').select('*').eq('id', 'system_users').single();
     if (!usersRow && initialData.systemUsers?.length) {
-      await supabase.from('school_info').upsert({ id: 'system_users', data: initialData.systemUsers });
+      const sanitized = initialData.systemUsers.map(u => {
+        const c = { ...u };
+        delete c.password;
+        return c;
+      });
+      await supabase.from('school_info').upsert({ id: 'system_users', data: sanitized });
     }
   } catch (err) {
     console.warn('seedCloudIfEmpty caught error:', err);
