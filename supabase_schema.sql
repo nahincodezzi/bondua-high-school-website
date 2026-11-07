@@ -118,3 +118,4 @@ create table if not exists gallery (
   type text default 'photo',
   created_at timestamp with time zone default timezone('utc'::text, now())
 );
+
