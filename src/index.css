@@ -426,11 +426,14 @@ section, [id] {
     max-width: 100% !important;
   }
 
-  /* When printing any modal, hide #root completely to guarantee Page 1 is NOT blank */
+  /* When printing any modal, hide everything except the modal dialog to guarantee Page 1 is NOT blank */
   body:has(#official-notice-modal) #root,
   body:has(#official-money-receipt) #root,
   body:has(#student-id-card) #root,
-  body.printing-modal #root {
+  body.printing-modal #root,
+  body:has(#official-notice-modal) > *:not(div[role="dialog"]),
+  body:has(#official-money-receipt) > *:not(div[role="dialog"]),
+  body.printing-modal > *:not(div[role="dialog"]) {
     display: none !important;
     height: 0 !important;
     min-height: 0 !important;
@@ -444,16 +447,20 @@ section, [id] {
   /* Reset modal overlay container so it starts at the top of Page 1 */
   div[role="dialog"] {
     position: static !important;
+    inset: auto !important;
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
     height: auto !important;
     min-height: 0 !important;
+    max-height: none !important;
     background: transparent !important;
     padding: 0 !important;
     margin: 0 !important;
     display: block !important;
     box-shadow: none !important;
+    page-break-before: avoid !important;
+    break-before: avoid !important;
   }
 
   div[role="dialog"] > div[aria-hidden="true"] {
@@ -465,6 +472,8 @@ section, [id] {
     box-shadow: none !important;
     border: none !important;
     margin: 0 auto !important;
+    page-break-before: avoid !important;
+    break-before: avoid !important;
   }
 
   /* Marksheet Single Page Enforcement */
@@ -532,6 +541,8 @@ section, [id] {
     box-shadow: none !important;
     border: 1px solid #cbd5e1 !important;
     border-radius: 6px !important;
+    page-break-before: avoid !important;
+    break-before: avoid !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     page-break-after: avoid !important;
@@ -547,6 +558,8 @@ section, [id] {
     box-shadow: none !important;
     border: 1px solid #cbd5e1 !important;
     border-radius: 6px !important;
+    page-break-before: avoid !important;
+    break-before: avoid !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     page-break-after: avoid !important;

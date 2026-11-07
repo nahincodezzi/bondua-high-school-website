@@ -95,7 +95,7 @@ export default function NoticeBoard() {
 
   const modalElement = activeNoticeModal ? (
     <div 
-      className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200 print:static print:inset-auto print:p-0 print:m-0 print:bg-transparent print:backdrop-blur-none print:block print:w-full print:h-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="notice-modal-title"
