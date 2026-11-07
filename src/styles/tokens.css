@@ -33,7 +33,7 @@
   --color-info-soft: #DBEAFE;      /* Info background */
 
   /* Typography */
-  --font-ui: 'Hind Siliguri', 'Noto Sans Bengali', system-ui, -apple-system, sans-serif;
+  --font-ui: 'Anek Bangla', 'Noto Sans Bengali', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
   /* Shape & Radius */

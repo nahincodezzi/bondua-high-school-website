@@ -68,7 +68,7 @@ export default function RoutinesDownload() {
       <head>
         <title>${title} - ${schoolInfo.nameBn}</title>
         <style>
-          body { font-family: 'Hind Siliguri', sans-serif; padding: 40px; color: #1F2937; }
+          body { font-family: 'Anek Bangla', 'Noto Sans Bengali', sans-serif; padding: 40px; color: #1F2937; }
           .header { text-align: center; border-bottom: 2px solid #14532D; padding-bottom: 15px; margin-bottom: 20px; }
           h1 { color: #14532D; margin: 0 0 5px 0; font-size: 24px; }
           .subtitle { color: #4B5563; font-size: 13px; margin: 0; }
