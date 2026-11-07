@@ -52,6 +52,9 @@ export function SchoolProvider({ children }) {
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlTheme = urlParams.get('theme');
+        if (urlTheme === 'indigo' || urlTheme === 'emerald') return urlTheme;
         const savedTheme = localStorage.getItem('bdhs_theme');
         if (savedTheme === 'indigo') return 'indigo';
       } catch (e) {

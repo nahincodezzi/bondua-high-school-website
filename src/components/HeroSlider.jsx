@@ -204,29 +204,29 @@ export default function HeroSlider() {
       </div>
 
       {/* Stat Bar Bottom Ribbon: Flat Solid Dark Green, Consistent Numerals */}
-      <div className="relative z-20 bg-deep border-t border-primary py-4 px-4 sm:px-8 shadow-xs">
+      <div className="relative z-20 bg-deep border-t border-white/10 py-4 px-4 sm:px-8 shadow-xs">
         <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-          <div className="border-r border-primary last:border-none px-2">
+          <div className="border-r border-white/15 last:border-none px-2">
             <p className="text-2xl sm:text-3xl font-extrabold text-white">
               {lang === 'bn' ? '১৯৯০' : '1990'}
             </p>
-            <p className="text-xs sm:text-sm text-primary font-bangla mt-0.5">
+            <p className="text-xs sm:text-sm text-soft font-medium font-bangla mt-0.5">
               {lang === 'bn' ? 'স্থাপিত শিক্ষাবর্ষ (স্বীকৃতি: ১৯৯৪)' : 'Established Year'}
             </p>
           </div>
-          <div className="border-r border-primary last:border-none px-2">
+          <div className="border-r border-white/15 last:border-none px-2">
             <p className="text-2xl sm:text-3xl font-extrabold text-white">
               {lang === 'bn' ? '৮৫০+' : '850+'}
             </p>
-            <p className="text-xs sm:text-sm text-primary font-bangla mt-0.5">
+            <p className="text-xs sm:text-sm text-soft font-medium font-bangla mt-0.5">
               {lang === 'bn' ? 'বর্তমান শিক্ষার্থী' : 'Enrolled Students'}
             </p>
           </div>
-          <div className="border-r border-primary last:border-none px-2">
+          <div className="border-r border-white/15 last:border-none px-2">
             <p className="text-2xl sm:text-3xl font-extrabold text-white">
               {lang === 'bn' ? '৯৮.৫%' : '98.5%'}
             </p>
-            <p className="text-xs sm:text-sm text-primary font-bangla mt-0.5">
+            <p className="text-xs sm:text-sm text-soft font-medium font-bangla mt-0.5">
               {lang === 'bn' ? 'এসএসসি পাশের হার' : 'SSC Board Pass Rate'}
             </p>
           </div>
@@ -234,7 +234,7 @@ export default function HeroSlider() {
             <p className="text-2xl sm:text-3xl font-extrabold text-white">
               {lang === 'bn' ? '৩টি বিভাগ' : '3 Groups'}
             </p>
-            <p className="text-xs sm:text-sm text-primary font-bangla mt-0.5">
+            <p className="text-xs sm:text-sm text-soft font-medium font-bangla mt-0.5">
               {lang === 'bn' ? 'বিজ্ঞান, ব্যবসায় ও মানবিক' : 'Science, Business & Humanities'}
             </p>
           </div>

@@ -197,15 +197,15 @@ export default function Header() {
             : '-translate-x-1/2 translate-y-0'
         } ${
           isScrolled
-            ? 'top-[10px] w-[calc(100%-1.5rem)] max-w-[1100px] h-[58px] bg-deep/90 backdrop-blur-[14px] backdrop-saturate-[140%] border border-white/[0.14] shadow-[0_12px_32px_rgba(0,0,0,0.18)] floating-glass-scrolled'
-            : 'top-[16px] w-[calc(100%-2rem)] max-w-[1200px] h-[72px] bg-deep border border-white/[0.12] shadow-lg'
+            ? 'top-[10px] w-[calc(100%-1.5rem)] max-w-[1260px] h-[58px] bg-deep/90 backdrop-blur-[14px] backdrop-saturate-[140%] border border-white/[0.14] shadow-[0_12px_32px_rgba(0,0,0,0.18)] floating-glass-scrolled'
+            : 'top-[16px] w-[calc(100%-2rem)] max-w-[1360px] h-[72px] bg-deep border border-white/[0.12] shadow-lg'
         }`}
       >
-        <nav className="w-full h-full px-3.5 sm:px-6 flex items-center justify-between gap-2 sm:gap-4 select-none">
-          {/* LEFT BRAND IDENTITY: CIRCULAR EMBLEM + NAME (C5 fix for mobile screens) */}
+        <nav className="w-full h-full px-3 sm:px-5 xl:px-6 flex items-center justify-between gap-2 sm:gap-3 xl:gap-4 select-none">
+          {/* LEFT BRAND IDENTITY: CIRCULAR EMBLEM + NAME (Never truncate on desktop) */}
           <div 
             onClick={() => handleNavClick('home')}
-            className="flex items-center gap-2 sm:gap-3 cursor-pointer group min-w-0"
+            className="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0 min-w-max"
             role="button"
             tabIndex={0}
             onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleNavClick('home')}
@@ -219,13 +219,13 @@ export default function Header() {
               <SchoolLogo logo={schoolInfo.logo} />
             </div>
 
-            <div className="hidden sm:block min-w-0 max-w-[140px] sm:max-w-[200px] md:max-w-xs transition-all duration-300">
-              <h1 className={`text-white font-bold font-bangla truncate leading-tight tracking-normal transition-all duration-300 group-hover:text-accent ${
+            <div className="hidden sm:block shrink-0 transition-all duration-300">
+              <h1 className={`text-white font-bold font-bangla whitespace-nowrap leading-tight tracking-normal transition-all duration-300 group-hover:text-accent ${
                 isScrolled ? 'text-xs sm:text-sm' : 'text-xs sm:text-base'
               }`}>
                 {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || 'Bandua Daulatpur High School')}
               </h1>
-              <p className={`text-white/90 font-sans tracking-wide truncate transition-all duration-300 overflow-hidden ${
+              <p className={`text-white/90 font-sans tracking-wide whitespace-nowrap transition-all duration-300 overflow-hidden ${
                 isScrolled 
                   ? 'opacity-0 max-h-0 -translate-y-1' 
                   : 'opacity-100 max-h-4 text-[10px] sm:text-[11px] mt-0.5 translate-y-0'
@@ -236,7 +236,7 @@ export default function Header() {
           </div>
 
           {/* CENTER: DESKTOP NAVIGATION ITEMS */}
-          <ul className="hidden lg:flex items-center gap-1 xl:gap-2 flex-nowrap h-full">
+          <ul className="hidden lg:flex items-center gap-0.5 xl:gap-2 flex-nowrap h-full">
             {navItems.map((item) => {
               const active = isItemActive(item);
               const hasChildren = Boolean(item.children && item.children.length > 0);
@@ -256,13 +256,13 @@ export default function Header() {
                       handleNavClick(item.directTab);
                     }}
                     aria-label={lang === 'bn' ? item.labelBn : item.labelEn}
-                    className={`px-3.5 xl:px-4 py-2 rounded-full transition-all duration-200 flex items-center justify-center text-center cursor-pointer focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
+                    className={`px-2.5 xl:px-4 py-1.5 xl:py-2 rounded-full transition-all duration-200 flex items-center justify-center text-center cursor-pointer focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
                       active 
                         ? 'bg-white/[0.14] text-white shadow-xs font-bold' 
                         : 'text-white/90 hover:text-white hover:bg-white/[0.08]'
                     }`}
                   >
-                    <span className="font-bangla font-semibold text-sm leading-none flex items-center gap-1.5">
+                    <span className="font-bangla font-semibold text-xs xl:text-sm leading-none flex items-center gap-1 xl:gap-1.5">
                       <span>{lang === 'bn' ? item.labelBn : item.labelEn}</span>
                       {active && (
                         <span className="w-1.5 h-1.5 rounded-full bg-accent shadow-xs"></span>
@@ -309,16 +309,16 @@ export default function Header() {
           </ul>
 
           {/* RIGHT ACTION BUTTONS */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2 xl:gap-2.5 shrink-0">
             {/* Primary Action Button: "পোর্টাল লগইন" in Amber */}
             {authUser ? (
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1 sm:gap-1.5">
                 <button
                   onClick={() => handleNavClick('admin')}
                   className={`bg-accent hover:bg-accent-hover text-accent-ink font-bold rounded-full transition-all duration-300 flex items-center gap-1.5 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
                     isScrolled 
-                      ? 'px-3.5 sm:px-4 py-1.5 text-xs' 
-                      : 'px-4 sm:px-5 py-2 text-xs sm:text-sm'
+                      ? 'px-3 sm:px-3.5 xl:px-4 py-1.5 text-xs' 
+                      : 'px-3 sm:px-4 xl:px-5 py-1.5 xl:py-2 text-xs sm:text-sm'
                   }`}
                   title="Open CMS Dashboard"
                 >
@@ -328,7 +328,7 @@ export default function Header() {
                 <button
                   onClick={logout}
                   className={`rounded-full bg-white/10 hover:bg-danger-soft hover:text-danger border border-white/15 text-white/90 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-accent ${
-                    isScrolled ? 'w-9 h-9' : 'w-10 h-10'
+                    isScrolled ? 'w-8.5 h-8.5 xl:w-9 xl:h-9' : 'w-8.5 h-8.5 sm:w-9 sm:h-9 xl:w-10 xl:h-10'
                   }`}
                   title="লগআউট (Logout)"
                   aria-label="লগআউট"
@@ -341,8 +341,8 @@ export default function Header() {
                 onClick={() => setAuthModalOpen(true)}
                 className={`bg-accent hover:bg-accent-hover text-accent-ink font-bold rounded-full transition-all duration-300 flex items-center gap-1.5 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
                   isScrolled 
-                    ? 'px-3.5 sm:px-4 py-1.5 text-xs' 
-                    : 'px-4 sm:px-5 py-2 text-xs sm:text-sm'
+                    ? 'px-3 sm:px-3.5 xl:px-4 py-1.5 text-xs' 
+                    : 'px-3 sm:px-4 xl:px-5 py-1.5 xl:py-2 text-xs sm:text-sm'
                 }`}
                 title="School Portal Login"
               >
@@ -350,23 +350,23 @@ export default function Header() {
               </button>
             )}
 
-            {/* Language Switcher - 40px Round Icon Button */}
+            {/* Language Switcher - Round Icon Button */}
             <button
               onClick={toggleLanguage}
               className={`rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
-                isScrolled ? 'w-9 h-9' : 'w-10 h-10'
+                isScrolled ? 'w-8.5 h-8.5 xl:w-9 xl:h-9' : 'w-8.5 h-8.5 sm:w-9 sm:h-9 xl:w-10 xl:h-10'
               }`}
               title="ভাষা পরিবর্তন (Toggle Language)"
               aria-label="ভাষা পরিবর্তন (Toggle Language)"
             >
-              <Globe className="w-4 h-4 text-white" />
+              <Globe className="w-3.5 h-3.5 xl:w-4 xl:h-4 text-white" />
             </button>
 
-            {/* Theme Toggle Button - 40px Round Icon Button with Palette & Preview Dot */}
+            {/* Theme Toggle Button - Round Icon Button with Palette & Preview Dot */}
             <button
               onClick={toggleTheme}
               className={`rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
-                isScrolled ? 'w-9 h-9' : 'w-10 h-10'
+                isScrolled ? 'w-8.5 h-8.5 xl:w-9 xl:h-9' : 'w-8.5 h-8.5 sm:w-9 sm:h-9 xl:w-10 xl:h-10'
               }`}
               title={
                 theme === 'emerald'
@@ -375,7 +375,7 @@ export default function Header() {
               }
               aria-label="রঙের থিম পরিবর্তন করুন"
             >
-              <Palette className="w-4 h-4 text-white" />
+              <Palette className="w-3.5 h-3.5 xl:w-4 xl:h-4 text-white" />
               <span
                 className={`absolute top-1.5 right-1.5 w-2 h-2 rounded-full ring-1 ring-white/60 ${
                   theme === 'emerald' ? 'bg-[#FACC15]' : 'bg-[#E8B931]'
@@ -384,19 +384,19 @@ export default function Header() {
               />
             </button>
 
-            {/* Notice Bell Indicator - 40px Round Icon Button (L8 fix: clears unread dot on click) */}
+            {/* Notice Bell Indicator - Round Icon Button */}
             <button
               onClick={() => {
                 setHasUnreadNotice(false);
                 handleNavClick('notices');
               }}
               className={`rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
-                isScrolled ? 'w-9 h-9' : 'w-10 h-10'
+                isScrolled ? 'w-8.5 h-8.5 xl:w-9 xl:h-9' : 'w-8.5 h-8.5 sm:w-9 sm:h-9 xl:w-10 xl:h-10'
               }`}
               title="নোটিফিকেশন (Notification)"
               aria-label="নোটিফিকেশন (Notification)"
             >
-              <Bell className="w-4 h-4 text-white" />
+              <Bell className="w-3.5 h-3.5 xl:w-4 xl:h-4 text-white" />
               {hasUnreadNotice && (
                 <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-accent ring-2 ring-deep"></span>
               )}
@@ -406,7 +406,7 @@ export default function Header() {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className={`lg:hidden rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 ${
-                isScrolled ? 'w-9 h-9' : 'w-10 h-10'
+                isScrolled ? 'w-8.5 h-8.5' : 'w-9 h-9 sm:w-10 sm:h-10'
               }`}
               aria-label="মেনু খুলুন / বন্ধ করুন"
               aria-expanded={mobileMenuOpen}
