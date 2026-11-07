@@ -174,11 +174,11 @@ export default function OnlineAdmission() {
   };
 
   return (
-    <section className="py-12 sm:py-16 text-ink relative z-10 font-sans min-h-[750px]">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+    <section className="py-12 sm:py-16 text-ink relative z-10 font-sans min-h-[750px] print:py-0 print:min-h-0 print:m-0">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 print:max-w-full print:p-0 print:m-0">
         {/* If Application is submitted successfully, show the Official Printable Admit Slip */}
         {submittedApplication ? (
-          <div className="bg-white rounded-2xl shadow-xl border border-line overflow-hidden" id="admission-slip">
+          <div className="bg-white rounded-2xl shadow-xl border border-line overflow-hidden print:rounded-none print:shadow-none print:border-none print:m-0 print:p-0" id="admission-slip">
             {/* Top Toolbar */}
             <div className="bg-deep text-white px-6 py-3.5 flex items-center justify-between no-print border-b border-primary">
               <div className="flex items-center gap-2 text-xs font-semibold">
@@ -204,7 +204,7 @@ export default function OnlineAdmission() {
             </div>
 
             {/* Printable Slip Container */}
-            <div className="p-6 sm:p-10 bg-white text-ink space-y-6">
+            <div className="p-6 sm:p-10 bg-white text-ink space-y-6 print:p-3 print:space-y-2">
               {/* Slip Header */}
               <div className="text-center border-b-2 border-deep pb-4">
                 <div className="w-14 h-14 mx-auto mb-2 rounded-full bg-white p-0.5 shadow-sm ring-2 ring-primary">

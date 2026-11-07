@@ -64,9 +64,9 @@ export default function AdminLayout() {
   });
 
   return (
-    <div className="min-h-screen bg-bg text-ink flex flex-col no-print relative overflow-x-hidden font-sans admin-portal">
+    <div className="min-h-screen bg-bg text-ink flex flex-col relative overflow-x-hidden font-sans admin-portal">
       {/* Admin Top Header - Dark Green Institutional Bar (P3) */}
-      <header className="sticky top-0 z-30 bg-deep text-white border-b border-line shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+      <header className="sticky top-0 z-30 bg-deep text-white border-b border-line shadow-[0_1px_3px_rgba(0,0,0,0.08)] no-print">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-2">
           {/* Left Brand Area */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -167,7 +167,7 @@ export default function AdminLayout() {
         <aside
           className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white text-ink transform ${
             sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          } lg:translate-x-0 transition-transform duration-200 ease-in-out flex flex-col justify-between border-r border-line pt-16 lg:pt-0`}
+          } lg:translate-x-0 transition-transform duration-200 ease-in-out flex flex-col justify-between border-r border-line pt-16 lg:pt-0 no-print`}
         >
           <div className="p-3.5 space-y-1 overflow-y-auto">
             <div className="text-[11px] font-semibold text-primary uppercase tracking-wider px-3 py-2 font-bangla">

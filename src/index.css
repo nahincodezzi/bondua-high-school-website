@@ -368,15 +368,139 @@ section, [id] {
 }
 
 @media print {
-  .no-print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm 8mm 10mm;
+  }
+
+  /* Reset layout, remove scrollbars and screen margins */
+  html, body {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 11pt !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide all non-printable elements */
+  .no-print,
+  nav,
+  header.no-print,
+  aside.no-print,
+  footer.no-print,
+  button,
+  .floating-glass-pill {
     display: none !important;
   }
+
   .print-only {
     display: block !important;
   }
-  body {
-    background: white !important;
-    color: black !important;
+
+  /* Remove outer paddings that cause vertical overflow */
+  #root,
+  #main-content,
+  main,
+  section,
+  article {
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Marksheet Single Page Enforcement */
+  #official-marksheet {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  #official-marksheet table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  #official-marksheet th,
+  #official-marksheet td {
+    padding: 3px 6px !important;
+    font-size: 9.5pt !important;
+    line-height: 1.2 !important;
+  }
+
+  #official-marksheet tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Admission Slip Single Page Enforcement */
+  #admission-slip {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  /* Money Receipt Modal Print Styles */
+  #official-money-receipt {
+    width: 100% !important;
+    max-width: 440px !important;
+    margin: 20px auto !important;
+    padding: 16px 20px !important;
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Modal Dialog Backdrop Reset for Print */
+  div[role="dialog"] {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    display: block !important;
+  }
+
+  div[role="dialog"] > div[aria-hidden="true"] {
+    display: none !important;
+  }
+
+  div[role="dialog"] > div {
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Student ID Card Print Styles */
+  #student-id-card {
+    max-width: 320px !important;
+    margin: 30px auto !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    box-shadow: none !important;
   }
 }
 

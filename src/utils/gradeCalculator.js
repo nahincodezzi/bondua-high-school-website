@@ -27,3 +27,4 @@ export function calculateOverallGrade(gpa, hasFail = false) {
   if (num >= 1.0) return 'D';
   return 'F';
 }
+
