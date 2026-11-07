@@ -370,7 +370,7 @@ section, [id] {
 @media print {
   @page {
     size: A4 portrait;
-    margin: 8mm 10mm 8mm 10mm;
+    margin: 5mm 8mm 5mm 8mm;
   }
 
   /* Reset layout, remove scrollbars and screen margins */
@@ -382,18 +382,28 @@ section, [id] {
     padding: 0 !important;
     background: #ffffff !important;
     color: #0f172a !important;
-    font-size: 11pt !important;
+    font-size: 10pt !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  /* Hide all non-printable elements */
+  /* Hide all non-printable interactive elements during print */
   .no-print,
+  [class*="no-print"],
   nav,
   header.no-print,
   aside.no-print,
   footer.no-print,
   button,
+  .btn,
+  .btn-accent,
+  .btn-secondary,
+  .btn-primary,
+  .btn-danger,
+  input,
+  select,
+  textarea,
+  a[download],
   .floating-glass-pill {
     display: none !important;
   }
@@ -402,8 +412,9 @@ section, [id] {
     display: block !important;
   }
 
-  /* Remove outer paddings that cause vertical overflow */
+  /* Remove outer paddings and min-heights that cause vertical overflow and blank page 1 */
   #root,
+  #root > div,
   #main-content,
   main,
   section,
@@ -411,7 +422,49 @@ section, [id] {
     padding: 0 !important;
     margin: 0 !important;
     min-height: 0 !important;
+    height: auto !important;
     max-width: 100% !important;
+  }
+
+  /* When printing any modal, hide #root completely to guarantee Page 1 is NOT blank */
+  body:has(#official-notice-modal) #root,
+  body:has(#official-money-receipt) #root,
+  body:has(#student-id-card) #root,
+  body.printing-modal #root {
+    display: none !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    left: -99999px !important;
+    top: -99999px !important;
+  }
+
+  /* Reset modal overlay container so it starts at the top of Page 1 */
+  div[role="dialog"] {
+    position: static !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    box-shadow: none !important;
+  }
+
+  div[role="dialog"] > div[aria-hidden="true"] {
+    display: none !important;
+  }
+
+  div[role="dialog"] > div {
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 auto !important;
   }
 
   /* Marksheet Single Page Enforcement */
@@ -422,7 +475,7 @@ section, [id] {
     padding: 0 !important;
     box-shadow: none !important;
     border: 1px solid #cbd5e1 !important;
-    border-radius: 6px !important;
+    border-radius: 4px !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     page-break-after: avoid !important;
@@ -438,9 +491,15 @@ section, [id] {
 
   #official-marksheet th,
   #official-marksheet td {
-    padding: 3px 6px !important;
-    font-size: 9.5pt !important;
-    line-height: 1.2 !important;
+    padding: 2px 4px !important;
+    font-size: 7.5pt !important;
+    line-height: 1.15 !important;
+  }
+
+  #official-marksheet tfoot td {
+    padding: 2.5px 4px !important;
+    font-size: 8pt !important;
+    line-height: 1.15 !important;
   }
 
   #official-marksheet tr {
@@ -456,61 +515,38 @@ section, [id] {
     padding: 0 !important;
     box-shadow: none !important;
     border: 1px solid #cbd5e1 !important;
-    border-radius: 6px !important;
+    border-radius: 4px !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     page-break-after: avoid !important;
     break-after: avoid !important;
+    background: #ffffff !important;
   }
 
   /* Money Receipt Modal Print Styles */
   #official-money-receipt {
     width: 100% !important;
-    max-width: 440px !important;
-    margin: 20px auto !important;
-    padding: 16px 20px !important;
+    max-width: 480px !important;
+    margin: 0 auto !important;
+    padding: 14px 18px !important;
     box-shadow: none !important;
     border: 1px solid #cbd5e1 !important;
-    border-radius: 8px !important;
+    border-radius: 6px !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
-  }
-
-  /* Modal Dialog Backdrop Reset for Print */
-  div[role="dialog"] {
-    position: static !important;
-    background: transparent !important;
-    padding: 0 !important;
-    display: block !important;
-  }
-
-  div[role="dialog"] > div[aria-hidden="true"] {
-    display: none !important;
-  }
-
-  div[role="dialog"] > div {
-    max-width: 100% !important;
-    box-shadow: none !important;
-    border: none !important;
-  }
-
-  /* Student ID Card Print Styles */
-  #student-id-card {
-    max-width: 320px !important;
-    margin: 30px auto !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-    box-shadow: none !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    background: #ffffff !important;
   }
 
   /* Notice Modal Print Styles */
   #official-notice-modal {
     width: 100% !important;
-    max-width: 680px !important;
-    margin: 10px auto !important;
+    max-width: 720px !important;
+    margin: 0 auto !important;
     box-shadow: none !important;
     border: 1px solid #cbd5e1 !important;
-    border-radius: 8px !important;
+    border-radius: 6px !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     page-break-after: avoid !important;
@@ -518,6 +554,7 @@ section, [id] {
     max-height: none !important;
     height: auto !important;
     overflow: visible !important;
+    background: #ffffff !important;
   }
 
   #official-notice-modal > div {
@@ -525,17 +562,13 @@ section, [id] {
     overflow: visible !important;
   }
 
-  /* Universal button & interactive controls hide during print */
-  button,
-  .btn,
-  .btn-accent,
-  .btn-secondary,
-  .no-print,
-  input,
-  select,
-  textarea,
-  a[download] {
-    display: none !important;
+  /* Student ID Card Print Styles */
+  #student-id-card {
+    max-width: 320px !important;
+    margin: 20px auto !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    box-shadow: none !important;
   }
 }
 

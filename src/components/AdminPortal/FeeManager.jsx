@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import SchoolLogo from '../common/SchoolLogo';
 import { useSchool } from '../../context/useSchool';
 import { toBanglaNumerals, toEnglishNumerals } from '../../utils/dateFormatter';
+import { getSignatories } from '../../utils/signatories';
 import { 
   DollarSign, 
   Printer, 
@@ -12,7 +14,8 @@ import {
 } from 'lucide-react';
 
 export default function FeeManager() {
-  const { fees, addFee, schoolInfo, students, lang } = useSchool();
+  const { fees, addFee, schoolInfo, students, lang, teachers, systemUsers } = useSchool();
+  const signatories = getSignatories(schoolInfo, teachers, systemUsers);
   const [studentRoll, setStudentRoll] = useState('');
   const [targetClass, setTargetClass] = useState('10');
   const [feeType, setFeeType] = useState('Monthly Tuition Fee (November)');
@@ -74,7 +77,14 @@ export default function FeeManager() {
   };
 
   const handlePrint = () => {
+    document.body.classList.add('printing-modal');
+    const cleanup = () => {
+      document.body.classList.remove('printing-modal');
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
     window.print();
+    setTimeout(cleanup, 1200);
   };
 
   const receiptModal = activeReceipt ? (
@@ -84,10 +94,10 @@ export default function FeeManager() {
       aria-modal="true"
       aria-labelledby="money-receipt-title"
     >
-      <div className="fixed inset-0 -z-10" onClick={() => setActiveReceipt(null)} aria-hidden="true" />
-      <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden border border-line shadow-2xl relative">
+      <div className="fixed inset-0 -z-10 no-print print:hidden" onClick={() => setActiveReceipt(null)} aria-hidden="true" />
+      <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden border border-line shadow-2xl relative print:shadow-none print:border-none print:m-0">
         {/* Top Toolbar */}
-        <div className="bg-deep text-white px-4 py-2.5 flex justify-between items-center text-xs no-print border-b border-primary">
+        <div className="bg-deep text-white px-4 py-2.5 flex justify-between items-center text-xs no-print print:hidden border-b border-primary">
           <span className="font-bold flex items-center gap-1.5">
             <Receipt className="w-4 h-4 text-accent" />
             <span id="money-receipt-title">অফিসিয়াল মানি রিসিট</span>
@@ -95,43 +105,49 @@ export default function FeeManager() {
           <div className="flex gap-2">
             <button
               onClick={handlePrint}
-              className="btn-accent px-3 py-1 rounded text-xs font-bold flex items-center gap-1 cursor-pointer"
+              className="btn-accent px-3 py-1 rounded text-xs font-bold flex items-center gap-1 cursor-pointer no-print print:hidden"
             >
               <Printer className="w-3.5 h-3.5 text-ink" />
               <span>প্রিন্ট করুন</span>
             </button>
-            <button onClick={() => setActiveReceipt(null)} className="text-white/80 hover:text-white cursor-pointer" aria-label="Close">
+            <button onClick={() => setActiveReceipt(null)} className="text-white/80 hover:text-white cursor-pointer no-print print:hidden" aria-label="Close">
               <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
         {/* Printable Receipt Paper */}
-        <div className="p-6 sm:p-8 bg-white space-y-4 font-bangla" id="official-money-receipt">
-          <div className="text-center border-b-2 border-deep pb-3">
-            <h3 className="text-xl font-extrabold text-deep">
+        <div className="p-6 sm:p-8 bg-white space-y-4 font-bangla print:p-4 print:space-y-3" id="official-money-receipt">
+          <div className="text-center border-b-2 border-deep pb-3 print:pb-2">
+            {/* Dynamic School Logo */}
+            <div className="flex justify-center mb-1.5">
+              <div className="w-12 h-12 rounded-full border border-slate-300 p-0.5 shadow-xs">
+                <SchoolLogo logo={schoolInfo.logo} />
+              </div>
+            </div>
+            <h3 className="text-xl font-extrabold text-deep print:text-lg">
               {schoolInfo.nameBn}
             </h3>
-            <p className="text-xs text-muted">{schoolInfo.addressBn}</p>
-            <p className="text-[10px] text-muted font-mono">EIIN: {schoolInfo.eiin} • ফুলগাজী, ফেনী</p>
-            <span className="inline-block bg-deep text-white text-[10px] font-bold px-3 py-0.5 rounded uppercase mt-2">
+            <p className="text-xs text-muted print:text-[9.5pt]">{schoolInfo.addressBn}</p>
+            <p className="text-[10px] text-muted font-mono print:text-[8pt]">EIIN: {schoolInfo.eiin} • কুমিল্লা শিক্ষা বোর্ড • স্থাপিত: ১৯৯০</p>
+            <span className="inline-block bg-deep text-white text-[10px] font-bold px-3 py-0.5 rounded uppercase mt-1.5 print:text-[8.5pt]">
               MONEY RECEIPT / ফি আদায়ের রশিদ
             </span>
           </div>
 
-          <div className="flex justify-between items-center text-xs text-muted border-b border-line pb-2">
-            <span>রশিদ নং: <strong className="font-mono text-ink">{activeReceipt.receiptNo}</strong></span>
-            <span>তারিখ: <strong className="font-mono text-ink">{activeReceipt.paidDate}</strong></span>
+          <div className="flex justify-between items-center text-xs text-muted border-b border-line pb-2 print:text-[9pt]">
+            <span>রশিদ নং: <strong className="font-mono text-ink font-bold">{activeReceipt.receiptNo}</strong></span>
+            <span>তারিখ: <strong className="font-mono text-ink font-bold">{activeReceipt.paidDate}</strong></span>
           </div>
 
-          <div className="space-y-2 text-xs">
+          <div className="space-y-2 text-xs print:text-[9.5pt] print:space-y-1.5">
             <div className="flex justify-between">
               <span className="text-muted">শিক্ষার্থীর নাম:</span>
               <span className="font-bold text-ink">{activeReceipt.studentName}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted">শ্রেণি ও রোল নম্বর:</span>
-              <span>{activeReceipt.class} শ্রেণি • রোল: <strong className="font-mono">{activeReceipt.studentRoll}</strong></span>
+              <span>{activeReceipt.class} শ্রেণি • রোল: <strong className="font-mono font-bold">{activeReceipt.studentRoll}</strong></span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted">ফি এর বিবরণ:</span>
@@ -141,26 +157,40 @@ export default function FeeManager() {
               <span className="text-muted">পরিশোধের মাধ্যম:</span>
               <span className="font-bold text-primary">{activeReceipt.method}</span>
             </div>
-            <div className="flex justify-between p-2.5 bg-soft rounded-lg border border-soft-border text-sm">
+            <div className="flex justify-between p-2.5 bg-soft rounded-lg border border-soft-border text-sm print:p-2 print:text-xs">
               <span className="font-bold text-deep">সর্বমোট পরিশোধিত টাকা:</span>
               <span className="font-mono font-extrabold text-deep">৳{activeReceipt.amount} /-</span>
             </div>
           </div>
 
-          {/* Signatures */}
-          <div className="pt-8 flex justify-between items-end text-xs">
-            <div className="text-center space-y-1">
-              <div className="w-24 border-b border-line mx-auto pb-1 text-muted">
-                স্বাক্ষর
+          {/* Dynamic Signatures & Official Seal */}
+          <div className="pt-6 border-t border-line flex justify-between items-end text-xs print:pt-4 print:text-[8.5pt]">
+            {/* Accountant (Left) */}
+            <div className="text-center space-y-0.5 min-w-[100px]">
+              <div className="w-24 border-b border-slate-400 mx-auto pb-0.5">
+                <span className="font-serif italic text-primary font-bold text-sm">
+                  {signatories.accountant.signature}
+                </span>
               </div>
-              <p className="font-bold text-ink">হিসাবরক্ষক</p>
+              <p className="font-bold text-ink text-[9.5pt]">{signatories.accountant.nameBn}</p>
+              <p className="text-muted text-[8pt]">{signatories.accountant.designationBn}</p>
             </div>
 
-            <div className="text-center space-y-1">
-              <div className="w-24 border-b border-line mx-auto pb-1">
-                <span className="font-serif italic text-primary font-bold">Bahar U.</span>
+            {/* School Seal (Center) */}
+            <div className="w-12 h-12 rounded-full border-2 border-dashed border-primary text-primary flex flex-col items-center justify-center p-0.5 text-[6px] text-center font-bold">
+              <span>BANDUA DAULATPUR</span>
+              <span>SEAL</span>
+            </div>
+
+            {/* Headmaster (Right) */}
+            <div className="text-center space-y-0.5 min-w-[100px]">
+              <div className="w-24 border-b border-slate-400 mx-auto pb-0.5">
+                <span className="font-serif italic text-primary font-bold text-sm">
+                  {signatories.headmaster.signature}
+                </span>
               </div>
-              <p className="font-bold text-ink">{schoolInfo.headmasterNameBn}</p>
+              <p className="font-bold text-ink text-[9.5pt]">{signatories.headmaster.nameBn}</p>
+              <p className="text-muted text-[8pt]">{signatories.headmaster.designationBn}</p>
             </div>
           </div>
         </div>

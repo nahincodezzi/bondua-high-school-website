@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SchoolLogo from './common/SchoolLogo';
 import { useSchool } from '../context/useSchool';
+import { getSignatories } from '../utils/signatories';
 import { 
   Send, 
   CheckCircle2, 
@@ -14,7 +15,8 @@ import {
 } from 'lucide-react';
 
 export default function OnlineAdmission() {
-  const { lang, submitAdmission, schoolInfo } = useSchool();
+  const { lang, submitAdmission, schoolInfo, teachers, systemUsers } = useSchool();
+  const signatories = getSignatories(schoolInfo, teachers, systemUsers);
 
   const [formData, setFormData] = useState({
     studentNameBn: '',
@@ -180,7 +182,7 @@ export default function OnlineAdmission() {
         {submittedApplication ? (
           <div className="bg-white rounded-2xl shadow-xl border border-line overflow-hidden print:rounded-none print:shadow-none print:border-none print:m-0 print:p-0" id="admission-slip">
             {/* Top Toolbar */}
-            <div className="bg-deep text-white px-6 py-3.5 flex items-center justify-between no-print border-b border-primary">
+            <div className="bg-deep text-white px-6 py-3.5 flex items-center justify-between no-print print:hidden border-b border-primary">
               <div className="flex items-center gap-2 text-xs font-semibold">
                 <CheckCircle2 className="w-4 h-4 text-accent" />
                 <span className="text-white font-bangla">{lang === 'bn' ? 'ভর্তি আবেদন সফলভাবে গৃহীত হয়েছে!' : 'Admission Application Submitted!'}</span>
@@ -188,14 +190,14 @@ export default function OnlineAdmission() {
               <div className="flex items-center gap-2.5">
                 <button
                   onClick={handleNewApplication}
-                  className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs transition flex items-center gap-1.5 font-bangla border border-white/20 cursor-pointer text-white"
+                  className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs transition flex items-center gap-1.5 font-bangla border border-white/20 cursor-pointer text-white no-print print:hidden"
                 >
                   <RotateCcw className="w-3.5 h-3.5 text-accent" />
                   <span>{lang === 'bn' ? 'নতুন আবেদন' : 'New Form'}</span>
                 </button>
                 <button
                   onClick={handlePrintSlip}
-                  className="btn-accent px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer"
+                  className="btn-accent px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer no-print print:hidden"
                 >
                   <Printer className="w-3.5 h-3.5 text-ink" />
                   <span>{lang === 'bn' ? 'স্লিপ প্রিন্ট করুন' : 'Print Slip'}</span>
@@ -206,61 +208,61 @@ export default function OnlineAdmission() {
             {/* Printable Slip Container */}
             <div className="p-6 sm:p-10 bg-white text-ink space-y-6 print:p-3 print:space-y-2">
               {/* Slip Header */}
-              <div className="text-center border-b-2 border-deep pb-4">
-                <div className="w-14 h-14 mx-auto mb-2 rounded-full bg-white p-0.5 shadow-sm ring-2 ring-primary">
+              <div className="text-center border-b-2 border-deep pb-4 print:pb-2">
+                <div className="w-14 h-14 print:w-10 print:h-10 mx-auto mb-2 print:mb-1 rounded-full bg-white p-0.5 shadow-sm ring-2 ring-primary">
                   <SchoolLogo logo={schoolInfo.logo} />
                 </div>
-                <h3 className="text-2xl sm:text-3xl font-extrabold font-bangla text-deep">
+                <h3 className="text-2xl sm:text-3xl print:text-lg font-extrabold font-bangla text-deep">
                   {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || 'Bandua Daulatpur High School')}
                 </h3>
-                <p className="text-xs sm:text-sm text-ink font-semibold font-bangla">
+                <p className="text-xs sm:text-sm print:text-[9pt] text-ink font-semibold font-bangla">
                   {schoolInfo.addressBn}
                 </p>
-                <p className="text-xs text-muted font-mono mt-0.5">
+                <p className="text-xs print:text-[8pt] text-muted font-mono mt-0.5">
                   EIIN: {schoolInfo.eiin} • কুমিল্লা শিক্ষাবোর্ড • স্থাপিত: ১৯৯০
                 </p>
-                <div className="mt-3 inline-block bg-deep text-white px-4 py-1 rounded text-xs font-bold uppercase tracking-wider font-bangla">
+                <div className="mt-3 print:mt-1 inline-block bg-deep text-white px-4 py-1 print:px-2.5 print:py-0.5 rounded text-xs print:text-[8.5pt] font-bold uppercase tracking-wider font-bangla">
                   {lang === 'bn' ? 'অনলাইন ভর্তি আবেদন পত্র ও প্রবেশপত্র (Admit Slip)' : 'ONLINE ADMISSION APPLICATION & ADMIT SLIP'}
                 </div>
-                <p className="text-xs font-bold text-warning mt-1.5">শিক্ষাবর্ষ: ২০২৭ (Academic Session 2027)</p>
+                <p className="text-xs print:text-[8.5pt] font-bold text-warning mt-1.5 print:mt-0.5">শিক্ষাবর্ষ: ২০২৭ (Academic Session 2027)</p>
               </div>
 
               {/* Tracking ID Banner */}
-              <div className="bg-warning-soft border border-accent rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="bg-warning-soft border border-accent rounded-xl p-4 print:p-2 flex flex-col sm:flex-row items-center justify-between gap-4 print:gap-2">
                 <div>
-                  <span className="text-xs text-warning block font-bangla font-semibold">
+                  <span className="text-xs print:text-[8pt] text-warning block font-bangla font-semibold">
                     {lang === 'bn' ? 'আবেদন ট্র্যাকিং নম্বর:' : 'Application Tracking ID:'}
                   </span>
-                  <span className="text-xl sm:text-2xl font-mono font-extrabold text-ink tracking-wider">
+                  <span className="text-xl sm:text-2xl print:text-base font-mono font-extrabold text-ink tracking-wider">
                     {submittedApplication.trackingId}
                   </span>
-                  <p className="text-[11px] text-muted font-bangla mt-0.5">
+                  <p className="text-[11px] print:text-[7.5pt] text-muted font-bangla mt-0.5">
                     {lang === 'bn' ? 'ভর্তির ফলাফল ও অ্যাডমিট কার্ড যাচাইয়ের জন্য এই নম্বরটি সংরক্ষণ করুন।' : 'Keep this tracking ID safe for future admission queries.'}
                   </p>
                 </div>
 
                 {/* Simulated Barcode */}
                 <div className="text-center">
-                  <div className="font-mono text-xl tracking-widest text-ink font-bold select-none">
+                  <div className="font-mono text-xl print:text-base tracking-widest text-ink font-bold select-none">
                     ||| | |||| | ||| |||| |
                   </div>
-                  <span className="text-[10px] font-mono text-muted">{submittedApplication.trackingId}</span>
+                  <span className="text-[10px] print:text-[7pt] font-mono text-muted">{submittedApplication.trackingId}</span>
                 </div>
               </div>
 
               {/* Candidate Info Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bangla bg-bg p-5 rounded-xl border border-line">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 print:gap-1.5 text-xs print:text-[8.5pt] font-bangla bg-bg print:bg-white p-5 print:p-2 rounded-xl print:rounded-md border border-line print:border-slate-300">
                 <div>
-                  <span className="text-muted block">{lang === 'bn' ? 'শিক্ষার্থীর নাম (বাংলা):' : 'Candidate Name (Bangla):'}</span>
-                  <span className="font-bold text-ink text-sm">{submittedApplication.studentNameBn || '-'}</span>
+                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'শিক্ষার্থীর নাম (বাংলা):' : 'Candidate Name (Bangla):'}</span>
+                  <span className="font-bold text-ink text-sm print:text-[9pt]">{submittedApplication.studentNameBn || '-'}</span>
                 </div>
                 <div>
-                  <span className="text-muted block">{lang === 'bn' ? 'শিক্ষার্থীর নাম (ইংরেজি):' : 'Candidate Name (English):'}</span>
-                  <span className="font-bold text-ink text-sm uppercase font-mono">{submittedApplication.studentNameEn}</span>
+                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'শিক্ষার্থীর নাম (ইংরেজি):' : 'Candidate Name (English):'}</span>
+                  <span className="font-bold text-ink text-sm uppercase font-mono print:text-[9pt]">{submittedApplication.studentNameEn}</span>
                 </div>
                 <div>
-                  <span className="text-muted block">{lang === 'bn' ? 'আবেদনকৃত শ্রেণি:' : 'Applied Class:'}</span>
-                  <span className="font-bold text-primary">
+                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'আবেদনকৃত শ্রেণি:' : 'Applied Class:'}</span>
+                  <span className="font-bold text-primary print:text-[9pt]">
                     {lang === 'bn' 
                       ? `${{ '6': '৬ষ্ঠ', '7': '৭ম', '8': '৮ম', '9': '৯ম', '10': '১০ম' }[submittedApplication.applyingClass] || submittedApplication.applyingClass} শ্রেণি` 
                       : `Class ${submittedApplication.applyingClass}`}
@@ -268,7 +270,7 @@ export default function OnlineAdmission() {
                   </span>
                 </div>
                 <div>
-                  <span className="text-muted block">{lang === 'bn' ? 'লিঙ্গ ও রক্তগ্রুপ:' : 'Gender & Blood Group:'}</span>
+                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'লিঙ্গ ও রক্তগ্রুপ:' : 'Gender & Blood Group:'}</span>
                   <span className="font-semibold text-ink">
                     {lang === 'bn'
                       ? ({ 'Male': 'ছাত্র', 'Female': 'ছাত্রী' }[submittedApplication.gender] || submittedApplication.gender)
@@ -277,24 +279,56 @@ export default function OnlineAdmission() {
                   </span>
                 </div>
                 <div>
-                  <span className="text-muted block">{lang === 'bn' ? 'পিতার নাম:' : "Father's Name:"}</span>
+                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'পিতার নাম:' : "Father's Name:"}</span>
                   <span className="font-semibold text-ink">{submittedApplication.fatherName}</span>
                 </div>
                 <div>
-                  <span className="text-muted block">{lang === 'bn' ? 'মাতার নাম:' : "Mother's Name:"}</span>
+                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'মাতার নাম:' : "Mother's Name:"}</span>
                   <span className="font-semibold text-ink">{submittedApplication.motherName}</span>
                 </div>
                 <div>
-                  <span className="text-muted block">{lang === 'bn' ? 'অভিভাবকের মোবাইল নম্বর:' : 'Guardian Phone:'}</span>
+                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'অভিভাবকের মোবাইল নম্বর:' : 'Guardian Phone:'}</span>
                   <span className="font-mono font-bold text-primary">{submittedApplication.guardianPhone}</span>
                 </div>
                 <div>
-                  <span className="text-muted block">{lang === 'bn' ? 'পূর্ববর্তী প্রতিষ্ঠান ও জিপিএ:' : 'Previous School & GPA:'}</span>
+                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'পূর্ববর্তী প্রতিষ্ঠান ও জিপিএ:' : 'Previous School & GPA:'}</span>
                   <span className="font-semibold text-ink">{submittedApplication.previousSchool || 'N/A'} (GPA: {submittedApplication.previousGpa || 'N/A'})</span>
                 </div>
                 <div className="sm:col-span-2">
-                  <span className="text-muted block">{lang === 'bn' ? 'স্থায়ী ঠিকানা:' : 'Address:'}</span>
+                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'স্থায়ী ঠিকানা:' : 'Address:'}</span>
                   <span className="font-medium text-ink">{submittedApplication.address}</span>
+                </div>
+              </div>
+
+              {/* Dynamic Signatures & Official Seal */}
+              <div className="pt-6 print:pt-3 border-t border-line flex justify-between items-end text-xs print:text-[8.5pt]">
+                {/* Admission Convener (Left) */}
+                <div className="text-center space-y-0.5 min-w-[120px]">
+                  <div className="w-28 border-b border-slate-400 mx-auto pb-0.5">
+                    <span className="font-serif italic text-primary font-bold text-sm print:text-xs">
+                      {signatories.admissionConvener.signature}
+                    </span>
+                  </div>
+                  <p className="font-bold text-ink text-[9.5pt] print:text-[8.5pt]">{signatories.admissionConvener.nameBn}</p>
+                  <p className="text-muted text-[8pt] print:text-[7pt]">{signatories.admissionConvener.designationBn}</p>
+                </div>
+
+                {/* Institute Seal Stamp (Center) */}
+                <div className="w-14 h-14 print:w-11 print:h-11 rounded-full border-2 border-dashed border-primary text-primary flex flex-col items-center justify-center p-0.5 text-[6px] text-center font-bold">
+                  <span>BANDUA DAULATPUR</span>
+                  <span>HIGH SCHOOL</span>
+                  <span>SEAL</span>
+                </div>
+
+                {/* Headmaster (Right) */}
+                <div className="text-center space-y-0.5 min-w-[120px]">
+                  <div className="w-28 border-b border-slate-400 mx-auto pb-0.5">
+                    <span className="font-serif italic text-primary font-bold text-sm print:text-xs">
+                      {signatories.headmaster.signature}
+                    </span>
+                  </div>
+                  <p className="font-bold text-ink text-[9.5pt] print:text-[8.5pt]">{signatories.headmaster.nameBn}</p>
+                  <p className="text-muted text-[8pt] print:text-[7pt]">{signatories.headmaster.designationBn}</p>
                 </div>
               </div>
             </div>

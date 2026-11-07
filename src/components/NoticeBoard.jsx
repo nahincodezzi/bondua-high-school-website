@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import SchoolLogo from './common/SchoolLogo';
 import { useSchool } from '../context/useSchool';
 import { formatBanglaDate, toBanglaNumerals } from '../utils/dateFormatter';
+import { getSignatories } from '../utils/signatories';
 import { 
   Bell, 
   Search, 
@@ -14,7 +16,8 @@ import {
 } from 'lucide-react';
 
 export default function NoticeBoard() {
-  const { lang, notices, schoolInfo } = useSchool();
+  const { lang, notices, schoolInfo, teachers, systemUsers } = useSchool();
+  const signatories = getSignatories(schoolInfo, teachers, systemUsers);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeNoticeModal, setActiveNoticeModal] = useState(null);
@@ -80,7 +83,14 @@ export default function NoticeBoard() {
   });
 
   const handlePrintNotice = () => {
+    document.body.classList.add('printing-modal');
+    const cleanup = () => {
+      document.body.classList.remove('printing-modal');
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
     window.print();
+    setTimeout(cleanup, 1200);
   };
 
   const modalElement = activeNoticeModal ? (
@@ -92,17 +102,17 @@ export default function NoticeBoard() {
     >
       {/* Backdrop click to close */}
       <div 
-        className="fixed inset-0 -z-10 no-print" 
+        className="fixed inset-0 -z-10 no-print print:hidden" 
         onClick={() => setActiveNoticeModal(null)} 
         aria-hidden="true" 
       />
 
-      <div className="bg-white max-w-2xl w-full rounded-2xl shadow-2xl overflow-hidden border border-line animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] print:max-w-full print:shadow-none print:border print:border-slate-300 print:rounded-lg print:m-0 print:max-h-none print:static" id="official-notice-modal">
-        {/* Modal Top Header */}
-        <div className="bg-deep text-white p-6 relative shrink-0 border-b border-primary">
+      <div className="bg-white max-w-3xl w-full rounded-2xl shadow-2xl overflow-hidden border border-line animate-in zoom-in-95 duration-200 flex flex-col max-h-[92vh] print:max-w-full print:shadow-none print:border-none print:rounded-none print:m-0 print:max-h-none print:static" id="official-notice-modal">
+        {/* Screen-Only Header */}
+        <div className="bg-deep text-white p-6 relative shrink-0 border-b border-primary print:hidden">
           <button
             onClick={() => setActiveNoticeModal(null)}
-            className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/20 text-white/80 hover:text-white transition cursor-pointer no-print"
+            className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/20 text-white/80 hover:text-white transition cursor-pointer no-print print:hidden"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -128,36 +138,71 @@ export default function NoticeBoard() {
           </div>
         </div>
 
+        {/* Official Printable Institutional Letterhead (Shown in Print) */}
+        <div className="hidden print:block p-4 pb-2 border-b-2 border-slate-900 bg-white">
+          <div className="flex items-center justify-center gap-3">
+            <div className="w-12 h-12 rounded-full border border-slate-300 p-0.5 shrink-0">
+              <SchoolLogo logo={schoolInfo.logo} />
+            </div>
+            <div className="text-center">
+              <h1 className="text-xl font-extrabold text-slate-900 font-bangla leading-tight">
+                {schoolInfo.nameBn}
+              </h1>
+              <p className="text-[10pt] text-slate-700 font-bangla">
+                {schoolInfo.addressBn} • কুমিল্লা শিক্ষা বোর্ড
+              </p>
+              <p className="text-[8pt] text-slate-600 font-mono">
+                EIIN: {schoolInfo.eiin} • MPO: {schoolInfo.mpoCode} • স্থাপিত: ১৯৯০
+              </p>
+            </div>
+          </div>
+          <div className="flex justify-between items-center text-[8.5pt] font-mono border-t border-b border-slate-300 py-1 mt-2 font-semibold">
+            <span>স্মারক নং: বদৌউবি/বিজ্ঞপ্তি/{(activeNoticeModal.id || 'not-1').replace('not-', '')}/২০২৬</span>
+            <span>তারিখ: {formatBanglaDate(activeNoticeModal.publishDate || activeNoticeModal.date, lang)}</span>
+          </div>
+          <div className="mt-2 text-center">
+            <span className="inline-block bg-slate-900 text-white text-[9pt] font-bold px-3 py-0.5 rounded font-bangla uppercase tracking-wider">
+              প্রাতিষ্ঠানিক অফিসিয়াল বিজ্ঞপ্তি
+            </span>
+          </div>
+        </div>
+
         {/* Modal Content Body */}
-        <div className="p-6 sm:p-8 space-y-6 overflow-y-auto flex-1 font-bangla text-ink text-sm leading-relaxed whitespace-pre-line bg-bg">
-          <div className="bg-white p-5 rounded-xl border border-line shadow-xs">
-            <p>{lang === 'bn' ? activeNoticeModal.contentBn : (activeNoticeModal.contentEn || activeNoticeModal.contentBn)}</p>
+        <div className="p-6 sm:p-8 space-y-5 overflow-y-auto flex-1 font-bangla text-ink text-sm leading-relaxed whitespace-pre-line bg-bg print:bg-white print:p-4 print:space-y-3 print:overflow-visible">
+          {/* Subject Line */}
+          <div className="p-3 bg-white rounded-xl border border-line shadow-xs print:border-none print:shadow-none print:p-0">
+            <h2 className="text-base sm:text-lg font-extrabold font-bangla text-deep border-b border-line pb-2 print:text-base print:border-b-2 print:border-slate-800">
+              বিষয়: {lang === 'bn' ? activeNoticeModal.titleBn : activeNoticeModal.titleEn}
+            </h2>
+            <div className="mt-3 text-ink leading-relaxed text-justify print:text-[10.5pt]">
+              {lang === 'bn' ? activeNoticeModal.contentBn : (activeNoticeModal.contentEn || activeNoticeModal.contentBn)}
+            </div>
           </div>
 
           {/* Attached File Preview if available */}
           {activeNoticeModal.fileUrl && activeNoticeModal.fileUrl !== '#' && (
-            <div className="bg-white p-4 rounded-xl border border-line space-y-3">
-              <span className="text-xs font-bold text-muted uppercase tracking-wider block font-mono">
-                {lang === 'bn' ? 'সংযুক্ত ফাইল (Attached Document):' : 'Attached Document:'}
+            <div className="bg-white p-4 rounded-xl border border-line space-y-3 print:p-2 print:border-slate-300">
+              <span className="text-xs font-bold text-muted uppercase tracking-wider block font-mono print:text-[8pt]">
+                {lang === 'bn' ? 'সংযুক্ত ফাইল / বিজ্ঞপ্তির অংশ:' : 'Attached Document:'}
               </span>
               {activeNoticeModal.fileUrl.startsWith('data:image/') || activeNoticeModal.fileUrl.match(/\.(jpeg|jpg|gif|png)$/) != null ? (
-                <div className="relative rounded-xl overflow-hidden border border-line bg-bg max-h-96 flex items-center justify-center">
+                <div className="relative rounded-xl overflow-hidden border border-line bg-bg max-h-96 flex items-center justify-center print:max-h-72 print:border-none">
                   <img 
                     src={activeNoticeModal.fileUrl} 
                     alt="Notice Attachment" 
-                    className="max-h-96 w-auto object-contain"
+                    className="max-h-96 w-auto object-contain print:max-h-72"
                   />
                 </div>
               ) : (
-                <div className="flex items-center justify-between p-3 bg-soft/60 rounded-xl border border-soft-border">
+                <div className="flex items-center justify-between p-3 bg-soft/60 rounded-xl border border-soft-border print:p-1.5">
                   <div className="flex items-center gap-2">
-                    <Paperclip className="w-5 h-5 text-primary" />
-                    <span className="font-mono text-xs text-ink truncate max-w-xs">{activeNoticeModal.fileName || 'Notice_Attachment.pdf'}</span>
+                    <Paperclip className="w-5 h-5 text-primary print:w-4 print:h-4" />
+                    <span className="font-mono text-xs text-ink truncate max-w-xs print:text-[9pt]">{activeNoticeModal.fileName || 'Notice_Attachment.pdf'}</span>
                   </div>
                   <a
                     href={activeNoticeModal.fileUrl}
                     download={activeNoticeModal.fileName || 'notice_file.pdf'}
-                    className="btn-accent px-3 py-1.5 text-xs font-bold flex items-center gap-1 shadow-xs no-print"
+                    className="btn-accent px-3 py-1.5 text-xs font-bold flex items-center gap-1 shadow-xs no-print print:hidden"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>{lang === 'bn' ? 'ডাউনলোড' : 'Download'}</span>
@@ -167,31 +212,55 @@ export default function NoticeBoard() {
             </div>
           )}
 
-          {/* Institute Sign-off */}
-          <div className="pt-4 border-t border-line text-xs text-muted flex justify-between items-end">
-            <div>
-              <p className="font-bold text-ink">{lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || 'Bandua Daulatpur High School')}</p>
-              <p>ফুলগাজী, ফেনী • EIIN: {schoolInfo.eiin}</p>
+          {/* Official Sign-off & Seal */}
+          <div className="pt-6 border-t border-line text-xs text-muted flex justify-between items-end print:pt-4 print:border-t-2 print:border-slate-800">
+            {/* Distribution List (Left) */}
+            <div className="text-[8pt] text-slate-600 font-bangla space-y-0.5 text-left max-w-xs">
+              <p className="font-bold text-slate-800">অনুলিপি অবগতির জন্য ও কার্যার্থে প্রেরিত:</p>
+              <p>১. সহকারী প্রধান শিক্ষক ও সকল শিক্ষক-কর্মচারী</p>
+              <p>২. নোটিশ বোর্ড ও বিদ্যালয় অফিস নথি</p>
+              <p>৩. বিদ্যালয় ওয়েবসাইট / অনলাইন নোটিশ বোর্ড</p>
             </div>
-            <div className="text-right">
-              <p className="font-bold text-ink font-serif italic text-sm">{schoolInfo.headmasterNameBn}</p>
-              <p>{lang === 'bn' ? schoolInfo.headmasterDesignationBn : schoolInfo.headmasterDesignationEn}</p>
+
+            {/* Institute Official Seal Stamp (Center) */}
+            <div className="w-16 h-16 rounded-full border-2 border-dashed border-primary text-primary flex flex-col items-center justify-center p-1 text-[7px] text-center font-bold">
+              <span>BANDUA DAULATPUR</span>
+              <span>HIGH SCHOOL</span>
+              <span>SEAL</span>
+            </div>
+
+            {/* Dynamic Headmaster Signature & Designation (Right) */}
+            <div className="text-center space-y-0.5 min-w-[140px]">
+              <div className="w-32 border-b border-slate-400 mx-auto pb-0.5">
+                <span className="font-serif italic text-primary font-bold text-base print:text-sm">
+                  {signatories.headmaster.signature}
+                </span>
+              </div>
+              <p className="font-bold text-ink font-bangla text-xs print:text-[9pt]">
+                {signatories.headmaster.nameBn}
+              </p>
+              <p className="text-muted text-[10px] font-bangla print:text-[8pt]">
+                {signatories.headmaster.designationBn}
+              </p>
+              <p className="text-muted text-[9px] print:text-[7.5pt]">
+                {schoolInfo.nameBn}
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Modal Action Buttons Footer */}
-        <div className="p-4 bg-white border-t border-line flex items-center justify-between gap-3 shrink-0 no-print">
+        {/* Modal Action Buttons Footer - Hidden during print */}
+        <div className="p-4 bg-white border-t border-line flex items-center justify-between gap-3 shrink-0 no-print print:hidden">
           <button
             onClick={handlePrintNotice}
-            className="px-4 py-2 bg-bg hover:bg-soft text-ink rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer border border-line"
+            className="px-4 py-2 bg-bg hover:bg-soft text-ink rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer border border-line no-print print:hidden"
           >
             <Printer className="w-4 h-4" />
             <span>{lang === 'bn' ? 'প্রিন্ট করুন' : 'Print'}</span>
           </button>
           <button
             onClick={() => setActiveNoticeModal(null)}
-            className="btn-secondary px-6 py-2 text-xs font-bold cursor-pointer"
+            className="btn-secondary px-6 py-2 text-xs font-bold cursor-pointer no-print print:hidden"
           >
             {lang === 'bn' ? 'বন্ধ করুন' : 'Close'}
           </button>
