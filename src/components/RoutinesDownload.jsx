@@ -184,7 +184,7 @@ export default function RoutinesDownload() {
           </p>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 no-print">
           <button
             onClick={() => setActiveRoutineModal(null)}
             className="flex-1 bg-bg hover:bg-soft py-2.5 rounded-lg text-xs text-ink border border-line cursor-pointer font-bold"

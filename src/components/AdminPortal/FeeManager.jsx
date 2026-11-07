@@ -169,7 +169,7 @@ export default function FeeManager() {
   ) : null;
 
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 ${activeReceipt ? 'no-print' : ''}`}>
       {/* Header */}
       <div>
         <h2 className="text-xl sm:text-2xl font-bold font-bangla text-ink">

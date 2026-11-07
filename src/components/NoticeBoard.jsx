@@ -92,17 +92,17 @@ export default function NoticeBoard() {
     >
       {/* Backdrop click to close */}
       <div 
-        className="fixed inset-0 -z-10" 
+        className="fixed inset-0 -z-10 no-print" 
         onClick={() => setActiveNoticeModal(null)} 
         aria-hidden="true" 
       />
 
-      <div className="bg-white max-w-2xl w-full rounded-2xl shadow-2xl overflow-hidden border border-line animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+      <div className="bg-white max-w-2xl w-full rounded-2xl shadow-2xl overflow-hidden border border-line animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] print:max-w-full print:shadow-none print:border print:border-slate-300 print:rounded-lg print:m-0 print:max-h-none print:static" id="official-notice-modal">
         {/* Modal Top Header */}
         <div className="bg-deep text-white p-6 relative shrink-0 border-b border-primary">
           <button
             onClick={() => setActiveNoticeModal(null)}
-            className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/20 text-white/80 hover:text-white transition cursor-pointer"
+            className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/20 text-white/80 hover:text-white transition cursor-pointer no-print"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -157,7 +157,7 @@ export default function NoticeBoard() {
                   <a
                     href={activeNoticeModal.fileUrl}
                     download={activeNoticeModal.fileName || 'notice_file.pdf'}
-                    className="btn-accent px-3 py-1.5 text-xs font-bold flex items-center gap-1 shadow-xs"
+                    className="btn-accent px-3 py-1.5 text-xs font-bold flex items-center gap-1 shadow-xs no-print"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>{lang === 'bn' ? 'ডাউনলোড' : 'Download'}</span>
@@ -181,7 +181,7 @@ export default function NoticeBoard() {
         </div>
 
         {/* Modal Action Buttons Footer */}
-        <div className="p-4 bg-white border-t border-line flex items-center justify-between gap-3 shrink-0">
+        <div className="p-4 bg-white border-t border-line flex items-center justify-between gap-3 shrink-0 no-print">
           <button
             onClick={handlePrintNotice}
             className="px-4 py-2 bg-bg hover:bg-soft text-ink rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer border border-line"
@@ -201,7 +201,7 @@ export default function NoticeBoard() {
   ) : null;
 
   return (
-    <section className="py-12 sm:py-16 text-ink font-bangla relative z-10">
+    <section className={`py-12 sm:py-16 text-ink font-bangla relative z-10 ${activeNoticeModal ? 'no-print' : ''}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-10">
