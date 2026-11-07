@@ -3,6 +3,13 @@ import { SchoolContext } from './SchoolContextInstance';
 import { storeVideoFile, getVideoFile, deleteVideoFile } from '../utils/mediaStorage';
 import { getDhakaDateString } from '../utils/dateFormatter';
 import {
+  supabase,
+  isSupabaseConfigured,
+  fetchAllCloudData,
+  seedCloudIfEmpty,
+  mappers
+} from '../lib/supabase';
+import {
   initialSchoolInfo,
   initialUniformInfo,
   initialHeroSlides,
@@ -378,6 +385,48 @@ export function SchoolProvider({ children }) {
     };
   }, []);
 
+  // Supabase Cloud Synchronization & Auto-Seed
+  useEffect(() => {
+    if (!isSupabaseConfigured || !supabase) return;
+
+    let isMounted = true;
+    async function initCloudSync() {
+      try {
+        // 1. Seed any empty tables with initial baseline data
+        await seedCloudIfEmpty({
+          notices: initialNotices,
+          teachers: initialTeachers,
+          students: initialStudents,
+          admissions: initialAdmissions,
+          results: initialResults,
+          fees: initialFees,
+          heroSlides: initialHeroSlides,
+          gallery: initialGallery,
+          schoolInfo: initialSchoolInfo,
+        });
+
+        // 2. Fetch live data from Supabase
+        const cloud = await fetchAllCloudData();
+        if (!isMounted || !cloud) return;
+
+        if (cloud.notices && cloud.notices.length > 0) setNotices(cloud.notices);
+        if (cloud.teachers && cloud.teachers.length > 0) setTeachers(cloud.teachers);
+        if (cloud.students && cloud.students.length > 0) setStudents(cloud.students);
+        if (cloud.admissions && cloud.admissions.length > 0) setAdmissions(cloud.admissions);
+        if (cloud.results && cloud.results.length > 0) setResults(cloud.results);
+        if (cloud.fees && cloud.fees.length > 0) setFees(cloud.fees);
+        if (cloud.heroSlides && cloud.heroSlides.length > 0) setHeroSlides(cloud.heroSlides);
+        if (cloud.gallery && cloud.gallery.length > 0) setGallery(cloud.gallery);
+        if (cloud.schoolInfo) setSchoolInfo(cloud.schoolInfo);
+      } catch (err) {
+        console.warn('Supabase cloud synchronization error:', err);
+      }
+    }
+
+    initCloudSync();
+    return () => { isMounted = false; };
+  }, []);
+
   useEffect(() => {
     if (authUser) {
       localStorage.setItem('bdhs_auth', JSON.stringify(authUser));
@@ -664,6 +713,11 @@ export function SchoolProvider({ children }) {
       publishDate: notice.publishDate || notice.date || today
     };
     setNotices(prev => [newNotice, ...prev]);
+    if (supabase) {
+      supabase.from('notices').insert(mappers.notice.toDb(newNotice)).then(({ error }) => {
+        if (error) console.warn('Supabase insert notice warning:', error.message);
+      });
+    }
     return newNotice;
   };
 
@@ -671,12 +725,18 @@ export function SchoolProvider({ children }) {
     setNotices(prev => prev.map(n => {
       if (n.id === id) {
         const dateVal = updatedNotice.date || n.date;
-        return {
+        const merged = {
           ...n,
           ...updatedNotice,
           date: dateVal,
           publishDate: updatedNotice.publishDate || dateVal
         };
+        if (supabase) {
+          supabase.from('notices').update(mappers.notice.toDb(merged)).eq('id', id).then(({ error }) => {
+            if (error) console.warn('Supabase update notice warning:', error.message);
+          });
+        }
+        return merged;
       }
       return n;
     }));
@@ -684,6 +744,11 @@ export function SchoolProvider({ children }) {
 
   const deleteNotice = (id) => {
     setNotices(prev => prev.filter(n => n.id !== id));
+    if (supabase) {
+      supabase.from('notices').delete().eq('id', id).then(({ error }) => {
+        if (error) console.warn('Supabase delete notice warning:', error.message);
+      });
+    }
   };
 
   const addStudent = (student) => {
@@ -693,15 +758,36 @@ export function SchoolProvider({ children }) {
       studentId: `BDHS-2026-${Math.floor(100 + Math.random() * 900)}`
     };
     setStudents(prev => [newStudent, ...prev]);
+    if (supabase) {
+      supabase.from('students').insert(mappers.student.toDb(newStudent)).then(({ error }) => {
+        if (error) console.warn('Supabase insert student warning:', error.message);
+      });
+    }
     return newStudent;
   };
 
   const updateStudent = (id, updatedData) => {
-    setStudents(prev => prev.map(s => s.id === id ? { ...s, ...updatedData } : s));
+    setStudents(prev => prev.map(s => {
+      if (s.id === id) {
+        const merged = { ...s, ...updatedData };
+        if (supabase) {
+          supabase.from('students').update(mappers.student.toDb(merged)).eq('id', id).then(({ error }) => {
+            if (error) console.warn('Supabase update student warning:', error.message);
+          });
+        }
+        return merged;
+      }
+      return s;
+    }));
   };
 
   const deleteStudent = (id) => {
     setStudents(prev => prev.filter(s => s.id !== id));
+    if (supabase) {
+      supabase.from('students').delete().eq('id', id).then(({ error }) => {
+        if (error) console.warn('Supabase delete student warning:', error.message);
+      });
+    }
   };
 
   const addTeacher = (teacher) => {
@@ -710,14 +796,35 @@ export function SchoolProvider({ children }) {
       id: `tea-${Date.now()}`
     };
     setTeachers(prev => [...prev, newTeacher]);
+    if (supabase) {
+      supabase.from('teachers').insert(mappers.teacher.toDb(newTeacher)).then(({ error }) => {
+        if (error) console.warn('Supabase insert teacher warning:', error.message);
+      });
+    }
   };
 
   const updateTeacher = (id, updatedData) => {
-    setTeachers(prev => prev.map(t => t.id === id ? { ...t, ...updatedData } : t));
+    setTeachers(prev => prev.map(t => {
+      if (t.id === id) {
+        const merged = { ...t, ...updatedData };
+        if (supabase) {
+          supabase.from('teachers').update(mappers.teacher.toDb(merged)).eq('id', id).then(({ error }) => {
+            if (error) console.warn('Supabase update teacher warning:', error.message);
+          });
+        }
+        return merged;
+      }
+      return t;
+    }));
   };
 
   const deleteTeacher = (id) => {
     setTeachers(prev => prev.filter(t => t.id !== id));
+    if (supabase) {
+      supabase.from('teachers').delete().eq('id', id).then(({ error }) => {
+        if (error) console.warn('Supabase delete teacher warning:', error.message);
+      });
+    }
   };
 
   const submitAdmission = (formData) => {
@@ -732,16 +839,31 @@ export function SchoolProvider({ children }) {
       status: 'Pending'
     };
     setAdmissions(prev => [newApplication, ...prev]);
+    if (supabase) {
+      supabase.from('admissions').insert(mappers.admission.toDb(newApplication)).then(({ error }) => {
+        if (error) console.warn('Supabase insert admission warning:', error.message);
+      });
+    }
     return newApplication;
   };
 
   const updateAdmissionStatus = (id, status) => {
-    setAdmissions(prev => prev.map(a => a.id === id ? { ...a, status } : a));
+    setAdmissions(prev => prev.map(a => {
+      if (a.id === id) {
+        if (supabase) {
+          supabase.from('admissions').update({ status }).eq('id', id).then(({ error }) => {
+            if (error) console.warn('Supabase update admission warning:', error.message);
+          });
+        }
+        return { ...a, status };
+      }
+      return a;
+    }));
   };
 
   const approveAdmissionAndCreateStudent = (admissionApp) => {
     // 1. Mark status as Approved
-    setAdmissions(prev => prev.map(a => a.id === admissionApp.id ? { ...a, status: 'Approved' } : a));
+    updateAdmissionStatus(admissionApp.id, 'Approved');
 
     // 2. Find next roll in target class
     const targetClass = admissionApp.applyingClass || '6';
@@ -771,6 +893,11 @@ export function SchoolProvider({ children }) {
     };
 
     setStudents(prev => [createdStudent, ...prev]);
+    if (supabase) {
+      supabase.from('students').insert(mappers.student.toDb(createdStudent)).then(({ error }) => {
+        if (error) console.warn('Supabase insert student from admission warning:', error.message);
+      });
+    }
     return createdStudent;
   };
 
@@ -779,6 +906,11 @@ export function SchoolProvider({ children }) {
       const filtered = prev.filter(r => !(r.roll === resultData.roll && r.exam === resultData.exam));
       return [resultData, ...filtered];
     });
+    if (supabase) {
+      supabase.from('results').upsert(mappers.result.toDb(resultData)).then(({ error }) => {
+        if (error) console.warn('Supabase upsert result warning:', error.message);
+      });
+    }
   };
 
   const addFee = (feeData) => {
@@ -790,6 +922,11 @@ export function SchoolProvider({ children }) {
       status: 'Paid'
     };
     setFees(prev => [newFee, ...prev]);
+    if (supabase) {
+      supabase.from('fee_receipts').insert(mappers.fee.toDb(newFee)).then(({ error }) => {
+        if (error) console.warn('Supabase insert fee warning:', error.message);
+      });
+    }
     return newFee;
   };
 
@@ -825,10 +962,20 @@ export function SchoolProvider({ children }) {
       date: getDhakaDateString()
     };
     setGallery(prev => [newItem, ...prev]);
+    if (supabase) {
+      supabase.from('gallery').insert(mappers.gallery.toDb(newItem)).then(({ error }) => {
+        if (error) console.warn('Supabase insert gallery warning:', error.message);
+      });
+    }
   };
 
   const deleteGalleryItem = (id) => {
     setGallery(prev => prev.filter(g => g.id !== id));
+    if (supabase) {
+      supabase.from('gallery').delete().eq('id', id).then(({ error }) => {
+        if (error) console.warn('Supabase delete gallery warning:', error.message);
+      });
+    }
   };
 
   const addVideoItem = async (video) => {
@@ -939,7 +1086,8 @@ export function SchoolProvider({ children }) {
         contactMessages,
         submitContactMessage,
         routines,
-        resetToDefaults
+        resetToDefaults,
+        isCloudSyncActive: isSupabaseConfigured
       }}
     >
       {children}
