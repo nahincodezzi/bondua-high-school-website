@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SchoolContext } from './SchoolContextInstance';
 import { storeVideoFile, getVideoFile, deleteVideoFile } from '../utils/mediaStorage';
 import { getDhakaDateString } from '../utils/dateFormatter';
+import { hashPassword, verifyPassword } from '../utils/security';
 import {
   supabase,
   isSupabaseConfigured,
@@ -413,6 +414,7 @@ export function SchoolProvider({ children }) {
           heroSlides: initialHeroSlides,
           gallery: initialGallery,
           schoolInfo: initialSchoolInfo,
+          systemUsers: initialUsers,
         });
 
         // 2. Fetch live data from Supabase
@@ -430,6 +432,7 @@ export function SchoolProvider({ children }) {
         if (cloud.schoolInfo) setSchoolInfo(cloud.schoolInfo);
         if (cloud.contactMessages && cloud.contactMessages.length > 0) setContactMessages(cloud.contactMessages);
         if (cloud.videos && cloud.videos.length > 0) setVideos(cloud.videos);
+        if (cloud.systemUsers && cloud.systemUsers.length > 0) setSystemUsers(cloud.systemUsers);
       } catch (err) {
         console.warn('Supabase cloud synchronization error:', err);
       }
@@ -549,8 +552,20 @@ export function SchoolProvider({ children }) {
     setLang(prev => (prev === 'bn' ? 'en' : 'bn'));
   };
 
-  // Authentication & Access Control (RBAC with N2 Rate-limiting Lockout)
-  const authenticate = (username, password) => {
+  // Authentication & Access Control (Hashed Credentials & Cloud-Synced Users)
+  const syncSystemUsersToCloud = (usersList) => {
+    if (!supabase) return;
+    const sanitized = usersList.map(u => {
+      const copy = { ...u };
+      delete copy.password; // Never store plaintext password in cloud or storage
+      return copy;
+    });
+    supabase.from('school_info').upsert({ id: 'system_users', data: sanitized }).then(({ error }) => {
+      if (error) console.warn('Supabase sync system_users warning:', error.message);
+    });
+  };
+
+  const authenticate = async (username, password) => {
     // Check lockout status (N2)
     const lockDataRaw = localStorage.getItem('bdhs_lockout');
     if (lockDataRaw) {
@@ -566,11 +581,17 @@ export function SchoolProvider({ children }) {
       } catch {}
     }
 
+    const cleanUser = username.trim().toLowerCase();
     const user = systemUsers.find(
-      u => u.username.toLowerCase() === username.trim().toLowerCase() && u.password === password
+      u => u.username?.toLowerCase() === cleanUser
     );
 
-    if (!user) {
+    let passwordMatches = false;
+    if (user) {
+      passwordMatches = await verifyPassword(password, user.passwordHash || user.password);
+    }
+
+    if (!user || !passwordMatches) {
       let attempts = 1;
       const prevRaw = localStorage.getItem('bdhs_lockout');
       if (prevRaw) {
@@ -677,43 +698,74 @@ export function SchoolProvider({ children }) {
     return Array.isArray(authUser.permissions) && authUser.permissions.includes(moduleKey);
   };
 
-  // User Management Actions (Superadmin Controlled)
-  const addUser = (newUser) => {
+  // User Management Actions (Superadmin Controlled & Cloud Synced with SHA-256 Hashing)
+  const addUser = async (newUser) => {
+    const rawPass = newUser.password || 'admin2026';
+    const passHash = await hashPassword(rawPass);
     const created = {
       ...newUser,
       id: `usr-${Date.now()}`,
+      passwordHash: passHash,
       createdAt: getDhakaDateString(),
       status: newUser.status || 'active'
     };
-    setSystemUsers(prev => [created, ...prev]);
+    delete created.password;
+    setSystemUsers(prev => {
+      const updated = [created, ...prev];
+      syncSystemUsersToCloud(updated);
+      return updated;
+    });
     return created;
   };
 
-  const updateUser = (updatedUser) => {
-    setSystemUsers(prev => prev.map(u => u.id === updatedUser.id ? { ...u, ...updatedUser } : u));
-    if (authUser && authUser.id === updatedUser.id) {
+  const updateUser = async (updatedUserOrId, optionalData) => {
+    const isIdFirst = typeof updatedUserOrId === 'string';
+    const targetId = isIdFirst ? updatedUserOrId : updatedUserOrId.id;
+    let data = isIdFirst ? optionalData : updatedUserOrId;
+
+    if (data.password) {
+      const passHash = await hashPassword(data.password);
+      data = { ...data, passwordHash: passHash };
+      delete data.password;
+    }
+
+    setSystemUsers(prev => {
+      const updated = prev.map(u => (u.id === targetId ? { ...u, ...data } : u));
+      syncSystemUsersToCloud(updated);
+      return updated;
+    });
+
+    if (authUser && authUser.id === targetId) {
       setAuthUser(prev => ({
         ...prev,
-        name: updatedUser.nameBn || prev.name,
-        nameEn: updatedUser.nameEn || prev.nameEn,
-        role: updatedUser.role || prev.role,
-        designation: updatedUser.designationBn || prev.designation,
-        permissions: updatedUser.permissions || prev.permissions
+        name: data.nameBn || prev.name,
+        nameEn: data.nameEn || prev.nameEn,
+        role: data.role || prev.role,
+        designation: data.designationBn || prev.designation,
+        permissions: data.permissions || prev.permissions
       }));
     }
   };
 
   const deleteUser = (userId) => {
-    setSystemUsers(prev => prev.filter(u => u.id !== userId));
+    setSystemUsers(prev => {
+      const updated = prev.filter(u => u.id !== userId);
+      syncSystemUsersToCloud(updated);
+      return updated;
+    });
   };
 
   const toggleUserStatus = (userId) => {
-    setSystemUsers(prev => prev.map(u => {
-      if (u.id === userId) {
-        return { ...u, status: u.status === 'active' ? 'inactive' : 'active' };
-      }
-      return u;
-    }));
+    setSystemUsers(prev => {
+      const updated = prev.map(u => {
+        if (u.id === userId) {
+          return { ...u, status: u.status === 'active' ? 'inactive' : 'active' };
+        }
+        return u;
+      });
+      syncSystemUsersToCloud(updated);
+      return updated;
+    });
   };
 
   const addNotice = (notice) => {
@@ -1009,22 +1061,26 @@ export function SchoolProvider({ children }) {
     setContactMessages(prev => {
       const updated = [newMsg, ...prev];
       localStorage.setItem('bdhs_contact_messages', JSON.stringify(updated));
+
+      if (supabase) {
+        supabase.from('contact_messages').insert({
+          id: newMsg.id,
+          name: newMsg.name,
+          email: newMsg.email || null,
+          phone: newMsg.phone || '',
+          subject: newMsg.subject || null,
+          message: newMsg.message,
+          status: 'New'
+        }).then(({ error }) => {
+          if (error) {
+            // Cloud fallback: store in school_info doc
+            supabase.from('school_info').upsert({ id: 'contact_messages', data: updated }).then(() => {});
+          }
+        });
+      }
+
       return updated;
     });
-
-    if (supabase) {
-      supabase.from('contact_messages').insert({
-        id: newMsg.id,
-        name: newMsg.name,
-        email: newMsg.email || null,
-        phone: newMsg.phone || '',
-        subject: newMsg.subject || null,
-        message: newMsg.message,
-        status: 'New'
-      }).then(({ error }) => {
-        if (error) console.warn('Supabase insert contact message warning:', error.message);
-      });
-    }
     return newMsg;
   };
 
@@ -1079,23 +1135,33 @@ export function SchoolProvider({ children }) {
       id: newVidId
     };
     delete newVid.videoFile;
-    setVideos(prev => [newVid, ...prev]);
-
-    if (supabase) {
-      supabase.from('videos').insert(mappers.video.toDb(newVid)).then(({ error }) => {
-        if (error) console.warn('Supabase insert video warning:', error.message);
-      });
-    }
+    setVideos(prev => {
+      const updated = [newVid, ...prev];
+      if (supabase) {
+        supabase.from('videos').insert(mappers.video.toDb(newVid)).then(({ error }) => {
+          if (error) {
+            // Cloud fallback: store in school_info doc
+            supabase.from('school_info').upsert({ id: 'videos', data: updated }).then(() => {});
+          }
+        });
+      }
+      return updated;
+    });
   };
 
   const deleteVideoItem = (id) => {
     deleteVideoFile(id);
-    setVideos(prev => prev.filter(v => v.id !== id));
-    if (supabase) {
-      supabase.from('videos').delete().eq('id', id).then(({ error }) => {
-        if (error) console.warn('Supabase delete video warning:', error.message);
-      });
-    }
+    setVideos(prev => {
+      const updated = prev.filter(v => v.id !== id);
+      if (supabase) {
+        supabase.from('videos').delete().eq('id', id).then(({ error }) => {
+          if (error) {
+            supabase.from('school_info').upsert({ id: 'videos', data: updated }).then(() => {});
+          }
+        });
+      }
+      return updated;
+    });
   };
 
   const resetToDefaults = (confirmCode) => {

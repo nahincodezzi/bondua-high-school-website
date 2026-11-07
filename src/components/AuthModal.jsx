@@ -49,7 +49,7 @@ export default function AuthModal() {
 
   if (!authModalOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
     if (!username.trim()) {
@@ -60,15 +60,15 @@ export default function AuthModal() {
       setErrorMsg(lang === 'bn' ? 'পাসওয়ার্ড পূরণ করা আবশ্যক।' : 'Password is required.');
       return;
     }
-    const result = authenticate(username.trim(), password);
+    const result = await authenticate(username.trim(), password);
     if (!result.success) {
       setErrorMsg(result.message);
     }
   };
 
-  const handleDevLogin = (presetRole, presetUser, presetPass) => {
+  const handleDevLogin = async (presetRole, presetUser, presetPass) => {
     setErrorMsg('');
-    const result = authenticate(presetUser, presetPass);
+    const result = await authenticate(presetUser, presetPass);
     if (!result.success) {
       login(presetRole, presetUser);
     }

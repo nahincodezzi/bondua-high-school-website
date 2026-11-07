@@ -129,7 +129,7 @@ export default function UserManager() {
     setFormData(prev => ({ ...prev, permissions: [] }));
   };
 
-  const handleResetPasswordSubmit = (e) => {
+  const handleResetPasswordSubmit = async (e) => {
     e.preventDefault();
     if (!newPasswordInput || newPasswordInput.length < 8) {
       alert('পাসওয়ার্ড অবশ্যই কমপক্ষে ৮ অক্ষরের হতে হবে!');
@@ -139,7 +139,7 @@ export default function UserManager() {
       alert('পাসওয়ার্ডে অন্তত একটি ইংরেজি বর্ণ (letter) ও একটি সংখ্যা (number) থাকতে হবে!');
       return;
     }
-    updateUser(resetModalUser.id, { password: newPasswordInput });
+    await updateUser(resetModalUser.id, { password: newPasswordInput });
     setResetSuccessMsg(`"${resetModalUser.nameBn}" এর পাসওয়ার্ড সফলভাবে রিসেট করা হয়েছে!`);
     setTimeout(() => {
       setResetSuccessMsg('');
@@ -148,7 +148,7 @@ export default function UserManager() {
     }, 1500);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.username.trim() || !formData.password || !formData.nameBn.trim()) {
       alert('অনুগ্রহ করে নাম, ইউজারনেম এবং পাসওয়ার্ড পূরণ করুন!');
@@ -172,10 +172,10 @@ export default function UserManager() {
         alert('এই ইউজারনেমটি ইতিমধ্যে বিদ্যমান! অনুগ্রহ করে অন্য ইউজারনেম নির্বাচন করুন।');
         return;
       }
-      addUser(formData);
+      await addUser(formData);
       alert(`"${formData.nameBn}" এর জন্য নতুন অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!`);
     } else {
-      updateUser({
+      await updateUser({
         ...editingUser,
         ...formData
       });

@@ -869,6 +869,7 @@ export const initialUsers = [
   {
     id: 'usr-superadmin',
     username: 'superadmin',
+    passwordHash: '6051fc84a7a0d74c225fb18a496b09952da5642e60723ecae543298edd7d82d6',
     password: 'admin2026',
     nameBn: 'প্রধান সিস্টেম অ্যাডমিনিস্ট্রেটর',
     nameEn: 'System Super Administrator',
@@ -884,6 +885,7 @@ export const initialUsers = [
   {
     id: 'usr-headmaster',
     username: 'headmaster',
+    passwordHash: 'b0702ec5f856b9dcc9114f5976cf618af9d90000ef19a1c6aa5cab5f264b2fb4',
     password: 'headmaster2026',
     nameBn: 'জনাব বাহার উদ্দিন ভূঁইয়া',
     nameEn: 'Mr. Bahar Uddin Bhuiyan',
@@ -899,6 +901,7 @@ export const initialUsers = [
   {
     id: 'usr-asst-headmaster',
     username: 'asst_headmaster',
+    passwordHash: 'e3af47e260baf3c95c85c5d0efc3e62d44ea0bc7d6e81709b50dc206797d3ae1',
     password: 'assthead2026',
     nameBn: 'জনাব সলিম উদ্দিন মজুমদার',
     nameEn: 'Mr. Solim Uddin Majumder',
@@ -914,6 +917,7 @@ export const initialUsers = [
   {
     id: 'usr-teacher',
     username: 'teacher',
+    passwordHash: '01d58c1ac3df6d023d869e50bf78e2f9185332c281f665fd53f6dbd7592df45e',
     password: 'teacher2026',
     nameBn: 'জনাব জাহাঙ্গীর আলম',
     nameEn: 'Mr. Jahangir Alam',
@@ -929,6 +933,7 @@ export const initialUsers = [
   {
     id: 'usr-office-asst',
     username: 'office_assistant',
+    passwordHash: '5278374f8a2f6c0bcbb4da91e38acadef155ac20964dad6f4d3f6edede34e74e',
     password: 'office2026',
     nameBn: 'নুরুল কবির ভূঁইয়া',
     nameEn: 'Nurul Kabir Bhuiyan',

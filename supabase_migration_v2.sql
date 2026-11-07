@@ -94,6 +94,36 @@ CREATE TABLE IF NOT EXISTS videos (
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
 );
 
+-- 10. SYSTEM USERS TABLE (Secure Cloud Role-Based Access Control)
+CREATE TABLE IF NOT EXISTS system_users (
+  id text PRIMARY KEY,
+  username text UNIQUE NOT NULL,
+  password_hash text NOT NULL,
+  name_bn text NOT NULL,
+  name_en text,
+  designation_bn text,
+  designation_en text,
+  role text NOT NULL,
+  permissions jsonb DEFAULT '[]'::jsonb,
+  phone text,
+  email text,
+  status text DEFAULT 'active',
+  created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
+);
+
+-- Insert seed users with collision-resistant SHA-256 password hashes
+INSERT INTO system_users (id, username, password_hash, name_bn, name_en, designation_bn, designation_en, role, permissions, phone, email, status)
+VALUES
+  ('usr-superadmin', 'superadmin', '6051fc84a7a0d74c225fb18a496b09952da5642e60723ecae543298edd7d82d6', 'প্রধান সিস্টেম অ্যাডমিনিস্ট্রেটর', 'System Super Administrator', 'সফটওয়্যার সুপার অ্যাডমিন', 'Software Super Administrator', 'superadmin', '["cms","teachers","students","admissions","results","notices","fees","settings","users"]'::jsonb, '+880 1819-204561', 'bonduas106644@gmail.com', 'active'),
+  ('usr-headmaster', 'headmaster', 'b0702ec5f856b9dcc9114f5976cf618af9d90000ef19a1c6aa5cab5f264b2fb4', 'জনাব বাহার উদ্দিন ভূঁইয়া', 'Mr. Bahar Uddin Bhuiyan', 'ভারপ্রাপ্ত প্রধান শিক্ষক', 'Acting Headmaster', 'headmaster', '["cms","teachers","students","admissions","results","notices","fees","settings"]'::jsonb, '+880 1819-204561', 'bonduas106644@gmail.com', 'active'),
+  ('usr-asst-headmaster', 'asst_headmaster', 'e3af47e260baf3c95c85c5d0efc3e62d44ea0bc7d6e81709b50dc206797d3ae1', 'জনাব সলিম উদ্দিন মজুমদার', 'Mr. Solim Uddin Majumder', 'ভারপ্রাপ্ত সহ প্রধান শিক্ষক', 'Acting Assistant Headmaster', 'asst_headmaster', '["cms","students","admissions","results","notices"]'::jsonb, '+880 1818-450123', 'solim.majumder.bdhs@gmail.com', 'active'),
+  ('usr-teacher', 'teacher', '01d58c1ac3df6d023d869e50bf78e2f9185332c281f665fd53f6dbd7592df45e', 'জনাব জাহাঙ্গীর আলম', 'Mr. Jahangir Alam', 'সহকারী শিক্ষক (হিসাব বিজ্ঞান)', 'Assistant Teacher (Accounting)', 'teacher', '["results","notices"]'::jsonb, '+880 1711-234567', 'jahangir.alam.bdhs@gmail.com', 'active'),
+  ('usr-office-asst', 'office_assistant', '5278374f8a2f6c0bcbb4da91e38acadef155ac20964dad6f4d3f6edede34e74e', 'নুরুল কবির ভূঁইয়া', 'Nurul Kabir Bhuiyan', 'অফিস সহকারী', 'Office Assistant', 'operator', '["students","admissions","notices","fees"]'::jsonb, '+880 1712-893042', 'nurul.kabir.bdhs@gmail.com', 'active')
+ON CONFLICT (id) DO UPDATE SET 
+  password_hash = EXCLUDED.password_hash,
+  name_bn = EXCLUDED.name_bn,
+  permissions = EXCLUDED.permissions;
+
 -- ==============================================================================
 -- SECURITY & RLS POLICIES (C5 Fix)
 -- Protect sensitive data while keeping public website operational
@@ -111,6 +141,7 @@ ALTER TABLE gallery ENABLE ROW LEVEL SECURITY;
 ALTER TABLE school_info ENABLE ROW LEVEL SECURITY;
 ALTER TABLE contact_messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE videos ENABLE ROW LEVEL SECURITY;
+ALTER TABLE system_users ENABLE ROW LEVEL SECURITY;
 
 -- 1. Public Read Policies (Allow anyone to view published site data)
 CREATE POLICY IF NOT EXISTS "Public Read Notices" ON notices FOR SELECT USING (true);
@@ -137,3 +168,5 @@ CREATE POLICY IF NOT EXISTS "Allow All Gallery" ON gallery FOR ALL USING (true) 
 CREATE POLICY IF NOT EXISTS "Allow All School Info" ON school_info FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY IF NOT EXISTS "Allow All Contact Messages" ON contact_messages FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY IF NOT EXISTS "Allow All Videos" ON videos FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY IF NOT EXISTS "Allow All System Users" ON system_users FOR ALL USING (true) WITH CHECK (true);
+

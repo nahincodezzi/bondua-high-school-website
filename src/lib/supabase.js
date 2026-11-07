@@ -394,11 +394,40 @@ export async function fetchAllCloudData() {
       }
     } catch {}
 
+    // Fallback for contactMessages from school_info if dedicated table not created yet
+    if (!contactMessages) {
+      try {
+        const contactDoc = await supabase.from('school_info').select('*').eq('id', 'contact_messages').single();
+        if (contactDoc.data?.data && Array.isArray(contactDoc.data.data)) {
+          contactMessages = contactDoc.data.data;
+        }
+      } catch {}
+    }
+
     let videos = null;
     try {
       const videosRes = await supabase.from('videos').select('*').order('created_at', { ascending: true });
       if (!videosRes.error && videosRes.data && videosRes.data.length > 0) {
         videos = videosRes.data.map(mappers.video.fromDb);
+      }
+    } catch {}
+
+    // Fallback for videos from school_info if dedicated table not created yet
+    if (!videos) {
+      try {
+        const videosDoc = await supabase.from('school_info').select('*').eq('id', 'videos').single();
+        if (videosDoc.data?.data && Array.isArray(videosDoc.data.data)) {
+          videos = videosDoc.data.data;
+        }
+      } catch {}
+    }
+
+    // System Users cloud load (school_info 'system_users' document)
+    let systemUsers = null;
+    try {
+      const usersDoc = await supabase.from('school_info').select('*').eq('id', 'system_users').single();
+      if (usersDoc.data?.data && Array.isArray(usersDoc.data.data) && usersDoc.data.data.length > 0) {
+        systemUsers = usersDoc.data.data;
       }
     } catch {}
 
@@ -414,6 +443,7 @@ export async function fetchAllCloudData() {
       schoolInfo: schoolInfoRes.data?.data || null,
       contactMessages,
       videos,
+      systemUsers,
     };
   } catch (err) {
     console.warn('Supabase fetchAllCloudData caught error:', err);
@@ -480,6 +510,12 @@ export async function seedCloudIfEmpty(initialData) {
     const { data: infoRow } = await supabase.from('school_info').select('*').eq('id', 'main').single();
     if (!infoRow && initialData.schoolInfo) {
       await supabase.from('school_info').upsert({ id: 'main', data: initialData.schoolInfo });
+    }
+
+    // 10. Check & Seed System Users (Cloud Sync)
+    const { data: usersRow } = await supabase.from('school_info').select('*').eq('id', 'system_users').single();
+    if (!usersRow && initialData.systemUsers?.length) {
+      await supabase.from('school_info').upsert({ id: 'system_users', data: initialData.systemUsers });
     }
   } catch (err) {
     console.warn('seedCloudIfEmpty caught error:', err);

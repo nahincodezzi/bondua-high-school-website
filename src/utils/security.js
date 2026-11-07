@@ -1,0 +1,43 @@
+/**
+ * Cryptographic security utilities for Bandua Daulatpur High School
+ * Uses native Web Crypto API (SHA-256) for collision-resistant password hashing
+ */
+
+export async function hashPassword(plainPassword) {
+  if (!plainPassword) return '';
+  // If it's already a 64-character SHA-256 hex string, return it as-is
+  if (/^[a-f0-9]{64}$/i.test(plainPassword)) {
+    return plainPassword.toLowerCase();
+  }
+
+  const cryptoObj = (typeof window !== 'undefined' && window.crypto && window.crypto.subtle)
+    ? window.crypto
+    : (typeof crypto !== 'undefined' && crypto.subtle ? crypto : null);
+
+  if (cryptoObj?.subtle) {
+    const msgUint8 = new TextEncoder().encode(plainPassword);
+    const hashBuffer = await cryptoObj.subtle.digest('SHA-256', msgUint8);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').toLowerCase();
+  }
+
+  // Pure JS fallback if crypto.subtle is unavailable (legacy / non-secure contexts)
+  let hash = 0;
+  for (let i = 0; i < plainPassword.length; i++) {
+    const char = plainPassword.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0;
+  }
+  return `fallback-${Math.abs(hash).toString(16).padStart(8, '0')}`;
+}
+
+export async function verifyPassword(inputPassword, storedCredential) {
+  if (!inputPassword || !storedCredential) return false;
+  
+  // 1. Direct match (in case stored credential is still legacy plaintext during initial migration)
+  if (inputPassword === storedCredential) return true;
+
+  // 2. Hash comparison
+  const inputHash = await hashPassword(inputPassword);
+  return inputHash.toLowerCase() === storedCredential.toLowerCase();
+}
