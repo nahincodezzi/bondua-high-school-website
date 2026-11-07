@@ -379,3 +379,9 @@ section, [id] {
     color: black !important;
   }
 }
+
+/* Enhance secondary text contrast and legibility across website & portal */
+.text-muted {
+  color: var(--c-muted);
+  font-weight: 500;
+}

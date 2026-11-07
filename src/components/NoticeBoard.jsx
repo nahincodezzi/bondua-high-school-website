@@ -112,7 +112,7 @@ export default function NoticeBoard() {
           <h3 id="notice-modal-title" className="text-xl sm:text-2xl font-bold font-bangla text-white leading-tight">
             {lang === 'bn' ? activeNoticeModal.titleBn : activeNoticeModal.titleEn}
           </h3>
-          <div className="flex flex-wrap items-center gap-4 text-xs text-soft mt-2 font-mono">
+          <div className="flex flex-wrap items-center gap-4 text-xs text-white/95 mt-2 font-mono font-medium">
             <span className="flex items-center gap-1">
               <Calendar className="w-3.5 h-3.5 text-accent" />
               <span>

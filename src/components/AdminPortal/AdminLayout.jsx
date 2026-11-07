@@ -87,7 +87,7 @@ export default function AdminLayout() {
                 <h1 className="text-xs sm:text-base font-semibold font-bangla text-white leading-tight truncate">
                   {lang === 'bn' ? schoolInfo.nameBn : schoolInfo.nameEn}
                 </h1>
-                <p className="text-[10px] sm:text-[11px] text-soft hidden sm:block truncate">
+                <p className="text-[10px] sm:text-[11px] text-white/90 hidden sm:block truncate font-medium">
                   CMS & ERP Management • EIIN: {schoolInfo.eiin}
                 </p>
               </div>

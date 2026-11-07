@@ -284,13 +284,13 @@ export default function Gallery() {
                   <h3 className="text-base font-bold font-bangla text-accent">
                     {lang === 'bn' ? activeImageModal.titleBn : activeImageModal.titleEn}
                   </h3>
-                  <p className="text-xs text-muted font-bangla mt-0.5">
+                  <p className="text-xs text-white/90 font-medium font-bangla mt-0.5">
                     {activeImageModal.description}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="text-xs font-mono text-muted">{activeImageModal.date}</span>
+                  <span className="text-xs font-mono text-white/80 font-medium">{activeImageModal.date}</span>
                   <a
                     href={activeImageModal.image}
                     target="_blank"

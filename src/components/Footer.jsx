@@ -38,7 +38,7 @@ export default function Footer() {
               </div>
             </div>
 
-            <p className="text-xs text-muted font-bangla leading-relaxed">
+            <p className="text-xs text-white/95 font-medium font-bangla leading-relaxed">
               {lang === 'bn'
                 ? '১৯৯০ সাল থেকে ফেনী জেলার ফুলগাজী উপজেলার প্রত্যন্ত অঞ্চলে আদর্শ ও নৈতিকতাসম্পন্ন সুনাগরিক গড়ে তুলতে প্রতিশ্রুতিবদ্ধ এক ঐতিহ্যবাহী বিদ্যাপীঠ।'
                 : 'A dedicated secondary educational seat in Anandapur, Fulgazi, Feni inspiring young generations with knowledge and moral values since 1990.'}
@@ -63,7 +63,7 @@ export default function Footer() {
             <h4 className="text-sm font-bold text-accent uppercase tracking-wider font-mono">
               {lang === 'bn' ? 'প্রয়োজনীয় লিংক' : 'Quick Links'}
             </h4>
-            <ul className="space-y-2 text-xs font-bangla text-muted">
+            <ul className="space-y-2 text-xs font-bangla text-white/95 font-medium">
               <li>
                 <button onClick={() => handleNav('admission')} className="hover:text-accent transition text-left cursor-pointer">
                   {lang === 'bn' ? 'অনলাইন ভর্তি ২০২৬' : 'Online Admission'}
@@ -102,7 +102,7 @@ export default function Footer() {
             <h4 className="text-sm font-bold text-accent uppercase tracking-wider font-mono">
               {lang === 'bn' ? 'সরকারি গুরুত্বপূর্ণ লিংক' : 'Govt. Education Portals'}
             </h4>
-            <ul className="space-y-2 text-xs font-bangla text-muted">
+            <ul className="space-y-2 text-xs font-bangla text-white/95 font-medium">
               <li>
                 <a href="https://moedu.gov.bd" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition flex items-center gap-1.5">
                   <ExternalLink className="w-3 h-3 text-accent" />
@@ -137,7 +137,7 @@ export default function Footer() {
           </div>
 
           {/* Col 4: Contact & Location */}
-          <div className="lg:col-span-3 space-y-3 text-xs text-muted font-bangla">
+          <div className="lg:col-span-3 space-y-3 text-xs text-white/95 font-medium font-bangla">
             <h4 className="text-sm font-bold text-accent uppercase tracking-wider font-mono">
               {lang === 'bn' ? 'যোগাযোগের ঠিকানা' : 'School Address'}
             </h4>
@@ -175,17 +175,17 @@ export default function Footer() {
       </div>
 
       {/* Bottom Sub-footer */}
-      <div className="glass-capsule border-t border-white/10 py-4 px-4 sm:px-8 text-xs text-muted">
+      <div className="glass-capsule border-t border-white/10 py-4 px-4 sm:px-8 text-xs text-white/95 font-medium">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left font-bangla">
           {/* Copyright Notice */}
-          <p className="text-muted">
+          <p className="text-white/90 font-medium">
             {lang === 'bn' 
               ? `© ${CURRENT_YEAR} ${schoolInfo.nameBn} (EIIN: ${schoolInfo.eiin})। সর্বস্বত্ব সংরক্ষিত।`
               : `© ${CURRENT_YEAR} ${schoolInfo.nameEn} (EIIN: ${schoolInfo.eiin}). All rights reserved.`}
           </p>
 
           {/* Developer Credit - Designed and Developed by Md Jaker Ullah Chowdhury Nahin */}
-          <div className="font-sans text-xs text-muted flex items-center justify-center">
+          <div className="font-sans text-xs text-white/95 font-medium flex items-center justify-center">
             <span>Designed and Developed by</span>
             <a
               href="https://mdjakerullahchowdhurynahin.vercel.app"

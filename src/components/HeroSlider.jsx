@@ -97,12 +97,12 @@ export default function HeroSlider() {
                     </h2>
 
                     {/* Subtitle */}
-                    <p className="text-sm sm:text-lg text-muted font-bangla leading-relaxed max-w-xl drop-shadow-xs">
+                    <p className="text-sm sm:text-lg text-white font-medium font-bangla leading-relaxed max-w-xl drop-shadow-md">
                       {lang === 'bn' ? slide.subtitleBn : slide.subtitleEn}
                     </p>
 
                     {/* Quick Uniform Callout Tag */}
-                    <div className="inline-flex items-center gap-2 bg-black/30 border border-white/20 px-4 py-1.5 rounded-full text-xs text-soft font-bangla">
+                    <div className="inline-flex items-center gap-2 bg-black/30 border border-white/20 px-4 py-1.5 rounded-full text-xs text-white font-medium font-bangla">
                       <Shirt className="w-4 h-4 text-accent shrink-0" />
                       <span>
                         {lang === 'bn' 
@@ -145,11 +145,11 @@ export default function HeroSlider() {
                         href={schoolInfo.facebookGroupUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-white/80 hover:text-white px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 sm:gap-2"
+                        className="text-white hover:text-accent font-semibold px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 sm:gap-2"
                         title="Join Facebook Group"
                         aria-label="ফেসবুক গ্রুপে যান"
                       >
-                        <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white/80" />
+                        <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                         <span className="hidden sm:inline">{lang === 'bn' ? 'ফেসবুক গ্রুপ' : 'Facebook'}</span>
                       </a>
                     </div>

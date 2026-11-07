@@ -401,7 +401,7 @@ export default function StudentManager() {
                 <h3 className="text-base font-extrabold font-bangla text-white leading-tight">
                   {schoolInfo.nameBn}
                 </h3>
-                <p className="text-[10px] text-soft font-mono">
+                <p className="text-[10px] text-white/95 font-mono font-medium">
                   EIIN: {schoolInfo.eiin} • ফুলগাজী, ফেনী
                 </p>
                 <span className="inline-block bg-accent text-deep text-[9px] font-bold px-2 py-0.2 rounded-full uppercase mt-1">
@@ -426,7 +426,7 @@ export default function StudentManager() {
                 <p className="text-xs text-white uppercase font-mono font-bold tracking-wide">
                   {activeIdCardStudent.nameEn}
                 </p>
-                <p className="text-[11px] font-mono text-soft mt-0.5">
+                <p className="text-[11px] font-mono text-white/95 mt-0.5 font-medium">
                   ID: {activeIdCardStudent.studentId}
                 </p>
               </div>
@@ -434,19 +434,19 @@ export default function StudentManager() {
               {/* Metadata Table */}
               <div className="bg-deep/80 p-3 rounded-xl border border-primary text-left text-xs font-bangla space-y-1">
                 <div className="flex justify-between">
-                  <span className="text-soft">শ্রেণি:</span>
+                  <span className="text-white/90 font-medium">শ্রেণি:</span>
                   <span className="font-bold text-white">{activeIdCardStudent.class} শ্রেণি</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-soft">রোল নম্বর:</span>
+                  <span className="text-white/90 font-medium">রোল নম্বর:</span>
                   <span className="font-mono font-bold text-accent">{activeIdCardStudent.roll}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-soft">বিভাগ (গ্রুপ):</span>
+                  <span className="text-white/90 font-medium">বিভাগ (গ্রুপ):</span>
                   <span className="font-bold text-white">{activeIdCardStudent.group}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-soft">মোবাইল:</span>
+                  <span className="text-white/90 font-medium">মোবাইল:</span>
                   <span className="font-mono text-soft text-[11px]">{activeIdCardStudent.guardianPhone}</span>
                 </div>
               </div>
@@ -456,7 +456,7 @@ export default function StudentManager() {
                 <span className="text-soft font-mono">Session: 2026</span>
                 <div className="text-center">
                   <span className="font-serif italic text-accent font-bold text-xs block">Bahar U.</span>
-                  <span className="text-soft">ভারপ্রাপ্ত প্রধান শিক্ষক</span>
+                  <span className="text-white/90 font-medium">ভারপ্রাপ্ত প্রধান শিক্ষক</span>
                 </div>
               </div>
             </div>

@@ -183,7 +183,7 @@ export default function FacultyDirectory() {
                           : isAsstHead
                             ? 'bg-primary text-accent'
                             : isStaff
-                              ? 'bg-ink text-muted'
+                              ? 'bg-ink text-white font-medium'
                               : 'bg-deep text-white'
                       }`}>
                         {isHead && <ShieldCheck className="w-3 h-3 text-ink" />}

@@ -46,7 +46,7 @@ export default function NoticeTicker() {
           <span className="inline-flex items-center gap-1.5 shrink-0">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-danger opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-danger-soft0"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-danger"></span>
             </span>
             <span className="text-white font-bold tracking-wide text-[11px] sm:text-xs drop-shadow-xs">
               {lang === 'bn' ? 'জরুরি বিজ্ঞপ্তি' : 'Notice'}
@@ -57,7 +57,7 @@ export default function NoticeTicker() {
 
           {/* Notice Title Preview */}
           {currentNotice && (
-            <span className="text-soft group-hover:text-accent font-medium transition-colors text-[11px] sm:text-xs max-w-[180px] sm:max-w-xs md:max-w-md truncate">
+            <span className="text-white group-hover:text-accent font-medium font-medium transition-colors text-[11px] sm:text-xs max-w-[180px] sm:max-w-xs md:max-w-md truncate">
               {lang === 'bn' ? currentNotice.titleBn : currentNotice.titleEn}
             </span>
           )}

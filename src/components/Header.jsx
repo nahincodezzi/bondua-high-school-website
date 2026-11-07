@@ -225,7 +225,7 @@ export default function Header() {
               }`}>
                 {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || 'Bandua Daulatpur High School')}
               </h1>
-              <p className={`text-white/70 font-sans tracking-wide truncate transition-all duration-300 overflow-hidden ${
+              <p className={`text-white/90 font-sans tracking-wide truncate transition-all duration-300 overflow-hidden ${
                 isScrolled 
                   ? 'opacity-0 max-h-0 -translate-y-1' 
                   : 'opacity-100 max-h-4 text-[10px] sm:text-[11px] mt-0.5 translate-y-0'
@@ -288,14 +288,14 @@ export default function Header() {
                               className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition-all flex items-center justify-between font-bangla cursor-pointer focus-visible:outline-2 focus-visible:outline-accent ${
                                 isChildActive
                                   ? 'bg-white/[0.15] text-white font-bold shadow-xs'
-                                  : 'text-white/85 hover:text-white hover:bg-white/[0.08]'
+                                  : 'text-white hover:text-accent hover:bg-white/[0.08]'
                               }`}
                             >
                               <span>{lang === 'bn' ? child.labelBn : child.labelEn}</span>
                               {isChildActive ? (
                                 <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
                               ) : (
-                                <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+                                <ChevronRight className="w-3.5 h-3.5 opacity-90" />
                               )}
                             </a>
                           );
@@ -455,7 +455,7 @@ export default function Header() {
                     <h2 className="text-white font-bold text-xs font-bangla leading-tight">
                       {lang === 'bn' ? schoolInfo.nameBn : schoolInfo.nameEn}
                     </h2>
-                    <p className="text-white/60 text-[10px]">
+                    <p className="text-white/90 text-[10px] font-mono">
                       EIIN: {schoolInfo.eiin || '106644'}
                     </p>
                   </div>
@@ -515,7 +515,7 @@ export default function Header() {
                           className={`flex-1 text-left px-3.5 py-2.5 rounded-xl text-sm font-bold transition flex items-center justify-between ${
                             active 
                               ? 'bg-white/[0.14] text-white shadow-xs' 
-                              : 'text-white/85 hover:text-white hover:bg-white/[0.08]'
+                              : 'text-white hover:text-accent hover:bg-white/[0.08]'
                           }`}
                         >
                           <span className="flex items-center gap-2">
@@ -551,7 +551,7 @@ export default function Header() {
                                 className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center justify-between cursor-pointer ${
                                   isChildActive 
                                     ? 'bg-white/[0.12] text-white font-bold' 
-                                    : 'text-white/75 hover:text-white hover:bg-white/[0.06]'
+                                    : 'text-white hover:text-accent hover:bg-white/[0.06]'
                                 }`}
                               >
                                 <span>{lang === 'bn' ? child.labelBn : child.labelEn}</span>
