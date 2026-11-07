@@ -39,14 +39,14 @@ export default function NoticeTicker() {
         {/* Floating Frosted Notice Pill */}
         <div 
           onClick={() => setActiveTab('notices')}
-          className="rounded-full px-3.5 sm:px-5 py-1 sm:py-1.5 text-xs text-white shadow-xl flex items-center gap-2 sm:gap-2.5 font-bangla cursor-pointer hover:border-amber-400/50 transition-all duration-300 group border border-white/20 bg-[#14532D]"
+          className="rounded-full px-3.5 sm:px-5 py-1 sm:py-1.5 text-xs text-white shadow-xl flex items-center gap-2 sm:gap-2.5 font-bangla cursor-pointer hover:border-accent/50 transition-all duration-300 group border border-white/20 bg-deep"
           title="Click to view all notices"
         >
           {/* Pulsing Red Dot & Urgent Tag */}
           <span className="inline-flex items-center gap-1.5 shrink-0">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-danger opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-danger-soft0"></span>
             </span>
             <span className="text-white font-bold tracking-wide text-[11px] sm:text-xs drop-shadow-xs">
               {lang === 'bn' ? 'জরুরি বিজ্ঞপ্তি' : 'Notice'}
@@ -57,7 +57,7 @@ export default function NoticeTicker() {
 
           {/* Notice Title Preview */}
           {currentNotice && (
-            <span className="text-emerald-100/90 group-hover:text-amber-300 font-medium transition-colors text-[11px] sm:text-xs max-w-[180px] sm:max-w-xs md:max-w-md truncate">
+            <span className="text-soft group-hover:text-accent font-medium transition-colors text-[11px] sm:text-xs max-w-[180px] sm:max-w-xs md:max-w-md truncate">
               {lang === 'bn' ? currentNotice.titleBn : currentNotice.titleEn}
             </span>
           )}
@@ -65,7 +65,7 @@ export default function NoticeTicker() {
           <span className="text-white/40 font-mono text-[10px] hidden min-[400px]:inline">||</span>
 
           {/* View All Link Button */}
-          <span className="text-amber-400 group-hover:text-amber-300 font-bold text-[11px] sm:text-xs flex items-center gap-0.5 shrink-0 whitespace-nowrap">
+          <span className="text-accent group-hover:text-accent font-bold text-[11px] sm:text-xs flex items-center gap-0.5 shrink-0 whitespace-nowrap">
             <span>{lang === 'bn' ? 'সকল নোটিশ' : 'View All'}</span>
             <ChevronRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
           </span>

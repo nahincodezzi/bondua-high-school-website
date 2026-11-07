@@ -43,7 +43,7 @@ export default function HeroSlider() {
 
   return (
     <div 
-      className="relative bg-slate-900 text-white overflow-hidden shadow-xl no-print"
+      className="relative bg-ink text-white overflow-hidden shadow-xl no-print"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocus={() => setIsPaused(true)}
@@ -72,7 +72,7 @@ export default function HeroSlider() {
                 loading={idx === 0 ? "eager" : "lazy"}
                 className="w-full h-full object-cover object-center transform scale-105 transition-transform duration-7000 ease-out"
               />
-              <div className="absolute inset-0 bg-[#14532D]/65"></div>
+              <div className="absolute inset-0 bg-deep/65"></div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20"></div>
 
               {/* Slide Content with safe responsive padding (M1) */}
@@ -81,8 +81,8 @@ export default function HeroSlider() {
                   <div className="max-w-2xl space-y-4">
                     {/* Tag Pill & Location Indicator */}
                     <div className="flex flex-wrap items-center gap-2">
-                      <div className="inline-flex items-center gap-1.5 bg-[#DCFCE7] text-[#14532D] px-3.5 py-1 text-xs sm:text-sm font-bold shadow-xs rounded-full font-bangla border border-emerald-300">
-                        <Sparkles className="w-4 h-4 text-[#166534]" />
+                      <div className="inline-flex items-center gap-1.5 bg-soft text-deep px-3.5 py-1 text-xs sm:text-sm font-bold shadow-xs rounded-full font-bangla border border-soft-border">
+                        <Sparkles className="w-4 h-4 text-primary" />
                         <span>{lang === 'bn' ? slide.tagBn : slide.tagEn}</span>
                       </div>
 
@@ -97,13 +97,13 @@ export default function HeroSlider() {
                     </h2>
 
                     {/* Subtitle */}
-                    <p className="text-sm sm:text-lg text-slate-100 font-bangla leading-relaxed max-w-xl drop-shadow-xs">
+                    <p className="text-sm sm:text-lg text-muted font-bangla leading-relaxed max-w-xl drop-shadow-xs">
                       {lang === 'bn' ? slide.subtitleBn : slide.subtitleEn}
                     </p>
 
                     {/* Quick Uniform Callout Tag */}
-                    <div className="inline-flex items-center gap-2 bg-black/30 border border-white/20 px-4 py-1.5 rounded-full text-xs text-emerald-100 font-bangla">
-                      <Shirt className="w-4 h-4 text-[#F59E0B] shrink-0" />
+                    <div className="inline-flex items-center gap-2 bg-black/30 border border-white/20 px-4 py-1.5 rounded-full text-xs text-soft font-bangla">
+                      <Shirt className="w-4 h-4 text-accent shrink-0" />
                       <span>
                         {lang === 'bn' 
                           ? 'নির্ধারিত স্কুল পোশাক: ছাত্র—সাদা শার্ট ও নীল প্যান্ট | ছাত্রী—লাল ড্রেস'
@@ -118,7 +118,7 @@ export default function HeroSlider() {
                         onClick={() => setActiveTab('admission')}
                         className="btn-accent px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-base flex items-center gap-1.5 sm:gap-2 font-bangla shadow-md cursor-pointer rounded-lg"
                       >
-                        <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-[#1F2937]" />
+                        <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-ink" />
                         <span>{lang === 'bn' ? 'অনলাইন ভর্তি আবেদন ২০২৭' : 'Apply for Admission'}</span>
                       </button>
 
@@ -134,7 +134,7 @@ export default function HeroSlider() {
                       <button
                         tabIndex={isActive ? 0 : -1}
                         onClick={() => setActiveTab('uniform')}
-                        className="text-white hover:text-[#DCFCE7] px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer"
+                        className="text-white hover:text-primary px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer"
                       >
                         <Shirt className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         <span>{lang === 'bn' ? 'পোশাক নীতিমালা' : 'Dress Code'}</span>
@@ -186,7 +186,7 @@ export default function HeroSlider() {
               key={idx}
               onClick={() => setCurrentSlide(idx)}
               className={`transition-all duration-300 rounded-full cursor-pointer ${
-                idx === currentSlide ? 'w-6 h-2 bg-[#F59E0B]' : 'w-2 h-2 bg-white/50 hover:bg-white'
+                idx === currentSlide ? 'w-6 h-2 bg-accent' : 'w-2 h-2 bg-white/50 hover:bg-white'
               }`}
               aria-label={`Go to slide ${idx + 1}`}
             />
@@ -199,34 +199,34 @@ export default function HeroSlider() {
           aria-label={isPaused ? 'Resume slider' : 'Pause slider'}
           title={isPaused ? 'Resume slider' : 'Pause slider'}
         >
-          {isPaused ? <Play className="w-3 h-3 text-[#F59E0B]" /> : <Pause className="w-3 h-3 text-white" />}
+          {isPaused ? <Play className="w-3 h-3 text-accent" /> : <Pause className="w-3 h-3 text-white" />}
         </button>
       </div>
 
       {/* Stat Bar Bottom Ribbon: Flat Solid Dark Green, Consistent Numerals */}
-      <div className="relative z-20 bg-[#14532D] border-t border-[#166534] py-4 px-4 sm:px-8 shadow-xs">
+      <div className="relative z-20 bg-deep border-t border-primary py-4 px-4 sm:px-8 shadow-xs">
         <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-          <div className="border-r border-[#166534] last:border-none px-2">
+          <div className="border-r border-primary last:border-none px-2">
             <p className="text-2xl sm:text-3xl font-extrabold text-white">
               {lang === 'bn' ? '১৯৯০' : '1990'}
             </p>
-            <p className="text-xs sm:text-sm text-[#DCFCE7] font-bangla mt-0.5">
+            <p className="text-xs sm:text-sm text-primary font-bangla mt-0.5">
               {lang === 'bn' ? 'স্থাপিত শিক্ষাবর্ষ (স্বীকৃতি: ১৯৯৪)' : 'Established Year'}
             </p>
           </div>
-          <div className="border-r border-[#166534] last:border-none px-2">
+          <div className="border-r border-primary last:border-none px-2">
             <p className="text-2xl sm:text-3xl font-extrabold text-white">
               {lang === 'bn' ? '৮৫০+' : '850+'}
             </p>
-            <p className="text-xs sm:text-sm text-[#DCFCE7] font-bangla mt-0.5">
+            <p className="text-xs sm:text-sm text-primary font-bangla mt-0.5">
               {lang === 'bn' ? 'বর্তমান শিক্ষার্থী' : 'Enrolled Students'}
             </p>
           </div>
-          <div className="border-r border-[#166534] last:border-none px-2">
+          <div className="border-r border-primary last:border-none px-2">
             <p className="text-2xl sm:text-3xl font-extrabold text-white">
               {lang === 'bn' ? '৯৮.৫%' : '98.5%'}
             </p>
-            <p className="text-xs sm:text-sm text-[#DCFCE7] font-bangla mt-0.5">
+            <p className="text-xs sm:text-sm text-primary font-bangla mt-0.5">
               {lang === 'bn' ? 'এসএসসি পাশের হার' : 'SSC Board Pass Rate'}
             </p>
           </div>
@@ -234,7 +234,7 @@ export default function HeroSlider() {
             <p className="text-2xl sm:text-3xl font-extrabold text-white">
               {lang === 'bn' ? '৩টি বিভাগ' : '3 Groups'}
             </p>
-            <p className="text-xs sm:text-sm text-[#DCFCE7] font-bangla mt-0.5">
+            <p className="text-xs sm:text-sm text-primary font-bangla mt-0.5">
               {lang === 'bn' ? 'বিজ্ঞান, ব্যবসায় ও মানবিক' : 'Science, Business & Humanities'}
             </p>
           </div>

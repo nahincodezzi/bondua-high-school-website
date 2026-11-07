@@ -130,26 +130,26 @@ export default function ResultManager() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl sm:text-2xl font-bold font-bangla text-[#1F2937]">
+        <h2 className="text-xl sm:text-2xl font-bold font-bangla text-ink">
           ফলাফল ও নম্বর প্রদান ব্যবস্থাপনা (Marks Entry & Result Publishing)
         </h2>
-        <p className="text-xs text-[#4B5563] font-bangla">
+        <p className="text-xs text-muted font-bangla">
           পরীক্ষার নম্বর ইনপুট দিন; জিপিএ এবং লেটার গ্রেড স্বয়ংক্রিয়ভাবে হিসাব হয়ে পাবলিক পোর্টালে যুক্ত হবে
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Entry Form */}
-        <div className="lg:col-span-7 card-base bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-xs space-y-4">
+        <div className="lg:col-span-7 card-base bg-white p-6 rounded-2xl border border-line shadow-xs space-y-4">
           <form onSubmit={handlePublish} className="space-y-4 text-xs font-bangla">
             {/* Unified Exam List (A14) */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">পরীক্ষার নাম</label>
+                <label className="block font-bold text-ink mb-1">পরীক্ষার নাম</label>
                 <select
                   value={examName}
                   onChange={(e) => setExamName(e.target.value)}
-                  className="w-full rounded-lg border border-[#D1D5DB] p-2.5 bg-[#F7F9F8] text-[#1F2937] focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                  className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
                 >
                   <option value="SSC Test Examination 2026">এসএসসি টেস্ট পরীক্ষা ২০২৬</option>
                   <option value="Annual Examination 2025">বার্ষিক পরীক্ষা ২০২৫</option>
@@ -159,14 +159,14 @@ export default function ResultManager() {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">শ্রেণি</label>
+                <label className="block font-bold text-ink mb-1">শ্রেণি</label>
                 <select
                   value={selectedClass}
                   onChange={(e) => {
                     setSelectedClass(e.target.value);
                     setFormError('');
                   }}
-                  className="w-full rounded-lg border border-[#D1D5DB] p-2.5 bg-[#F7F9F8] text-[#1F2937] focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                  className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
                 >
                   <option value="10">১০ম শ্রেণি</option>
                   <option value="9">৯ম শ্রেণি</option>
@@ -177,7 +177,7 @@ export default function ResultManager() {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">শিক্ষার্থীর রোল *</label>
+                <label className="block font-bold text-ink mb-1">শিক্ষার্থীর রোল *</label>
                 <input
                   type="text"
                   required
@@ -186,7 +186,7 @@ export default function ResultManager() {
                     setSelectedStudentRoll(e.target.value);
                     setFormError('');
                   }}
-                  className="w-full rounded-lg border border-[#D1D5DB] p-2.5 font-mono font-bold bg-[#F7F9F8] text-[#1F2937] focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                  className="w-full rounded-lg border border-line p-2.5 font-mono font-bold bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
                   placeholder="যেমন: 101"
                 />
               </div>
@@ -194,15 +194,15 @@ export default function ResultManager() {
 
             {/* Live Student Match Confirmation Pill */}
             {activeStudent ? (
-              <div className="p-3 bg-[#DCFCE7] text-[#14532D] rounded-xl text-xs flex items-center justify-between border border-emerald-300">
+              <div className="p-3 bg-soft text-deep rounded-xl text-xs flex items-center justify-between border border-soft-border">
                 <div className="flex items-center gap-2">
-                  <UserCheck className="w-4 h-4 text-[#166534]" />
+                  <UserCheck className="w-4 h-4 text-primary" />
                   <span className="font-bold">শিক্ষার্থী: {activeStudent.nameBn} ({activeStudent.studentId})</span>
                 </div>
-                <span className="font-semibold text-[11px] text-[#166534]">শাখা {activeStudent.section} • বিভাগ {activeStudent.group}</span>
+                <span className="font-semibold text-[11px] text-primary">শাখা {activeStudent.section} • বিভাগ {activeStudent.group}</span>
               </div>
             ) : selectedStudentRoll ? (
-              <div className="p-2.5 bg-[#FEE2E2] text-[#DC2626] rounded-xl text-xs flex items-center gap-1.5 border border-red-200">
+              <div className="p-2.5 bg-danger-soft text-danger rounded-xl text-xs flex items-center gap-1.5 border border-danger-soft">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>শ্রেণি {selectedClass}-এ এই রোলের কোনো শিক্ষার্থী পাওয়া যায়নি।</span>
               </div>
@@ -210,15 +210,15 @@ export default function ResultManager() {
 
             {/* Subject Marks Table Inputs (0-100, ICT 0-50) */}
             <div>
-              <span className="font-bold text-slate-700 block mb-2">বিষয়ভিত্তিক প্রাপ্ত নম্বর (পূর্ণমান ১০০, আইসিটি ৫০):</span>
+              <span className="font-bold text-ink block mb-2">বিষয়ভিত্তিক প্রাপ্ত নম্বর (পূর্ণমান ১০০, আইসিটি ৫০):</span>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {Object.keys(marks).map((sub) => {
                   const maxMark = sub === 'ICT' ? 50 : 100;
                   return (
-                    <div key={sub} className="bg-[#F7F9F8] p-2.5 rounded-xl border border-[#E5E7EB]">
+                    <div key={sub} className="bg-bg p-2.5 rounded-xl border border-line">
                       <div className="flex justify-between items-center mb-1">
-                        <label className="block font-bold text-[#1F2937] text-[11px]">{sub}</label>
-                        <span className="text-[10px] text-[#4B5563]">/{maxMark}</span>
+                        <label className="block font-bold text-ink text-[11px]">{sub}</label>
+                        <span className="text-[10px] text-muted">/{maxMark}</span>
                       </div>
                       <input
                         type="number"
@@ -228,7 +228,7 @@ export default function ResultManager() {
                         placeholder="0"
                         value={marks[sub]}
                         onChange={(e) => handleMarkChange(sub, e.target.value)}
-                        className="w-full rounded-lg border border-[#D1D5DB] p-2 font-mono text-xs font-bold text-[#1F2937] bg-white focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                        className="w-full rounded-lg border border-line p-2 font-mono text-xs font-bold text-ink bg-white focus:ring-2 focus:ring-primary focus:outline-none"
                       />
                     </div>
                   );
@@ -238,7 +238,7 @@ export default function ResultManager() {
 
             {/* Error Message Alert */}
             {formError && (
-              <div className="p-3 bg-[#FEE2E2] text-[#DC2626] rounded-xl text-xs font-medium flex items-center gap-2 border border-red-200">
+              <div className="p-3 bg-danger-soft text-danger rounded-xl text-xs font-medium flex items-center gap-2 border border-danger-soft">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{formError}</span>
               </div>
@@ -246,8 +246,8 @@ export default function ResultManager() {
 
             {/* Success Message Alert */}
             {savedSuccess && (
-              <div className="p-3 bg-[#DCFCE7] text-[#14532D] rounded-xl text-xs font-semibold flex items-center gap-2 border border-emerald-300">
-                <CheckCircle className="w-4 h-4 text-[#166534]" />
+              <div className="p-3 bg-soft text-deep rounded-xl text-xs font-semibold flex items-center gap-2 border border-soft-border">
+                <CheckCircle className="w-4 h-4 text-primary" />
                 <span>ফলাফল সফলভাবে প্রকাশিত ও সংরক্ষিত হয়েছে! শিক্ষার্থী অনলাইনে তা দেখতে পারবে।</span>
               </div>
             )}
@@ -263,23 +263,23 @@ export default function ResultManager() {
         </div>
 
         {/* Existing Results List */}
-        <div className="lg:col-span-5 card-base bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-xs space-y-3 font-bangla">
-          <h3 className="font-bold text-[#1F2937] text-sm pb-2 border-b border-[#E5E7EB]">
+        <div className="lg:col-span-5 card-base bg-white p-6 rounded-2xl border border-line shadow-xs space-y-3 font-bangla">
+          <h3 className="font-bold text-ink text-sm pb-2 border-b border-line">
             প্রকাশিত ফলাফল তালিকা ({lang === 'bn' ? toBanglaNumerals(results.length) : results.length} জন)
           </h3>
 
           <div className="space-y-2 max-h-[440px] overflow-y-auto">
             {results.map((r, i) => (
-              <div key={i} className="p-3 bg-[#F7F9F8] rounded-xl border border-[#E5E7EB] text-xs flex items-center justify-between">
+              <div key={i} className="p-3 bg-bg rounded-xl border border-line text-xs flex items-center justify-between">
                 <div>
-                  <span className="font-bold text-[#1F2937] block">{r.studentNameBn}</span>
-                  <span className="text-[11px] text-[#4B5563] font-mono">
+                  <span className="font-bold text-ink block">{r.studentNameBn}</span>
+                  <span className="text-[11px] text-muted font-mono">
                     Roll: {r.roll} • Class: {r.class} ({r.exam})
                   </span>
                 </div>
                 <div className="text-right">
-                  <span className="font-mono font-bold text-[#166534] text-sm block">GPA {r.gpa}</span>
-                  <span className="text-[10px] font-semibold text-[#15803D]">Grade: {r.letterGrade}</span>
+                  <span className="font-mono font-bold text-primary text-sm block">GPA {r.gpa}</span>
+                  <span className="text-[10px] font-semibold text-success">Grade: {r.letterGrade}</span>
                 </div>
               </div>
             ))}

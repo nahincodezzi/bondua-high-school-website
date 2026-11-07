@@ -88,9 +88,9 @@ export default function AuthModal() {
         aria-hidden="true" 
       />
 
-      <div className="bg-white max-w-lg w-full rounded-2xl shadow-2xl overflow-hidden border border-[#E5E7EB] animate-in zoom-in-95 duration-200">
+      <div className="bg-white max-w-lg w-full rounded-2xl shadow-2xl overflow-hidden border border-line animate-in zoom-in-95 duration-200">
         {/* Top Header */}
-        <div className="bg-[#14532D] text-white p-6 relative border-b border-[#166534]">
+        <div className="bg-deep text-white p-6 relative border-b border-primary">
           <button
             onClick={() => setAuthModalOpen(false)}
             className="absolute top-5 right-5 p-1.5 rounded-full hover:bg-white/10 text-white/80 hover:text-white transition cursor-pointer"
@@ -99,15 +99,15 @@ export default function AuthModal() {
             <X className="w-5 h-5" />
           </button>
 
-          <div className="flex items-center gap-2 text-[#F59E0B] text-xs font-bold uppercase tracking-wider mb-1 font-mono">
-            <Key className="w-4 h-4 text-[#F59E0B]" />
+          <div className="flex items-center gap-2 text-accent text-xs font-bold uppercase tracking-wider mb-1 font-mono">
+            <Key className="w-4 h-4 text-accent" />
             <span>{lang === 'bn' ? 'সফটওয়্যার লগইন ও এক্সেস কন্ট্রোল' : 'Secure Portal Access'}</span>
           </div>
 
           <h3 id="auth-modal-title" className="text-xl font-bold font-bangla text-white">
             {lang === 'bn' ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়' : 'Bandua Daulatpur High School'}
           </h3>
-          <p className="text-xs text-emerald-100 font-mono mt-0.5">
+          <p className="text-xs text-soft font-mono mt-0.5">
             EIIN: 106644 • Management ERP & CMS System
           </p>
         </div>
@@ -116,8 +116,8 @@ export default function AuthModal() {
         <div className="p-6 sm:p-7 space-y-5 bg-white">
           {/* Error Alert */}
           {errorMsg && (
-            <div className="p-3.5 bg-[#FEE2E2] border border-red-200 text-[#DC2626] text-xs rounded-xl flex items-center gap-2 font-bangla">
-              <AlertCircle className="w-4 h-4 shrink-0 text-[#DC2626]" />
+            <div className="p-3.5 bg-danger-soft border border-danger-soft text-danger text-xs rounded-xl flex items-center gap-2 font-bangla">
+              <AlertCircle className="w-4 h-4 shrink-0 text-danger" />
               <span className="font-medium">{errorMsg}</span>
             </div>
           )}
@@ -125,11 +125,11 @@ export default function AuthModal() {
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-4 text-xs font-bangla">
             <div>
-              <label htmlFor="auth-username" className="block font-bold text-[#1F2937] mb-1.5">
+              <label htmlFor="auth-username" className="block font-bold text-ink mb-1.5">
                 {lang === 'bn' ? 'ব্যবহারকারীর নাম / ইউজার আইডি (Username)' : 'Username / User ID'}
               </label>
               <div className="relative">
-                <User className="w-4 h-4 text-[#166534] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <User className="w-4 h-4 text-primary absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   id="auth-username"
                   name="username"
@@ -139,17 +139,17 @@ export default function AuthModal() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder={lang === 'bn' ? 'ইউজারনেম লিখুন' : 'Enter username'}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#D1D5DB] bg-[#F7F9F8] text-[#1F2937] font-mono text-xs font-semibold focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-line bg-bg text-ink font-mono text-xs font-semibold focus:ring-2 focus:ring-primary focus:outline-none"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="auth-password" className="block font-bold text-[#1F2937] mb-1.5">
+              <label htmlFor="auth-password" className="block font-bold text-ink mb-1.5">
                 {lang === 'bn' ? 'গোপন পাসওয়ার্ড (Password)' : 'Password'}
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-[#166534] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Lock className="w-4 h-4 text-primary absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   id="auth-password"
                   name="password"
@@ -159,12 +159,12 @@ export default function AuthModal() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={lang === 'bn' ? 'পাসওয়ার্ড লিখুন' : 'Enter password'}
-                  className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-[#D1D5DB] bg-[#F7F9F8] text-[#1F2937] font-mono text-xs font-semibold focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                  className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-line bg-bg text-ink font-mono text-xs font-semibold focus:ring-2 focus:ring-primary focus:outline-none"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-muted cursor-pointer"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -176,76 +176,76 @@ export default function AuthModal() {
               type="submit"
               className="w-full btn-accent py-3 rounded-lg text-xs font-bold shadow-md flex items-center justify-center gap-2 cursor-pointer mt-2"
             >
-              <LogIn className="w-4 h-4 text-[#1F2937]" />
+              <LogIn className="w-4 h-4 text-ink" />
               <span>{lang === 'bn' ? 'সফটওয়্যার ড্যাশবোর্ডে প্রবেশ করুন' : 'Sign In to Portal'}</span>
             </button>
           </form>
 
           {/* Development Environment Quick-Fill Helper (Only shown in DEV mode) */}
           {import.meta.env.DEV && (
-            <div className="pt-4 border-t border-[#E5E7EB]">
-              <span className="text-[11px] font-bold text-[#4B5563] block mb-2 font-bangla">
+            <div className="pt-4 border-t border-line">
+              <span className="text-[11px] font-bold text-muted block mb-2 font-bangla">
                 🛠️ ডেভেলপার টেস্টিং টুল (লোকাল ডেভ মোডে সক্রিয়):
               </span>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs font-bangla">
                 <button
                   type="button"
                   onClick={() => handleDevLogin('superadmin', 'superadmin', 'admin2026')}
-                  className="bg-[#F7F9F8] hover:bg-[#DCFCE7]/40 hover:border-[#166534] p-2.5 rounded-xl text-left transition border border-[#E5E7EB] cursor-pointer"
+                  className="bg-bg hover:bg-soft/40 hover:border-primary p-2.5 rounded-xl text-left transition border border-line cursor-pointer"
                 >
-                  <div className="font-bold text-[#1F2937] flex items-center gap-1.5">
-                    <Shield className="w-3.5 h-3.5 text-[#166534]" />
+                  <div className="font-bold text-ink flex items-center gap-1.5">
+                    <Shield className="w-3.5 h-3.5 text-primary" />
                     <span>সুপার অ্যাডমিন</span>
                   </div>
-                  <div className="text-[10px] text-[#166534] font-mono mt-0.5">superadmin</div>
+                  <div className="text-[10px] text-primary font-mono mt-0.5">superadmin</div>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleDevLogin('headmaster', 'headmaster', 'headmaster2026')}
-                  className="bg-[#F7F9F8] hover:bg-[#DCFCE7]/40 hover:border-[#166534] p-2.5 rounded-xl text-left transition border border-[#E5E7EB] cursor-pointer"
+                  className="bg-bg hover:bg-soft/40 hover:border-primary p-2.5 rounded-xl text-left transition border border-line cursor-pointer"
                 >
-                  <div className="font-bold text-[#1F2937] flex items-center gap-1.5">
-                    <GraduationCap className="w-3.5 h-3.5 text-[#166534]" />
+                  <div className="font-bold text-ink flex items-center gap-1.5">
+                    <GraduationCap className="w-3.5 h-3.5 text-primary" />
                     <span>প্রধান শিক্ষক</span>
                   </div>
-                  <div className="text-[10px] text-[#166534] font-mono mt-0.5">headmaster</div>
+                  <div className="text-[10px] text-primary font-mono mt-0.5">headmaster</div>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleDevLogin('asst_headmaster', 'asst_headmaster', 'assthead2026')}
-                  className="bg-[#F7F9F8] hover:bg-[#DCFCE7]/40 hover:border-[#166534] p-2.5 rounded-xl text-left transition border border-[#E5E7EB] cursor-pointer"
+                  className="bg-bg hover:bg-soft/40 hover:border-primary p-2.5 rounded-xl text-left transition border border-line cursor-pointer"
                 >
-                  <div className="font-bold text-[#1F2937] flex items-center gap-1.5">
-                    <GraduationCap className="w-3.5 h-3.5 text-[#166534]" />
+                  <div className="font-bold text-ink flex items-center gap-1.5">
+                    <GraduationCap className="w-3.5 h-3.5 text-primary" />
                     <span>সহ প্রধান শিক্ষক</span>
                   </div>
-                  <div className="text-[10px] text-[#166534] font-mono mt-0.5">asst_headmaster</div>
+                  <div className="text-[10px] text-primary font-mono mt-0.5">asst_headmaster</div>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleDevLogin('teacher', 'teacher', 'teacher2026')}
-                  className="bg-[#F7F9F8] hover:bg-[#DCFCE7]/40 hover:border-[#166534] p-2.5 rounded-xl text-left transition border border-[#E5E7EB] cursor-pointer"
+                  className="bg-bg hover:bg-soft/40 hover:border-primary p-2.5 rounded-xl text-left transition border border-line cursor-pointer"
                 >
-                  <div className="font-bold text-[#1F2937] flex items-center gap-1.5">
-                    <BookOpen className="w-3.5 h-3.5 text-[#166534]" />
+                  <div className="font-bold text-ink flex items-center gap-1.5">
+                    <BookOpen className="w-3.5 h-3.5 text-primary" />
                     <span>সহকারী শিক্ষক</span>
                   </div>
-                  <div className="text-[10px] text-[#166534] font-mono mt-0.5">teacher</div>
+                  <div className="text-[10px] text-primary font-mono mt-0.5">teacher</div>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleDevLogin('operator', 'office_assistant', 'office2026')}
-                  className="bg-[#F7F9F8] hover:bg-[#DCFCE7]/40 hover:border-[#166534] p-2.5 rounded-xl text-left transition border border-[#E5E7EB] cursor-pointer col-span-2 sm:col-span-1"
+                  className="bg-bg hover:bg-soft/40 hover:border-primary p-2.5 rounded-xl text-left transition border border-line cursor-pointer col-span-2 sm:col-span-1"
                 >
-                  <div className="font-bold text-[#1F2937] flex items-center gap-1.5">
-                    <Building2 className="w-3.5 h-3.5 text-[#166534]" />
+                  <div className="font-bold text-ink flex items-center gap-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-primary" />
                     <span>অফিস সহকারী</span>
                   </div>
-                  <div className="text-[10px] text-[#166534] font-mono mt-0.5">office_assistant</div>
+                  <div className="text-[10px] text-primary font-mono mt-0.5">office_assistant</div>
                 </button>
               </div>
             </div>

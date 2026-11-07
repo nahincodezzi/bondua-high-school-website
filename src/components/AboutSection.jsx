@@ -12,18 +12,18 @@ export default function AboutSection() {
   const { lang, schoolInfo, setActiveTab } = useSchool();
 
   return (
-    <section className="py-12 sm:py-16 text-slate-800 relative z-10 font-sans min-h-[700px]">
+    <section className="py-12 sm:py-16 text-ink relative z-10 font-sans min-h-[700px]">
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-1.5 bg-emerald-100/80 text-emerald-900 text-xs font-bold px-4 py-1.5 rounded-full mb-3 shadow-xs border border-emerald-200">
-            <History className="w-3.5 h-3.5 text-emerald-700" />
+          <div className="inline-flex items-center gap-1.5 bg-soft text-deep text-xs font-bold px-4 py-1.5 rounded-full mb-3 shadow-xs border border-soft-border">
+            <History className="w-3.5 h-3.5 text-primary" />
             <span>{lang === 'bn' ? 'আমাদের ইতিহাস ও ঐতিহ্য' : 'Heritage & History'}</span>
           </div>
-          <h2 className="text-2xl sm:text-4xl font-extrabold font-bangla text-slate-900 leading-tight">
+          <h2 className="text-2xl sm:text-4xl font-extrabold font-bangla text-ink leading-tight">
             {lang === 'bn' ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় পরিচিতি' : 'About Bandua Daulatpur High School'}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 font-bangla mt-2">
+          <p className="text-xs sm:text-sm text-muted font-bangla mt-2">
             {lang === 'bn' 
               ? '১৯৯০ সাল থেকে ফেনী জেলার ফুলগাজীতে গুণগত শিক্ষার আলোকবর্তিকা'
               : 'Serving with dedication in Anandapur, Fulgazi, Feni since January 8, 1990.'}
@@ -31,11 +31,11 @@ export default function AboutSection() {
         </div>
 
         {/* Story & Background Card */}
-        <div className="glass-card rounded-3xl p-6 sm:p-10 lg:p-12 border border-slate-200 shadow-md mb-12">
+        <div className="glass-card rounded-3xl p-6 sm:p-10 lg:p-12 border border-line shadow-md mb-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            <div className="lg:col-span-7 space-y-4 text-slate-700 font-bangla leading-relaxed text-sm sm:text-base">
-              <h3 className="text-xl sm:text-3xl font-extrabold text-slate-900 flex items-center gap-2">
-                <span className="text-amber-500">❖</span>
+            <div className="lg:col-span-7 space-y-4 text-ink font-bangla leading-relaxed text-sm sm:text-base">
+              <h3 className="text-xl sm:text-3xl font-extrabold text-ink flex items-center gap-2">
+                <span className="text-accent">❖</span>
                 <span>{lang === 'bn' ? 'একটি আদর্শ শিক্ষাপ্রতিষ্ঠানের সৃষ্টি ও অভিযাত্রা' : 'Origins and Noble Journey'}</span>
               </h3>
 
@@ -52,33 +52,33 @@ export default function AboutSection() {
               </p>
 
               <div className="pt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-semibold">
-                <div className="flex items-center gap-2.5 bg-slate-50 p-3 rounded-xl border border-slate-200 text-slate-800">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <div className="flex items-center gap-2.5 bg-bg p-3 rounded-xl border border-line text-ink">
+                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
                   <span>{lang === 'bn' ? 'প্রতিষ্ঠাকাল: ৮ জানুয়ারি, ১৯৯০' : 'Founded: January 8, 1990'}</span>
                 </div>
-                <div className="flex items-center gap-2.5 bg-slate-50 p-3 rounded-xl border border-slate-200 text-slate-800">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <div className="flex items-center gap-2.5 bg-bg p-3 rounded-xl border border-line text-ink">
+                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
                   <span>{lang === 'bn' ? 'EIIN কোড: ১০৬৬৪৪' : 'EIIN Code: 106644'}</span>
                 </div>
-                <div className="flex items-center gap-2.5 bg-slate-50 p-3 rounded-xl border border-slate-200 text-slate-800">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <div className="flex items-center gap-2.5 bg-bg p-3 rounded-xl border border-line text-ink">
+                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
                   <span>{lang === 'bn' ? 'এমপিও কোড: ১০৫৪৭৬৩০১' : 'MPO Code: 105476301'}</span>
                 </div>
-                <div className="flex items-center gap-2.5 bg-slate-50 p-3 rounded-xl border border-slate-200 text-slate-800">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <div className="flex items-center gap-2.5 bg-bg p-3 rounded-xl border border-line text-ink">
+                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
                   <span>{lang === 'bn' ? 'শিক্ষা বোর্ড: কুমিল্লা শিক্ষাবোর্ড' : 'Education Board: Comilla Board'}</span>
                 </div>
               </div>
             </div>
 
             <div className="lg:col-span-5">
-              <div className="relative rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-slate-100 group">
+              <div className="relative rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-bg group">
                 <img
                   src={schoolInfo.campusImage || "https://images.unsplash.com/photo-1562774053-701939374585?w=800&auto=format&fit=crop&q=80"}
                   alt="School Campus"
                   className="w-full h-80 sm:h-96 object-cover group-hover:scale-105 transition duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/85 via-transparent to-transparent flex items-end p-6">
+                <div className="absolute inset-0 bg-gradient-to-t from-deep/85 via-transparent to-transparent flex items-end p-6">
                   <div className="text-white">
                     <span className="btn-gold text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase inline-block mb-1 shadow-sm">Campus View</span>
                     <h4 className="text-lg font-bold font-bangla text-white drop-shadow-sm">
@@ -93,42 +93,42 @@ export default function AboutSection() {
 
         {/* Mission & Vision Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="glass-card glass-card-hover p-6 sm:p-8 rounded-3xl border border-slate-200 space-y-4 shadow-sm">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-900 text-amber-400 flex items-center justify-center font-bold shadow-sm">
+          <div className="glass-card glass-card-hover p-6 sm:p-8 rounded-3xl border border-line space-y-4 shadow-sm">
+            <div className="w-12 h-12 rounded-2xl bg-deep text-accent flex items-center justify-center font-bold shadow-sm">
               <Target className="w-6 h-6" />
             </div>
-            <h3 className="text-xl font-bold font-bangla text-slate-900">
+            <h3 className="text-xl font-bold font-bangla text-ink">
               {lang === 'bn' ? 'আমাদের লক্ষ্য (Mission)' : 'Our Mission'}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-600 font-bangla leading-relaxed">
+            <p className="text-xs sm:text-sm text-muted font-bangla leading-relaxed">
               {lang === 'bn'
                 ? (schoolInfo.missionBn || 'মানসম্মত শিক্ষা, নৈতিক মূল্যবোধ ও ডিজিটাল প্রযুক্তির সমন্বয়ে প্রতিটি শিক্ষার্থীকে আধুনিক বিজ্ঞানমনস্ক, দেশপ্রেমিক ও দক্ষ মানবসম্পদ হিসেবে গড়ে তোলা।')
                 : (schoolInfo.missionEn || 'To deliver quality secondary education emphasizing moral character, scientific literacy, and 21st-century technological proficiency.')}
             </p>
           </div>
 
-          <div className="glass-card glass-card-hover p-6 sm:p-8 rounded-3xl border border-slate-200 space-y-4 shadow-sm">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-800 text-white flex items-center justify-center font-bold shadow-sm">
+          <div className="glass-card glass-card-hover p-6 sm:p-8 rounded-3xl border border-line space-y-4 shadow-sm">
+            <div className="w-12 h-12 rounded-2xl bg-primary text-white flex items-center justify-center font-bold shadow-sm">
               <Eye className="w-6 h-6" />
             </div>
-            <h3 className="text-xl font-bold font-bangla text-slate-900">
+            <h3 className="text-xl font-bold font-bangla text-ink">
               {lang === 'bn' ? 'আমাদের রূপকল্প (Vision)' : 'Our Vision'}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-600 font-bangla leading-relaxed">
+            <p className="text-xs sm:text-sm text-muted font-bangla leading-relaxed">
               {lang === 'bn'
                 ? (schoolInfo.visionBn || 'একটি বৈষম্যহীন, আধুনিক প্রযুক্তি-নির্ভর ও আদর্শ বিদ্যাপীঠ হিসেবে কুমিল্লা শিক্ষা বোর্ডের অন্যতম শ্রেষ্ঠ ও মডেল বিদ্যালয়ে রূপান্তরিত হওয়া।')
                 : (schoolInfo.visionEn || 'To emerge as one of the premier model institutions under the Comilla Education Board, fostering discrimination-free, technology-driven, and holistic moral education.')}
             </p>
           </div>
 
-          <div className="glass-card glass-card-hover p-6 sm:p-8 rounded-3xl border border-amber-300/80 space-y-4 shadow-sm bg-gradient-to-br from-amber-50/40 via-white to-white">
-            <div className="w-12 h-12 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center font-bold shadow-sm">
+          <div className="glass-card glass-card-hover p-6 sm:p-8 rounded-3xl border border-accent space-y-4 shadow-sm bg-gradient-to-br from-soft/40 via-white to-white">
+            <div className="w-12 h-12 rounded-2xl bg-accent text-ink flex items-center justify-center font-bold shadow-sm">
               <Compass className="w-6 h-6" />
             </div>
-            <h3 className="text-xl font-bold font-bangla text-slate-900">
+            <h3 className="text-xl font-bold font-bangla text-ink">
               {lang === 'bn' ? 'মূল আদর্শ (Core Values)' : 'Core Values'}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-600 font-bangla leading-relaxed">
+            <p className="text-xs sm:text-sm text-muted font-bangla leading-relaxed">
               {lang === 'bn'
                 ? (schoolInfo.coreValuesBn || 'শৃঙ্খলা, সততা, সহমর্মিতা, বিজ্ঞানচেতনা এবং মাতৃভূমির সার্বিক উন্নয়নে অবদান রাখার চিরন্তন ব্রত।')
                 : (schoolInfo.coreValuesEn || 'Discipline, integrity, empathy, inquiry-based learning, and selfless service to the nation.')}
@@ -137,16 +137,16 @@ export default function AboutSection() {
         </div>
 
         {/* Chairman & Committee Info */}
-        <div className="glass-card p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm">
+        <div className="glass-card p-6 sm:p-8 rounded-3xl border border-line shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div>
-              <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider block mb-1 font-mono">
+              <span className="text-xs font-bold text-primary uppercase tracking-wider block mb-1 font-mono">
                 {lang === 'bn' ? schoolInfo.chairmanDesignationBn : schoolInfo.chairmanDesignationEn}
               </span>
-              <h3 className="text-xl sm:text-2xl font-bold font-bangla text-slate-900">
+              <h3 className="text-xl sm:text-2xl font-bold font-bangla text-ink">
                 {lang === 'bn' ? schoolInfo.chairmanNameBn : schoolInfo.chairmanNameEn}
               </h3>
-              <p className="text-xs sm:text-sm text-slate-600 font-bangla mt-2 leading-relaxed">
+              <p className="text-xs sm:text-sm text-muted font-bangla mt-2 leading-relaxed">
                 {lang === 'bn' ? schoolInfo.chairmanMessageBn : schoolInfo.chairmanMessageEn}
               </p>
             </div>
@@ -160,7 +160,7 @@ export default function AboutSection() {
               </button>
               <button
                 onClick={() => setActiveTab('contact')}
-                className="flex-1 bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 py-3 px-5 rounded-full text-xs font-bangla transition text-center cursor-pointer shadow-xs font-semibold"
+                className="flex-1 bg-white hover:bg-bg text-ink border border-line py-3 px-5 rounded-full text-xs font-bangla transition text-center cursor-pointer shadow-xs font-semibold"
               >
                 {lang === 'bn' ? 'যোগাযোগের তথ্য ও ঠিকানা' : 'Contact Information & Location'}
               </button>

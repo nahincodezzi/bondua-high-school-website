@@ -48,24 +48,24 @@ export default function AdmissionManager() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl sm:text-2xl font-bold font-bangla text-[#1F2937]">
+        <h2 className="text-xl sm:text-2xl font-bold font-bangla text-ink">
           ভর্তি আবেদন যাচাই ও অনুমোদন (Admission Review)
         </h2>
-        <p className="text-xs text-[#4B5563] font-bangla">
+        <p className="text-xs text-muted font-bangla">
           ২০২৭ শিক্ষাবর্ষে ৬ষ্ঠ থেকে ৯ম শ্রেণিতে ভর্তির আবেদনসমূহ পর্যবেক্ষণ ও অনুমোদন
         </p>
       </div>
 
       {/* Success Alert Banner (A10) */}
       {actionSuccess && (
-        <div className="p-4 bg-[#DCFCE7] text-[#14532D] rounded-xl text-xs font-bold flex items-center gap-2 border border-emerald-300">
-          <UserCheck className="w-5 h-5 text-[#166534] shrink-0" />
+        <div className="p-4 bg-soft text-deep rounded-xl text-xs font-bold flex items-center gap-2 border border-soft-border">
+          <UserCheck className="w-5 h-5 text-primary shrink-0" />
           <span>{actionSuccess}</span>
         </div>
       )}
 
       {/* Filter and Search Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="bg-white p-4 rounded-2xl border border-line shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Status Pills */}
         <div className="flex items-center gap-1.5 font-bangla text-xs">
           {['all', 'Pending', 'Approved'].map((status) => (
@@ -74,8 +74,8 @@ export default function AdmissionManager() {
               onClick={() => setFilterStatus(status)}
               className={`px-3 py-1.5 rounded-lg font-semibold transition ${
                 filterStatus === status
-                  ? 'bg-emerald-800 text-white shadow'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-primary text-white shadow'
+                  : 'bg-bg text-muted hover:bg-line'
               }`}
             >
               {status === 'all' ? 'সকল আবেদন' : status === 'Pending' ? 'অপেক্ষমাণ (Pending)' : 'অনুমোদিত (Approved)'}
@@ -85,23 +85,23 @@ export default function AdmissionManager() {
 
         {/* Search Input */}
         <div className="relative w-full sm:w-72">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-muted absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="ট্র্যাকিং আইডি বা নাম খুঁজুন..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-500 font-bangla"
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-line text-xs focus:ring-2 focus:ring-primary font-bangla"
           />
         </div>
       </div>
 
       {/* Table & Mobile Cards */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-line shadow-2xs overflow-hidden">
         {/* Desktop & Tablet Table (>= sm) */}
         <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-left text-xs font-bangla">
-            <thead className="bg-emerald-950 text-white uppercase text-[11px] font-bold">
+            <thead className="bg-deep text-white uppercase text-[11px] font-bold">
               <tr>
                 <th className="py-3 px-3">ট্র্যাকিং আইডি</th>
                 <th className="py-3 px-3">শিক্ষার্থীর নাম</th>
@@ -113,23 +113,23 @@ export default function AdmissionManager() {
                 <th className="py-3 px-3 text-center">কার্যক্রম</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-line">
               {filtered.length > 0 ? (
                 filtered.map((app) => (
-                  <tr key={app.id} className="hover:bg-slate-50">
-                    <td className="py-3 px-3 font-mono font-bold text-slate-800">{app.trackingId}</td>
-                    <td className="py-3 px-3 font-semibold text-slate-900">
+                  <tr key={app.id} className="hover:bg-bg">
+                    <td className="py-3 px-3 font-mono font-bold text-ink">{app.trackingId}</td>
+                    <td className="py-3 px-3 font-semibold text-ink">
                       {app.studentNameBn || app.studentNameEn}
                     </td>
-                    <td className="py-3 px-3 font-medium text-emerald-800">{app.applyingClass} শ্রেণি</td>
-                    <td className="py-3 px-3 text-slate-600">{app.fatherName}</td>
-                    <td className="py-3 px-3 font-mono text-slate-700">{app.guardianPhone}</td>
-                    <td className="py-3 px-3 font-mono text-center text-slate-500">{app.submissionDate}</td>
+                    <td className="py-3 px-3 font-medium text-primary">{app.applyingClass} শ্রেণি</td>
+                    <td className="py-3 px-3 text-muted">{app.fatherName}</td>
+                    <td className="py-3 px-3 font-mono text-ink">{app.guardianPhone}</td>
+                    <td className="py-3 px-3 font-mono text-center text-muted">{app.submissionDate}</td>
                     <td className="py-3 px-3 text-center">
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                         app.status === 'Approved'
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : 'bg-amber-100 text-amber-800'
+                          ? 'bg-soft text-primary'
+                          : 'bg-warning-soft text-warning'
                       }`}>
                         {app.status === 'Approved' ? 'অনুমোদিত' : 'অপেক্ষমাণ'}
                       </span>
@@ -138,7 +138,7 @@ export default function AdmissionManager() {
                       <div className="flex items-center justify-center gap-1.5">
                         <button
                           onClick={() => setViewModalApp(app)}
-                          className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs"
+                          className="p-1.5 bg-bg hover:bg-line text-ink rounded-lg text-xs"
                           title="View Details"
                         >
                           <Eye className="w-3.5 h-3.5" />
@@ -147,7 +147,7 @@ export default function AdmissionManager() {
                         {app.status === 'Pending' ? (
                           <button
                             onClick={() => handleApprove(app)}
-                            className="p-1.5 bg-[#166534] hover:bg-[#14532D] text-white rounded-lg text-xs font-bold cursor-pointer"
+                            className="p-1.5 bg-primary hover:bg-deep text-white rounded-lg text-xs font-bold cursor-pointer"
                             title="অনুমোদন ও শিক্ষার্থী তৈরি করুন"
                           >
                             <CheckCircle2 className="w-3.5 h-3.5 text-white" />
@@ -155,7 +155,7 @@ export default function AdmissionManager() {
                         ) : (
                           <button
                             onClick={() => updateAdmissionStatus(app.id, 'Pending')}
-                            className="p-1.5 bg-[#FEF3C7] text-[#92400E] hover:bg-amber-200 rounded-lg text-[10px] font-bold cursor-pointer"
+                            className="p-1.5 bg-warning-soft text-warning hover:bg-warning-soft rounded-lg text-[10px] font-bold cursor-pointer"
                             title="Set Pending"
                           >
                             রিভার্ট
@@ -167,7 +167,7 @@ export default function AdmissionManager() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" className="py-8 text-center text-slate-500">
+                  <td colSpan="8" className="py-8 text-center text-muted">
                     কোনো ভর্তি আবেদন পাওয়া যায়নি।
                   </td>
                 </tr>
@@ -177,41 +177,41 @@ export default function AdmissionManager() {
         </div>
 
         {/* Mobile Card Layout (< sm) (N5) */}
-        <div className="block sm:hidden divide-y divide-slate-100 font-bangla">
+        <div className="block sm:hidden divide-y divide-line font-bangla">
           {filtered.length > 0 ? (
             filtered.map((app) => (
-              <div key={app.id} className="p-4 space-y-2.5 hover:bg-slate-50 transition">
+              <div key={app.id} className="p-4 space-y-2.5 hover:bg-bg transition">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono font-bold text-xs text-[#166534]">
+                  <span className="font-mono font-bold text-xs text-primary">
                     {app.trackingId}
                   </span>
                   <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                     app.status === 'Approved'
-                      ? 'bg-emerald-100 text-emerald-800'
-                      : 'bg-amber-100 text-amber-800'
+                      ? 'bg-soft text-primary'
+                      : 'bg-warning-soft text-warning'
                   }`}>
                     {app.status === 'Approved' ? 'অনুমোদিত' : 'অপেক্ষমাণ'}
                   </span>
                 </div>
 
                 <div>
-                  <h4 className="font-bold text-slate-900 text-sm">{app.studentNameBn || app.studentNameEn}</h4>
-                  <p className="text-xs text-slate-600">পিতা: {app.fatherName}</p>
+                  <h4 className="font-bold text-ink text-sm">{app.studentNameBn || app.studentNameEn}</h4>
+                  <p className="text-xs text-muted">পিতা: {app.fatherName}</p>
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-slate-600 bg-[#F7F9F8] p-2.5 rounded-lg border border-slate-100">
-                  <span className="font-semibold text-emerald-800">{app.applyingClass} শ্রেণি</span>
-                  <span className="font-mono text-slate-500 text-[11px]">{app.guardianPhone}</span>
+                <div className="flex items-center justify-between text-xs text-muted bg-bg p-2.5 rounded-lg border border-line">
+                  <span className="font-semibold text-primary">{app.applyingClass} শ্রেণি</span>
+                  <span className="font-mono text-muted text-[11px]">{app.guardianPhone}</span>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-                  <span className="text-[11px] font-mono text-slate-400">
+                <div className="flex items-center justify-between pt-2 border-t border-line">
+                  <span className="text-[11px] font-mono text-muted">
                     তারিখ: {app.submissionDate}
                   </span>
                   <div className="flex items-center gap-1.5">
                     <button
                       onClick={() => setViewModalApp(app)}
-                      className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
+                      className="px-2.5 py-1 bg-bg hover:bg-line text-ink rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
                     >
                       <Eye className="w-3.5 h-3.5" />
                       <span>বিস্তারিত</span>
@@ -220,7 +220,7 @@ export default function AdmissionManager() {
                     {app.status === 'Pending' ? (
                       <button
                         onClick={() => handleApprove(app)}
-                        className="px-2.5 py-1 bg-[#166534] hover:bg-[#14532D] text-white rounded-lg text-xs font-bold cursor-pointer flex items-center gap-1"
+                        className="px-2.5 py-1 bg-primary hover:bg-deep text-white rounded-lg text-xs font-bold cursor-pointer flex items-center gap-1"
                         title="অনুমোদন ও শিক্ষার্থী তৈরি করুন"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5 text-white" />
@@ -229,7 +229,7 @@ export default function AdmissionManager() {
                     ) : (
                       <button
                         onClick={() => updateAdmissionStatus(app.id, 'Pending')}
-                        className="px-2 py-1 bg-[#FEF3C7] text-[#92400E] hover:bg-amber-200 rounded-lg text-[10px] font-bold cursor-pointer"
+                        className="px-2 py-1 bg-warning-soft text-warning hover:bg-warning-soft rounded-lg text-[10px] font-bold cursor-pointer"
                       >
                         রিভার্ট
                       </button>
@@ -239,7 +239,7 @@ export default function AdmissionManager() {
               </div>
             ))
           ) : (
-            <div className="py-8 text-center text-slate-500 text-xs font-bangla">
+            <div className="py-8 text-center text-muted text-xs font-bangla">
               কোনো ভর্তি আবেদন পাওয়া যায়নি।
             </div>
           )}
@@ -253,14 +253,14 @@ export default function AdmissionManager() {
           role="dialog"
           aria-modal="true"
         >
-          <div className="bg-white max-w-lg w-full rounded-2xl overflow-hidden shadow-2xl border border-[#E5E7EB] p-6 space-y-4 font-bangla">
-            <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
-              <h3 className="font-bold text-[#1F2937] text-base">
+          <div className="bg-white max-w-lg w-full rounded-2xl overflow-hidden shadow-2xl border border-line p-6 space-y-4 font-bangla">
+            <div className="flex items-center justify-between border-b border-line pb-3">
+              <h3 className="font-bold text-ink text-base">
                 ভর্তি আবেদন পত্র বিস্তারিত
               </h3>
               <button 
                 onClick={() => setViewModalApp(null)} 
-                className="text-[#4B5563] hover:text-[#1F2937] p-1 rounded-lg hover:bg-[#F3F4F6] cursor-pointer"
+                className="text-muted hover:text-ink p-1 rounded-lg hover:bg-bg cursor-pointer"
                 aria-label="বন্ধ করুন"
               >
                 <X className="w-5 h-5" />
@@ -268,54 +268,54 @@ export default function AdmissionManager() {
             </div>
 
             <div className="space-y-3 text-xs">
-              <div className="p-3 bg-[#F7F9F8] rounded-xl space-y-1.5 border border-[#E5E7EB]">
+              <div className="p-3 bg-bg rounded-xl space-y-1.5 border border-line">
                 <div className="flex justify-between">
-                  <span className="text-[#4B5563]">ট্র্যাকিং আইডি:</span>
-                  <span className="font-mono font-bold text-[#1F2937]">{viewModalApp.trackingId}</span>
+                  <span className="text-muted">ট্র্যাকিং আইডি:</span>
+                  <span className="font-mono font-bold text-ink">{viewModalApp.trackingId}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#4B5563]">শিক্ষার্থীর নাম:</span>
-                  <span className="font-bold text-[#1F2937]">{viewModalApp.studentNameBn} ({viewModalApp.studentNameEn})</span>
+                  <span className="text-muted">শিক্ষার্থীর নাম:</span>
+                  <span className="font-bold text-ink">{viewModalApp.studentNameBn} ({viewModalApp.studentNameEn})</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#4B5563]">আবেদনকৃত শ্রেণি:</span>
-                  <span className="font-bold text-[#14532D]">{toBanglaNumerals(viewModalApp.applyingClass)} শ্রেণি</span>
+                  <span className="text-muted">আবেদনকৃত শ্রেণি:</span>
+                  <span className="font-bold text-deep">{toBanglaNumerals(viewModalApp.applyingClass)} শ্রেণি</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#4B5563]">লিঙ্গ ও রক্তের গ্রুপ:</span>
+                  <span className="text-muted">লিঙ্গ ও রক্তের গ্রুপ:</span>
                   <span>{viewModalApp.gender} • {viewModalApp.bloodGroup}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#4B5563]">পিতার নাম:</span>
+                  <span className="text-muted">পিতার নাম:</span>
                   <span>{viewModalApp.fatherName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#4B5563]">মাতার নাম:</span>
+                  <span className="text-muted">মাতার নাম:</span>
                   <span>{viewModalApp.motherName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#4B5563]">অভিভাবকের মোবাইল:</span>
-                  <span className="font-mono font-bold text-[#1F2937]">{viewModalApp.guardianPhone}</span>
+                  <span className="text-muted">অভিভাবকের মোবাইল:</span>
+                  <span className="font-mono font-bold text-ink">{viewModalApp.guardianPhone}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#4B5563]">পূর্ববর্তী বিদ্যালয়:</span>
+                  <span className="text-muted">পূর্ববর্তী বিদ্যালয়:</span>
                   <span>{viewModalApp.previousSchool} (GPA: {viewModalApp.previousGpa})</span>
                 </div>
                 <div className="pt-1">
-                  <span className="text-[#4B5563] block">ঠিকানা:</span>
-                  <span className="text-[#1F2937]">{viewModalApp.address}</span>
+                  <span className="text-muted block">ঠিকানা:</span>
+                  <span className="text-ink">{viewModalApp.address}</span>
                 </div>
               </div>
 
               <div className="flex items-center justify-between pt-2">
-                <span className="font-semibold text-[#1F2937]">বর্তমান স্ট্যাটাস: {viewModalApp.status}</span>
+                <span className="font-semibold text-ink">বর্তমান স্ট্যাটাস: {viewModalApp.status}</span>
                 {viewModalApp.status === 'Pending' ? (
                   <button
                     onClick={() => {
                       approveAdmissionAndCreateStudent(viewModalApp);
                       setViewModalApp(null);
                     }}
-                    className="bg-[#14532D] hover:bg-[#166534] text-white px-4 py-2 rounded-xl text-xs font-bold cursor-pointer"
+                    className="bg-deep hover:bg-primary text-white px-4 py-2 rounded-xl text-xs font-bold cursor-pointer"
                   >
                     অনুমোদন ও শিক্ষার্থী হিসেবে ভর্তি
                   </button>
@@ -325,7 +325,7 @@ export default function AdmissionManager() {
                       updateAdmissionStatus(viewModalApp.id, 'Pending');
                       setViewModalApp(null);
                     }}
-                    className="bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#1F2937] px-4 py-2 rounded-xl text-xs font-bold cursor-pointer"
+                    className="bg-bg hover:bg-soft text-ink px-4 py-2 rounded-xl text-xs font-bold cursor-pointer"
                   >
                     অপেক্ষমাণ রাখুন
                   </button>

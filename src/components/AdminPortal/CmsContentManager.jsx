@@ -320,29 +320,29 @@ export default function CmsContentManager() {
 
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1 font-mono">
-          <Sliders className="w-4 h-4 text-emerald-700" />
+        <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wider mb-1 font-mono">
+          <Sliders className="w-4 h-4 text-primary" />
           <span>CONTENT MANAGEMENT SYSTEM (CMS)</span>
         </div>
-        <h2 className="text-xl sm:text-2xl font-bold font-bangla text-slate-900">
+        <h2 className="text-xl sm:text-2xl font-bold font-bangla text-ink">
           ওয়েবসাইট কনটেন্ট ও মিডিয়া আপলোড (CMS Editor)
         </h2>
-        <p className="text-xs text-slate-500 font-bangla">
+        <p className="text-xs text-muted font-bangla">
           ফটো গ্যালারি, ভিডিও, স্কুল ড্রেস কোড, হোমপেজ ব্যানার স্লাইডার ও অবস্থান তথ্য সরাসরি পরিচালনা করুন
         </p>
       </div>
 
       {/* CMS Sub-tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-slate-200 pb-3 font-bangla text-xs">
+      <div className="flex flex-wrap gap-2 border-b border-line pb-3 font-bangla text-xs">
         <button
           onClick={() => setActiveTab('gallery')}
           className={`px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-2 ${
             activeTab === 'gallery'
-              ? 'bg-emerald-900 text-white shadow-md'
-              : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+              ? 'bg-deep text-white shadow-md'
+              : 'bg-white text-muted hover:bg-bg border border-line'
           }`}
         >
-          <ImageIcon className="w-4 h-4 text-amber-300" />
+          <ImageIcon className="w-4 h-4 text-accent" />
           <span>ফটো ও ভিডিও গ্যালারি আপলোড (Gallery CMS)</span>
         </button>
 
@@ -350,11 +350,11 @@ export default function CmsContentManager() {
           onClick={() => setActiveTab('slides')}
           className={`px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-2 ${
             activeTab === 'slides'
-              ? 'bg-emerald-900 text-white shadow-md'
-              : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+              ? 'bg-deep text-white shadow-md'
+              : 'bg-white text-muted hover:bg-bg border border-line'
           }`}
         >
-          <Sliders className="w-4 h-4 text-amber-300" />
+          <Sliders className="w-4 h-4 text-accent" />
           <span>হোমপেজ ব্যানার স্লাইডার (Hero Slider CMS)</span>
         </button>
 
@@ -362,11 +362,11 @@ export default function CmsContentManager() {
           onClick={() => setActiveTab('uniform')}
           className={`px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-2 ${
             activeTab === 'uniform'
-              ? 'bg-emerald-900 text-white shadow-md'
-              : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+              ? 'bg-deep text-white shadow-md'
+              : 'bg-white text-muted hover:bg-bg border border-line'
           }`}
         >
-          <Shirt className="w-4 h-4 text-amber-300" />
+          <Shirt className="w-4 h-4 text-accent" />
           <span>ইউনিফর্ম ও পোশাক কোড (Dress Code CMS)</span>
         </button>
 
@@ -374,18 +374,18 @@ export default function CmsContentManager() {
           onClick={() => setActiveTab('general')}
           className={`px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-2 ${
             activeTab === 'general'
-              ? 'bg-emerald-900 text-white shadow-md'
-              : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+              ? 'bg-deep text-white shadow-md'
+              : 'bg-white text-muted hover:bg-bg border border-line'
           }`}
         >
-          <MapPin className="w-4 h-4 text-amber-300" />
+          <MapPin className="w-4 h-4 text-accent" />
           <span>রোড ও প্রতিষ্ঠান পরিচিতি (Location & Identity)</span>
         </button>
       </div>
 
       {savedMessage && (
-        <div className="p-3.5 bg-emerald-100 text-emerald-900 rounded-xl text-xs font-bold flex items-center gap-2 animate-in fade-in duration-200 font-bangla border border-emerald-200 shadow-xs">
-          <CheckCircle className="w-4 h-4 text-emerald-700 shrink-0" />
+        <div className="p-3.5 bg-soft text-deep rounded-xl text-xs font-bold flex items-center gap-2 animate-in fade-in duration-200 font-bangla border border-soft-border shadow-xs">
+          <CheckCircle className="w-4 h-4 text-primary shrink-0" />
           <span>পরিবর্তনসমূহ সফলভাবে সংরক্ষিত হয়েছে এবং ওয়েবসাইটে তৎক্ষণাৎ লাইভ হালনাগাদ করা হয়েছে!</span>
         </div>
       )}
@@ -395,42 +395,42 @@ export default function CmsContentManager() {
         <div className="space-y-8 font-bangla">
           {/* Top Form: Upload New Photo */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-6 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-              <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2 pb-2 border-b">
-                <Upload className="w-4 h-4 text-emerald-800" />
+            <div className="lg:col-span-6 bg-white p-5 sm:p-6 rounded-2xl border border-line shadow-2xs space-y-4">
+              <h3 className="text-sm sm:text-base font-bold text-ink flex items-center gap-2 pb-2 border-b">
+                <Upload className="w-4 h-4 text-primary" />
                 <span>নতুন ফটো গ্যালারিতে আপলোড করুন</span>
               </h3>
 
               <form onSubmit={handleAddPhotoSubmit} className="space-y-3.5 text-xs">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">ছবির শিরোনাম (বাংলায়) *</label>
+                  <label className="block font-bold text-ink mb-1">ছবির শিরোনাম (বাংলায়) *</label>
                   <input
                     type="text"
                     required
                     value={photoTitleBn}
                     onChange={(e) => setPhotoTitleBn(e.target.value)}
                     placeholder="যেমন: বার্ষিক ক্রীড়া প্রতিযোগিতা ২০২৬ বা কম্পিউটার ল্যাব"
-                    className="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-emerald-500"
+                    className="w-full rounded-lg border border-line p-2.5 focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">ছবির শিরোনাম (ইংরেজিতে)</label>
+                  <label className="block font-bold text-ink mb-1">ছবির শিরোনাম (ইংরেজিতে)</label>
                   <input
                     type="text"
                     value={photoTitleEn}
                     onChange={(e) => setPhotoTitleEn(e.target.value)}
                     placeholder="Photo title in English"
-                    className="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-emerald-500"
+                    className="w-full rounded-lg border border-line p-2.5 focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">ক্যাটাগরি / বিভাগ</label>
+                  <label className="block font-bold text-ink mb-1">ক্যাটাগরি / বিভাগ</label>
                   <select
                     value={photoCategory}
                     onChange={(e) => setPhotoCategory(e.target.value)}
-                    className="w-full rounded-lg border border-slate-300 p-2.5 bg-white"
+                    className="w-full rounded-lg border border-line p-2.5 bg-white"
                   >
                     <option value="campus">ক্যাম্পাস ও প্রাঙ্গণ (Campus Life)</option>
                     <option value="academic">বিজ্ঞান ও কম্পিউটার ল্যাব (Academic & Labs)</option>
@@ -440,8 +440,8 @@ export default function CmsContentManager() {
                 </div>
 
                 {/* Photo File Picker with Preview */}
-                <div className="p-3 bg-slate-50 rounded-xl border border-dashed border-slate-300 space-y-2">
-                  <span className="font-bold text-slate-700 block">মোবাইল / কম্পিউটার থেকে ছবি নির্বাচন করুন *</span>
+                <div className="p-3 bg-bg rounded-xl border border-dashed border-line space-y-2">
+                  <span className="font-bold text-ink block">মোবাইল / কম্পিউটার থেকে ছবি নির্বাচন করুন *</span>
                   
                   <input
                     type="file"
@@ -454,53 +454,53 @@ export default function CmsContentManager() {
 
                   {photoDataUrl ? (
                     <div className="space-y-2">
-                      <div className="relative h-40 w-full rounded-lg overflow-hidden border border-slate-300 bg-slate-900">
+                      <div className="relative h-40 w-full rounded-lg overflow-hidden border border-line bg-ink">
                         <img src={photoDataUrl} alt="Preview" className="w-full h-full object-cover" />
                         <button
                           type="button"
                           onClick={() => { setPhotoDataUrl(''); if (photoInputRef.current) photoInputRef.current.value = ''; }}
-                          className="absolute top-2 right-2 bg-rose-600 text-white p-1 rounded-full shadow hover:bg-rose-700"
+                          className="absolute top-2 right-2 bg-danger text-white p-1 rounded-full shadow hover:bg-danger"
                         >
                           <X className="w-4 h-4" />
                         </button>
                       </div>
-                      <p className="text-[11px] text-emerald-700 font-bold">{photoUploadStatus || 'ছবি সফলভাবে লোড হয়েছে'}</p>
+                      <p className="text-[11px] text-primary font-bold">{photoUploadStatus || 'ছবি সফলভাবে লোড হয়েছে'}</p>
                     </div>
                   ) : (
                     <label
                       htmlFor="gallery-photo-file"
-                      className="cursor-pointer flex flex-col items-center justify-center p-6 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl text-slate-600 transition"
+                      className="cursor-pointer flex flex-col items-center justify-center p-6 bg-white hover:bg-bg border border-line rounded-xl text-muted transition"
                     >
-                      <ImageIcon className="w-8 h-8 text-emerald-800 mb-1" />
-                      <span className="font-bold text-slate-800">ছবি আপলোড করতে ক্লিক করুন</span>
-                      <span className="text-[10px] text-slate-400 mt-0.5">গ্যালারি বা ক্যামেরা থেকে JPG, PNG ছবি (স্বয়ংক্রিয় কম্প্রেস হবে)</span>
+                      <ImageIcon className="w-8 h-8 text-primary mb-1" />
+                      <span className="font-bold text-ink">ছবি আপলোড করতে ক্লিক করুন</span>
+                      <span className="text-[10px] text-muted mt-0.5">গ্যালারি বা ক্যামেরা থেকে JPG, PNG ছবি (স্বয়ংক্রিয় কম্প্রেস হবে)</span>
                     </label>
                   )}
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-emerald-800 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow flex items-center justify-center gap-2"
+                  className="w-full bg-primary hover:bg-primary text-white font-bold py-2.5 rounded-xl text-xs transition shadow flex items-center justify-center gap-2"
                 >
-                  <Plus className="w-4 h-4 text-amber-300" />
+                  <Plus className="w-4 h-4 text-accent" />
                   <span>গ্যালারিতে ছবি যোগ করুন</span>
                 </button>
               </form>
             </div>
 
             {/* Video Manager Card (Dual Mode: YouTube Link & Direct Video File Upload Side-by-Side) */}
-            <div className="lg:col-span-6 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+            <div className="lg:col-span-6 bg-white p-5 sm:p-6 rounded-2xl border border-line shadow-2xs space-y-4">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-2 border-b">
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
-                    <Video className="w-4 h-4 text-emerald-800" />
+                  <h3 className="text-sm sm:text-base font-bold text-ink flex items-center gap-2">
+                    <Video className="w-4 h-4 text-primary" />
                     <span>নতুন ভিডিও যুক্ত ও সরাসরি আপলোড</span>
                   </h3>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
+                  <p className="text-[11px] text-muted mt-0.5">
                     ইউটিউব ভিডিও লিংকের পাশাপাশি সরাসরি ডিভাইস থেকে ভিডিও ফাইল আপলোড করুন
                   </p>
                 </div>
-                <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+                <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-soft text-primary border border-soft-border">
                   Dual Video Engine
                 </span>
               </div>
@@ -509,40 +509,40 @@ export default function CmsContentManager() {
                 {/* Video Title Inputs */}
                 <div className="space-y-3">
                   <div>
-                    <label className="block font-bold text-slate-700 mb-1">ভিডিওর শিরোনাম (বাংলায়) *</label>
+                    <label className="block font-bold text-ink mb-1">ভিডিওর শিরোনাম (বাংলায়) *</label>
                     <input
                       type="text"
                       required
                       value={videoTitleBn}
                       onChange={(e) => setVideoTitleBn(e.target.value)}
                       placeholder="যেমন: বার্ষিক পুরস্কার বিতরণী ও সাংস্কৃতিক অনুষ্ঠান"
-                      className="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-emerald-500"
+                      className="w-full rounded-lg border border-line p-2.5 focus:ring-2 focus:ring-primary"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-bold text-slate-700 mb-1">ভিডিওর শিরোনাম (ইংরেজিতে)</label>
+                    <label className="block font-bold text-ink mb-1">ভিডিওর শিরোনাম (ইংরেজিতে)</label>
                     <input
                       type="text"
                       value={videoTitleEn}
                       onChange={(e) => setVideoTitleEn(e.target.value)}
                       placeholder="Video title in English"
-                      className="w-full rounded-lg border border-slate-300 p-2.5 focus:ring-2 focus:ring-emerald-500"
+                      className="w-full rounded-lg border border-line p-2.5 focus:ring-2 focus:ring-primary"
                     />
                   </div>
                 </div>
 
                 {/* Option 1: YouTube Video Link */}
                 <div className={`p-3.5 rounded-xl border transition ${
-                  videoUrl.trim() ? 'bg-emerald-50/70 border-emerald-400' : 'bg-slate-50 border-slate-200'
+                  videoUrl.trim() ? 'bg-soft/70 border-soft-border' : 'bg-bg border-line'
                 }`}>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="font-bold text-slate-800 flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full bg-rose-600 text-white flex items-center justify-center text-[10px] font-bold">1</span>
-                      <span className="text-slate-900 font-bold">ইউটিউব ভিডিও লিংক (YouTube Video Link)</span>
+                    <label className="font-bold text-ink flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-danger text-white flex items-center justify-center text-[10px] font-bold">1</span>
+                      <span className="text-ink font-bold">ইউটিউব ভিডিও লিংক (YouTube Video Link)</span>
                     </label>
                     {videoUrl.trim() && (
-                      <span className="text-[10px] text-emerald-800 font-bold bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300">
+                      <span className="text-[10px] text-primary font-bold bg-soft px-2 py-0.5 rounded-full border border-soft-border">
                         ✓ লিংক সক্রিয়
                       </span>
                     )}
@@ -561,33 +561,33 @@ export default function CmsContentManager() {
                       }
                     }}
                     placeholder="https://www.youtube.com/watch?v=... অথবা Shorts লিংক পেস্ট করুন"
-                    className="w-full rounded-lg border border-slate-300 p-2.5 font-mono text-[11px] bg-white focus:ring-2 focus:ring-emerald-500"
+                    className="w-full rounded-lg border border-line p-2.5 font-mono text-[11px] bg-white focus:ring-2 focus:ring-primary"
                   />
-                  <p className="text-[10px] text-slate-500 mt-1">
+                  <p className="text-[10px] text-muted mt-1">
                     ইউটিউব ওয়াচ লিংক বা শর্টস লিংক পেস্ট করলে প্লেয়ার এবং থাম্বনেইল স্বয়ংক্রিয়ভাবে জেনারেট হবে।
                   </p>
                 </div>
 
                 {/* Divider Between Video Link and Direct Video File Upload */}
                 <div className="relative flex py-1 items-center">
-                  <div className="flex-grow border-t border-slate-300"></div>
-                  <span className="flex-shrink mx-3 text-slate-700 text-[10px] font-extrabold uppercase tracking-wider bg-slate-100 px-3 py-1 rounded-full border border-slate-300 shadow-2xs">
+                  <div className="flex-grow border-t border-line"></div>
+                  <span className="flex-shrink mx-3 text-ink text-[10px] font-extrabold uppercase tracking-wider bg-bg px-3 py-1 rounded-full border border-line shadow-2xs">
                     অথবা সরাসরি ফাইল আপলোড (OR DIRECT VIDEO UPLOAD)
                   </span>
-                  <div className="flex-grow border-t border-slate-300"></div>
+                  <div className="flex-grow border-t border-line"></div>
                 </div>
 
                 {/* Option 2: Direct Video File Upload */}
                 <div className={`p-3.5 rounded-xl border transition ${
-                  uploadedVideoPreviewUrl ? 'bg-emerald-50/70 border-emerald-400' : 'bg-slate-50 border-slate-200'
+                  uploadedVideoPreviewUrl ? 'bg-soft/70 border-soft-border' : 'bg-bg border-line'
                 }`}>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="font-bold text-slate-800 flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full bg-emerald-800 text-white flex items-center justify-center text-[10px] font-bold">2</span>
-                      <span className="text-slate-900 font-bold">ডিভাইস থেকে সরাসরি ভিডিও ফাইল আপলোড (Direct File Upload)</span>
+                    <label className="font-bold text-ink flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-bold">2</span>
+                      <span className="text-ink font-bold">ডিভাইস থেকে সরাসরি ভিডিও ফাইল আপলোড (Direct File Upload)</span>
                     </label>
                     {uploadedVideoPreviewUrl && (
-                      <span className="text-[10px] text-emerald-800 font-bold bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300">
+                      <span className="text-[10px] text-primary font-bold bg-soft px-2 py-0.5 rounded-full border border-soft-border">
                         ✓ ভিডিও ফাইল লোড হয়েছে
                       </span>
                     )}
@@ -607,7 +607,7 @@ export default function CmsContentManager() {
 
                   {uploadedVideoPreviewUrl ? (
                     <div className="space-y-2 mt-2">
-                      <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-black border border-slate-300 shadow-xs">
+                      <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-black border border-line shadow-xs">
                         <video
                           src={uploadedVideoPreviewUrl}
                           controls
@@ -622,19 +622,19 @@ export default function CmsContentManager() {
                             setVideoUploadStatus('');
                             if (videoFileInputRef.current) videoFileInputRef.current.value = '';
                           }}
-                          className="absolute top-2 right-2 bg-rose-600 text-white p-1 rounded-full shadow hover:bg-rose-700 cursor-pointer"
+                          className="absolute top-2 right-2 bg-danger text-white p-1 rounded-full shadow hover:bg-danger cursor-pointer"
                           title="মুছে ফেলুন"
                         >
                           <X className="w-4 h-4" />
                         </button>
                       </div>
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="text-emerald-800 font-bold flex items-center gap-1">
-                          <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                        <span className="text-primary font-bold flex items-center gap-1">
+                          <CheckCircle className="w-3.5 h-3.5 text-primary" />
                           <span>{videoUploadStatus || 'ভিডিও সফলভাবে লোড হয়েছে'}</span>
                         </span>
                         {uploadedVideoThumbnail && (
-                          <span className="text-slate-600 text-[10px] bg-slate-200/70 px-2 py-0.5 rounded-full font-bold">
+                          <span className="text-muted text-[10px] bg-line px-2 py-0.5 rounded-full font-bold">
                             ফ্রেম থাম্বনেইল প্রস্তুত
                           </span>
                         )}
@@ -643,37 +643,37 @@ export default function CmsContentManager() {
                   ) : (
                     <label
                       htmlFor="cms-video-file-input"
-                      className="cursor-pointer flex flex-col items-center justify-center p-6 bg-white hover:bg-emerald-50/40 border-2 border-dashed border-emerald-300 hover:border-emerald-500 rounded-xl text-slate-600 transition"
+                      className="cursor-pointer flex flex-col items-center justify-center p-6 bg-white hover:bg-soft/40 border-2 border-dashed border-soft-border hover:border-primary rounded-xl text-muted transition"
                     >
-                      <Film className="w-8 h-8 text-emerald-800 mb-1" />
-                      <span className="font-bold text-slate-800 text-xs">
+                      <Film className="w-8 h-8 text-primary mb-1" />
+                      <span className="font-bold text-ink text-xs">
                         {videoProcessing ? 'ভিডিও প্রসেসিং হচ্ছে...' : 'মোবাইল বা পিসি থেকে ভিডিও ফাইল সিলেক্ট করুন'}
                       </span>
-                      <span className="text-[10px] text-slate-400 mt-0.5">MP4, WebM বা OGG ফরম্যাট (সর্বোচ্চ ১০০ মেগাবাইট / 100 MB)</span>
+                      <span className="text-[10px] text-muted mt-0.5">MP4, WebM বা OGG ফরম্যাট (সর্বোচ্চ ১০০ মেগাবাইট / 100 MB)</span>
                     </label>
                   )}
                 </div>
 
                 {/* Duration */}
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">ভিডিওর ব্যপ্তিকাল (Duration)</label>
+                  <label className="block font-bold text-ink mb-1">ভিডিওর ব্যপ্তিকাল (Duration)</label>
                   <input
                     type="text"
                     value={videoDuration}
                     onChange={(e) => setVideoDuration(e.target.value)}
                     placeholder="যেমন: 05:30"
-                    className="w-full rounded-lg border border-slate-300 p-2.5 font-mono bg-white"
+                    className="w-full rounded-lg border border-line p-2.5 font-mono bg-white"
                   />
-                  <p className="text-[10px] text-slate-400 mt-0.5">ফাইল আপলোড করলে ব্যপ্তিকাল স্বয়ংক্রিয়ভাবে গণনা করা হবে</p>
+                  <p className="text-[10px] text-muted mt-0.5">ফাইল আপলোড করলে ব্যপ্তিকাল স্বয়ংক্রিয়ভাবে গণনা করা হবে</p>
                 </div>
 
                 <div className="pt-1">
                   <button
                     type="submit"
                     disabled={videoProcessing}
-                    className="w-full bg-emerald-800 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold py-3 rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full bg-primary hover:bg-primary disabled:opacity-50 text-white font-bold py-3 rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <Plus className="w-4 h-4 text-amber-300" />
+                    <Plus className="w-4 h-4 text-accent" />
                     <span>ভিডিওটি গ্যালারিতে প্রকাশ করুন</span>
                   </button>
                 </div>
@@ -682,22 +682,22 @@ export default function CmsContentManager() {
           </div>
 
           {/* Manage Existing Photos */}
-          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-            <h3 className="text-sm sm:text-base font-bold text-slate-900 pb-2 border-b flex justify-between items-center">
+          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-line shadow-2xs space-y-4">
+            <h3 className="text-sm sm:text-base font-bold text-ink pb-2 border-b flex justify-between items-center">
               <span>বর্তমানে প্রদর্শিত ফটো গ্যালারি ({gallery.length} টি ছবি)</span>
             </h3>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {gallery.map((item) => (
-                <div key={item.id} className="group relative rounded-xl overflow-hidden border border-slate-200 bg-slate-50 flex flex-col justify-between">
-                  <div className="relative h-36 w-full overflow-hidden bg-slate-200">
+                <div key={item.id} className="group relative rounded-xl overflow-hidden border border-line bg-bg flex flex-col justify-between">
+                  <div className="relative h-36 w-full overflow-hidden bg-line">
                     <img src={item.image} alt={item.titleBn} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
-                    <span className="absolute top-2 left-2 bg-emerald-950/80 text-amber-300 text-[9px] font-bold px-2 py-0.5 rounded-full capitalize">
+                    <span className="absolute top-2 left-2 bg-deep/80 text-accent text-[9px] font-bold px-2 py-0.5 rounded-full capitalize">
                       {item.category}
                     </span>
                   </div>
                   <div className="p-2.5 flex items-center justify-between gap-1">
-                    <p className="font-bold text-slate-800 text-xs truncate flex-1" title={item.titleBn}>
+                    <p className="font-bold text-ink text-xs truncate flex-1" title={item.titleBn}>
                       {item.titleBn}
                     </p>
                     <button
@@ -706,7 +706,7 @@ export default function CmsContentManager() {
                           deleteGalleryItem(item.id);
                         }
                       }}
-                      className="p-1 text-rose-600 hover:bg-rose-50 rounded transition shrink-0"
+                      className="p-1 text-danger hover:bg-danger-soft rounded transition shrink-0"
                       title="Delete Image"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -718,17 +718,17 @@ export default function CmsContentManager() {
           </div>
 
           {/* Manage Existing Videos */}
-          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-            <h3 className="text-sm sm:text-base font-bold text-slate-900 pb-2 border-b flex justify-between items-center">
+          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-line shadow-2xs space-y-4">
+            <h3 className="text-sm sm:text-base font-bold text-ink pb-2 border-b flex justify-between items-center">
               <span>বর্তমানে প্রদর্শিত ভিডিও গ্যালারি ({videos.length} টি ভিডিও)</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {videos.map((vid) => (
-                <div key={vid.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-start justify-between gap-3 text-xs">
+                <div key={vid.id} className="p-3 bg-bg rounded-xl border border-line flex items-start justify-between gap-3 text-xs">
                   <div className="flex items-start gap-3">
                     {vid.thumbnail && (
-                      <div className="relative w-16 h-10 rounded-lg overflow-hidden bg-slate-800 shrink-0 border border-slate-300">
+                      <div className="relative w-16 h-10 rounded-lg overflow-hidden bg-ink shrink-0 border border-line">
                         <img src={vid.thumbnail} alt={vid.titleBn} className="w-full h-full object-cover" />
                         <span className="absolute bottom-0 right-0 bg-black/80 text-white text-[8px] font-mono px-1">
                           {vid.duration}
@@ -739,27 +739,27 @@ export default function CmsContentManager() {
                       <div className="flex items-center gap-2">
                         <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded font-mono ${
                           vid.source === 'Uploaded Video' || vid.videoUrl?.startsWith('blob:') || vid.videoUrl?.startsWith('data:')
-                            ? 'bg-blue-100 text-blue-800 border border-blue-200'
-                            : 'bg-rose-100 text-rose-800 border border-rose-200'
+                            ? 'bg-soft text-primary border border-soft-border'
+                            : 'bg-danger-soft text-danger border border-danger-soft'
                         }`}>
                           {vid.source === 'Uploaded Video' ? 'Direct Upload' : 'YouTube'}
                         </span>
                         <button
                           type="button"
                           onClick={() => setPreviewModalVideo(vid)}
-                          className="text-emerald-800 hover:text-emerald-950 font-bold flex items-center gap-1 text-[11px] bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200 cursor-pointer"
+                          className="text-primary hover:text-deep font-bold flex items-center gap-1 text-[11px] bg-soft hover:bg-soft px-2 py-0.5 rounded border border-soft-border cursor-pointer"
                         >
                           <Play className="w-2.5 h-2.5 fill-current" />
                           <span>প্লেয়ার প্রিভিউ</span>
                         </button>
                         {vid.videoUrl?.startsWith('http') && (
-                          <a href={vid.videoUrl} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline flex items-center gap-1 text-[11px] font-mono">
+                          <a href={vid.videoUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline flex items-center gap-1 text-[11px] font-mono">
                             <span>লিংক</span>
                             <ExternalLink className="w-2.5 h-2.5" />
                           </a>
                         )}
                       </div>
-                      <h4 className="font-bold text-slate-900 line-clamp-1">{vid.titleBn}</h4>
+                      <h4 className="font-bold text-ink line-clamp-1">{vid.titleBn}</h4>
                     </div>
                   </div>
                   <button
@@ -768,7 +768,7 @@ export default function CmsContentManager() {
                         deleteVideoItem(vid.id);
                       }
                     }}
-                    className="p-1.5 text-rose-600 hover:bg-rose-50 rounded transition shrink-0 cursor-pointer"
+                    className="p-1.5 text-danger hover:bg-danger-soft rounded transition shrink-0 cursor-pointer"
                     title="Delete Video"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -786,18 +786,18 @@ export default function CmsContentManager() {
             >
               <div
                 onClick={(e) => e.stopPropagation()}
-                className="bg-slate-900 rounded-2xl overflow-hidden max-w-2xl w-full border border-slate-700 shadow-2xl"
+                className="bg-ink rounded-2xl overflow-hidden max-w-2xl w-full border border-line shadow-2xl"
               >
-                <div className="p-3.5 bg-slate-950 flex items-center justify-between text-white border-b border-slate-800">
+                <div className="p-3.5 bg-ink flex items-center justify-between text-white border-b border-line">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] bg-emerald-700 text-white font-mono px-2 py-0.5 rounded font-bold">
+                    <span className="text-[10px] bg-primary text-white font-mono px-2 py-0.5 rounded font-bold">
                       {previewModalVideo.source === 'Uploaded Video' ? 'DIRECT FILE' : 'YOUTUBE'}
                     </span>
                     <h4 className="font-bold text-xs sm:text-sm line-clamp-1">{previewModalVideo.titleBn}</h4>
                   </div>
                   <button
                     onClick={() => setPreviewModalVideo(null)}
-                    className="p-1 hover:bg-rose-600 rounded-full transition text-white cursor-pointer"
+                    className="p-1 hover:bg-danger rounded-full transition text-white cursor-pointer"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -825,28 +825,28 @@ export default function CmsContentManager() {
 
       {/* 2. DRESS CODE & UNIFORM CMS */}
       {activeTab === 'uniform' && (
-        <form onSubmit={handleUniformSave} className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-2xs space-y-6 font-bangla text-xs">
+        <form onSubmit={handleUniformSave} className="bg-white p-6 sm:p-8 rounded-2xl border border-line shadow-2xs space-y-6 font-bangla text-xs">
           <div className="flex items-center justify-between pb-3 border-b">
             <div>
-              <h3 className="text-base font-bold text-slate-900">
+              <h3 className="text-base font-bold text-ink">
                 বিদ্যালয়ের অফিসিয়াল ইউনিফর্ম ও ড্রেস কোড নীতিমালা
               </h3>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-muted">
                 ছাত্র এবং ছাত্রীদের নির্ধারিত স্কুল পোশাকের নির্দেশনা ও রঙের বিবরণ
               </p>
             </div>
           </div>
 
           {/* Boys Uniform Grid */}
-          <div className="p-4 sm:p-5 bg-blue-50/60 rounded-2xl border border-blue-200 space-y-4">
-            <div className="flex items-center gap-2 text-blue-900 font-bold text-sm">
+          <div className="p-4 sm:p-5 bg-soft rounded-2xl border border-soft-border space-y-4">
+            <div className="flex items-center gap-2 text-primary font-bold text-sm">
               <Shirt className="w-4 h-4" />
               <span>ছাত্রদের পোশাক নীতিমালা (Boys Dress Code)</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">শার্টের বিবরণ</label>
+                <label className="block font-bold text-ink mb-1">শার্টের বিবরণ</label>
                 <input
                   type="text"
                   value={uniformForm.boys.shirtBn}
@@ -854,12 +854,12 @@ export default function CmsContentManager() {
                     ...uniformForm,
                     boys: { ...uniformForm.boys, shirtBn: e.target.value }
                   })}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 bg-white"
+                  className="w-full rounded-lg border border-line p-2.5 bg-white"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">প্যান্টের বিবরণ</label>
+                <label className="block font-bold text-ink mb-1">প্যান্টের বিবরণ</label>
                 <input
                   type="text"
                   value={uniformForm.boys.pantBn}
@@ -867,12 +867,12 @@ export default function CmsContentManager() {
                     ...uniformForm,
                     boys: { ...uniformForm.boys, pantBn: e.target.value }
                   })}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 bg-white"
+                  className="w-full rounded-lg border border-line p-2.5 bg-white"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">জুতা ও মোজা</label>
+                <label className="block font-bold text-ink mb-1">জুতা ও মোজা</label>
                 <input
                   type="text"
                   value={uniformForm.boys.shoesBn}
@@ -880,12 +880,12 @@ export default function CmsContentManager() {
                     ...uniformForm,
                     boys: { ...uniformForm.boys, shoesBn: e.target.value }
                   })}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 bg-white"
+                  className="w-full rounded-lg border border-line p-2.5 bg-white"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">ব্যাজ ও বেল্ট</label>
+                <label className="block font-bold text-ink mb-1">ব্যাজ ও বেল্ট</label>
                 <input
                   type="text"
                   value={uniformForm.boys.badgeBn}
@@ -893,22 +893,22 @@ export default function CmsContentManager() {
                     ...uniformForm,
                     boys: { ...uniformForm.boys, badgeBn: e.target.value }
                   })}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 bg-white"
+                  className="w-full rounded-lg border border-line p-2.5 bg-white"
                 />
               </div>
             </div>
           </div>
 
           {/* Girls Uniform Grid */}
-          <div className="p-4 sm:p-5 bg-rose-50/60 rounded-2xl border border-rose-200 space-y-4">
-            <div className="flex items-center gap-2 text-rose-900 font-bold text-sm">
+          <div className="p-4 sm:p-5 bg-danger-soft rounded-2xl border border-danger-soft space-y-4">
+            <div className="flex items-center gap-2 text-danger font-bold text-sm">
               <Shirt className="w-4 h-4" />
               <span>ছাত্রীদের পোশাক নীতিমালা (Girls Dress Code)</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">পোশাক / কামিজের বিবরণ</label>
+                <label className="block font-bold text-ink mb-1">পোশাক / কামিজের বিবরণ</label>
                 <input
                   type="text"
                   value={uniformForm.girls.dressBn}
@@ -916,12 +916,12 @@ export default function CmsContentManager() {
                     ...uniformForm,
                     girls: { ...uniformForm.girls, dressBn: e.target.value }
                   })}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 bg-white"
+                  className="w-full rounded-lg border border-line p-2.5 bg-white"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">পায়জামা ও সালোয়ার</label>
+                <label className="block font-bold text-ink mb-1">পায়জামা ও সালোয়ার</label>
                 <input
                   type="text"
                   value={uniformForm.girls.salwarBn}
@@ -929,12 +929,12 @@ export default function CmsContentManager() {
                     ...uniformForm,
                     girls: { ...uniformForm.girls, salwarBn: e.target.value }
                   })}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 bg-white"
+                  className="w-full rounded-lg border border-line p-2.5 bg-white"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">ওড়না / স্কার্ফ</label>
+                <label className="block font-bold text-ink mb-1">ওড়না / স্কার্ফ</label>
                 <input
                   type="text"
                   value={uniformForm.girls.ornaBn}
@@ -942,12 +942,12 @@ export default function CmsContentManager() {
                     ...uniformForm,
                     girls: { ...uniformForm.girls, ornaBn: e.target.value }
                   })}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 bg-white"
+                  className="w-full rounded-lg border border-line p-2.5 bg-white"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">চুলের ফিতা ও জুতা</label>
+                <label className="block font-bold text-ink mb-1">চুলের ফিতা ও জুতা</label>
                 <input
                   type="text"
                   value={uniformForm.girls.hairBn}
@@ -955,7 +955,7 @@ export default function CmsContentManager() {
                     ...uniformForm,
                     girls: { ...uniformForm.girls, hairBn: e.target.value }
                   })}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 bg-white"
+                  className="w-full rounded-lg border border-line p-2.5 bg-white"
                 />
               </div>
             </div>
@@ -964,9 +964,9 @@ export default function CmsContentManager() {
           <div className="pt-3 border-t flex justify-end">
             <button
               type="submit"
-              className="bg-emerald-800 hover:bg-emerald-700 text-white font-bold py-2.5 px-6 rounded-xl text-xs transition shadow flex items-center gap-2"
+              className="bg-primary hover:bg-primary text-white font-bold py-2.5 px-6 rounded-xl text-xs transition shadow flex items-center gap-2"
             >
-              <Save className="w-4 h-4 text-amber-300" />
+              <Save className="w-4 h-4 text-accent" />
               <span>ইউনিফর্ম নীতিমালা সংরক্ষণ করুন</span>
             </button>
           </div>
@@ -975,13 +975,13 @@ export default function CmsContentManager() {
 
       {/* 3. HERO SLIDER CMS WITH PHOTO UPLOAD */}
       {activeTab === 'slides' && (
-        <form onSubmit={handleSlidesSave} className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-2xs space-y-6 font-bangla text-xs">
+        <form onSubmit={handleSlidesSave} className="bg-white p-6 sm:p-8 rounded-2xl border border-line shadow-2xs space-y-6 font-bangla text-xs">
           <div className="flex items-center justify-between pb-3 border-b">
             <div>
-              <h3 className="text-base font-bold text-slate-900">
+              <h3 className="text-base font-bold text-ink">
                 হোমপেজ ব্যানার স্লাইডার কনটেন্ট ও ছবি পরিবর্তন
               </h3>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-muted">
                 মূল ওয়েবসাইটের ৩টি মূল ব্যানার স্লাইডারের ছবি সরাসরি আপলোড করুন বা লিংক প্রদান করুন
               </p>
             </div>
@@ -989,29 +989,29 @@ export default function CmsContentManager() {
 
           <div className="space-y-6">
             {slidesForm.map((slide, idx) => (
-              <div key={slide.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
-                <span className="font-bold text-emerald-950 text-sm block">
+              <div key={slide.id} className="p-4 bg-bg rounded-2xl border border-line space-y-3">
+                <span className="font-bold text-deep text-sm block">
                   স্লাইড #{idx + 1}
                 </span>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-bold text-slate-700 mb-1">ট্যাগ / ক্যাটাগরি পিল</label>
+                    <label className="block font-bold text-ink mb-1">ট্যাগ / ক্যাটাগরি পিল</label>
                     <input
                       type="text"
                       value={slide.tagBn}
                       onChange={(e) => handleSlideChange(idx, 'tagBn', e.target.value)}
-                      className="w-full rounded-lg border border-slate-300 p-2.5 bg-white"
+                      className="w-full rounded-lg border border-line p-2.5 bg-white"
                     />
                   </div>
 
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="block font-bold text-slate-700">ব্যাকগ্রাউন্ড ছবি</label>
+                      <label className="block font-bold text-ink">ব্যাকগ্রাউন্ড ছবি</label>
                       <button
                         type="button"
                         onClick={() => triggerSlideUpload(idx)}
-                        className="text-emerald-800 hover:text-emerald-950 font-bold text-[11px] flex items-center gap-1 bg-emerald-100 hover:bg-emerald-200 px-2 py-0.5 rounded transition"
+                        className="text-primary hover:text-deep font-bold text-[11px] flex items-center gap-1 bg-soft hover:bg-soft px-2 py-0.5 rounded transition"
                       >
                         <Upload className="w-3 h-3" />
                         <span>ডিভাইস থেকে ছবি আপলোড</span>
@@ -1021,28 +1021,28 @@ export default function CmsContentManager() {
                       type="text"
                       value={slide.image}
                       onChange={(e) => handleSlideChange(idx, 'image', e.target.value)}
-                      className="w-full rounded-lg border border-slate-300 p-2.5 bg-white font-mono text-[11px]"
+                      className="w-full rounded-lg border border-line p-2.5 bg-white font-mono text-[11px]"
                       placeholder="Image URL or uploaded image"
                     />
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label className="block font-bold text-slate-700 mb-1">প্রধান শিরোনাম (Title)</label>
+                    <label className="block font-bold text-ink mb-1">প্রধান শিরোনাম (Title)</label>
                     <input
                       type="text"
                       value={slide.titleBn}
                       onChange={(e) => handleSlideChange(idx, 'titleBn', e.target.value)}
-                      className="w-full rounded-lg border border-slate-300 p-2.5 bg-white font-bold"
+                      className="w-full rounded-lg border border-line p-2.5 bg-white font-bold"
                     />
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label className="block font-bold text-slate-700 mb-1">উপ-শিরোনাম / বিবরণ (Subtitle)</label>
+                    <label className="block font-bold text-ink mb-1">উপ-শিরোনাম / বিবরণ (Subtitle)</label>
                     <input
                       type="text"
                       value={slide.subtitleBn}
                       onChange={(e) => handleSlideChange(idx, 'subtitleBn', e.target.value)}
-                      className="w-full rounded-lg border border-slate-300 p-2.5 bg-white"
+                      className="w-full rounded-lg border border-line p-2.5 bg-white"
                     />
                   </div>
                 </div>
@@ -1053,9 +1053,9 @@ export default function CmsContentManager() {
           <div className="pt-3 border-t flex justify-end">
             <button
               type="submit"
-              className="bg-emerald-800 hover:bg-emerald-700 text-white font-bold py-2.5 px-6 rounded-xl text-xs transition shadow flex items-center gap-2"
+              className="bg-primary hover:bg-primary text-white font-bold py-2.5 px-6 rounded-xl text-xs transition shadow flex items-center gap-2"
             >
-              <Save className="w-4 h-4 text-amber-300" />
+              <Save className="w-4 h-4 text-accent" />
               <span>স্লাইডার সংরক্ষণ করুন</span>
             </button>
           </div>
@@ -1064,13 +1064,13 @@ export default function CmsContentManager() {
 
       {/* 4. LOCATION & CONTACT CMS */}
       {activeTab === 'general' && (
-        <form onSubmit={handleInfoSave} className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-2xs space-y-6 font-bangla text-xs">
+        <form onSubmit={handleInfoSave} className="bg-white p-6 sm:p-8 rounded-2xl border border-line shadow-2xs space-y-6 font-bangla text-xs">
           <div className="flex items-center justify-between pb-3 border-b">
             <div>
-              <h3 className="text-base font-bold text-slate-900">
+              <h3 className="text-base font-bold text-ink">
                 রোড, অবস্থান ও প্রাতিষ্ঠানিক যোগাযোগ তথ্য
               </h3>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-muted">
                 ফেনী-পরশুরাম রোড সংলগ্ন ঠিকানা ও অফিশিয়াল ইমেইল
               </p>
             </div>
@@ -1078,53 +1078,53 @@ export default function CmsContentManager() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block font-bold text-slate-700 mb-1">অফিশিয়াল ইমেইল *</label>
+              <label className="block font-bold text-ink mb-1">অফিশিয়াল ইমেইল *</label>
               <input
                 type="email"
                 required
                 value={infoForm.email}
                 onChange={(e) => setInfoForm({ ...infoForm, email: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 p-2.5 font-mono text-emerald-800 font-bold"
+                className="w-full rounded-lg border border-line p-2.5 font-mono text-primary font-bold"
               />
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 mb-1">প্রধান রোড / মহাসড়ক অবস্থান</label>
+              <label className="block font-bold text-ink mb-1">প্রধান রোড / মহাসড়ক অবস্থান</label>
               <input
                 type="text"
                 value={infoForm.roadBn}
                 onChange={(e) => setInfoForm({ ...infoForm, roadBn: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 p-2.5 font-bold"
+                className="w-full rounded-lg border border-line p-2.5 font-bold"
               />
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block font-bold text-slate-700 mb-1">পূর্ণাঙ্গ প্রাতিষ্ঠানিক ঠিকানা</label>
+              <label className="block font-bold text-ink mb-1">পূর্ণাঙ্গ প্রাতিষ্ঠানিক ঠিকানা</label>
               <input
                 type="text"
                 value={infoForm.addressBn}
                 onChange={(e) => setInfoForm({ ...infoForm, addressBn: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 p-2.5"
+                className="w-full rounded-lg border border-line p-2.5"
               />
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 mb-1">হটলাইন / মোবাইল নম্বর</label>
+              <label className="block font-bold text-ink mb-1">হটলাইন / মোবাইল নম্বর</label>
               <input
                 type="text"
                 value={infoForm.phone}
                 onChange={(e) => setInfoForm({ ...infoForm, phone: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 p-2.5 font-mono"
+                className="w-full rounded-lg border border-line p-2.5 font-mono"
               />
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 mb-1">বিকল্প মোবাইল নম্বর</label>
+              <label className="block font-bold text-ink mb-1">বিকল্প মোবাইল নম্বর</label>
               <input
                 type="text"
                 value={infoForm.phoneAlt}
                 onChange={(e) => setInfoForm({ ...infoForm, phoneAlt: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 p-2.5 font-mono"
+                className="w-full rounded-lg border border-line p-2.5 font-mono"
               />
             </div>
           </div>
@@ -1132,9 +1132,9 @@ export default function CmsContentManager() {
           <div className="pt-3 border-t flex justify-end">
             <button
               type="submit"
-              className="bg-emerald-800 hover:bg-emerald-700 text-white font-bold py-2.5 px-6 rounded-xl text-xs transition shadow flex items-center gap-2"
+              className="bg-primary hover:bg-primary text-white font-bold py-2.5 px-6 rounded-xl text-xs transition shadow flex items-center gap-2"
             >
-              <Save className="w-4 h-4 text-amber-300" />
+              <Save className="w-4 h-4 text-accent" />
               <span>যোগাযোগ তথ্য সংরক্ষণ করুন</span>
             </button>
           </div>

@@ -18,13 +18,27 @@
     <meta name="twitter:title" content="বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়" />
     <meta name="twitter:description" content="EIIN: 106644 • Bandua Daulatpur High School, Fulgazi, Feni." />
     <meta name="twitter:image" content="https://bondua-high-school-website.vercel.app/screenshots/ss_1_home.png" />
+    <meta name="theme-color" content="#0B3D2E" id="meta-theme-color" />
     <title>বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় | Bandua Daulatpur High School (EIIN: 106644)</title>
+    <!-- Prevent theme flicker on load -->
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('bdhs_theme');
+          if (t === 'indigo') {
+            document.documentElement.setAttribute('data-theme', 'indigo');
+            var m = document.getElementById('meta-theme-color');
+            if (m) m.setAttribute('content', '#1E1B4B');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <!-- Google Fonts: Anek Bangla (Modern & Trendy), Noto Sans Bengali & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@300;400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700;800&family=Anek+Bangla:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   </head>
-  <body class="bg-[#F7F9F8] text-[#1F2937] antialiased selection:bg-[#166534] selection:text-white">
+  <body class="bg-bg text-ink antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

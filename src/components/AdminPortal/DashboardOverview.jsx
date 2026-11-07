@@ -110,24 +110,24 @@ export default function DashboardOverview({ onNavigate }) {
   };
 
   return (
-    <div className="space-y-6 text-[#1F2937] font-sans">
+    <div className="space-y-6 text-ink font-sans">
       {/* Welcome Banner */}
-      <div className="card-base p-6 sm:p-8 rounded-2xl shadow-xs border border-[#E5E7EB] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 bg-white">
+      <div className="card-base p-6 sm:p-8 rounded-2xl shadow-xs border border-line flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 bg-white">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[#166534] text-xs font-bold font-mono">SYSTEM DASHBOARD</span>
-            <span className="bg-[#FEF3C7] text-[#92400E] border border-[#F59E0B] text-[10px] font-bold px-3 py-1 rounded-full font-bangla flex items-center gap-1">
-              <Clock className="w-3 h-3 text-[#92400E]" />
+            <span className="text-primary text-xs font-bold font-mono">SYSTEM DASHBOARD</span>
+            <span className="bg-warning-soft text-warning border border-accent text-[10px] font-bold px-3 py-1 rounded-full font-bangla flex items-center gap-1">
+              <Clock className="w-3 h-3 text-warning" />
               <span>{lang === 'bn' ? greeting.bn : greeting.en}</span>
             </span>
           </div>
-          <h2 className="text-lg sm:text-2xl font-bold font-bangla text-[#1F2937] mt-1.5">
+          <h2 className="text-lg sm:text-2xl font-bold font-bangla text-ink mt-1.5">
             {lang === 'bn' 
               ? `স্বাগতম, ${(authUser?.nameBn && !authUser.nameBn.includes('রবিউল')) ? authUser.nameBn : (authUser?.role === 'superadmin' ? 'প্রধান সিস্টেম অ্যাডমিনিস্ট্রেটর' : 'জনাব বাহার উদ্দিন ভূঁইয়া')} (${authUser?.designationBn || authUser?.designation || authUser?.role || 'প্রশাসক'})` 
               : `Welcome, ${(authUser?.nameEn && !authUser.nameEn.includes('Rabiul')) ? authUser.nameEn : (authUser?.role === 'superadmin' ? 'Super Administrator' : 'Mr. Bahar Uddin Bhuiyan')} (${authUser?.designationEn || authUser?.designation || authUser?.role || 'Administrator'})`
             }
           </h2>
-          <p className="text-xs text-[#4B5563] font-bangla mt-1">
+          <p className="text-xs text-muted font-bangla mt-1">
             {lang === 'bn'
               ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় ডিজিটাল ম্যানেজমেন্ট সফটওয়্যারে আপনাকে স্বাগতম।'
               : 'Welcome to Bandua Daulatpur High School Digital Management ERP.'
@@ -157,8 +157,8 @@ export default function DashboardOverview({ onNavigate }) {
 
       {/* Success Alert Banner for Student Creation (A10) */}
       {approvalMessage && (
-        <div className="p-4 bg-[#DCFCE7] text-[#14532D] rounded-xl text-xs font-bold flex items-center gap-2 border border-emerald-300">
-          <CheckCircle2 className="w-5 h-5 text-[#166534] shrink-0" />
+        <div className="p-4 bg-soft text-deep rounded-xl text-xs font-bold flex items-center gap-2 border border-soft-border">
+          <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
           <span>{approvalMessage}</span>
         </div>
       )}
@@ -172,23 +172,23 @@ export default function DashboardOverview({ onNavigate }) {
             <div
               key={idx}
               onClick={() => isAllowed && onNavigate(kpi.action)}
-              className={`card-base p-5 rounded-2xl border border-[#E5E7EB] shadow-xs transition flex flex-col justify-between bg-white ${
-                isAllowed ? 'hover:shadow-md cursor-pointer hover:border-[#166534]' : 'opacity-80 cursor-default'
+              className={`card-base p-5 rounded-2xl border border-line shadow-xs transition flex flex-col justify-between bg-white ${
+                isAllowed ? 'hover:shadow-md cursor-pointer hover:border-primary' : 'opacity-80 cursor-default'
               }`}
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-[#4B5563] font-bangla">
+                <span className="text-xs font-bold text-muted font-bangla">
                   {lang === 'bn' ? kpi.titleBn : kpi.titleEn}
                 </span>
-                <span className="p-2 rounded-xl bg-[#DCFCE7] text-[#14532D]">
-                  <Icon className="w-4 h-4 text-[#166534]" />
+                <span className="p-2 rounded-xl bg-soft text-deep">
+                  <Icon className="w-4 h-4 text-primary" />
                 </span>
               </div>
               <div>
-                <span className="text-2xl sm:text-3xl font-extrabold text-[#1F2937] font-mono">
+                <span className="text-2xl sm:text-3xl font-extrabold text-ink font-mono">
                   {kpi.value}
                 </span>
-                <p className="text-[11px] text-[#4B5563] font-bangla mt-1">{kpi.subtextBn}</p>
+                <p className="text-[11px] text-muted font-bangla mt-1">{kpi.subtextBn}</p>
               </div>
             </div>
           );
@@ -198,29 +198,29 @@ export default function DashboardOverview({ onNavigate }) {
       {/* Two Column Section: Recent Admission Applications & Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Recent Online Admission Applications OR Academic Notices for Teachers (N3/A2) */}
-        <div className="lg:col-span-8 card-base rounded-2xl p-6 border border-[#E5E7EB] shadow-xs space-y-4 bg-white">
+        <div className="lg:col-span-8 card-base rounded-2xl p-6 border border-line shadow-xs space-y-4 bg-white">
           {hasPermission('admissions') ? (
             <>
-              <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
+              <div className="flex items-center justify-between pb-3 border-b border-line">
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold font-bangla text-[#1F2937] flex items-center gap-2">
-                    <FileCheck className="w-4 h-4 text-[#166534]" />
+                  <h3 className="text-sm sm:text-base font-bold font-bangla text-ink flex items-center gap-2">
+                    <FileCheck className="w-4 h-4 text-primary" />
                     <span>সাম্প্রতিক অনলাইন ভর্তি আবেদন সমূহ</span>
                   </h3>
-                  <p className="text-[11px] text-[#4B5563] font-bangla">ওয়েবসাইটের মাধ্যমে শিক্ষার্থীদের পাঠানো আবেদন</p>
+                  <p className="text-[11px] text-muted font-bangla">ওয়েবসাইটের মাধ্যমে শিক্ষার্থীদের পাঠানো আবেদন</p>
                 </div>
                 <button
                   onClick={() => onNavigate('admissions')}
-                  className="text-xs font-bold text-[#166534] hover:underline flex items-center gap-1 font-bangla cursor-pointer"
+                  className="text-xs font-bold text-primary hover:underline flex items-center gap-1 font-bangla cursor-pointer"
                 >
                   <span>সকল দেখুন</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               </div>
 
-              <div className="overflow-x-auto rounded-xl border border-[#E5E7EB]">
+              <div className="overflow-x-auto rounded-xl border border-line">
                 <table className="w-full text-left text-xs font-bangla">
-                  <thead className="bg-[#F3F4F6] text-[#1F2937] font-bold border-b border-[#E5E7EB]">
+                  <thead className="bg-bg text-ink font-bold border-b border-line">
                     <tr>
                       <th className="py-3 px-3">ট্র্যাকিং আইডি</th>
                       <th className="py-3 px-3">শিক্ষার্থীর নাম</th>
@@ -230,18 +230,18 @@ export default function DashboardOverview({ onNavigate }) {
                       <th className="py-3 px-3 text-center">কার্যক্রম</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#E5E7EB]">
+                  <tbody className="divide-y divide-line">
                     {admissions.slice(0, 5).map((app) => (
-                      <tr key={app.id} className="hover:bg-[#F7F9F8] transition-colors">
-                        <td className="py-3 px-3 font-mono font-bold text-[#166534]">{app.trackingId}</td>
-                        <td className="py-3 px-3 font-semibold text-[#1F2937]">{app.studentNameBn || app.studentNameEn}</td>
-                        <td className="py-3 px-3 font-medium text-slate-700">
+                      <tr key={app.id} className="hover:bg-bg transition-colors">
+                        <td className="py-3 px-3 font-mono font-bold text-primary">{app.trackingId}</td>
+                        <td className="py-3 px-3 font-semibold text-ink">{app.studentNameBn || app.studentNameEn}</td>
+                        <td className="py-3 px-3 font-medium text-ink">
                           {lang === 'bn' ? `${toBanglaNumerals(app.applyingClass)} শ্রেণি` : `Class ${app.applyingClass}`}
                         </td>
-                        <td className="py-3 px-3 font-mono text-[#4B5563]">{app.guardianPhone}</td>
+                        <td className="py-3 px-3 font-mono text-muted">{app.guardianPhone}</td>
                         <td className="py-3 px-3 text-center">
                           <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                            app.status === 'Approved' ? 'bg-[#DCFCE7] text-[#14532D] border border-emerald-300' : 'bg-[#FEF3C7] text-[#92400E] border border-amber-300'
+                            app.status === 'Approved' ? 'bg-soft text-deep border border-soft-border' : 'bg-warning-soft text-warning border border-accent'
                           }`}>
                             {app.status === 'Approved' ? 'অনুমোদিত' : 'অপেক্ষমাণ'}
                           </span>
@@ -256,8 +256,8 @@ export default function DashboardOverview({ onNavigate }) {
                               অনুমোদন ও ভর্তি
                             </button>
                           ) : (
-                            <span className="text-[10px] text-[#15803D] font-bold flex items-center justify-center gap-0.5">
-                              <CheckCircle2 className="w-3 h-3 text-[#15803D]" />
+                            <span className="text-[10px] text-success font-bold flex items-center justify-center gap-0.5">
+                              <CheckCircle2 className="w-3 h-3 text-success" />
                               <span>ভর্তি সম্পন্ন</span>
                             </span>
                           )}
@@ -270,18 +270,18 @@ export default function DashboardOverview({ onNavigate }) {
             </>
           ) : (
             <>
-              <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
+              <div className="flex items-center justify-between pb-3 border-b border-line">
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold font-bangla text-[#1F2937] flex items-center gap-2">
-                    <Bell className="w-4 h-4 text-[#166534]" />
+                  <h3 className="text-sm sm:text-base font-bold font-bangla text-ink flex items-center gap-2">
+                    <Bell className="w-4 h-4 text-primary" />
                     <span>সাম্প্রতিক নোটিশ ও সার্কুলার</span>
                   </h3>
-                  <p className="text-[11px] text-[#4B5563] font-bangla">শিক্ষক ও কর্মকর্তা ড্যাশবোর্ড আপডেট</p>
+                  <p className="text-[11px] text-muted font-bangla">শিক্ষক ও কর্মকর্তা ড্যাশবোর্ড আপডেট</p>
                 </div>
                 {hasPermission('notices') && (
                   <button
                     onClick={() => onNavigate('notices')}
-                    className="text-xs font-bold text-[#166534] hover:underline flex items-center gap-1 font-bangla cursor-pointer"
+                    className="text-xs font-bold text-primary hover:underline flex items-center gap-1 font-bangla cursor-pointer"
                   >
                     <span>সকল নোটিশ</span>
                     <ChevronRight className="w-3.5 h-3.5" />
@@ -289,9 +289,9 @@ export default function DashboardOverview({ onNavigate }) {
                 )}
               </div>
 
-              <div className="overflow-x-auto rounded-xl border border-[#E5E7EB]">
+              <div className="overflow-x-auto rounded-xl border border-line">
                 <table className="w-full text-left text-xs font-bangla">
-                  <thead className="bg-[#F3F4F6] text-[#1F2937] font-bold border-b border-[#E5E7EB]">
+                  <thead className="bg-bg text-ink font-bold border-b border-line">
                     <tr>
                       <th className="py-3 px-3">শিরোনাম / বিষয়</th>
                       <th className="py-3 px-3">বিভাগ</th>
@@ -299,26 +299,26 @@ export default function DashboardOverview({ onNavigate }) {
                       <th className="py-3 px-3 text-center">কার্যক্রম</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#E5E7EB]">
+                  <tbody className="divide-y divide-line">
                     {(notices || []).slice(0, 5).map((n) => (
-                      <tr key={n.id} className="hover:bg-[#F7F9F8] transition-colors">
-                        <td className="py-3 px-3 font-semibold text-[#1F2937]">{n.titleBn || n.titleEn}</td>
+                      <tr key={n.id} className="hover:bg-bg transition-colors">
+                        <td className="py-3 px-3 font-semibold text-ink">{n.titleBn || n.titleEn}</td>
                         <td className="py-3 px-3">
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-bg text-ink">
                             {n.category === 'exam' ? 'পরীক্ষা' : n.category === 'academic' ? 'একাডেমিক' : 'সাধারণ'}
                           </span>
                         </td>
-                        <td className="py-3 px-3 font-mono text-slate-500">{n.date}</td>
+                        <td className="py-3 px-3 font-mono text-muted">{n.date}</td>
                         <td className="py-3 px-3 text-center">
                           {hasPermission('notices') ? (
                             <button
                               onClick={() => onNavigate('notices')}
-                              className="text-[#166534] hover:underline font-bold text-xs"
+                              className="text-primary hover:underline font-bold text-xs"
                             >
                               সম্পাদনা
                             </button>
                           ) : (
-                            <span className="text-slate-400">পর্যবেক্ষণ</span>
+                            <span className="text-muted">পর্যবেক্ষণ</span>
                           )}
                         </td>
                       </tr>
@@ -332,9 +332,9 @@ export default function DashboardOverview({ onNavigate }) {
 
         {/* Right Column: Quick ERP Navigation Tiles (Filtered by RBAC - A2) */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="card-base rounded-2xl p-6 border border-[#E5E7EB] shadow-xs space-y-3 bg-white">
-            <h3 className="text-sm font-bold font-bangla text-[#1F2937] pb-2 border-b border-[#E5E7EB] flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-[#166534]" />
+          <div className="card-base rounded-2xl p-6 border border-line shadow-xs space-y-3 bg-white">
+            <h3 className="text-sm font-bold font-bangla text-ink pb-2 border-b border-line flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-primary" />
               <span>দ্রুত কার্যক্রম</span>
             </h3>
 
@@ -345,13 +345,13 @@ export default function DashboardOverview({ onNavigate }) {
                   <button
                     key={action.id}
                     onClick={() => onNavigate(action.id)}
-                    className="w-full p-3 bg-[#F7F9F8] hover:bg-[#DCFCE7]/40 hover:border-[#166534] rounded-xl text-left font-semibold text-[#1F2937] transition flex items-center justify-between border border-[#E5E7EB] shadow-2xs cursor-pointer"
+                    className="w-full p-3 bg-bg hover:bg-soft/40 hover:border-primary rounded-xl text-left font-semibold text-ink transition flex items-center justify-between border border-line shadow-2xs cursor-pointer"
                   >
                     <span className="flex items-center gap-2">
-                      <Icon className="w-4 h-4 text-[#166534]" />
+                      <Icon className="w-4 h-4 text-primary" />
                       <span>{action.labelBn}</span>
                     </span>
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                    <ChevronRight className="w-3.5 h-3.5 text-muted" />
                   </button>
                 );
               })}
@@ -359,12 +359,12 @@ export default function DashboardOverview({ onNavigate }) {
           </div>
 
           {/* School Contact Card */}
-          <div className="card-base rounded-2xl p-5 text-xs space-y-2 border border-[#E5E7EB] shadow-xs bg-white">
-            <span className="text-[#14532D] font-bold block">প্রাতিষ্ঠানিক হেল্পডেস্ক</span>
-            <p className="text-[#4B5563] font-bangla leading-relaxed">
+          <div className="card-base rounded-2xl p-5 text-xs space-y-2 border border-line shadow-xs bg-white">
+            <span className="text-deep font-bold block">প্রাতিষ্ঠানিক হেল্পডেস্ক</span>
+            <p className="text-muted font-bangla leading-relaxed">
               কারিগরি সহায়তা ও সার্ভার রক্ষণাবেক্ষণ সংক্রান্ত তথ্যের জন্য বিদ্যালয়ের আইসিটি ল্যাবে যোগাযোগ করুন।
             </p>
-            <p className="font-mono text-[#166534] font-bold">হটলাইন: +880 1819-204561</p>
+            <p className="font-mono text-primary font-bold">হটলাইন: +880 1819-204561</p>
           </div>
         </div>
       </div>

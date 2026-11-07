@@ -3,6 +3,7 @@ import SchoolLogo from './common/SchoolLogo';
 import { useSchool } from '../context/useSchool';
 import { 
   Globe, 
+  Palette, 
   LogOut, 
   Menu, 
   X, 
@@ -13,7 +14,7 @@ import {
 } from 'lucide-react';
 
 export default function Header() {
-  const { lang, toggleLanguage, activeTab, setActiveTab, schoolInfo, authUser, logout, setAuthModalOpen } = useSchool();
+  const { lang, toggleLanguage, theme, toggleTheme, activeTab, setActiveTab, schoolInfo, authUser, logout, setAuthModalOpen } = useSchool();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -196,8 +197,8 @@ export default function Header() {
             : '-translate-x-1/2 translate-y-0'
         } ${
           isScrolled
-            ? 'top-[10px] w-[calc(100%-1.5rem)] max-w-[1100px] h-[58px] bg-[rgba(20,83,45,0.88)] backdrop-blur-[14px] backdrop-saturate-[140%] border border-white/[0.14] shadow-[0_12px_32px_rgba(0,0,0,0.18)] floating-glass-scrolled'
-            : 'top-[16px] w-[calc(100%-2rem)] max-w-[1200px] h-[72px] bg-[#14532D] border border-white/[0.12] shadow-[0_10px_30px_rgba(20,83,45,0.18)]'
+            ? 'top-[10px] w-[calc(100%-1.5rem)] max-w-[1100px] h-[58px] bg-deep/90 backdrop-blur-[14px] backdrop-saturate-[140%] border border-white/[0.14] shadow-[0_12px_32px_rgba(0,0,0,0.18)] floating-glass-scrolled'
+            : 'top-[16px] w-[calc(100%-2rem)] max-w-[1200px] h-[72px] bg-deep border border-white/[0.12] shadow-lg'
         }`}
       >
         <nav className="w-full h-full px-3.5 sm:px-6 flex items-center justify-between gap-2 sm:gap-4 select-none">
@@ -211,7 +212,7 @@ export default function Header() {
             aria-label="হোমপেজে ফিরে যান"
           >
             <div 
-              className={`bg-white rounded-full p-1 ring-2 ring-[#F59E0B] shrink-0 shadow-md transition-all duration-300 group-hover:scale-105 ${
+              className={`bg-white rounded-full p-1 ring-2 ring-accent shrink-0 shadow-md transition-all duration-300 group-hover:scale-105 ${
                 isScrolled ? 'w-9 h-9 scale-[0.88]' : 'w-11 h-11 scale-100'
               }`}
             >
@@ -219,7 +220,7 @@ export default function Header() {
             </div>
 
             <div className="hidden sm:block min-w-0 max-w-[140px] sm:max-w-[200px] md:max-w-xs transition-all duration-300">
-              <h1 className={`text-white font-bold font-bangla truncate leading-tight tracking-normal transition-all duration-300 group-hover:text-amber-300 ${
+              <h1 className={`text-white font-bold font-bangla truncate leading-tight tracking-normal transition-all duration-300 group-hover:text-accent ${
                 isScrolled ? 'text-xs sm:text-sm' : 'text-xs sm:text-base'
               }`}>
                 {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || 'Bandua Daulatpur High School')}
@@ -255,7 +256,7 @@ export default function Header() {
                       handleNavClick(item.directTab);
                     }}
                     aria-label={lang === 'bn' ? item.labelBn : item.labelEn}
-                    className={`px-3.5 xl:px-4 py-2 rounded-full transition-all duration-200 flex items-center justify-center text-center cursor-pointer focus-visible:outline-2 focus-visible:outline-[#F59E0B] focus-visible:outline-offset-2 ${
+                    className={`px-3.5 xl:px-4 py-2 rounded-full transition-all duration-200 flex items-center justify-center text-center cursor-pointer focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
                       active 
                         ? 'bg-white/[0.14] text-white shadow-xs font-bold' 
                         : 'text-white/90 hover:text-white hover:bg-white/[0.08]'
@@ -264,7 +265,7 @@ export default function Header() {
                     <span className="font-bangla font-semibold text-sm leading-none flex items-center gap-1.5">
                       <span>{lang === 'bn' ? item.labelBn : item.labelEn}</span>
                       {active && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-xs"></span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent shadow-xs"></span>
                       )}
                     </span>
                   </a>
@@ -272,7 +273,7 @@ export default function Header() {
                   {/* Dropdown Menu for Subpages */}
                   {hasChildren && isDropdownOpen && (
                     <div className="absolute top-[85%] left-1/2 -translate-x-1/2 pt-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
-                      <div className="bg-[#14532D]/95 backdrop-blur-md rounded-2xl p-1.5 min-w-[210px] space-y-1 shadow-2xl border border-white/15">
+                      <div className="bg-deep/95 backdrop-blur-md rounded-2xl p-1.5 min-w-[210px] space-y-1 shadow-2xl border border-white/15">
                         {item.children.map((child) => {
                           const isChildActive = activeTab === child.id;
                           return (
@@ -284,7 +285,7 @@ export default function Header() {
                                 e.stopPropagation();
                                 handleNavClick(child.id);
                               }}
-                              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition-all flex items-center justify-between font-bangla cursor-pointer focus-visible:outline-2 focus-visible:outline-[#F59E0B] ${
+                              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition-all flex items-center justify-between font-bangla cursor-pointer focus-visible:outline-2 focus-visible:outline-accent ${
                                 isChildActive
                                   ? 'bg-white/[0.15] text-white font-bold shadow-xs'
                                   : 'text-white/85 hover:text-white hover:bg-white/[0.08]'
@@ -292,7 +293,7 @@ export default function Header() {
                             >
                               <span>{lang === 'bn' ? child.labelBn : child.labelEn}</span>
                               {isChildActive ? (
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
                               ) : (
                                 <ChevronRight className="w-3.5 h-3.5 opacity-60" />
                               )}
@@ -314,19 +315,19 @@ export default function Header() {
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => handleNavClick('admin')}
-                  className={`bg-[#F59E0B] hover:bg-[#D97706] text-[#1F2937] font-bold rounded-full transition-all duration-300 flex items-center gap-1.5 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-[0_4px_14px_rgba(245,158,11,0.35)] active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-[#F59E0B] focus-visible:outline-offset-2 ${
+                  className={`bg-accent hover:bg-accent-hover text-accent-ink font-bold rounded-full transition-all duration-300 flex items-center gap-1.5 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
                     isScrolled 
                       ? 'px-3.5 sm:px-4 py-1.5 text-xs' 
                       : 'px-4 sm:px-5 py-2 text-xs sm:text-sm'
                   }`}
                   title="Open CMS Dashboard"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#1F2937]" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-accent-ink" />
                   <span>{lang === 'bn' ? 'ড্যাশবোর্ড' : 'Dashboard'}</span>
                 </button>
                 <button
                   onClick={logout}
-                  className={`rounded-full bg-white/10 hover:bg-red-500/20 hover:text-red-300 border border-white/15 text-white/90 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-[#F59E0B] ${
+                  className={`rounded-full bg-white/10 hover:bg-danger-soft hover:text-danger border border-white/15 text-white/90 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-accent ${
                     isScrolled ? 'w-9 h-9' : 'w-10 h-10'
                   }`}
                   title="লগআউট (Logout)"
@@ -338,7 +339,7 @@ export default function Header() {
             ) : (
               <button
                 onClick={() => setAuthModalOpen(true)}
-                className={`bg-[#F59E0B] hover:bg-[#D97706] text-[#1F2937] font-bold rounded-full transition-all duration-300 flex items-center gap-1.5 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-[0_4px_14px_rgba(245,158,11,0.35)] active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-[#F59E0B] focus-visible:outline-offset-2 ${
+                className={`bg-accent hover:bg-accent-hover text-accent-ink font-bold rounded-full transition-all duration-300 flex items-center gap-1.5 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
                   isScrolled 
                     ? 'px-3.5 sm:px-4 py-1.5 text-xs' 
                     : 'px-4 sm:px-5 py-2 text-xs sm:text-sm'
@@ -352,7 +353,7 @@ export default function Header() {
             {/* Language Switcher - 40px Round Icon Button */}
             <button
               onClick={toggleLanguage}
-              className={`rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-[#F59E0B] focus-visible:outline-offset-2 ${
+              className={`rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
                 isScrolled ? 'w-9 h-9' : 'w-10 h-10'
               }`}
               title="ভাষা পরিবর্তন (Toggle Language)"
@@ -361,13 +362,35 @@ export default function Header() {
               <Globe className="w-4 h-4 text-white" />
             </button>
 
+            {/* Theme Toggle Button - 40px Round Icon Button with Palette & Preview Dot */}
+            <button
+              onClick={toggleTheme}
+              className={`rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
+                isScrolled ? 'w-9 h-9' : 'w-10 h-10'
+              }`}
+              title={
+                theme === 'emerald'
+                  ? (lang === 'bn' ? 'ইন্ডিগো থিম' : 'Switch to Indigo theme')
+                  : (lang === 'bn' ? 'এমেরাল্ড থিম' : 'Switch to Emerald theme')
+              }
+              aria-label="রঙের থিম পরিবর্তন করুন"
+            >
+              <Palette className="w-4 h-4 text-white" />
+              <span
+                className={`absolute top-1.5 right-1.5 w-2 h-2 rounded-full ring-1 ring-white/60 ${
+                  theme === 'emerald' ? 'bg-[#FACC15]' : 'bg-[#E8B931]'
+                }`}
+                aria-hidden="true"
+              />
+            </button>
+
             {/* Notice Bell Indicator - 40px Round Icon Button (L8 fix: clears unread dot on click) */}
             <button
               onClick={() => {
                 setHasUnreadNotice(false);
                 handleNavClick('notices');
               }}
-              className={`rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-[#F59E0B] focus-visible:outline-offset-2 ${
+              className={`rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
                 isScrolled ? 'w-9 h-9' : 'w-10 h-10'
               }`}
               title="নোটিফিকেশন (Notification)"
@@ -375,7 +398,7 @@ export default function Header() {
             >
               <Bell className="w-4 h-4 text-white" />
               {hasUnreadNotice && (
-                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-[#F59E0B] ring-2 ring-[#14532D]"></span>
+                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-accent ring-2 ring-deep"></span>
               )}
             </button>
 
@@ -395,7 +418,7 @@ export default function Header() {
 
         {/* THIN 2.5px AMBER SCROLL PROGRESS LINE (CLIPPED BY PILL RADIUS) */}
         <div 
-          className="absolute bottom-0 left-0 h-[2.5px] bg-[#F59E0B] rounded-full pointer-events-none transition-all duration-75 ease-out"
+          className="absolute bottom-0 left-0 h-[2.5px] bg-accent rounded-full pointer-events-none transition-all duration-75 ease-out"
           style={{ width: `${scrollProgress}%` }}
           role="progressbar"
           aria-valuenow={Math.round(scrollProgress)}
@@ -416,7 +439,7 @@ export default function Header() {
 
           {/* Full-Height Right Drawer */}
           <aside 
-            className="fixed top-0 right-0 bottom-0 w-[290px] sm:w-[320px] bg-[#14532D] z-50 shadow-2xl border-l border-white/15 p-5 flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-300 no-print"
+            className="fixed top-0 right-0 bottom-0 w-[290px] sm:w-[320px] bg-deep z-50 shadow-2xl border-l border-white/15 p-5 flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-300 no-print"
             role="dialog"
             aria-modal="true"
             aria-label="মোবাইল নেভিগেশন মেনু"
@@ -425,7 +448,7 @@ export default function Header() {
               {/* Drawer Top Header with Close Button */}
               <div className="flex items-center justify-between pb-4 border-b border-white/15">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 bg-white rounded-full p-1 ring-2 ring-[#F59E0B]">
+                  <div className="w-9 h-9 bg-white rounded-full p-1 ring-2 ring-accent">
                     <SchoolLogo logo={schoolInfo.logo} />
                   </div>
                   <div>
@@ -444,6 +467,32 @@ export default function Header() {
                   aria-label="মেনু বন্ধ করুন"
                 >
                   <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Mobile Drawer Theme Toggle Row */}
+              <div className="mt-3 flex items-center justify-between p-2.5 rounded-xl bg-white/10 border border-white/15 font-bangla">
+                <div className="flex items-center gap-2">
+                  <Palette className="w-4 h-4 text-accent" />
+                  <span className="text-white text-xs font-semibold">
+                    {lang === 'bn' ? 'রঙের থিম' : 'Color Theme'}
+                  </span>
+                </div>
+                <button
+                  onClick={toggleTheme}
+                  className="px-3 py-1 rounded-lg bg-accent text-accent-ink text-xs font-bold transition active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-xs"
+                  title={
+                    theme === 'emerald'
+                      ? (lang === 'bn' ? 'ইন্ডিগো থিম' : 'Switch to Indigo theme')
+                      : (lang === 'bn' ? 'এমেরাল্ড থিম' : 'Switch to Emerald theme')
+                  }
+                  aria-label="রঙের থিম পরিবর্তন করুন"
+                >
+                  <span>
+                    {theme === 'emerald'
+                      ? (lang === 'bn' ? 'ইন্ডিগো' : 'Indigo')
+                      : (lang === 'bn' ? 'এমেরাল্ড' : 'Emerald')}
+                  </span>
                 </button>
               </div>
 
@@ -470,7 +519,7 @@ export default function Header() {
                           }`}
                         >
                           <span className="flex items-center gap-2">
-                            {active && <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>}
+                            {active && <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>}
                             <span>{lang === 'bn' ? item.labelBn : item.labelEn}</span>
                           </span>
                         </a>
@@ -481,7 +530,7 @@ export default function Header() {
                             className="min-w-[44px] min-h-[44px] flex items-center justify-center text-white/70 hover:text-white transition cursor-pointer"
                             aria-expanded={isExpanded}
                             aria-label={isExpanded ? (lang === 'bn' ? 'সাব-মেনু বন্ধ করুন' : 'Close sub-menu') : (lang === 'bn' ? 'সাব-মেনু খুলুন' : 'Open sub-menu')}>
-                            <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-[#F59E0B]' : ''}`} />
+                            <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-accent' : ''}`} />
                           </button>
                         )}
                       </div>
@@ -506,7 +555,7 @@ export default function Header() {
                                 }`}
                               >
                                 <span>{lang === 'bn' ? child.labelBn : child.labelEn}</span>
-                                {isChildActive && <span className="w-1 h-1 rounded-full bg-[#F59E0B]"></span>}
+                                {isChildActive && <span className="w-1 h-1 rounded-full bg-accent"></span>}
                               </a>
                             );
                           })}
@@ -524,14 +573,14 @@ export default function Header() {
                 <div className="space-y-2">
                   <button
                     onClick={() => handleNavClick('admin')}
-                    className="w-full bg-[#F59E0B] hover:bg-[#D97706] text-[#1F2937] font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                    className="w-full bg-accent hover:bg-accent-hover text-accent-ink font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
                   >
                     <ShieldCheck className="w-4 h-4" />
                     <span>{lang === 'bn' ? 'ড্যাশবোর্ড প্রবেশ করুন' : 'Open Dashboard'}</span>
                   </button>
                   <button
                     onClick={logout}
-                    className="w-full bg-white/10 hover:bg-red-500/20 text-white hover:text-red-300 font-semibold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
+                    className="w-full bg-white/10 hover:bg-danger-soft text-white hover:text-danger font-semibold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
                   >
                     <LogOut className="w-3.5 h-3.5" />
                     <span>{lang === 'bn' ? 'লগআউট' : 'Logout'}</span>
@@ -543,7 +592,7 @@ export default function Header() {
                     setMobileMenuOpen(false);
                     setAuthModalOpen(true);
                   }}
-                  className="w-full bg-[#F59E0B] hover:bg-[#D97706] text-[#1F2937] font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                  className="w-full bg-accent hover:bg-accent-hover text-accent-ink font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
                 >
                   <span>{lang === 'bn' ? 'পোর্টাল লগইন' : 'Portal Login'}</span>
                 </button>

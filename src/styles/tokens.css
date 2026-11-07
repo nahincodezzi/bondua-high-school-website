@@ -1,39 +1,58 @@
 /* ==========================================================================
-   Design Tokens - Bandua Doulatpur High School (CMS + ERP)
-   Brand Identity: Forest Green + Amber (60-30-10 Rule)
-   Flat, Trustworthy, Modern Bangladeshi Institutional Theme
+   Design Tokens - Bandua Doulatpur High School (Institutional CMS & ERP)
+   Two-Theme System: Emerald Prestige (Default) & Indigo & Sunflower
    ========================================================================== */
 
 :root {
-  /* Brand Colors */
-  --color-primary: #166534;        /* Buttons, links, icons, focus ring */
-  --color-primary-hover: #14532D;  /* Hover state for primary */
-  --color-primary-dark: #14532D;   /* Header, footer, stats bar backgrounds */
-  --color-primary-soft: #DCFCE7;   /* Active menu item, selected states, soft tags */
-  --color-accent: #F59E0B;         /* ONLY main call-to-action buttons */
-  --color-accent-hover: #D97706;   /* Accent hover */
+  /* Theme 1: Emerald Prestige (Default) */
+  --c-deep: #0B3D2E;
+  --c-primary: #0F6B47;
+  --c-primary-hover: #0B5A3B;
+  --c-soft: #E7F5EE;
+  --c-soft-border: #C9E7D7;
+  --c-accent: #E8B931;
+  --c-accent-hover: #D4A520;
+  --c-accent-ink: #0B3D2E;
+  --c-bg: #F6F8F5;
+  --c-surface: #FFFFFF;
+  --c-ink: #1C2B22;
+  --c-muted: #4A5A50;
+  --c-line: #E3E8E4;
+  --c-danger: #B91C1C;
+  --c-danger-soft: #FDECEC;
+  --c-success: #0F6B47;
+  --c-success-soft: #E7F5EE;
+  --c-warning: #B45309;
+  --c-warning-soft: #FEF3C7;
 
-  /* Neutral Colors */
-  --color-page-bg: #F7F9F8;        /* Page background (~60%) */
-  --color-surface: #FFFFFF;        /* Cards, sidebar, tables, modals */
-  --color-surface-muted: #F3F4F6;  /* Neutral badges, chips, input backgrounds */
-  --color-border: #E5E7EB;         /* Soft borders */
-  --color-border-strong: #D1D5DB;  /* Stronger borders for chips / inputs */
-  --color-text: #1F2937;           /* Main high-contrast text */
-  --color-text-muted: #4B5563;     /* Labels and helper text (never lighter than this) */
+  accent-color: var(--c-primary);
 
-  /* Semantic Colors (Functional Only) */
-  --color-success: #15803D;        /* Active status */
-  --color-success-soft: #DCFCE7;   /* Active status background */
-  --color-danger: #DC2626;         /* Delete, deactivate, errors, "নতুন" badge */
-  --color-danger-soft: #FEE2E2;    /* Danger background */
-  --color-warning: #B45309;        /* Special badges like "SUPER" */
-  --color-warning-soft: #FEF3C7;   /* Warning background */
-  --color-info: #1D4ED8;           /* Info state */
-  --color-info-soft: #DBEAFE;      /* Info background */
+  /* Legacy & Semantic Mappings */
+  --color-primary: var(--c-primary);
+  --color-primary-hover: var(--c-primary-hover);
+  --color-primary-dark: var(--c-deep);
+  --color-primary-soft: var(--c-soft);
+  --color-accent: var(--c-accent);
+  --color-accent-hover: var(--c-accent-hover);
+  --color-page-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-surface-muted: var(--c-bg);
+  --color-border: var(--c-line);
+  --color-border-strong: var(--c-soft-border);
+  --color-text: var(--c-ink);
+  --color-text-main: var(--c-ink);
+  --color-text-muted: var(--c-muted);
+  --color-success: var(--c-success);
+  --color-success-soft: var(--c-success-soft);
+  --color-danger: var(--c-danger);
+  --color-danger-soft: var(--c-danger-soft);
+  --color-warning: var(--c-warning);
+  --color-warning-soft: var(--c-warning-soft);
+  --color-info: var(--c-primary);
+  --color-info-soft: var(--c-soft);
 
   /* Typography */
-  --font-ui: 'Anek Bangla', 'Noto Sans Bengali', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-ui: 'Noto Sans Bengali', 'Anek Bangla', 'Kalpurush', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
   /* Shape & Radius */
@@ -42,8 +61,32 @@
   --radius-card: 12px;
   --radius-badge: 9999px;
 
-  /* Shadow (Flat & simple: single light shadow) */
+  /* Shadow */
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
   --shadow-card-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
 }
 
+:root[data-theme="indigo"] {
+  /* Theme 2: Indigo & Sunflower */
+  --c-deep: #1E1B4B;
+  --c-primary: #4338CA;
+  --c-primary-hover: #3730A3;
+  --c-soft: #EEF0FF;
+  --c-soft-border: #D9DCFB;
+  --c-accent: #FACC15;
+  --c-accent-hover: #EAB308;
+  --c-accent-ink: #1E1B4B;
+  --c-bg: #F7F7FC;
+  --c-surface: #FFFFFF;
+  --c-ink: #1B1A33;
+  --c-muted: #555472;
+  --c-line: #E4E4F0;
+  --c-danger: #DC2626;
+  --c-danger-soft: #FDECEC;
+  --c-success: #15803D;
+  --c-success-soft: #E8F6EC;
+  --c-warning: #B45309;
+  --c-warning-soft: #FEF3C7;
+
+  accent-color: var(--c-primary);
+}

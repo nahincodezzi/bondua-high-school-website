@@ -812,7 +812,7 @@ export const ROLE_DEFINITIONS = {
     id: 'superadmin',
     nameBn: 'সুপার অ্যাডমিন (প্রধান সিস্টেম প্রশাসক)',
     nameEn: 'System Super Administrator',
-    badgeColor: 'bg-[#F3F4F6] text-[#374151] border-[#D1D5DB]',
+    badgeColor: 'bg-soft text-ink border-line',
     descriptionBn: 'সম্পূর্ণ সিস্টেমের একক ও সর্বোচ্চ ক্ষমতা। নতুন অ্যাকাউন্ট খোলা, যেকোনো রোলে অনুমোদন দেওয়া, পাসওয়ার্ড রিসেট ও ডাটাবেস নিয়ন্ত্রণ করতে পারবেন।',
     descriptionEn: 'Full absolute system authority. Can create new accounts, assign granular permissions, reset passwords, and manage all software modules.',
     defaultPermissions: ['cms', 'teachers', 'students', 'admissions', 'results', 'notices', 'fees', 'settings', 'users']
@@ -821,7 +821,7 @@ export const ROLE_DEFINITIONS = {
     id: 'headmaster',
     nameBn: 'প্রধান শিক্ষক / অধ্যক্ষ',
     nameEn: 'Headmaster / Principal',
-    badgeColor: 'bg-[#F3F4F6] text-[#374151] border-[#D1D5DB]',
+    badgeColor: 'bg-soft text-ink border-line',
     descriptionBn: 'বিদ্যালয়ের প্রধান প্রশাসনিক কর্মকর্তা। ভর্তি অনুমোদন, নোটিশ প্রকাশ, রেজাল্ট অনুমোদন, শিক্ষক প্রোফাইল ও প্রাতিষ্ঠানিক সকল মডিউল পরিচালনা করতে পারবেন।',
     descriptionEn: 'Chief institutional administrator. Full operational access across academic, admission, notice, and faculty modules.',
     defaultPermissions: ['cms', 'teachers', 'students', 'admissions', 'results', 'notices', 'fees', 'settings']
@@ -830,7 +830,7 @@ export const ROLE_DEFINITIONS = {
     id: 'asst_headmaster',
     nameBn: 'সহকারী প্রধান শিক্ষক / প্রশাসনিক কর্মকর্তা',
     nameEn: 'Assistant Headmaster / Admin Officer',
-    badgeColor: 'bg-[#F3F4F6] text-[#374151] border-[#D1D5DB]',
+    badgeColor: 'bg-soft text-ink border-line',
     descriptionBn: 'ভর্তি আবেদন যাচাই, নোটিশ সার্কুলার প্রকাশ, রুটিন আপডেট এবং একাডেমিক রেজাল্ট তদারকি করার ক্ষমতা।',
     descriptionEn: 'Administrative supervisor for admissions, notices, routines, and academic verification.',
     defaultPermissions: ['cms', 'students', 'admissions', 'results', 'notices']
@@ -839,7 +839,7 @@ export const ROLE_DEFINITIONS = {
     id: 'teacher',
     nameBn: 'সহকারী শিক্ষক (শিক্ষক পরিষদ)',
     nameEn: 'Assistant Teacher / Faculty',
-    badgeColor: 'bg-[#F3F4F6] text-[#374151] border-[#D1D5DB]',
+    badgeColor: 'bg-soft text-ink border-line',
     descriptionBn: 'শুধুমাত্র বিষয়ভিত্তিক পরীক্ষার নম্বর ইনপুট প্রদান (Marks Entry), ফলাফল যাচাই এবং নোটিশ বোর্ড দেখার ক্ষমতা।',
     descriptionEn: 'Academic faculty access strictly limited to entering subject exam marks and viewing institutional notices.',
     defaultPermissions: ['results', 'notices']
@@ -848,7 +848,7 @@ export const ROLE_DEFINITIONS = {
     id: 'accountant',
     nameBn: 'হিসাবরক্ষক ও ক্যাশিয়ার',
     nameEn: 'Accountant & Cashier',
-    badgeColor: 'bg-[#F3F4F6] text-[#374151] border-[#D1D5DB]',
+    badgeColor: 'bg-soft text-ink border-line',
     descriptionBn: 'সকল ধরনের ফি গ্রহণ (টিউশন ফি, সেশন ফি, পরীক্ষার ফি), অর্থ জমার অফিসিয়াল ভাউচার বা মানি রসিদ প্রিন্ট এবং শিক্ষার্থী বকেয়া যাচাই।',
     descriptionEn: 'Financial clerk access limited to collecting student fees, issuing printed money receipts, and viewing payments.',
     defaultPermissions: ['fees', 'students']
@@ -857,7 +857,7 @@ export const ROLE_DEFINITIONS = {
     id: 'operator',
     nameBn: 'অফিস সহকারী ও ডাটা এন্ট্রি অপারেটর',
     nameEn: 'Office Assistant / Data Entry Operator',
-    badgeColor: 'bg-[#F3F4F6] text-[#374151] border-[#D1D5DB]',
+    badgeColor: 'bg-soft text-ink border-line',
     descriptionBn: 'নতুন শিক্ষার্থী ভর্তি এন্ট্রি, স্টুডেন্ট আইডি কার্ড প্রিন্ট এবং সাধারণ নোটিশ ড্রাফট করার ক্ষমতা।',
     descriptionEn: 'Data entry assistant for registering students, printing ID cards, and processing admission forms.',
     defaultPermissions: ['students', 'admissions', 'notices']

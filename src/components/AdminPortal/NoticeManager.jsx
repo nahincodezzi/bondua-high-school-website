@@ -164,27 +164,27 @@ export default function NoticeManager() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl sm:text-2xl font-bold font-bangla text-[#1F2937]">
+        <h2 className="text-xl sm:text-2xl font-bold font-bangla text-ink">
           নোটিশ বোর্ড ও ফাইল আপলোড ব্যবস্থাপনা (Notice Publisher)
         </h2>
-        <p className="text-xs text-[#4B5563] font-bangla">
+        <p className="text-xs text-muted font-bangla">
           বিদ্যালয়ের পাবলিক নোটিশ বোর্ডে নতুন নোটিশ, সার্কুলার ও পিডিএফ/ছবি ফাইল সরাসরি প্রকাশ বা সম্পাদনা করুন
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Publish/Edit Form */}
-        <div className="lg:col-span-5 card-base bg-white p-5 sm:p-6 rounded-2xl border border-[#E5E7EB] shadow-xs space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB]">
-            <h3 className="font-bold font-bangla text-[#1F2937] text-sm flex items-center gap-2">
-              <Bell className="w-4 h-4 text-[#166534]" />
+        <div className="lg:col-span-5 card-base bg-white p-5 sm:p-6 rounded-2xl border border-line shadow-xs space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-line">
+            <h3 className="font-bold font-bangla text-ink text-sm flex items-center gap-2">
+              <Bell className="w-4 h-4 text-primary" />
               <span>{editingNoticeId ? 'নোটিশ সম্পাদনা করুন' : 'নতুন নোটিশ প্রকাশ ও ফাইল আপলোড'}</span>
             </h3>
             {editingNoticeId && (
               <button
                 type="button"
                 onClick={cancelEdit}
-                className="text-xs font-semibold text-[#DC2626] hover:underline cursor-pointer"
+                className="text-xs font-semibold text-danger hover:underline cursor-pointer"
               >
                 বাতিল করুন
               </button>
@@ -193,35 +193,35 @@ export default function NoticeManager() {
 
           <form onSubmit={handleSubmit} className="space-y-3.5 text-xs font-bangla">
             <div>
-              <label className="block font-bold text-slate-700 mb-1">নোটিশের শিরোনাম (বাংলায়) *</label>
+              <label className="block font-bold text-ink mb-1">নোটিশের শিরোনাম (বাংলায়) *</label>
               <input
                 type="text"
                 required
                 value={titleBn}
                 onChange={(e) => setTitleBn(e.target.value)}
                 placeholder="যেমন: ২০২৭ সালের এসএসসি নির্বাচনী পরীক্ষার সময়সূচি প্রকাশ..."
-                className="w-full rounded-lg border border-[#D1D5DB] p-2.5 bg-[#F7F9F8] text-[#1F2937] focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 mb-1">নোটিশের শিরোনাম (ইংরেজিতে)</label>
+              <label className="block font-bold text-ink mb-1">নোটিশের শিরোনাম (ইংরেজিতে)</label>
               <input
                 type="text"
                 value={titleEn}
                 onChange={(e) => setTitleEn(e.target.value)}
                 placeholder="Notice title in English"
-                className="w-full rounded-lg border border-[#D1D5DB] p-2.5 bg-[#F7F9F8] text-[#1F2937] focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">বিভাগ (Category)</label>
+                <label className="block font-bold text-ink mb-1">বিভাগ (Category)</label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full rounded-lg border border-[#D1D5DB] p-2.5 bg-[#F7F9F8] text-[#1F2937] focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                  className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
                 >
                   <option value="academic">অ্যাকাডেমিক (Academic)</option>
                   <option value="exam">পরীক্ষা ও ফলাফল (Examinations)</option>
@@ -231,41 +231,41 @@ export default function NoticeManager() {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">প্রকাশের তারিখ *</label>
+                <label className="block font-bold text-ink mb-1">প্রকাশের তারিখ *</label>
                 <input
                   type="date"
                   required
                   value={publishDate}
                   onChange={(e) => setPublishDate(e.target.value)}
-                  className="w-full rounded-lg border border-[#D1D5DB] p-2.5 bg-[#F7F9F8] text-[#1F2937] focus:ring-2 focus:ring-[#166534] focus:outline-none font-mono"
+                  className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none font-mono"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 mb-1">নোটিশের বিস্তারিত বিবরণ *</label>
+              <label className="block font-bold text-ink mb-1">নোটিশের বিস্তারিত বিবরণ *</label>
               <textarea
                 required
                 rows="4"
                 value={contentBn}
                 onChange={(e) => setContentBn(e.target.value)}
                 placeholder="নোটিশের পূর্ণাঙ্গ বিবরণ ও নির্দেশনাবলী লিখুন..."
-                className="w-full rounded-lg border border-[#D1D5DB] p-2.5 bg-[#F7F9F8] text-[#1F2937] focus:ring-2 focus:ring-[#166534] focus:outline-none leading-relaxed"
+                className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none leading-relaxed"
               ></textarea>
             </div>
 
             {/* Document / Photo File Attachment Upload */}
-            <div className="p-3 bg-[#F7F9F8] rounded-xl border border-dashed border-[#D1D5DB] space-y-2">
+            <div className="p-3 bg-bg rounded-xl border border-dashed border-line space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                  <Paperclip className="w-3.5 h-3.5 text-[#166534]" />
+                <span className="font-bold text-ink flex items-center gap-1.5">
+                  <Paperclip className="w-3.5 h-3.5 text-primary" />
                   <span>অফিসিয়াল ডকুমেন্ট / ফাইল আপলোড (ঐচ্ছিক)</span>
                 </span>
                 {fileName && (
                   <button
                     type="button"
                     onClick={removeAttachment}
-                    className="text-[#DC2626] hover:underline text-[10px] font-bold flex items-center gap-0.5 cursor-pointer"
+                    className="text-danger hover:underline text-[10px] font-bold flex items-center gap-0.5 cursor-pointer"
                   >
                     <X className="w-3 h-3" />
                     <span>মুছুন</span>
@@ -283,23 +283,23 @@ export default function NoticeManager() {
               />
 
               {fileName ? (
-                <div className="flex items-center gap-2 p-2 bg-[#DCFCE7] border border-emerald-300 rounded-lg text-[#14532D]">
-                  <FileText className="w-4 h-4 text-[#166534] shrink-0" />
+                <div className="flex items-center gap-2 p-2 bg-soft border border-soft-border rounded-lg text-deep">
+                  <FileText className="w-4 h-4 text-primary shrink-0" />
                   <span className="font-mono text-[11px] truncate">{fileName}</span>
-                  <span className="text-[10px] font-bold text-[#166534] ml-auto shrink-0">সংযুক্ত</span>
+                  <span className="text-[10px] font-bold text-primary ml-auto shrink-0">সংযুক্ত</span>
                 </div>
               ) : (
                 <label
                   htmlFor="notice-file-upload"
-                  className="cursor-pointer flex items-center justify-center gap-2 p-2.5 bg-white hover:bg-slate-50 border border-[#D1D5DB] rounded-lg text-slate-700 font-semibold transition"
+                  className="cursor-pointer flex items-center justify-center gap-2 p-2.5 bg-white hover:bg-bg border border-line rounded-lg text-ink font-semibold transition"
                 >
-                  <Upload className="w-4 h-4 text-[#166534]" />
+                  <Upload className="w-4 h-4 text-primary" />
                   <span>পিডিএফ বা ছবি নির্বাচন করুন</span>
                 </label>
               )}
 
               {uploadStatus && (
-                <p className="text-[10px] text-[#166534] font-medium">{uploadStatus}</p>
+                <p className="text-[10px] text-primary font-medium">{uploadStatus}</p>
               )}
             </div>
 
@@ -309,16 +309,16 @@ export default function NoticeManager() {
                 id="urgent-check"
                 checked={isUrgent}
                 onChange={(e) => setIsUrgent(e.target.checked)}
-                className="rounded border-[#D1D5DB] text-[#DC2626] focus:ring-red-500"
+                className="rounded border-line text-danger focus:ring-danger"
               />
-              <label htmlFor="urgent-check" className="font-semibold text-[#DC2626] cursor-pointer">
+              <label htmlFor="urgent-check" className="font-semibold text-danger cursor-pointer">
                 জরুরি নোটিশ হিসেবে চিহ্নিত করুন (ব্রেকিং টিকারে প্রদর্শিত হবে)
               </label>
             </div>
 
             {success && (
-              <div className="p-3 bg-[#DCFCE7] text-[#14532D] rounded-xl text-xs font-semibold flex items-center gap-2 border border-emerald-300">
-                <CheckCircle className="w-4 h-4 text-[#166534]" />
+              <div className="p-3 bg-soft text-deep rounded-xl text-xs font-semibold flex items-center gap-2 border border-soft-border">
+                <CheckCircle className="w-4 h-4 text-primary" />
                 <span>{success}</span>
               </div>
             )}
@@ -334,8 +334,8 @@ export default function NoticeManager() {
         </div>
 
         {/* Existing Notices List with Edit and Delete options (A11) */}
-        <div className="lg:col-span-7 card-base bg-white p-5 sm:p-6 rounded-2xl border border-[#E5E7EB] shadow-xs space-y-3 font-bangla">
-          <h3 className="font-bold text-[#1F2937] text-sm pb-2 border-b border-[#E5E7EB] flex justify-between items-center">
+        <div className="lg:col-span-7 card-base bg-white p-5 sm:p-6 rounded-2xl border border-line shadow-xs space-y-3 font-bangla">
+          <h3 className="font-bold text-ink text-sm pb-2 border-b border-line flex justify-between items-center">
             <span>বর্তমানে প্রকাশিত নোটিশসমূহ ({lang === 'bn' ? toBanglaNumerals(notices.length) : notices.length} টি)</span>
           </h3>
 
@@ -343,7 +343,7 @@ export default function NoticeManager() {
             {notices.map((n) => (
               <div
                 key={n.id}
-                className="p-3.5 bg-[#F7F9F8] rounded-xl border border-[#E5E7EB] text-xs space-y-2 flex items-start justify-between gap-3"
+                className="p-3.5 bg-bg rounded-xl border border-line text-xs space-y-2 flex items-start justify-between gap-3"
               >
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-2">
@@ -352,29 +352,29 @@ export default function NoticeManager() {
                         জরুরি
                       </span>
                     )}
-                    <span className="flex items-center gap-1 font-mono text-[#166534] text-[11px] font-semibold">
-                      <Calendar className="w-3 h-3 text-[#166534]" />
+                    <span className="flex items-center gap-1 font-mono text-primary text-[11px] font-semibold">
+                      <Calendar className="w-3 h-3 text-primary" />
                       <span>{formatBanglaDate(n.date || n.publishDate, 'bn')}</span>
                     </span>
                     <span className="badge-neutral text-[10px] px-1.5 py-0.5 rounded capitalize">
                       {n.category}
                     </span>
                     {n.fileUrl && n.fileUrl !== '#' && (
-                      <span className="bg-[#DCFCE7] text-[#14532D] text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1 font-mono">
-                        <Paperclip className="w-2.5 h-2.5 text-[#166534]" />
+                      <span className="bg-soft text-deep text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1 font-mono">
+                        <Paperclip className="w-2.5 h-2.5 text-primary" />
                         <span>ফাইল সংযুক্ত</span>
                       </span>
                     )}
                   </div>
-                  <h4 className="font-bold text-[#1F2937] mt-1 text-sm">{n.titleBn}</h4>
-                  <p className="text-[#4B5563] line-clamp-2 mt-0.5 leading-relaxed">{n.contentBn}</p>
+                  <h4 className="font-bold text-ink mt-1 text-sm">{n.titleBn}</h4>
+                  <p className="text-muted line-clamp-2 mt-0.5 leading-relaxed">{n.contentBn}</p>
                 </div>
 
                 <div className="flex items-center gap-1 shrink-0 pt-1">
                   {/* Edit Notice Button (A11) */}
                   <button
                     onClick={() => startEdit(n)}
-                    className="p-2 text-[#166534] hover:bg-[#DCFCE7] rounded-lg transition cursor-pointer"
+                    className="p-2 text-primary hover:bg-soft rounded-lg transition cursor-pointer"
                     title="নোটিশ সম্পাদনা করুন"
                   >
                     <Edit2 className="w-4 h-4" />
@@ -387,7 +387,7 @@ export default function NoticeManager() {
                         deleteNotice(n.id);
                       }
                     }}
-                    className="p-2 text-[#DC2626] hover:bg-red-50 rounded-lg transition cursor-pointer"
+                    className="p-2 text-danger hover:bg-danger-soft rounded-lg transition cursor-pointer"
                     title="মুছে ফেলুন"
                   >
                     <Trash2 className="w-4 h-4" />

@@ -85,11 +85,11 @@ export default function FeeManager() {
       aria-labelledby="money-receipt-title"
     >
       <div className="fixed inset-0 -z-10" onClick={() => setActiveReceipt(null)} aria-hidden="true" />
-      <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden border border-[#E5E7EB] shadow-2xl relative">
+      <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden border border-line shadow-2xl relative">
         {/* Top Toolbar */}
-        <div className="bg-[#14532D] text-white px-4 py-2.5 flex justify-between items-center text-xs no-print border-b border-[#166534]">
+        <div className="bg-deep text-white px-4 py-2.5 flex justify-between items-center text-xs no-print border-b border-primary">
           <span className="font-bold flex items-center gap-1.5">
-            <Receipt className="w-4 h-4 text-[#F59E0B]" />
+            <Receipt className="w-4 h-4 text-accent" />
             <span id="money-receipt-title">অফিসিয়াল মানি রিসিট</span>
           </span>
           <div className="flex gap-2">
@@ -97,7 +97,7 @@ export default function FeeManager() {
               onClick={handlePrint}
               className="btn-accent px-3 py-1 rounded text-xs font-bold flex items-center gap-1 cursor-pointer"
             >
-              <Printer className="w-3.5 h-3.5 text-[#1F2937]" />
+              <Printer className="w-3.5 h-3.5 text-ink" />
               <span>প্রিন্ট করুন</span>
             </button>
             <button onClick={() => setActiveReceipt(null)} className="text-white/80 hover:text-white cursor-pointer" aria-label="Close">
@@ -108,59 +108,59 @@ export default function FeeManager() {
 
         {/* Printable Receipt Paper */}
         <div className="p-6 sm:p-8 bg-white space-y-4 font-bangla" id="official-money-receipt">
-          <div className="text-center border-b-2 border-[#14532D] pb-3">
-            <h3 className="text-xl font-extrabold text-[#14532D]">
+          <div className="text-center border-b-2 border-deep pb-3">
+            <h3 className="text-xl font-extrabold text-deep">
               {schoolInfo.nameBn}
             </h3>
-            <p className="text-xs text-slate-600">{schoolInfo.addressBn}</p>
-            <p className="text-[10px] text-slate-400 font-mono">EIIN: {schoolInfo.eiin} • ফুলগাজী, ফেনী</p>
-            <span className="inline-block bg-[#14532D] text-white text-[10px] font-bold px-3 py-0.5 rounded uppercase mt-2">
+            <p className="text-xs text-muted">{schoolInfo.addressBn}</p>
+            <p className="text-[10px] text-muted font-mono">EIIN: {schoolInfo.eiin} • ফুলগাজী, ফেনী</p>
+            <span className="inline-block bg-deep text-white text-[10px] font-bold px-3 py-0.5 rounded uppercase mt-2">
               MONEY RECEIPT / ফি আদায়ের রশিদ
             </span>
           </div>
 
-          <div className="flex justify-between items-center text-xs text-slate-600 border-b border-[#E5E7EB] pb-2">
-            <span>রশিদ নং: <strong className="font-mono text-slate-900">{activeReceipt.receiptNo}</strong></span>
-            <span>তারিখ: <strong className="font-mono text-slate-900">{activeReceipt.paidDate}</strong></span>
+          <div className="flex justify-between items-center text-xs text-muted border-b border-line pb-2">
+            <span>রশিদ নং: <strong className="font-mono text-ink">{activeReceipt.receiptNo}</strong></span>
+            <span>তারিখ: <strong className="font-mono text-ink">{activeReceipt.paidDate}</strong></span>
           </div>
 
           <div className="space-y-2 text-xs">
             <div className="flex justify-between">
-              <span className="text-slate-500">শিক্ষার্থীর নাম:</span>
-              <span className="font-bold text-slate-900">{activeReceipt.studentName}</span>
+              <span className="text-muted">শিক্ষার্থীর নাম:</span>
+              <span className="font-bold text-ink">{activeReceipt.studentName}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-500">শ্রেণি ও রোল নম্বর:</span>
+              <span className="text-muted">শ্রেণি ও রোল নম্বর:</span>
               <span>{activeReceipt.class} শ্রেণি • রোল: <strong className="font-mono">{activeReceipt.studentRoll}</strong></span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-500">ফি এর বিবরণ:</span>
-              <span className="font-medium text-slate-800">{activeReceipt.feeType}</span>
+              <span className="text-muted">ফি এর বিবরণ:</span>
+              <span className="font-medium text-ink">{activeReceipt.feeType}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-500">পরিশোধের মাধ্যম:</span>
-              <span className="font-bold text-[#166534]">{activeReceipt.method}</span>
+              <span className="text-muted">পরিশোধের মাধ্যম:</span>
+              <span className="font-bold text-primary">{activeReceipt.method}</span>
             </div>
-            <div className="flex justify-between p-2.5 bg-[#DCFCE7] rounded-lg border border-emerald-300 text-sm">
-              <span className="font-bold text-[#14532D]">সর্বমোট পরিশোধিত টাকা:</span>
-              <span className="font-mono font-extrabold text-[#14532D]">৳{activeReceipt.amount} /-</span>
+            <div className="flex justify-between p-2.5 bg-soft rounded-lg border border-soft-border text-sm">
+              <span className="font-bold text-deep">সর্বমোট পরিশোধিত টাকা:</span>
+              <span className="font-mono font-extrabold text-deep">৳{activeReceipt.amount} /-</span>
             </div>
           </div>
 
           {/* Signatures */}
           <div className="pt-8 flex justify-between items-end text-xs">
             <div className="text-center space-y-1">
-              <div className="w-24 border-b border-slate-600 mx-auto pb-1 text-slate-400">
+              <div className="w-24 border-b border-line mx-auto pb-1 text-muted">
                 স্বাক্ষর
               </div>
-              <p className="font-bold text-slate-700">হিসাবরক্ষক</p>
+              <p className="font-bold text-ink">হিসাবরক্ষক</p>
             </div>
 
             <div className="text-center space-y-1">
-              <div className="w-24 border-b border-slate-600 mx-auto pb-1">
-                <span className="font-serif italic text-[#166534] font-bold">Bahar U.</span>
+              <div className="w-24 border-b border-line mx-auto pb-1">
+                <span className="font-serif italic text-primary font-bold">Bahar U.</span>
               </div>
-              <p className="font-bold text-slate-900">{schoolInfo.headmasterNameBn}</p>
+              <p className="font-bold text-ink">{schoolInfo.headmasterNameBn}</p>
             </div>
           </div>
         </div>
@@ -172,33 +172,33 @@ export default function FeeManager() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl sm:text-2xl font-bold font-bangla text-[#1F2937]">
+        <h2 className="text-xl sm:text-2xl font-bold font-bangla text-ink">
           ফি কালেকশন ও হিসাব ব্যবস্থাপনা (Fee Collection & Receipts)
         </h2>
-        <p className="text-xs text-[#4B5563] font-bangla">
+        <p className="text-xs text-muted font-bangla">
           শিক্ষার্থীদের মাসিক বেতন, পরীক্ষা ফি গ্রহণ এবং প্রাতিষ্ঠানিক মানি রিসিট প্রস্তুতকরণ
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Collection Form */}
-        <div className="lg:col-span-5 card-base bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-xs space-y-4">
-          <h3 className="font-bold font-bangla text-[#1F2937] text-sm pb-2 border-b border-[#E5E7EB] flex items-center gap-2">
-            <DollarSign className="w-4 h-4 text-[#166534]" />
+        <div className="lg:col-span-5 card-base bg-white p-6 rounded-2xl border border-line shadow-xs space-y-4">
+          <h3 className="font-bold font-bangla text-ink text-sm pb-2 border-b border-line flex items-center gap-2">
+            <DollarSign className="w-4 h-4 text-primary" />
             <span>নতুন ফি আদায় ও রশিদ প্রস্তুতকরণ</span>
           </h3>
 
           <form onSubmit={handleCollectSubmit} className="space-y-3 text-xs font-bangla">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">শ্রেণি *</label>
+                <label className="block font-bold text-ink mb-1">শ্রেণি *</label>
                 <select
                   value={targetClass}
                   onChange={(e) => {
                     setTargetClass(e.target.value);
                     setErrorMessage('');
                   }}
-                  className="w-full rounded-lg border border-[#D1D5DB] p-2.5 bg-[#F7F9F8] text-[#1F2937] focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                  className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
                 >
                   <option value="10">১০ম শ্রেণি</option>
                   <option value="9">৯ম শ্রেণি</option>
@@ -209,7 +209,7 @@ export default function FeeManager() {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">শিক্ষার্থীর রোল *</label>
+                <label className="block font-bold text-ink mb-1">শিক্ষার্থীর রোল *</label>
                 <input
                   type="text"
                   required
@@ -218,7 +218,7 @@ export default function FeeManager() {
                     setStudentRoll(e.target.value);
                     setErrorMessage('');
                   }}
-                  className="w-full rounded-lg border border-[#D1D5DB] p-2.5 font-mono font-bold bg-[#F7F9F8] text-[#1F2937] focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                  className="w-full rounded-lg border border-line p-2.5 font-mono font-bold bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
                   placeholder="যেমন: 101"
                 />
               </div>
@@ -226,26 +226,26 @@ export default function FeeManager() {
 
             {/* Live Student Match Confirmation Pill */}
             {matchedStudent ? (
-              <div className="p-3 bg-[#DCFCE7] text-[#14532D] rounded-xl text-xs flex items-center justify-between border border-emerald-300">
+              <div className="p-3 bg-soft text-deep rounded-xl text-xs flex items-center justify-between border border-soft-border">
                 <div className="flex items-center gap-2">
-                  <UserCheck className="w-4 h-4 text-[#166534]" />
+                  <UserCheck className="w-4 h-4 text-primary" />
                   <span className="font-bold">শিক্ষার্থী: {matchedStudent.nameBn}</span>
                 </div>
                 <span className="font-mono text-[11px] font-semibold">{matchedStudent.studentId}</span>
               </div>
             ) : studentRoll ? (
-              <div className="p-2.5 bg-[#FEE2E2] text-[#DC2626] rounded-xl text-xs flex items-center gap-1.5 border border-red-200">
+              <div className="p-2.5 bg-danger-soft text-danger rounded-xl text-xs flex items-center gap-1.5 border border-danger-soft">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>শ্রেণি {targetClass}-এ এই রোলের কোনো শিক্ষার্থী পাওয়া যায়নি।</span>
               </div>
             ) : null}
 
             <div>
-              <label className="block font-bold text-slate-700 mb-1">ফি এর বিবরণ *</label>
+              <label className="block font-bold text-ink mb-1">ফি এর বিবরণ *</label>
               <select
                 value={feeType}
                 onChange={(e) => setFeeType(e.target.value)}
-                className="w-full rounded-lg border border-[#D1D5DB] p-2.5 bg-[#F7F9F8] text-[#1F2937] focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
               >
                 <option value="Monthly Tuition Fee (November)">মাসিক বেতন (নভেম্বর)</option>
                 <option value="SSC Test Examination Fee">এসএসসি টেস্ট পরীক্ষা ফি</option>
@@ -257,7 +257,7 @@ export default function FeeManager() {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">টাকার পরিমাণ (৳) *</label>
+                <label className="block font-bold text-ink mb-1">টাকার পরিমাণ (৳) *</label>
                 <input
                   type="number"
                   min="1"
@@ -267,17 +267,17 @@ export default function FeeManager() {
                     setAmount(e.target.value);
                     setErrorMessage('');
                   }}
-                  className="w-full rounded-lg border border-[#D1D5DB] p-2.5 font-mono font-bold bg-[#F7F9F8] text-[#1F2937] focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                  className="w-full rounded-lg border border-line p-2.5 font-mono font-bold bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
                   placeholder="500"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">পরিশোধের মাধ্যম</label>
+                <label className="block font-bold text-ink mb-1">পরিশোধের মাধ্যম</label>
                 <select
                   value={method}
                   onChange={(e) => setMethod(e.target.value)}
-                  className="w-full rounded-lg border border-[#D1D5DB] p-2.5 bg-[#F7F9F8] text-[#1F2937] focus:ring-2 focus:ring-[#166534] focus:outline-none font-semibold"
+                  className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none font-semibold"
                 >
                   <option value="Cash">নগদ (Cash Counter)</option>
                   <option value="bKash">বিকাশ (bKash)</option>
@@ -289,7 +289,7 @@ export default function FeeManager() {
 
             {/* Error Alert */}
             {errorMessage && (
-              <div className="p-3 bg-[#FEE2E2] text-[#DC2626] rounded-xl text-xs font-medium flex items-center gap-2 border border-red-200">
+              <div className="p-3 bg-danger-soft text-danger rounded-xl text-xs font-medium flex items-center gap-2 border border-danger-soft">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{errorMessage}</span>
               </div>
@@ -306,22 +306,22 @@ export default function FeeManager() {
         </div>
 
         {/* Existing Collections Table */}
-        <div className="lg:col-span-7 card-base bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-xs space-y-4 font-bangla">
-          <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
+        <div className="lg:col-span-7 card-base bg-white p-6 rounded-2xl border border-line shadow-xs space-y-4 font-bangla">
+          <div className="flex items-center justify-between pb-3 border-b border-line">
             <div>
-              <h3 className="font-bold text-[#1F2937] text-sm">
+              <h3 className="font-bold text-ink text-sm">
                 ফি আদায় ও পেমেন্ট হিস্ট্রি ({lang === 'bn' ? toBanglaNumerals(fees.length) : fees.length} টি রেকর্ড)
               </h3>
-              <p className="text-[11px] text-[#4B5563]">সর্বশেষ সংরক্ষিত ফি ট্রানজেকশন</p>
+              <p className="text-[11px] text-muted">সর্বশেষ সংরক্ষিত ফি ট্রানজেকশন</p>
             </div>
-            <span className="font-mono font-bold text-xs bg-[#DCFCE7] text-[#14532D] px-3 py-1 rounded-full border border-emerald-300">
+            <span className="font-mono font-bold text-xs bg-soft text-deep px-3 py-1 rounded-full border border-soft-border">
               মোট: ৳{toBanglaNumerals(fees.reduce((sum, f) => sum + Number(f.amount || 0), 0).toLocaleString())}
             </span>
           </div>
 
-          <div className="overflow-x-auto rounded-xl border border-[#E5E7EB]">
+          <div className="overflow-x-auto rounded-xl border border-line">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#F3F4F6] text-[#1F2937] font-bold border-b border-[#E5E7EB]">
+              <thead className="bg-bg text-ink font-bold border-b border-line">
                 <tr>
                   <th className="py-3 px-3">রশিদ নং</th>
                   <th className="py-3 px-3">শিক্ষার্থী</th>
@@ -331,18 +331,18 @@ export default function FeeManager() {
                   <th className="py-3 px-3 text-center">রশিদ</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E5E7EB]">
+              <tbody className="divide-y divide-line">
                 {fees.map((f) => (
-                  <tr key={f.id} className="hover:bg-[#F7F9F8] transition-colors">
-                    <td className="py-3 px-3 font-mono font-bold text-[#166534]">{f.receiptNo}</td>
-                    <td className="py-3 px-3 font-semibold text-[#1F2937]">{f.studentName}</td>
-                    <td className="py-3 px-3 text-[#4B5563]">{f.class} শ্রেণি • রোল: {f.studentRoll}</td>
-                    <td className="py-3 px-3 text-slate-700">{f.feeType}</td>
-                    <td className="py-3 px-3 text-right font-mono font-bold text-[#14532D]">৳{f.amount}</td>
+                  <tr key={f.id} className="hover:bg-bg transition-colors">
+                    <td className="py-3 px-3 font-mono font-bold text-primary">{f.receiptNo}</td>
+                    <td className="py-3 px-3 font-semibold text-ink">{f.studentName}</td>
+                    <td className="py-3 px-3 text-muted">{f.class} শ্রেণি • রোল: {f.studentRoll}</td>
+                    <td className="py-3 px-3 text-ink">{f.feeType}</td>
+                    <td className="py-3 px-3 text-right font-mono font-bold text-deep">৳{f.amount}</td>
                     <td className="py-3 px-3 text-center">
                       <button
                         onClick={() => setActiveReceipt(f)}
-                        className="bg-[#DCFCE7] hover:bg-[#bbf7d0] text-[#14532D] px-2.5 py-1 rounded text-[11px] font-semibold transition cursor-pointer border border-emerald-300"
+                        className="bg-soft hover:bg-soft text-deep px-2.5 py-1 rounded text-[11px] font-semibold transition cursor-pointer border border-soft-border"
                       >
                         রশিদ দেখুন
                       </button>

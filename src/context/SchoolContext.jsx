@@ -48,6 +48,51 @@ export function SchoolProvider({ children }) {
     }
   }
 
+  // Two-Theme System: 'emerald' (default) | 'indigo'
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedTheme = localStorage.getItem('bdhs_theme');
+        if (savedTheme === 'indigo') return 'indigo';
+      } catch (e) {
+        console.error('Error reading theme from localStorage:', e);
+      }
+    }
+    return 'emerald';
+  });
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'emerald' ? 'indigo' : 'emerald'));
+  };
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.body.classList.add('theme-transition');
+      const timer = setTimeout(() => {
+        document.body.classList.remove('theme-transition');
+      }, 300);
+
+      if (theme === 'indigo') {
+        document.documentElement.setAttribute('data-theme', 'indigo');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+      }
+
+      const meta = document.getElementById('meta-theme-color');
+      if (meta) {
+        meta.setAttribute('content', theme === 'indigo' ? '#1E1B4B' : '#0B3D2E');
+      }
+
+      try {
+        localStorage.setItem('bdhs_theme', theme);
+      } catch (e) {
+        console.error('Error saving theme to localStorage:', e);
+      }
+
+      return () => clearTimeout(timer);
+    }
+  }, [theme]);
+
   // Auto-select Bangla ('bn') on first load / new session; user can toggle to English anytime
   const [lang, setLang] = useState(() => {
     const sessionActive = sessionStorage.getItem('bdhs_session_active');
@@ -810,7 +855,11 @@ export function SchoolProvider({ children }) {
       alert('ফ্যাক্টরি রিসেট নিশ্চিত করতে বক্সে "RESET" টাইপ করুন।');
       return false;
     }
+    const currentTheme = localStorage.getItem('bdhs_theme');
     localStorage.clear();
+    if (currentTheme) {
+      localStorage.setItem('bdhs_theme', currentTheme);
+    }
     setSchoolInfo(initialSchoolInfo);
     setUniformInfo(initialUniformInfo);
     setHeroSlides(initialHeroSlides);
@@ -831,6 +880,8 @@ export function SchoolProvider({ children }) {
   return (
     <SchoolContext.Provider
       value={{
+        theme,
+        toggleTheme,
         lang,
         setLang,
         toggleLanguage,

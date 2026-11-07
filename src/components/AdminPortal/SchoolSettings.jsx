@@ -155,41 +155,41 @@ export default function SchoolSettings() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl sm:text-2xl font-bold font-bangla text-slate-900">
+        <h2 className="text-xl sm:text-2xl font-bold font-bangla text-ink">
           প্রতিষ্ঠান তথ্য, লোগো ও সফটওয়্যার সেটিংস (School Settings)
         </h2>
-        <p className="text-xs text-slate-500 font-bangla mt-0.5">
+        <p className="text-xs text-muted font-bangla mt-0.5">
           বিদ্যালয়ের প্রাতিষ্ঠানিক লোগো (PNG সর্বোচ্চ 10MB), রূপকল্প (Vision), লক্ষ্য (Mission), ফোন, ইমেইল, ফেসবুক গ্রুপ ও বাণীবহুল তথ্যসমূহ সরাসরি CMS থেকে আপডেট ও প্রকাশ করুন।
         </p>
       </div>
 
-      <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-2xs space-y-6">
+      <div className="bg-white p-6 sm:p-8 rounded-2xl border border-line shadow-2xs space-y-6">
         <form onSubmit={handleSubmit} className="space-y-8 text-xs font-bangla">
 
           {/* Section 1: School Logo Upload (Max 10MB PNG) */}
-          <div className="bg-slate-50 p-5 sm:p-6 rounded-2xl border border-slate-200 space-y-4">
-            <h3 className="font-bold text-slate-900 text-sm pb-2 border-b flex items-center justify-between">
+          <div className="bg-bg p-5 sm:p-6 rounded-2xl border border-line space-y-4">
+            <h3 className="font-bold text-ink text-sm pb-2 border-b flex items-center justify-between">
               <span className="flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-emerald-700" />
+                <ImageIcon className="w-4 h-4 text-primary" />
                 <span>১. প্রাতিষ্ঠানিক লোগো ও মনোগ্রাম (School Logo - PNG Accepted up to 10MB)</span>
               </span>
-              <span className="text-[10px] text-emerald-700 bg-emerald-100 font-bold px-2.5 py-0.5 rounded-full">
+              <span className="text-[10px] text-primary bg-soft font-bold px-2.5 py-0.5 rounded-full">
                 সর্বোচ্চ 10 MB
               </span>
             </h3>
 
             <div className="flex flex-col sm:flex-row items-center gap-6">
               {/* Logo Preview */}
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white p-2 shadow-md ring-4 ring-emerald-600/30 shrink-0 flex items-center justify-center overflow-hidden">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white p-2 shadow-md ring-4 ring-primary/30 shrink-0 flex items-center justify-center overflow-hidden">
                 <SchoolLogo logo={formData.logo} className="w-full h-full object-contain" />
               </div>
 
               {/* Upload Controls */}
               <div className="space-y-2 flex-1 text-center sm:text-left">
-                <p className="font-bold text-slate-800 text-xs">
+                <p className="font-bold text-ink text-xs">
                   {formData.logo ? 'কাস্টম আপলোডকৃত লোগো সক্রিয় রয়েছে' : 'ডিফল্ট প্রাতিষ্ঠানিক মনোগ্রাম সক্রিয় রয়েছে'}
                 </p>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
+                <p className="text-[11px] text-muted leading-relaxed">
                   ট্রান্সপারেন্ট ব্যাকগ্রাউন্ডযুক্ত <strong>PNG</strong>, <strong>SVG</strong> অথবা <strong>JPG/WebP</strong> ফরম্যাটের লোগো আপলোড করতে পারবেন। ফাইল সাইজ সর্বোচ্চ <strong>১০ মেগাবাইট (10 MB)</strong> পর্যন্ত অনুমোদিত।
                 </p>
 
@@ -204,9 +204,9 @@ export default function SchoolSettings() {
                   <button
                     type="button"
                     onClick={() => logoInputRef.current?.click()}
-                    className="bg-emerald-900 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition shadow"
+                    className="bg-deep hover:bg-primary text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition shadow"
                   >
-                    <Upload className="w-3.5 h-3.5 text-amber-300" />
+                    <Upload className="w-3.5 h-3.5 text-accent" />
                     <span>নতুন লোগো আপলোড করুন (Max 10MB)</span>
                   </button>
 
@@ -214,7 +214,7 @@ export default function SchoolSettings() {
                     <button
                       type="button"
                       onClick={handleResetLogo}
-                      className="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1 transition"
+                      className="bg-line hover:bg-line text-ink font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1 transition"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                       <span>ডিফল্ট মনোগ্রামে ফিরুন</span>
@@ -223,7 +223,7 @@ export default function SchoolSettings() {
                 </div>
 
                 {logoUploadStatus && (
-                  <p className="text-[11px] text-emerald-700 font-bold flex items-center gap-1 pt-1">
+                  <p className="text-[11px] text-primary font-bold flex items-center gap-1 pt-1">
                     <CheckCircle className="w-3.5 h-3.5" />
                     <span>{logoUploadStatus}</span>
                   </p>
@@ -234,136 +234,136 @@ export default function SchoolSettings() {
 
           {/* Section 2: Basic Institutional Details */}
           <div>
-            <h3 className="font-bold text-slate-900 text-sm pb-2 border-b mb-4 flex items-center gap-2">
-              <School className="w-4 h-4 text-emerald-700" />
+            <h3 className="font-bold text-ink text-sm pb-2 border-b mb-4 flex items-center gap-2">
+              <School className="w-4 h-4 text-primary" />
               <span>২. মৌলিক পরিচিতি ও কোডসমূহ</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">বিদ্যালয়ের নাম (বাংলায়) *</label>
+                <label className="block font-bold text-ink mb-1">বিদ্যালয়ের নাম (বাংলায়) *</label>
                 <input
                   type="text"
                   required
                   name="nameBn"
                   value={formData.nameBn}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5"
+                  className="w-full rounded-lg border border-line p-2.5"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">বিদ্যালয়ের নাম (ইংরেজিতে) *</label>
+                <label className="block font-bold text-ink mb-1">বিদ্যালয়ের নাম (ইংরেজিতে) *</label>
                 <input
                   type="text"
                   required
                   name="nameEn"
                   value={formData.nameEn}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 font-mono"
+                  className="w-full rounded-lg border border-line p-2.5 font-mono"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">EIIN নম্বর *</label>
+                <label className="block font-bold text-ink mb-1">EIIN নম্বর *</label>
                 <input
                   type="text"
                   required
                   name="eiin"
                   value={formData.eiin}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 font-mono"
+                  className="w-full rounded-lg border border-line p-2.5 font-mono"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">এমপিও কোড (MPO Code)</label>
+                <label className="block font-bold text-ink mb-1">এমপিও কোড (MPO Code)</label>
                 <input
                   type="text"
                   name="mpoCode"
                   value={formData.mpoCode}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 font-mono"
+                  className="w-full rounded-lg border border-line p-2.5 font-mono"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">বিদ্যালয় কোড (School Code)</label>
+                <label className="block font-bold text-ink mb-1">বিদ্যালয় কোড (School Code)</label>
                 <input
                   type="text"
                   name="schoolCode"
                   value={formData.schoolCode || '4320'}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 font-mono"
+                  className="w-full rounded-lg border border-line p-2.5 font-mono"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">শিক্ষা বোর্ড (Education Board)</label>
+                <label className="block font-bold text-ink mb-1">শিক্ষা বোর্ড (Education Board)</label>
                 <input
                   type="text"
                   name="boardBn"
                   value={formData.boardBn || 'কুমিল্লা শিক্ষাবোর্ড'}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5"
+                  className="w-full rounded-lg border border-line p-2.5"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">প্রতিষ্ঠাকাল ও স্বীকৃতি</label>
+                <label className="block font-bold text-ink mb-1">প্রতিষ্ঠাকাল ও স্বীকৃতি</label>
                 <input
                   type="text"
                   name="foundationDate"
                   value={formData.foundationDate}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5"
+                  className="w-full rounded-lg border border-line p-2.5"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">রাস্তা / সড়ক পরিচিতি (বাংলা)</label>
+                <label className="block font-bold text-ink mb-1">রাস্তা / সড়ক পরিচিতি (বাংলা)</label>
                 <input
                   type="text"
                   name="roadBn"
                   value={formData.roadBn || 'ফেনী-পরশুরাম রোড সংলগ্ন'}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5"
+                  className="w-full rounded-lg border border-line p-2.5"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">মূল প্রতিপাদ্য / স্লোগান (Motto)</label>
+                <label className="block font-bold text-ink mb-1">মূল প্রতিপাদ্য / স্লোগান (Motto)</label>
                 <input
                   type="text"
                   name="mottoBn"
                   value={formData.mottoBn || 'জ্ঞানই আলো, শিক্ষাই শক্তি'}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5"
+                  className="w-full rounded-lg border border-line p-2.5"
                 />
               </div>
 
               <div className="sm:col-span-2 lg:col-span-3">
-                <label className="block font-bold text-slate-700 mb-1">পূর্ণাঙ্গ প্রাতিষ্ঠানিক ঠিকানা *</label>
+                <label className="block font-bold text-ink mb-1">পূর্ণাঙ্গ প্রাতিষ্ঠানিক ঠিকানা *</label>
                 <input
                   type="text"
                   required
                   name="addressBn"
                   value={formData.addressBn}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5"
+                  className="w-full rounded-lg border border-line p-2.5"
                 />
               </div>
             </div>
           </div>
 
           {/* Section 3: Vision, Mission & Core Values (Updated with Comilla Board Model Institution) */}
-          <div className="bg-emerald-50/50 p-5 sm:p-6 rounded-2xl border border-emerald-100 space-y-4">
-            <h3 className="font-bold text-slate-900 text-sm pb-2 border-b border-emerald-200 flex items-center justify-between">
+          <div className="bg-soft/50 p-5 sm:p-6 rounded-2xl border border-soft-border space-y-4">
+            <h3 className="font-bold text-ink text-sm pb-2 border-b border-soft-border flex items-center justify-between">
               <span className="flex items-center gap-2">
-                <Target className="w-4 h-4 text-emerald-800" />
+                <Target className="w-4 h-4 text-primary" />
                 <span>৩. রূপকল্প (Vision), লক্ষ্য (Mission) ও মূল আদর্শ (Core Values)</span>
               </span>
-              <span className="text-[10px] text-emerald-800 bg-emerald-200/80 font-bold px-2 py-0.5 rounded">
+              <span className="text-[10px] text-primary bg-soft font-bold px-2 py-0.5 rounded">
                 কুমিল্লা বোর্ড আদর্শ মডেল বিদ্যালয়
               </span>
             </h3>
@@ -371,8 +371,8 @@ export default function SchoolSettings() {
             <div className="space-y-4">
               {/* Vision */}
               <div>
-                <label className="block font-bold text-slate-800 mb-1 flex items-center gap-1.5">
-                  <Eye className="w-3.5 h-3.5 text-emerald-700" />
+                <label className="block font-bold text-ink mb-1 flex items-center gap-1.5">
+                  <Eye className="w-3.5 h-3.5 text-primary" />
                   <span>আমাদের রূপকল্প (Our Vision - বাংলা) *</span>
                 </label>
                 <textarea
@@ -381,26 +381,26 @@ export default function SchoolSettings() {
                   name="visionBn"
                   value={formData.visionBn || 'একটি বৈষম্যহীন, আধুনিক প্রযুক্তি-নির্ভর ও আদর্শ বিদ্যাপীঠ হিসেবে কুমিল্লা শিক্ষা বোর্ডের অন্যতম শ্রেষ্ঠ ও মডেল বিদ্যালয়ে রূপান্তরিত হওয়া।'}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 bg-white"
+                  className="w-full rounded-lg border border-line p-2.5 bg-white"
                   placeholder="কুমিল্লা বোর্ডের আওতায় শ্রেষ্ঠ মডেল প্রতিষ্ঠান হওয়ার রূপকল্প..."
                 ></textarea>
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Our Vision (English)</label>
+                <label className="block font-bold text-ink mb-1">Our Vision (English)</label>
                 <input
                   type="text"
                   name="visionEn"
                   value={formData.visionEn || 'To emerge as one of the premier model institutions under the Comilla Education Board, fostering discrimination-free, technology-driven, and holistic moral education.'}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 bg-white font-mono"
+                  className="w-full rounded-lg border border-line p-2.5 bg-white font-mono"
                 />
               </div>
 
               {/* Mission */}
               <div>
-                <label className="block font-bold text-slate-800 mb-1 flex items-center gap-1.5">
-                  <Target className="w-3.5 h-3.5 text-emerald-700" />
+                <label className="block font-bold text-ink mb-1 flex items-center gap-1.5">
+                  <Target className="w-3.5 h-3.5 text-primary" />
                   <span>আমাদের লক্ষ্য (Our Mission - বাংলা) *</span>
                 </label>
                 <textarea
@@ -409,14 +409,14 @@ export default function SchoolSettings() {
                   name="missionBn"
                   value={formData.missionBn || 'মানসম্মত শিক্ষা, নৈতিক মূল্যবোধ ও ডিজিটাল প্রযুক্তির সমন্বয়ে প্রতিটি শিক্ষার্থীকে আধুনিক বিজ্ঞানমনস্ক, দেশপ্রেমিক ও দক্ষ মানবসম্পদ হিসেবে গড়ে তোলা।'}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 bg-white"
+                  className="w-full rounded-lg border border-line p-2.5 bg-white"
                 ></textarea>
               </div>
 
               {/* Core Values */}
               <div>
-                <label className="block font-bold text-slate-800 mb-1 flex items-center gap-1.5">
-                  <Compass className="w-3.5 h-3.5 text-emerald-700" />
+                <label className="block font-bold text-ink mb-1 flex items-center gap-1.5">
+                  <Compass className="w-3.5 h-3.5 text-primary" />
                   <span>মূল আদর্শ (Core Values - বাংলা)</span>
                 </label>
                 <input
@@ -424,7 +424,7 @@ export default function SchoolSettings() {
                   name="coreValuesBn"
                   value={formData.coreValuesBn || 'শৃঙ্খলা, সততা, সহমর্মিতা, বিজ্ঞানচেতনা এবং মাতৃভূমির সার্বিক উন্নয়নে অবদান রাখার চিরন্তন ব্রত।'}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 bg-white"
+                  className="w-full rounded-lg border border-line p-2.5 bg-white"
                 />
               </div>
             </div>
@@ -432,70 +432,70 @@ export default function SchoolSettings() {
 
           {/* Section 4: Contact & Social Links */}
           <div>
-            <h3 className="font-bold text-slate-900 text-sm pb-2 border-b mb-4 flex items-center gap-2">
-              <Share2 className="w-4 h-4 text-emerald-700" />
+            <h3 className="font-bold text-ink text-sm pb-2 border-b mb-4 flex items-center gap-2">
+              <Share2 className="w-4 h-4 text-primary" />
               <span>৪. যোগাযোগ ও সোশ্যাল মিডিয়া হাব</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">প্রধান প্রাতিষ্ঠানিক মোবাইল</label>
+                <label className="block font-bold text-ink mb-1">প্রধান প্রাতিষ্ঠানিক মোবাইল</label>
                 <input
                   type="text"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 font-mono"
+                  className="w-full rounded-lg border border-line p-2.5 font-mono"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">বিকল্প মোবাইল নম্বর</label>
+                <label className="block font-bold text-ink mb-1">বিকল্প মোবাইল নম্বর</label>
                 <input
                   type="text"
                   name="phoneAlt"
                   value={formData.phoneAlt || '+880 1712-893042'}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 font-mono"
+                  className="w-full rounded-lg border border-line p-2.5 font-mono"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">অফিসিয়াল ইমেইল ঠিকানা</label>
+                <label className="block font-bold text-ink mb-1">অফিসিয়াল ইমেইল ঠিকানা</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 font-mono"
+                  className="w-full rounded-lg border border-line p-2.5 font-mono"
                 />
               </div>
 
               <div className="sm:col-span-2 lg:col-span-3">
-                <label className="block font-bold text-slate-700 mb-1">অফিসিয়াল ফেসবুক গ্রুপ লিংক (Official FB Group)</label>
+                <label className="block font-bold text-ink mb-1">অফিসিয়াল ফেসবুক গ্রুপ লিংক (Official FB Group)</label>
                 <input
                   type="url"
                   name="facebookGroupUrl"
                   value={formData.facebookGroupUrl}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-300 p-2.5 font-mono text-blue-700"
+                  className="w-full rounded-lg border border-line p-2.5 font-mono text-primary"
                 />
               </div>
             </div>
           </div>
 
           {/* Section 5: Campus Photograph Upload */}
-          <div className="bg-slate-50 p-5 sm:p-6 rounded-2xl border border-slate-200 space-y-4">
-            <h3 className="font-bold text-slate-900 text-sm pb-2 border-b flex items-center justify-between">
+          <div className="bg-bg p-5 sm:p-6 rounded-2xl border border-line space-y-4">
+            <h3 className="font-bold text-ink text-sm pb-2 border-b flex items-center justify-between">
               <span className="flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-emerald-700" />
+                <ImageIcon className="w-4 h-4 text-primary" />
                 <span>৫. ক্যাম্পাস পরিচিতি ছবি (Campus Header Photo)</span>
               </span>
-              <span className="text-[10px] text-slate-500">About সেকশনে প্রদর্শিত</span>
+              <span className="text-[10px] text-muted">About সেকশনে প্রদর্শিত</span>
             </h3>
 
             <div className="flex flex-col sm:flex-row items-center gap-6">
-              <div className="w-full sm:w-48 h-28 rounded-xl bg-slate-200 overflow-hidden shadow border border-slate-300 shrink-0">
+              <div className="w-full sm:w-48 h-28 rounded-xl bg-line overflow-hidden shadow border border-line shrink-0">
                 <img
                   src={formData.campusImage || "https://images.unsplash.com/photo-1562774053-701939374585?w=800&auto=format&fit=crop&q=80"}
                   alt="Campus Preview"
@@ -504,10 +504,10 @@ export default function SchoolSettings() {
               </div>
 
               <div className="space-y-2 flex-1">
-                <p className="font-bold text-slate-800 text-xs">
+                <p className="font-bold text-ink text-xs">
                   বিদ্যালয় ভবনের সুদৃশ্য ক্যাম্পাস ছবি আপলোড করুন
                 </p>
-                <p className="text-[11px] text-slate-500">
+                <p className="text-[11px] text-muted">
                   সর্বোচ্চ ১০ মেগাবাইট পর্যন্ত ছবি নির্বাচন করতে পারবেন। সিস্টেম স্বয়ংক্রিয়ভাবে হাই ডেফিনিশনে অপ্টিমাইজ করবে।
                 </p>
 
@@ -522,15 +522,15 @@ export default function SchoolSettings() {
                   <button
                     type="button"
                     onClick={() => campusInputRef.current?.click()}
-                    className="bg-emerald-800 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition shadow"
+                    className="bg-primary hover:bg-primary text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition shadow"
                   >
-                    <Upload className="w-3.5 h-3.5 text-amber-300" />
+                    <Upload className="w-3.5 h-3.5 text-accent" />
                     <span>নতুন ক্যাম্পাস ছবি আপলোড</span>
                   </button>
                 </div>
 
                 {campusUploadStatus && (
-                  <p className="text-[11px] text-emerald-700 font-bold flex items-center gap-1 pt-1">
+                  <p className="text-[11px] text-primary font-bold flex items-center gap-1 pt-1">
                     <CheckCircle className="w-3.5 h-3.5" />
                     <span>{campusUploadStatus}</span>
                   </p>
@@ -541,65 +541,65 @@ export default function SchoolSettings() {
 
           {/* Section 6: Leadership Messages */}
           <div>
-            <h3 className="font-bold text-slate-900 text-sm pb-2 border-b mb-4 flex items-center gap-2">
-              <UserCheck className="w-4 h-4 text-emerald-700" />
+            <h3 className="font-bold text-ink text-sm pb-2 border-b mb-4 flex items-center gap-2">
+              <UserCheck className="w-4 h-4 text-primary" />
               <span>৬. প্রধান শিক্ষক ও পরিচালনা পর্ষদ সভাপতির বাণী</span>
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Headmaster */}
-              <div className="space-y-3 p-4 bg-slate-50 rounded-xl border border-slate-200">
-                <div className="flex items-center gap-2 text-emerald-950 font-bold text-xs pb-1 border-b">
-                  <FileText className="w-3.5 h-3.5 text-emerald-700" />
+              <div className="space-y-3 p-4 bg-bg rounded-xl border border-line">
+                <div className="flex items-center gap-2 text-deep font-bold text-xs pb-1 border-b">
+                  <FileText className="w-3.5 h-3.5 text-primary" />
                   <span>ভারপ্রাপ্ত প্রধান শিক্ষকের পরিচিতি ও বাণী</span>
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">ভারপ্রাপ্ত প্রধান শিক্ষকের নাম *</label>
+                  <label className="block font-bold text-ink mb-1">ভারপ্রাপ্ত প্রধান শিক্ষকের নাম *</label>
                   <input
                     type="text"
                     required
                     name="headmasterNameBn"
                     value={formData.headmasterNameBn}
                     onChange={handleChange}
-                    className="w-full rounded-lg border border-slate-300 p-2.5 bg-white"
+                    className="w-full rounded-lg border border-line p-2.5 bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">বাণী (বাংলায়)</label>
+                  <label className="block font-bold text-ink mb-1">বাণী (বাংলায়)</label>
                   <textarea
                     rows="5"
                     name="headmasterMessageBn"
                     value={formData.headmasterMessageBn}
                     onChange={handleChange}
-                    className="w-full rounded-lg border border-slate-300 p-2.5 bg-white leading-relaxed"
+                    className="w-full rounded-lg border border-line p-2.5 bg-white leading-relaxed"
                   ></textarea>
                 </div>
               </div>
 
               {/* Chairman */}
-              <div className="space-y-3 p-4 bg-slate-50 rounded-xl border border-slate-200">
-                <div className="flex items-center gap-2 text-emerald-950 font-bold text-xs pb-1 border-b">
-                  <FileText className="w-3.5 h-3.5 text-emerald-700" />
+              <div className="space-y-3 p-4 bg-bg rounded-xl border border-line">
+                <div className="flex items-center gap-2 text-deep font-bold text-xs pb-1 border-b">
+                  <FileText className="w-3.5 h-3.5 text-primary" />
                   <span>পরিচালনা পর্ষদের সভাপতির পরিচিতি ও বাণী</span>
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">সভাপতির নাম</label>
+                  <label className="block font-bold text-ink mb-1">সভাপতির নাম</label>
                   <input
                     type="text"
                     name="chairmanNameBn"
                     value={formData.chairmanNameBn || 'আলহাজ্ব মো. মজিবুর রহমান'}
                     onChange={handleChange}
-                    className="w-full rounded-lg border border-slate-300 p-2.5 bg-white"
+                    className="w-full rounded-lg border border-line p-2.5 bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">বাণী (বাংলায়)</label>
+                  <label className="block font-bold text-ink mb-1">বাণী (বাংলায়)</label>
                   <textarea
                     rows="5"
                     name="chairmanMessageBn"
                     value={formData.chairmanMessageBn || ''}
                     onChange={handleChange}
-                    className="w-full rounded-lg border border-slate-300 p-2.5 bg-white leading-relaxed"
+                    className="w-full rounded-lg border border-line p-2.5 bg-white leading-relaxed"
                   ></textarea>
                 </div>
               </div>
@@ -607,8 +607,8 @@ export default function SchoolSettings() {
           </div>
 
           {savedSuccess && (
-            <div className="p-4 bg-emerald-100 text-emerald-900 rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm border border-emerald-300">
-              <CheckCircle className="w-5 h-5 text-emerald-700 shrink-0" />
+            <div className="p-4 bg-soft text-deep rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm border border-soft-border">
+              <CheckCircle className="w-5 h-5 text-primary shrink-0" />
               <span>প্রতিষ্ঠান সেটিংস, লোগো ও রূপকল্প সফলভাবে আপডেট ও সংরক্ষিত হয়েছে! ওয়েবসাইটের সর্বত্র তা কার্যকর হয়েছে।</span>
             </div>
           )}
@@ -623,13 +623,13 @@ export default function SchoolSettings() {
                   setResetError('');
                   setShowResetModal(true);
                 }}
-                className="text-[#DC2626] hover:text-red-700 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
+                className="text-danger hover:text-danger font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
               >
-                <AlertTriangle className="w-4 h-4 text-[#DC2626]" />
+                <AlertTriangle className="w-4 h-4 text-danger" />
                 <span>সকল ডেটা ফ্যাক্টরি রিসেট করুন (Reset to Defaults)</span>
               </button>
             ) : (
-              <div className="text-xs text-[#4B5563]">
+              <div className="text-xs text-muted">
                 * ফ্যাক্টরি রিসেটের অনুমতি শুধুমাত্র সুপার অ্যাডমিনের রয়েছে।
               </div>
             )}
@@ -647,23 +647,23 @@ export default function SchoolSettings() {
         {/* SuperAdmin Factory Reset Security Modal (A9) */}
         {showResetModal && (
           <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-md w-full p-6 border border-red-300 shadow-2xl space-y-4">
-              <div className="flex items-center gap-3 text-[#DC2626]">
-                <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
-                  <AlertTriangle className="w-5 h-5 text-[#DC2626]" />
+            <div className="bg-white rounded-2xl max-w-md w-full p-6 border border-danger-soft shadow-2xl space-y-4">
+              <div className="flex items-center gap-3 text-danger">
+                <div className="w-10 h-10 rounded-full bg-danger-soft flex items-center justify-center shrink-0">
+                  <AlertTriangle className="w-5 h-5 text-danger" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-[#1F2937]">ফ্যাক্টরি রিসেট নিশ্চিতকরণ</h3>
-                  <p className="text-xs text-[#4B5563]">এটি আপনার সকল কাস্টম তথ্য চিরতরে মুছে দেবে</p>
+                  <h3 className="text-base font-bold text-ink">ফ্যাক্টরি রিসেট নিশ্চিতকরণ</h3>
+                  <p className="text-xs text-muted">এটি আপনার সকল কাস্টম তথ্য চিরতরে মুছে দেবে</p>
                 </div>
               </div>
 
-              <div className="bg-[#FEF3C7] p-3 rounded-lg border border-[#F59E0B] text-xs text-[#92400E] leading-relaxed">
+              <div className="bg-warning-soft p-3 rounded-lg border border-accent text-xs text-warning leading-relaxed">
                 সতর্কতা: ফ্যাক্টরি রিসেট সম্পন্ন হলে সকল শিক্ষার্থী, ফলাফল, ভর্তি আবেদন এবং সেটিংস ডিফল্ট অবস্থায় ফিরে যাবে।
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#1F2937] mb-1">
+                <label className="block text-xs font-bold text-ink mb-1">
                   নিশ্চিত করতে নিচে ইংরেজিতে <strong>RESET</strong> লিখুন:
                 </label>
                 <input
@@ -674,10 +674,10 @@ export default function SchoolSettings() {
                     setResetError('');
                   }}
                   placeholder="RESET"
-                  className="w-full rounded-lg border border-[#D1D5DB] p-2.5 font-mono text-xs font-bold text-[#1F2937] bg-[#F7F9F8] uppercase"
+                  className="w-full rounded-lg border border-line p-2.5 font-mono text-xs font-bold text-ink bg-bg uppercase"
                 />
                 {resetError && (
-                  <p className="text-[#DC2626] text-xs mt-1 font-semibold">{resetError}</p>
+                  <p className="text-danger text-xs mt-1 font-semibold">{resetError}</p>
                 )}
               </div>
 
@@ -685,7 +685,7 @@ export default function SchoolSettings() {
                 <button
                   type="button"
                   onClick={() => setShowResetModal(false)}
-                  className="flex-1 bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#1F2937] py-2 rounded-lg text-xs font-bold transition border border-[#D1D5DB] cursor-pointer"
+                  className="flex-1 bg-bg hover:bg-soft text-ink py-2 rounded-lg text-xs font-bold transition border border-line cursor-pointer"
                 >
                   বাতিল করুন
                 </button>

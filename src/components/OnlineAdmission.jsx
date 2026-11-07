@@ -173,15 +173,15 @@ export default function OnlineAdmission() {
   };
 
   return (
-    <section className="py-12 sm:py-16 text-slate-800 relative z-10 font-sans min-h-[750px]">
+    <section className="py-12 sm:py-16 text-ink relative z-10 font-sans min-h-[750px]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         {/* If Application is submitted successfully, show the Official Printable Admit Slip */}
         {submittedApplication ? (
-          <div className="bg-white rounded-2xl shadow-xl border border-[#E5E7EB] overflow-hidden" id="admission-slip">
+          <div className="bg-white rounded-2xl shadow-xl border border-line overflow-hidden" id="admission-slip">
             {/* Top Toolbar */}
-            <div className="bg-[#14532D] text-white px-6 py-3.5 flex items-center justify-between no-print border-b border-[#166534]">
+            <div className="bg-deep text-white px-6 py-3.5 flex items-center justify-between no-print border-b border-primary">
               <div className="flex items-center gap-2 text-xs font-semibold">
-                <CheckCircle2 className="w-4 h-4 text-[#F59E0B]" />
+                <CheckCircle2 className="w-4 h-4 text-accent" />
                 <span className="text-white font-bangla">{lang === 'bn' ? 'ভর্তি আবেদন সফলভাবে গৃহীত হয়েছে!' : 'Admission Application Submitted!'}</span>
               </div>
               <div className="flex items-center gap-2.5">
@@ -189,121 +189,121 @@ export default function OnlineAdmission() {
                   onClick={handleNewApplication}
                   className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs transition flex items-center gap-1.5 font-bangla border border-white/20 cursor-pointer text-white"
                 >
-                  <RotateCcw className="w-3.5 h-3.5 text-amber-300" />
+                  <RotateCcw className="w-3.5 h-3.5 text-accent" />
                   <span>{lang === 'bn' ? 'নতুন আবেদন' : 'New Form'}</span>
                 </button>
                 <button
                   onClick={handlePrintSlip}
                   className="btn-accent px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer"
                 >
-                  <Printer className="w-3.5 h-3.5 text-[#1F2937]" />
+                  <Printer className="w-3.5 h-3.5 text-ink" />
                   <span>{lang === 'bn' ? 'স্লিপ প্রিন্ট করুন' : 'Print Slip'}</span>
                 </button>
               </div>
             </div>
 
             {/* Printable Slip Container */}
-            <div className="p-6 sm:p-10 bg-white text-slate-900 space-y-6">
+            <div className="p-6 sm:p-10 bg-white text-ink space-y-6">
               {/* Slip Header */}
-              <div className="text-center border-b-2 border-[#14532D] pb-4">
-                <div className="w-14 h-14 mx-auto mb-2 rounded-full bg-white p-0.5 shadow-sm ring-2 ring-[#166534]">
+              <div className="text-center border-b-2 border-deep pb-4">
+                <div className="w-14 h-14 mx-auto mb-2 rounded-full bg-white p-0.5 shadow-sm ring-2 ring-primary">
                   <SchoolLogo logo={schoolInfo.logo} />
                 </div>
-                <h3 className="text-2xl sm:text-3xl font-extrabold font-bangla text-[#14532D]">
+                <h3 className="text-2xl sm:text-3xl font-extrabold font-bangla text-deep">
                   {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || 'Bandua Daulatpur High School')}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-700 font-semibold font-bangla">
+                <p className="text-xs sm:text-sm text-ink font-semibold font-bangla">
                   {schoolInfo.addressBn}
                 </p>
-                <p className="text-xs text-slate-500 font-mono mt-0.5">
+                <p className="text-xs text-muted font-mono mt-0.5">
                   EIIN: {schoolInfo.eiin} • কুমিল্লা শিক্ষাবোর্ড • স্থাপিত: ১৯৯০
                 </p>
-                <div className="mt-3 inline-block bg-[#14532D] text-white px-4 py-1 rounded text-xs font-bold uppercase tracking-wider font-bangla">
+                <div className="mt-3 inline-block bg-deep text-white px-4 py-1 rounded text-xs font-bold uppercase tracking-wider font-bangla">
                   {lang === 'bn' ? 'অনলাইন ভর্তি আবেদন পত্র ও প্রবেশপত্র (Admit Slip)' : 'ONLINE ADMISSION APPLICATION & ADMIT SLIP'}
                 </div>
-                <p className="text-xs font-bold text-[#B45309] mt-1.5">শিক্ষাবর্ষ: ২০২৭ (Academic Session 2027)</p>
+                <p className="text-xs font-bold text-warning mt-1.5">শিক্ষাবর্ষ: ২০২৭ (Academic Session 2027)</p>
               </div>
 
               {/* Tracking ID Banner */}
-              <div className="bg-[#FEF3C7] border border-[#F59E0B] rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="bg-warning-soft border border-accent rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div>
-                  <span className="text-xs text-[#92400E] block font-bangla font-semibold">
+                  <span className="text-xs text-warning block font-bangla font-semibold">
                     {lang === 'bn' ? 'আবেদন ট্র্যাকিং নম্বর:' : 'Application Tracking ID:'}
                   </span>
-                  <span className="text-xl sm:text-2xl font-mono font-extrabold text-slate-950 tracking-wider">
+                  <span className="text-xl sm:text-2xl font-mono font-extrabold text-ink tracking-wider">
                     {submittedApplication.trackingId}
                   </span>
-                  <p className="text-[11px] text-slate-600 font-bangla mt-0.5">
+                  <p className="text-[11px] text-muted font-bangla mt-0.5">
                     {lang === 'bn' ? 'ভর্তির ফলাফল ও অ্যাডমিট কার্ড যাচাইয়ের জন্য এই নম্বরটি সংরক্ষণ করুন।' : 'Keep this tracking ID safe for future admission queries.'}
                   </p>
                 </div>
 
                 {/* Simulated Barcode */}
                 <div className="text-center">
-                  <div className="font-mono text-xl tracking-widest text-slate-900 font-bold select-none">
+                  <div className="font-mono text-xl tracking-widest text-ink font-bold select-none">
                     ||| | |||| | ||| |||| |
                   </div>
-                  <span className="text-[10px] font-mono text-slate-500">{submittedApplication.trackingId}</span>
+                  <span className="text-[10px] font-mono text-muted">{submittedApplication.trackingId}</span>
                 </div>
               </div>
 
               {/* Candidate Info Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bangla bg-[#F7F9F8] p-5 rounded-xl border border-[#E5E7EB]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bangla bg-bg p-5 rounded-xl border border-line">
                 <div>
-                  <span className="text-slate-500 block">{lang === 'bn' ? 'শিক্ষার্থীর নাম (বাংলা):' : 'Candidate Name (Bangla):'}</span>
-                  <span className="font-bold text-slate-900 text-sm">{submittedApplication.studentNameBn || '-'}</span>
+                  <span className="text-muted block">{lang === 'bn' ? 'শিক্ষার্থীর নাম (বাংলা):' : 'Candidate Name (Bangla):'}</span>
+                  <span className="font-bold text-ink text-sm">{submittedApplication.studentNameBn || '-'}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">{lang === 'bn' ? 'শিক্ষার্থীর নাম (ইংরেজি):' : 'Candidate Name (English):'}</span>
-                  <span className="font-bold text-slate-900 text-sm uppercase font-mono">{submittedApplication.studentNameEn}</span>
+                  <span className="text-muted block">{lang === 'bn' ? 'শিক্ষার্থীর নাম (ইংরেজি):' : 'Candidate Name (English):'}</span>
+                  <span className="font-bold text-ink text-sm uppercase font-mono">{submittedApplication.studentNameEn}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">{lang === 'bn' ? 'আবেদনকৃত শ্রেণি:' : 'Applied Class:'}</span>
-                  <span className="font-bold text-[#166534]">
+                  <span className="text-muted block">{lang === 'bn' ? 'আবেদনকৃত শ্রেণি:' : 'Applied Class:'}</span>
+                  <span className="font-bold text-primary">
                     {lang === 'bn' ? `${submittedApplication.applyingClass} শ্রেণি` : `Class ${submittedApplication.applyingClass}`}
                     {submittedApplication.group && submittedApplication.group !== 'General' && ` (${submittedApplication.group})`}
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">{lang === 'bn' ? 'লিঙ্গ ও রক্তগ্রুপ:' : 'Gender & Blood Group:'}</span>
-                  <span className="font-semibold text-slate-800">{submittedApplication.gender} {submittedApplication.bloodGroup && `• ${submittedApplication.bloodGroup}`}</span>
+                  <span className="text-muted block">{lang === 'bn' ? 'লিঙ্গ ও রক্তগ্রুপ:' : 'Gender & Blood Group:'}</span>
+                  <span className="font-semibold text-ink">{submittedApplication.gender} {submittedApplication.bloodGroup && `• ${submittedApplication.bloodGroup}`}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">{lang === 'bn' ? 'পিতার নাম:' : "Father's Name:"}</span>
-                  <span className="font-semibold text-slate-800">{submittedApplication.fatherName}</span>
+                  <span className="text-muted block">{lang === 'bn' ? 'পিতার নাম:' : "Father's Name:"}</span>
+                  <span className="font-semibold text-ink">{submittedApplication.fatherName}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">{lang === 'bn' ? 'মাতার নাম:' : "Mother's Name:"}</span>
-                  <span className="font-semibold text-slate-800">{submittedApplication.motherName}</span>
+                  <span className="text-muted block">{lang === 'bn' ? 'মাতার নাম:' : "Mother's Name:"}</span>
+                  <span className="font-semibold text-ink">{submittedApplication.motherName}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">{lang === 'bn' ? 'অভিভাবকের মোবাইল নম্বর:' : 'Guardian Phone:'}</span>
-                  <span className="font-mono font-bold text-[#166534]">{submittedApplication.guardianPhone}</span>
+                  <span className="text-muted block">{lang === 'bn' ? 'অভিভাবকের মোবাইল নম্বর:' : 'Guardian Phone:'}</span>
+                  <span className="font-mono font-bold text-primary">{submittedApplication.guardianPhone}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">{lang === 'bn' ? 'পূর্ববর্তী প্রতিষ্ঠান ও জিপিএ:' : 'Previous School & GPA:'}</span>
-                  <span className="font-semibold text-slate-800">{submittedApplication.previousSchool || 'N/A'} (GPA: {submittedApplication.previousGpa || 'N/A'})</span>
+                  <span className="text-muted block">{lang === 'bn' ? 'পূর্ববর্তী প্রতিষ্ঠান ও জিপিএ:' : 'Previous School & GPA:'}</span>
+                  <span className="font-semibold text-ink">{submittedApplication.previousSchool || 'N/A'} (GPA: {submittedApplication.previousGpa || 'N/A'})</span>
                 </div>
                 <div className="sm:col-span-2">
-                  <span className="text-slate-500 block">{lang === 'bn' ? 'স্থায়ী ঠিকানা:' : 'Address:'}</span>
-                  <span className="font-medium text-slate-800">{submittedApplication.address}</span>
+                  <span className="text-muted block">{lang === 'bn' ? 'স্থায়ী ঠিকানা:' : 'Address:'}</span>
+                  <span className="font-medium text-ink">{submittedApplication.address}</span>
                 </div>
               </div>
             </div>
           </div>
         ) : (
           /* Admission Application Form */
-          <div className="card-base rounded-2xl shadow-md border border-[#E5E7EB] overflow-hidden bg-white">
+          <div className="card-base rounded-2xl shadow-md border border-line overflow-hidden bg-white">
             {/* Header */}
-            <div className="bg-[#14532D] p-6 sm:p-8 text-center text-white border-b border-[#166534]">
-              <div className="inline-flex items-center gap-1.5 bg-[#DCFCE7] text-[#14532D] text-xs font-bold px-4 py-1.5 rounded-full mb-3 font-bangla border border-emerald-300">
-                <GraduationCap className="w-4 h-4 text-[#166534]" />
+            <div className="bg-deep p-6 sm:p-8 text-center text-white border-b border-primary">
+              <div className="inline-flex items-center gap-1.5 bg-soft text-deep text-xs font-bold px-4 py-1.5 rounded-full mb-3 font-bangla border border-soft-border">
+                <GraduationCap className="w-4 h-4 text-primary" />
                 <span>২০২৭ শিক্ষাবর্ষে নতুন শিক্ষার্থী ভর্তি কার্যক্রম</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-extrabold font-bangla text-white">
                 {lang === 'bn' ? 'অনলাইন ভর্তি আবেদন ফরম' : 'Online Admission Application Form'}
               </h2>
-              <p className="text-emerald-100 text-xs sm:text-sm font-bangla mt-1 max-w-xl mx-auto">
+              <p className="text-soft text-xs sm:text-sm font-bangla mt-1 max-w-xl mx-auto">
                 {lang === 'bn' 
                   ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়ে ৬ষ্ঠ থেকে ৯ম শ্রেণিতে ভর্তির জন্য নিচের সঠিক তথ্য প্রদান করুন।'
                   : 'Please complete all required fields carefully for admission into Bandua Daulatpur High School.'}
@@ -314,14 +314,14 @@ export default function OnlineAdmission() {
             <form onSubmit={handleSubmit} className="p-6 sm:p-10 space-y-8 bg-white">
               {/* Step 1: Student Information */}
               <div>
-                <h3 className="text-sm font-bold font-bangla text-[#14532D] border-b border-[#E5E7EB] pb-2.5 mb-5 flex items-center gap-2">
-                  <User className="w-4 h-4 text-[#166534]" />
+                <h3 className="text-sm font-bold font-bangla text-deep border-b border-line pb-2.5 mb-5 flex items-center gap-2">
+                  <User className="w-4 h-4 text-primary" />
                   <span>{lang === 'bn' ? '১. শিক্ষার্থীর ব্যক্তিগত তথ্য' : '1. Student Personal Information'}</span>
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bangla">
                   <div>
-                    <label htmlFor="studentNameBn" className="block font-bold text-slate-700 mb-1.5">
+                    <label htmlFor="studentNameBn" className="block font-bold text-ink mb-1.5">
                       {lang === 'bn' ? 'শিক্ষার্থীর নাম (বাংলায়) *' : "Student's Name (Bangla) *"}
                     </label>
                     <input
@@ -332,12 +332,12 @@ export default function OnlineAdmission() {
                       value={formData.studentNameBn}
                       onChange={handleChange}
                       placeholder={lang === 'bn' ? 'যেমন: তানভীর আহমেদ তানিম' : 'e.g. তানভীর আহমেদ'}
-                      className={`w-full rounded-lg border p-3 text-slate-900 bg-[#F7F9F8] focus:ring-2 focus:ring-[#166534] focus:outline-none ${
-                        formErrors.studentNameBn ? 'border-red-400 bg-red-50/30' : 'border-[#D1D5DB]'
+                      className={`w-full rounded-lg border p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none ${
+                        formErrors.studentNameBn ? 'border-danger-soft bg-danger-soft' : 'border-line'
                       }`}
                     />
                     {formErrors.studentNameBn && (
-                      <p className="text-[#DC2626] text-[11px] mt-1 flex items-center gap-1 font-medium">
+                      <p className="text-danger text-[11px] mt-1 flex items-center gap-1 font-medium">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         <span>{formErrors.studentNameBn}</span>
                       </p>
@@ -345,7 +345,7 @@ export default function OnlineAdmission() {
                   </div>
 
                   <div>
-                    <label htmlFor="studentNameEn" className="block font-bold text-slate-700 mb-1.5">
+                    <label htmlFor="studentNameEn" className="block font-bold text-ink mb-1.5">
                       {lang === 'bn' ? 'শিক্ষার্থীর নাম (ইংরেজিতে ক্যাপিটাল লেটারে) *' : "Student's Name (English Capital) *"}
                     </label>
                     <input
@@ -356,12 +356,12 @@ export default function OnlineAdmission() {
                       value={formData.studentNameEn}
                       onChange={handleChange}
                       placeholder="e.g. TANVIR AHMED TANIM"
-                      className={`w-full uppercase rounded-lg border p-3 text-slate-900 bg-[#F7F9F8] focus:ring-2 focus:ring-[#166534] focus:outline-none font-mono ${
-                        formErrors.studentNameEn ? 'border-red-400 bg-red-50/30' : 'border-[#D1D5DB]'
+                      className={`w-full uppercase rounded-lg border p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none font-mono ${
+                        formErrors.studentNameEn ? 'border-danger-soft bg-danger-soft' : 'border-line'
                       }`}
                     />
                     {formErrors.studentNameEn && (
-                      <p className="text-[#DC2626] text-[11px] mt-1 flex items-center gap-1 font-medium">
+                      <p className="text-danger text-[11px] mt-1 flex items-center gap-1 font-medium">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         <span>{formErrors.studentNameEn}</span>
                       </p>
@@ -369,7 +369,7 @@ export default function OnlineAdmission() {
                   </div>
 
                   <div>
-                    <label htmlFor="applyingClass" className="block font-bold text-slate-700 mb-1.5">
+                    <label htmlFor="applyingClass" className="block font-bold text-ink mb-1.5">
                       {lang === 'bn' ? 'আবেদনকৃত শ্রেণি *' : 'Applying Class *'}
                     </label>
                     <select
@@ -377,7 +377,7 @@ export default function OnlineAdmission() {
                       name="applyingClass"
                       value={formData.applyingClass}
                       onChange={handleChange}
-                      className="w-full rounded-lg border border-[#D1D5DB] p-3 text-slate-900 bg-[#F7F9F8] focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                      className="w-full rounded-lg border border-line p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none"
                     >
                       <option value="6">ষষ্ঠ শ্রেণি (Class VI)</option>
                       <option value="7">সপ্তম শ্রেণি (Class VII)</option>
@@ -388,7 +388,7 @@ export default function OnlineAdmission() {
 
                   {formData.applyingClass === '9' && (
                     <div>
-                      <label htmlFor="group" className="block font-bold text-slate-700 mb-1.5">
+                      <label htmlFor="group" className="block font-bold text-ink mb-1.5">
                         {lang === 'bn' ? 'গ্রুপ / বিভাগ (৯ম শ্রেণির জন্য)' : 'Group (For Class 9)'}
                       </label>
                       <select
@@ -396,7 +396,7 @@ export default function OnlineAdmission() {
                         name="group"
                         value={formData.group}
                         onChange={handleChange}
-                        className="w-full rounded-lg border border-[#D1D5DB] p-3 text-slate-900 bg-[#F7F9F8] focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                        className="w-full rounded-lg border border-line p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none"
                       >
                         <option value="Science">বিজ্ঞান (Science)</option>
                         <option value="Business Studies">ব্যবসায় শিক্ষা (Business Studies)</option>
@@ -406,7 +406,7 @@ export default function OnlineAdmission() {
                   )}
 
                   <div>
-                    <label htmlFor="gender" className="block font-bold text-slate-700 mb-1.5">
+                    <label htmlFor="gender" className="block font-bold text-ink mb-1.5">
                       {lang === 'bn' ? 'লিঙ্গ *' : 'Gender *'}
                     </label>
                     <select
@@ -414,7 +414,7 @@ export default function OnlineAdmission() {
                       name="gender"
                       value={formData.gender}
                       onChange={handleChange}
-                      className="w-full rounded-lg border border-[#D1D5DB] p-3 text-slate-900 bg-[#F7F9F8] focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                      className="w-full rounded-lg border border-line p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none"
                     >
                       <option value="Male">ছাত্র (Male)</option>
                       <option value="Female">ছাত্রী (Female)</option>
@@ -422,7 +422,7 @@ export default function OnlineAdmission() {
                   </div>
 
                   <div>
-                    <label htmlFor="dob" className="block font-bold text-slate-700 mb-1.5">
+                    <label htmlFor="dob" className="block font-bold text-ink mb-1.5">
                       {lang === 'bn' ? 'জন্ম তারিখ *' : 'Date of Birth *'}
                     </label>
                     <input
@@ -434,12 +434,12 @@ export default function OnlineAdmission() {
                       max="2017-12-31"
                       value={formData.dob}
                       onChange={handleChange}
-                      className={`w-full rounded-lg border p-3 text-slate-900 bg-[#F7F9F8] focus:ring-2 focus:ring-[#166534] focus:outline-none ${
-                        formErrors.dob ? 'border-red-400 bg-red-50/30' : 'border-[#D1D5DB]'
+                      className={`w-full rounded-lg border p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none ${
+                        formErrors.dob ? 'border-danger-soft bg-danger-soft' : 'border-line'
                       }`}
                     />
                     {formErrors.dob && (
-                      <p className="text-[#DC2626] text-[11px] mt-1 flex items-center gap-1 font-medium">
+                      <p className="text-danger text-[11px] mt-1 flex items-center gap-1 font-medium">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         <span>{formErrors.dob}</span>
                       </p>
@@ -447,7 +447,7 @@ export default function OnlineAdmission() {
                   </div>
 
                   <div>
-                    <label htmlFor="bloodGroup" className="block font-bold text-slate-700 mb-1.5">
+                    <label htmlFor="bloodGroup" className="block font-bold text-ink mb-1.5">
                       {lang === 'bn' ? 'রক্তের গ্রুপ (ঐচ্ছিক)' : 'Blood Group (Optional)'}
                     </label>
                     <select
@@ -455,7 +455,7 @@ export default function OnlineAdmission() {
                       name="bloodGroup"
                       value={formData.bloodGroup}
                       onChange={handleChange}
-                      className="w-full rounded-lg border border-[#D1D5DB] p-3 text-slate-900 bg-[#F7F9F8] focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                      className="w-full rounded-lg border border-line p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none"
                     >
                       <option value="">{lang === 'bn' ? '-- নির্বাচন করুন --' : '-- Select --'}</option>
                       <option value="A+">A Positive (A+)</option>
@@ -473,14 +473,14 @@ export default function OnlineAdmission() {
 
               {/* Step 2: Guardian Info */}
               <div>
-                <h3 className="text-sm font-bold font-bangla text-[#14532D] border-b border-[#E5E7EB] pb-2.5 mb-5 flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-[#166534]" />
+                <h3 className="text-sm font-bold font-bangla text-deep border-b border-line pb-2.5 mb-5 flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-primary" />
                   <span>{lang === 'bn' ? '২. পিতা, মাতা ও অভিভাবকের তথ্য' : '2. Guardian Information'}</span>
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bangla">
                   <div>
-                    <label htmlFor="fatherName" className="block font-bold text-slate-700 mb-1.5">
+                    <label htmlFor="fatherName" className="block font-bold text-ink mb-1.5">
                       {lang === 'bn' ? 'পিতার নাম *' : "Father's Name *"}
                     </label>
                     <input
@@ -491,12 +491,12 @@ export default function OnlineAdmission() {
                       value={formData.fatherName}
                       onChange={handleChange}
                       placeholder={lang === 'bn' ? 'পিতার নাম লিখুন' : "Enter father's name"}
-                      className={`w-full rounded-lg border p-3 text-slate-900 bg-[#F7F9F8] focus:ring-2 focus:ring-[#166534] focus:outline-none ${
-                        formErrors.fatherName ? 'border-red-400 bg-red-50/30' : 'border-[#D1D5DB]'
+                      className={`w-full rounded-lg border p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none ${
+                        formErrors.fatherName ? 'border-danger-soft bg-danger-soft' : 'border-line'
                       }`}
                     />
                     {formErrors.fatherName && (
-                      <p className="text-[#DC2626] text-[11px] mt-1 flex items-center gap-1 font-medium">
+                      <p className="text-danger text-[11px] mt-1 flex items-center gap-1 font-medium">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         <span>{formErrors.fatherName}</span>
                       </p>
@@ -504,7 +504,7 @@ export default function OnlineAdmission() {
                   </div>
 
                   <div>
-                    <label htmlFor="motherName" className="block font-bold text-slate-700 mb-1.5">
+                    <label htmlFor="motherName" className="block font-bold text-ink mb-1.5">
                       {lang === 'bn' ? 'মাতার নাম *' : "Mother's Name *"}
                     </label>
                     <input
@@ -515,12 +515,12 @@ export default function OnlineAdmission() {
                       value={formData.motherName}
                       onChange={handleChange}
                       placeholder={lang === 'bn' ? 'মাতার নাম লিখুন' : "Enter mother's name"}
-                      className={`w-full rounded-lg border p-3 text-slate-900 bg-[#F7F9F8] focus:ring-2 focus:ring-[#166534] focus:outline-none ${
-                        formErrors.motherName ? 'border-red-400 bg-red-50/30' : 'border-[#D1D5DB]'
+                      className={`w-full rounded-lg border p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none ${
+                        formErrors.motherName ? 'border-danger-soft bg-danger-soft' : 'border-line'
                       }`}
                     />
                     {formErrors.motherName && (
-                      <p className="text-[#DC2626] text-[11px] mt-1 flex items-center gap-1 font-medium">
+                      <p className="text-danger text-[11px] mt-1 flex items-center gap-1 font-medium">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         <span>{formErrors.motherName}</span>
                       </p>
@@ -528,7 +528,7 @@ export default function OnlineAdmission() {
                   </div>
 
                   <div>
-                    <label htmlFor="guardianPhone" className="block font-bold text-slate-700 mb-1.5">
+                    <label htmlFor="guardianPhone" className="block font-bold text-ink mb-1.5">
                       {lang === 'bn' ? 'অভিভাবকের সক্রিয় মোবাইল নম্বর *' : 'Guardian Mobile Number *'}
                     </label>
                     <input
@@ -539,12 +539,12 @@ export default function OnlineAdmission() {
                       value={formData.guardianPhone}
                       onChange={handleChange}
                       placeholder="01819204561"
-                      className={`w-full rounded-lg border p-3 text-slate-900 bg-[#F7F9F8] focus:ring-2 focus:ring-[#166534] focus:outline-none font-mono ${
-                        formErrors.guardianPhone ? 'border-red-400 bg-red-50/30' : 'border-[#D1D5DB]'
+                      className={`w-full rounded-lg border p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none font-mono ${
+                        formErrors.guardianPhone ? 'border-danger-soft bg-danger-soft' : 'border-line'
                       }`}
                     />
                     {formErrors.guardianPhone && (
-                      <p className="text-[#DC2626] text-[11px] mt-1 flex items-center gap-1 font-medium">
+                      <p className="text-danger text-[11px] mt-1 flex items-center gap-1 font-medium">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         <span>{formErrors.guardianPhone}</span>
                       </p>
@@ -552,7 +552,7 @@ export default function OnlineAdmission() {
                   </div>
 
                   <div>
-                    <label htmlFor="fatherNid" className="block font-bold text-slate-700 mb-1.5">
+                    <label htmlFor="fatherNid" className="block font-bold text-ink mb-1.5">
                       {lang === 'bn' ? 'পিতার জাতীয় পরিচয়পত্র (NID) নম্বর' : 'Father NID Number (Optional)'}
                     </label>
                     <input
@@ -562,12 +562,12 @@ export default function OnlineAdmission() {
                       value={formData.fatherNid}
                       onChange={handleChange}
                       placeholder="১০ বা ১৭ ডিজিটের এনআইডি"
-                      className={`w-full rounded-lg border p-3 text-slate-900 bg-[#F7F9F8] focus:ring-2 focus:ring-[#166534] focus:outline-none font-mono ${
-                        formErrors.fatherNid ? 'border-red-400 bg-red-50/30' : 'border-[#D1D5DB]'
+                      className={`w-full rounded-lg border p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none font-mono ${
+                        formErrors.fatherNid ? 'border-danger-soft bg-danger-soft' : 'border-line'
                       }`}
                     />
                     {formErrors.fatherNid && (
-                      <p className="text-[#DC2626] text-[11px] mt-1 flex items-center gap-1 font-medium">
+                      <p className="text-danger text-[11px] mt-1 flex items-center gap-1 font-medium">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         <span>{formErrors.fatherNid}</span>
                       </p>
@@ -578,14 +578,14 @@ export default function OnlineAdmission() {
 
               {/* Step 3: Academic Background & Address */}
               <div>
-                <h3 className="text-sm font-bold font-bangla text-[#14532D] border-b border-[#E5E7EB] pb-2.5 mb-5 flex items-center gap-2">
-                  <School className="w-4 h-4 text-[#166534]" />
+                <h3 className="text-sm font-bold font-bangla text-deep border-b border-line pb-2.5 mb-5 flex items-center gap-2">
+                  <School className="w-4 h-4 text-primary" />
                   <span>{lang === 'bn' ? '৩. পূর্ববর্তী শিক্ষা ও বর্তমান ঠিকানা' : '3. Previous Education & Address'}</span>
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bangla">
                   <div>
-                    <label htmlFor="previousSchool" className="block font-bold text-slate-700 mb-1.5">
+                    <label htmlFor="previousSchool" className="block font-bold text-ink mb-1.5">
                       {lang === 'bn' ? 'পূর্ববর্তী বিদ্যালয়ের নাম *' : 'Previous School Name *'}
                     </label>
                     <input
@@ -596,12 +596,12 @@ export default function OnlineAdmission() {
                       value={formData.previousSchool}
                       onChange={handleChange}
                       placeholder={lang === 'bn' ? 'যেমন: বন্দুয়া সরকারি প্রাথমিক বিদ্যালয়' : 'e.g. Primary School Name'}
-                      className="w-full rounded-lg border border-[#D1D5DB] p-3 text-slate-900 bg-[#F7F9F8] focus:ring-2 focus:ring-[#166534] focus:outline-none"
+                      className="w-full rounded-lg border border-line p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="previousGpa" className="block font-bold text-slate-700 mb-1.5">
+                    <label htmlFor="previousGpa" className="block font-bold text-ink mb-1.5">
                       {lang === 'bn' ? 'পূর্ববর্তী ক্লাসের ফলাফল (GPA/Marks)' : 'Previous Class GPA/Grade'}
                     </label>
                     <input
@@ -611,12 +611,12 @@ export default function OnlineAdmission() {
                       value={formData.previousGpa}
                       onChange={handleChange}
                       placeholder="যেমন: 4.85"
-                      className={`w-full rounded-lg border p-3 text-slate-900 bg-[#F7F9F8] focus:ring-2 focus:ring-[#166534] focus:outline-none font-mono ${
-                        formErrors.previousGpa ? 'border-red-400 bg-red-50/30' : 'border-[#D1D5DB]'
+                      className={`w-full rounded-lg border p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none font-mono ${
+                        formErrors.previousGpa ? 'border-danger-soft bg-danger-soft' : 'border-line'
                       }`}
                     />
                     {formErrors.previousGpa && (
-                      <p className="text-[#DC2626] text-[11px] mt-1 flex items-center gap-1 font-medium">
+                      <p className="text-danger text-[11px] mt-1 flex items-center gap-1 font-medium">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         <span>{formErrors.previousGpa}</span>
                       </p>
@@ -624,7 +624,7 @@ export default function OnlineAdmission() {
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label htmlFor="address" className="block font-bold text-slate-700 mb-1.5">
+                    <label htmlFor="address" className="block font-bold text-ink mb-1.5">
                       {lang === 'bn' ? 'বর্তমান স্থায়ী ঠিকানা *' : 'Complete Address *'}
                     </label>
                     <textarea
@@ -635,12 +635,12 @@ export default function OnlineAdmission() {
                       value={formData.address}
                       onChange={handleChange}
                       placeholder={lang === 'bn' ? 'গ্রাম: বন্দুয়া দৌলতপুর, ডাকঘর: আনন্দপুর, উপজেলা: ফুলগাজী, জেলা: ফেনী' : 'Village, Union, Upazila, District'}
-                      className={`w-full rounded-lg border p-3 text-slate-900 bg-[#F7F9F8] focus:ring-2 focus:ring-[#166534] focus:outline-none ${
-                        formErrors.address ? 'border-red-400 bg-red-50/30' : 'border-[#D1D5DB]'
+                      className={`w-full rounded-lg border p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none ${
+                        formErrors.address ? 'border-danger-soft bg-danger-soft' : 'border-line'
                       }`}
                     ></textarea>
                     {formErrors.address && (
-                      <p className="text-[#DC2626] text-[11px] mt-1 flex items-center gap-1 font-medium">
+                      <p className="text-danger text-[11px] mt-1 flex items-center gap-1 font-medium">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         <span>{formErrors.address}</span>
                       </p>
@@ -650,8 +650,8 @@ export default function OnlineAdmission() {
               </div>
 
               {/* Submit Buttons */}
-              <div className="pt-4 border-t border-[#E5E7EB] flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p className="text-xs text-slate-500 font-bangla">
+              <div className="pt-4 border-t border-line flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p className="text-xs text-muted font-bangla">
                   * ফরম জমা দেওয়ার পর স্বয়ংক্রিয়ভাবে প্রবেশপত্র তৈরি হবে।
                 </p>
 
@@ -660,7 +660,7 @@ export default function OnlineAdmission() {
                   disabled={isSubmitting}
                   className="w-full sm:w-auto btn-accent py-3 px-8 text-sm transition shadow-sm flex items-center justify-center gap-2 font-bangla cursor-pointer font-bold rounded-lg"
                 >
-                  <Send className="w-4 h-4 text-[#1F2937]" />
+                  <Send className="w-4 h-4 text-ink" />
                   <span>{isSubmitting ? 'প্রসেসিং হচ্ছে...' : (lang === 'bn' ? 'ভর্তি আবেদন জমা দিন' : 'Submit Application')}</span>
                 </button>
               </div>
