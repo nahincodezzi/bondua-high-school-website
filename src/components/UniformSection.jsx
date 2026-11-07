@@ -59,43 +59,47 @@ export default function UniformSection() {
               <div className="space-y-3 font-bangla text-xs sm:text-sm">
                 <div className="flex items-start gap-3 bg-[#F7F9F8] p-3.5 rounded-xl border border-[#E5E7EB]">
                   <div className="w-6 h-6 rounded-md bg-[#F3F4F6] text-[#166534] border border-[#E5E7EB] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    ১
+                    {lang === 'bn' ? '১' : '1'}
                   </div>
                   <div>
-                    <span className="font-bold text-[#1F2937] block text-sm">শার্ট (Shirt):</span>
-                    <span className="text-[#1F2937] font-semibold text-xs sm:text-sm">{uniformInfo.boys.shirtBn}</span>
-                    <p className="text-xs text-[#4B5563] mt-0.5">কলারযুক্ত পরিপাটি ধবধবে সাদা হাফ অথবা ফুল হাতা শার্ট।</p>
+                    <span className="font-bold text-[#1F2937] block text-sm">{lang === 'bn' ? 'শার্ট (Shirt):' : 'Shirt:'}</span>
+                    <span className="text-[#1F2937] font-semibold text-xs sm:text-sm">{lang === 'bn' ? uniformInfo.boys.shirtBn : (uniformInfo.boys.shirtEn || uniformInfo.boys.shirtBn)}</span>
+                    <p className="text-xs text-[#4B5563] mt-0.5">{lang === 'bn' ? 'কলারযুক্ত পরিপাটি ধবধবে সাদা হাফ অথবা ফুল হাতা শার্ট।' : 'Neat, crisp white half or full-sleeve collared shirt.'}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3 bg-[#F7F9F8] p-3.5 rounded-xl border border-[#E5E7EB]">
                   <div className="w-6 h-6 rounded-md bg-[#F3F4F6] text-[#166534] border border-[#E5E7EB] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    ২
+                    {lang === 'bn' ? '২' : '2'}
                   </div>
                   <div>
-                    <span className="font-bold text-[#1F2937] block text-sm">প্যান্ট (Pants):</span>
-                    <span className="text-[#1F2937] font-semibold text-xs sm:text-sm">{uniformInfo.boys.pantBn}</span>
-                    <p className="text-xs text-[#4B5563] mt-0.5">ফরমাল কাটিংয়ের নেভি ব্লু / গাঢ় নীল রঙের ফুল প্যান্ট।</p>
+                    <span className="font-bold text-[#1F2937] block text-sm">{lang === 'bn' ? 'প্যান্ট (Pants):' : 'Pants:'}</span>
+                    <span className="text-[#1F2937] font-semibold text-xs sm:text-sm">{lang === 'bn' ? uniformInfo.boys.pantBn : (uniformInfo.boys.pantEn || uniformInfo.boys.pantBn)}</span>
+                    <p className="text-xs text-[#4B5563] mt-0.5">{lang === 'bn' ? 'ফরমাল কাটিংয়ের নেভি ব্লু / গাঢ় নীল রঙের ফুল প্যান্ট।' : 'Formal tailored navy blue full trousers.'}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3 bg-[#F7F9F8] p-3.5 rounded-xl border border-[#E5E7EB]">
                   <div className="w-6 h-6 rounded-md bg-[#F3F4F6] text-[#166534] border border-[#E5E7EB] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    ৩
+                    {lang === 'bn' ? '৩' : '3'}
                   </div>
                   <div>
-                    <span className="font-bold text-[#1F2937] block text-sm">জুতা ও মোজা (Footwear):</span>
-                    <span className="text-[#1F2937] font-medium">{uniformInfo.boys.shoesBn}</span>
+                    <span className="font-bold text-[#1F2937] block text-sm">{lang === 'bn' ? 'জুতা ও মোজা (Footwear):' : 'Footwear & Socks:'}</span>
+                    <span className="text-[#1F2937] font-medium">{lang === 'bn' ? uniformInfo.boys.shoesBn : (uniformInfo.boys.shoesEn || uniformInfo.boys.shoesBn)}</span>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3 bg-[#F7F9F8] p-3.5 rounded-xl border border-[#E5E7EB]">
                   <div className="w-6 h-6 rounded-md bg-[#F3F4F6] text-[#166534] border border-[#E5E7EB] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    ৪
+                    {lang === 'bn' ? '৪' : '4'}
                   </div>
                   <div>
-                    <span className="font-bold text-[#1F2937] block text-sm">ব্যাজ ও বেল্ট (Accessories):</span>
-                    <span className="text-[#1F2937] font-medium">{uniformInfo.boys.badgeBn} এবং {uniformInfo.boys.beltBn}</span>
+                    <span className="font-bold text-[#1F2937] block text-sm">{lang === 'bn' ? 'ব্যাজ ও বেল্ট (Accessories):' : 'Badge & Belt:'}</span>
+                    <span className="text-[#1F2937] font-medium">
+                      {lang === 'bn' 
+                        ? `${uniformInfo.boys.badgeBn} এবং ${uniformInfo.boys.beltBn}` 
+                        : `${uniformInfo.boys.badgeEn || uniformInfo.boys.badgeBn} and ${uniformInfo.boys.beltEn || uniformInfo.boys.beltBn}`}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -136,43 +140,51 @@ export default function UniformSection() {
               <div className="space-y-3 font-bangla text-xs sm:text-sm">
                 <div className="flex items-start gap-3 bg-[#F7F9F8] p-3.5 rounded-xl border border-[#E5E7EB]">
                   <div className="w-6 h-6 rounded-md bg-[#F3F4F6] text-[#166534] border border-[#E5E7EB] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    ১
+                    {lang === 'bn' ? '১' : '1'}
                   </div>
                   <div>
-                    <span className="font-bold text-[#1F2937] block text-sm">পোশাক / কামিজ (Dress):</span>
-                    <span className="text-[#1F2937] font-semibold text-xs sm:text-sm">{uniformInfo.girls.dressBn}</span>
-                    <p className="text-xs text-[#4B5563] mt-0.5">নির্ধারিত শেডের মার্জিত ও পরিপাটি লাল ফ্রক অথবা কামিজ।</p>
+                    <span className="font-bold text-[#1F2937] block text-sm">{lang === 'bn' ? 'পোশাক / কামিজ (Dress):' : 'Dress / Kamiz:'}</span>
+                    <span className="text-[#1F2937] font-semibold text-xs sm:text-sm">{lang === 'bn' ? uniformInfo.girls.dressBn : (uniformInfo.girls.dressEn || uniformInfo.girls.dressBn)}</span>
+                    <p className="text-xs text-[#4B5563] mt-0.5">{lang === 'bn' ? 'নির্ধারিত শেডের মার্জিত ও পরিপাটি লাল ফ্রক অথবা কামিজ।' : 'Prescribed shade modest and neat red frock or kamiz.'}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3 bg-[#F7F9F8] p-3.5 rounded-xl border border-[#E5E7EB]">
                   <div className="w-6 h-6 rounded-md bg-[#F3F4F6] text-[#166534] border border-[#E5E7EB] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    ২
+                    {lang === 'bn' ? '২' : '2'}
                   </div>
                   <div>
-                    <span className="font-bold text-[#1F2937] block text-sm">পায়জামা ও ওড়না (Salwar & Scarf):</span>
-                    <span className="text-[#1F2937] font-medium">{uniformInfo.girls.salwarBn} এবং {uniformInfo.girls.ornaBn}</span>
-                    <p className="text-xs text-[#4B5563] mt-0.5">ধবধবে সাদা রঙের সালোয়ার এবং পরিচ্ছন্ন সাদা ওড়না/স্কার্ফ।</p>
+                    <span className="font-bold text-[#1F2937] block text-sm">{lang === 'bn' ? 'পায়জামা ও ওড়না (Salwar & Scarf):' : 'Salwar & Scarf:'}</span>
+                    <span className="text-[#1F2937] font-medium">
+                      {lang === 'bn' 
+                        ? `${uniformInfo.girls.salwarBn} এবং ${uniformInfo.girls.ornaBn}` 
+                        : `${uniformInfo.girls.salwarEn || uniformInfo.girls.salwarBn} and ${uniformInfo.girls.ornaEn || uniformInfo.girls.ornaBn}`}
+                    </span>
+                    <p className="text-xs text-[#4B5563] mt-0.5">{lang === 'bn' ? 'ধবধবে সাদা রঙের সালোয়ার এবং পরিচ্ছন্ন সাদা ওড়না/স্কার্ফ।' : 'Clean white salwar/pajama and white scarf.'}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3 bg-[#F7F9F8] p-3.5 rounded-xl border border-[#E5E7EB]">
                   <div className="w-6 h-6 rounded-md bg-[#F3F4F6] text-[#166534] border border-[#E5E7EB] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    ৩
+                    {lang === 'bn' ? '৩' : '3'}
                   </div>
                   <div>
-                    <span className="font-bold text-[#1F2937] block text-sm">চুলের ফিতা (Hair Ribbon):</span>
-                    <span className="text-[#1F2937] font-medium">{uniformInfo.girls.hairBn}</span>
+                    <span className="font-bold text-[#1F2937] block text-sm">{lang === 'bn' ? 'চুলের ফিতা (Hair Ribbon):' : 'Hair Ribbon:'}</span>
+                    <span className="text-[#1F2937] font-medium">{lang === 'bn' ? uniformInfo.girls.hairBn : (uniformInfo.girls.hairEn || uniformInfo.girls.hairBn)}</span>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3 bg-[#F7F9F8] p-3.5 rounded-xl border border-[#E5E7EB]">
                   <div className="w-6 h-6 rounded-md bg-[#F3F4F6] text-[#166534] border border-[#E5E7EB] flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
-                    ৪
+                    {lang === 'bn' ? '৪' : '4'}
                   </div>
                   <div>
-                    <span className="font-bold text-[#1F2937] block text-sm">জুতা ও প্রাতিষ্ঠানিক ব্যাজ:</span>
-                    <span className="text-[#1F2937] font-medium">{uniformInfo.girls.shoesBn} ও {uniformInfo.girls.badgeBn}</span>
+                    <span className="font-bold text-[#1F2937] block text-sm">{lang === 'bn' ? 'জুতা ও প্রাতিষ্ঠানিক ব্যাজ:' : 'Shoes & Institutional Badge:'}</span>
+                    <span className="text-[#1F2937] font-medium">
+                      {lang === 'bn' 
+                        ? `${uniformInfo.girls.shoesBn} ও ${uniformInfo.girls.badgeBn}` 
+                        : `${uniformInfo.girls.shoesEn || uniformInfo.girls.shoesBn} & ${uniformInfo.girls.badgeEn || uniformInfo.girls.badgeBn}`}
+                    </span>
                   </div>
                 </div>
               </div>

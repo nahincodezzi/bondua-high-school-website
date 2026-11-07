@@ -187,10 +187,10 @@ export default function AuthModal() {
               <span className="text-[11px] font-bold text-[#4B5563] block mb-2 font-bangla">
                 🛠️ ডেভেলপার টেস্টিং টুল (লোকাল ডেভ মোডে সক্রিয়):
               </span>
-              <div className="grid grid-cols-2 gap-2 text-xs font-bangla">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs font-bangla">
                 <button
                   type="button"
-                  onClick={() => handleDevLogin('superadmin', 'superadmin', 'admin123')}
+                  onClick={() => handleDevLogin('superadmin', 'superadmin', 'admin2026')}
                   className="bg-[#F7F9F8] hover:bg-[#DCFCE7]/40 hover:border-[#166534] p-2.5 rounded-xl text-left transition border border-[#E5E7EB] cursor-pointer"
                 >
                   <div className="font-bold text-[#1F2937] flex items-center gap-1.5">
@@ -202,7 +202,7 @@ export default function AuthModal() {
 
                 <button
                   type="button"
-                  onClick={() => handleDevLogin('headmaster', 'headmaster', 'headmaster123')}
+                  onClick={() => handleDevLogin('headmaster', 'headmaster', 'headmaster2026')}
                   className="bg-[#F7F9F8] hover:bg-[#DCFCE7]/40 hover:border-[#166534] p-2.5 rounded-xl text-left transition border border-[#E5E7EB] cursor-pointer"
                 >
                   <div className="font-bold text-[#1F2937] flex items-center gap-1.5">
@@ -214,7 +214,19 @@ export default function AuthModal() {
 
                 <button
                   type="button"
-                  onClick={() => handleDevLogin('teacher', 'teacher', 'teacher123')}
+                  onClick={() => handleDevLogin('asst_headmaster', 'asst_headmaster', 'assthead2026')}
+                  className="bg-[#F7F9F8] hover:bg-[#DCFCE7]/40 hover:border-[#166534] p-2.5 rounded-xl text-left transition border border-[#E5E7EB] cursor-pointer"
+                >
+                  <div className="font-bold text-[#1F2937] flex items-center gap-1.5">
+                    <GraduationCap className="w-3.5 h-3.5 text-[#166534]" />
+                    <span>সহ প্রধান শিক্ষক</span>
+                  </div>
+                  <div className="text-[10px] text-[#166534] font-mono mt-0.5">asst_headmaster</div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleDevLogin('teacher', 'teacher', 'teacher2026')}
                   className="bg-[#F7F9F8] hover:bg-[#DCFCE7]/40 hover:border-[#166534] p-2.5 rounded-xl text-left transition border border-[#E5E7EB] cursor-pointer"
                 >
                   <div className="font-bold text-[#1F2937] flex items-center gap-1.5">
@@ -226,8 +238,8 @@ export default function AuthModal() {
 
                 <button
                   type="button"
-                  onClick={() => handleDevLogin('operator', 'office_assistant', 'office123')}
-                  className="bg-[#F7F9F8] hover:bg-[#DCFCE7]/40 hover:border-[#166534] p-2.5 rounded-xl text-left transition border border-[#E5E7EB] cursor-pointer"
+                  onClick={() => handleDevLogin('operator', 'office_assistant', 'office2026')}
+                  className="bg-[#F7F9F8] hover:bg-[#DCFCE7]/40 hover:border-[#166534] p-2.5 rounded-xl text-left transition border border-[#E5E7EB] cursor-pointer col-span-2 sm:col-span-1"
                 >
                   <div className="font-bold text-[#1F2937] flex items-center gap-1.5">
                     <Building2 className="w-3.5 h-3.5 text-[#166534]" />

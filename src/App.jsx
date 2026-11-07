@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { SchoolProvider } from './context/SchoolContext';
 import { useSchool } from './context/useSchool';
 import Header from './components/Header';
@@ -18,7 +18,9 @@ import AboutSection from './components/AboutSection';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
-import AdminLayout from './components/AdminPortal/AdminLayout';
+
+// Lazy-load Admin Portal so public visitors don't load admin chunks (H2)
+const AdminLayout = lazy(() => import('./components/AdminPortal/AdminLayout'));
 
 function MainApp() {
   const { activeTab, authUser } = useSchool();
@@ -27,13 +29,27 @@ function MainApp() {
   if (authUser && activeTab === 'admin') {
     return (
       <div className="min-h-screen bg-slate-100 text-slate-800 flex flex-col font-sans relative selection:bg-amber-400 selection:text-slate-950">
-        <AdminLayout />
+        <Suspense fallback={
+          <div className="min-h-screen flex items-center justify-center bg-slate-100 font-bangla text-emerald-900 font-bold text-sm">
+            সফটওয়্যার ড্যাশবোর্ড লোড হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...
+          </div>
+        }>
+          <AdminLayout />
+        </Suspense>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 font-sans relative selection:bg-amber-400 selection:text-slate-950">
+      {/* Skip to Main Content Link for Keyboard & Screen Reader Accessibility (L4) */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[99999] focus:px-4 focus:py-2 focus:bg-[#14532D] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-bold focus:font-bangla focus:outline-2 focus:outline-[#F59E0B]"
+      >
+        মূল কনটেন্টে চলে যান (Skip to content)
+      </a>
+
       {/* Soft Ambient Light Glow */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-emerald-500/[0.04] blur-[150px] rounded-full"></div>
@@ -47,7 +63,7 @@ function MainApp() {
       <NoticeTicker />
 
       {/* Main Page Content based on activeTab */}
-      <main className={`flex-1 relative z-10 ${activeTab === 'home' ? '' : 'pt-24 sm:pt-28'}`}>
+      <main id="main-content" className={`flex-1 relative z-10 ${activeTab === 'home' ? '' : 'pt-24 sm:pt-28'}`}>
         {activeTab === 'home' && (
           <>
             <HeroSlider />

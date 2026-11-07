@@ -17,6 +17,7 @@ export default function ResultSearch() {
   const [examType, setExamType] = useState('SSC Test Examination 2026');
   const [targetClass, setTargetClass] = useState('10');
   const [rollInput, setRollInput] = useState('');
+  const [regInput, setRegInput] = useState('');
   const [searchedResult, setSearchedResult] = useState(null);
   const [searchAttempted, setSearchAttempted] = useState(false);
   const [validationError, setValidationError] = useState('');
@@ -40,9 +41,19 @@ export default function ResultSearch() {
       return;
     }
 
+    const rawReg = regInput.trim().toUpperCase();
+    const convertedReg = toEnglishNumerals(rawReg);
+
     setSearchAttempted(true);
     const found = results.find(
-      r => r.roll.toString() === convertedRoll && (r.class === targetClass || !targetClass)
+      r => {
+        const matchRoll = r.roll.toString() === convertedRoll;
+        const matchClass = !targetClass || r.class === targetClass;
+        const matchReg = !convertedReg || 
+          r.studentId?.toUpperCase().includes(convertedReg) || 
+          (r.regNo && r.regNo.toString().includes(convertedReg));
+        return matchRoll && matchClass && matchReg;
+      }
     );
 
     if (found) {
@@ -58,6 +69,7 @@ export default function ResultSearch() {
 
   const handleReset = () => {
     setRollInput('');
+    setRegInput('');
     setSearchedResult(null);
     setSearchAttempted(false);
     setValidationError('');
@@ -84,7 +96,7 @@ export default function ResultSearch() {
 
         {/* Search Box - Hidden during print */}
         <div className="card-base p-6 sm:p-8 rounded-2xl shadow-sm border border-[#E5E7EB] mb-8 no-print bg-white">
-          <form onSubmit={handleSearch} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-end">
+          <form onSubmit={handleSearch} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 items-end">
             {/* Exam Select */}
             <div>
               <label htmlFor="exam-select" className="block text-xs font-bold text-slate-700 mb-1.5 font-bangla">
@@ -122,7 +134,7 @@ export default function ResultSearch() {
               </select>
             </div>
 
-            {/* Roll Number Input (with numeric inputMode and Bangla digit support) */}
+            {/* Roll Number Input (with numeric inputMode, Bangla digit support and custom validity - L2) */}
             <div>
               <label htmlFor="roll-input" className="block text-xs font-bold text-slate-700 mb-1.5 font-bangla">
                 {lang === 'bn' ? 'রোল নম্বর *' : 'Roll Number *'}
@@ -136,11 +148,32 @@ export default function ResultSearch() {
                 required
                 placeholder={lang === 'bn' ? 'যেমন: ১০১ বা 101' : 'e.g. 101'}
                 value={rollInput}
+                onInvalid={(e) => e.target.setCustomValidity(lang === 'bn' ? 'অনুগ্রহ করে সঠিক রোল নম্বর দিন' : 'Please enter a valid roll number')}
+                onInput={(e) => e.target.setCustomValidity('')}
                 onChange={(e) => {
                   setRollInput(e.target.value);
                   setValidationError('');
                 }}
                 className="w-full text-xs font-mono font-bold rounded-lg p-3 border border-[#D1D5DB] bg-[#F7F9F8] text-slate-900 focus:ring-2 focus:ring-[#166534] focus:outline-none"
+              />
+            </div>
+
+            {/* Student ID / Registration Number Verification (C6 Privacy Fix) */}
+            <div>
+              <label htmlFor="reg-input" className="block text-xs font-bold text-slate-700 mb-1.5 font-bangla">
+                {lang === 'bn' ? 'রেজিস্ট্রেশন / আইডি' : 'Student ID / Reg'}
+              </label>
+              <input
+                id="reg-input"
+                name="regNo"
+                type="text"
+                placeholder={lang === 'bn' ? 'যেমন: 601 (ঐচ্ছিক)' : 'e.g. 601 (optional)'}
+                value={regInput}
+                onChange={(e) => {
+                  setRegInput(e.target.value);
+                  setValidationError('');
+                }}
+                className="w-full text-xs font-mono rounded-lg p-3 border border-[#D1D5DB] bg-[#F7F9F8] text-slate-900 focus:ring-2 focus:ring-[#166534] focus:outline-none"
               />
             </div>
 

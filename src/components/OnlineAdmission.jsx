@@ -48,9 +48,13 @@ export default function OnlineAdmission() {
   const validateForm = () => {
     const errors = {};
 
-    // 1. Student Name (Bangla)
+    // 1. Student Name (Bangla - M2 / TC13)
     if (!formData.studentNameBn.trim()) {
       errors.studentNameBn = lang === 'bn' ? 'শিক্ষার্থীর বাংলা নাম আবশ্যক।' : 'Bangla name is required.';
+    } else if (!/^[\u0980-\u09FF\s.]+$/.test(formData.studentNameBn.trim())) {
+      errors.studentNameBn = lang === 'bn' 
+        ? 'বাংলা নামের ঘরে শুধুমাত্র বাংলা অক্ষর লিখুন (ইংরেজি বা সংখ্যা গ্রহণযোগ্য নয়)।' 
+        : 'Student name in Bangla must contain only Bengali characters.';
     }
 
     // 2. Student Name (English)
@@ -108,9 +112,13 @@ export default function OnlineAdmission() {
       }
     }
 
-    // 9. Address
+    // 9. Address (M2 / TC13: minimum 10 characters)
     if (!formData.address.trim()) {
       errors.address = lang === 'bn' ? 'স্থায়ী ঠিকানা লিখুন।' : 'Address is required.';
+    } else if (formData.address.trim().length < 10) {
+      errors.address = lang === 'bn' 
+        ? 'পূর্ণাঙ্গ স্থায়ী ঠিকানা অন্তত ১০ অক্ষরে লিখুন (গ্রাম, ডাকঘর, উপজেলা, জেলা)।' 
+        : 'Please enter a complete address (minimum 10 characters).';
     }
 
     setFormErrors(errors);

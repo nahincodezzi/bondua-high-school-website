@@ -248,38 +248,26 @@ export default function Header() {
                   onMouseEnter={() => hasChildren && setActiveDropdown(item.id)}
                   onMouseLeave={() => hasChildren && setActiveDropdown(null)}
                 >
-                  <button
-                    onClick={() => handleNavClick(item.directTab)}
+                  <a
+                    href={`#${item.directTab}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavClick(item.directTab);
+                    }}
                     aria-label={lang === 'bn' ? item.labelBn : item.labelEn}
-                    className={`px-3 xl:px-3.5 py-1.5 rounded-full transition-all duration-200 flex flex-col items-center justify-center text-center cursor-pointer focus-visible:outline-2 focus-visible:outline-[#F59E0B] focus-visible:outline-offset-2 ${
+                    className={`px-3.5 xl:px-4 py-2 rounded-full transition-all duration-200 flex items-center justify-center text-center cursor-pointer focus-visible:outline-2 focus-visible:outline-[#F59E0B] focus-visible:outline-offset-2 ${
                       active 
-                        ? 'bg-white/[0.12] text-white shadow-xs' 
+                        ? 'bg-white/[0.14] text-white shadow-xs font-bold' 
                         : 'text-white/90 hover:text-white hover:bg-white/[0.08]'
                     }`}
                   >
-                    {/* Top Bangla Label */}
-                    <span className="font-bangla text-xs xl:text-sm font-bold tracking-normal leading-tight flex items-center gap-1">
-                      <span>{item.labelBn}</span>
-                      {hasChildren && <ChevronDown className="w-3 h-3 opacity-60" />}
+                    <span className="font-bangla font-semibold text-sm leading-none flex items-center gap-1.5">
+                      <span>{lang === 'bn' ? item.labelBn : item.labelEn}</span>
+                      {active && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-xs"></span>
+                      )}
                     </span>
-
-                    {/* Bottom English Sub-label: collapses and fades out smoothly on scroll (L4 fix) */}
-                    <span 
-                      aria-hidden="true"
-                      className={`text-[11px] font-sans tracking-wide text-white/70 transition-all duration-300 overflow-hidden ${
-                        isScrolled 
-                          ? 'opacity-0 max-h-0' 
-                          : 'opacity-100 max-h-4 mt-0.5'
-                      }`}
-                    >
-                      {item.labelEn}
-                    </span>
-
-                    {/* Active State Amber Dot */}
-                    {active && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] shadow-xs mt-0.5 animate-in fade-in zoom-in duration-200"></span>
-                    )}
-                  </button>
+                  </a>
 
                   {/* Dropdown Menu for Subpages */}
                   {hasChildren && isDropdownOpen && (
@@ -288,9 +276,11 @@ export default function Header() {
                         {item.children.map((child) => {
                           const isChildActive = activeTab === child.id;
                           return (
-                            <button
+                            <a
                               key={child.id}
+                              href={`#${child.id}`}
                               onClick={(e) => {
+                                e.preventDefault();
                                 e.stopPropagation();
                                 handleNavClick(child.id);
                               }}
@@ -306,7 +296,7 @@ export default function Header() {
                               ) : (
                                 <ChevronRight className="w-3.5 h-3.5 opacity-60" />
                               )}
-                            </button>
+                            </a>
                           );
                         })}
                       </div>
@@ -467,8 +457,12 @@ export default function Header() {
                   return (
                     <div key={item.id} className="space-y-1">
                       <div className="flex items-center justify-between">
-                        <button
-                          onClick={() => handleNavClick(item.directTab)}
+                        <a
+                          href={`#${item.directTab}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleNavClick(item.directTab);
+                          }}
                           className={`flex-1 text-left px-3.5 py-2.5 rounded-xl text-sm font-bold transition flex items-center justify-between ${
                             active 
                               ? 'bg-white/[0.14] text-white shadow-xs' 
@@ -479,14 +473,14 @@ export default function Header() {
                             {active && <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>}
                             <span>{lang === 'bn' ? item.labelBn : item.labelEn}</span>
                           </span>
-                        </button>
+                        </a>
 
                         {hasChildren && (
                           <button
                             onClick={() => toggleMobileSection(item.id)}
-                            className="p-2.5 text-white/70 hover:text-white transition cursor-pointer"
-                            aria-label="সাব-মেনু খুলুন"
-                          >
+                            className="min-w-[44px] min-h-[44px] flex items-center justify-center text-white/70 hover:text-white transition cursor-pointer"
+                            aria-expanded={isExpanded}
+                            aria-label={isExpanded ? (lang === 'bn' ? 'সাব-মেনু বন্ধ করুন' : 'Close sub-menu') : (lang === 'bn' ? 'সাব-মেনু খুলুন' : 'Open sub-menu')}>
                             <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-[#F59E0B]' : ''}`} />
                           </button>
                         )}
@@ -498,10 +492,14 @@ export default function Header() {
                           {item.children.map((child) => {
                             const isChildActive = activeTab === child.id;
                             return (
-                              <button
+                              <a
                                 key={child.id}
-                                onClick={() => handleNavClick(child.id)}
-                                className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center justify-between ${
+                                href={`#${child.id}`}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleNavClick(child.id);
+                                }}
+                                className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center justify-between cursor-pointer ${
                                   isChildActive 
                                     ? 'bg-white/[0.12] text-white font-bold' 
                                     : 'text-white/75 hover:text-white hover:bg-white/[0.06]'
@@ -509,7 +507,7 @@ export default function Header() {
                               >
                                 <span>{lang === 'bn' ? child.labelBn : child.labelEn}</span>
                                 {isChildActive && <span className="w-1 h-1 rounded-full bg-[#F59E0B]"></span>}
-                              </button>
+                              </a>
                             );
                           })}
                         </div>

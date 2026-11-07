@@ -40,6 +40,9 @@ export default function UserManager() {
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [showUserPassword, setShowUserPassword] = useState(false);
+  const [resetModalUser, setResetModalUser] = useState(null);
+  const [newPasswordInput, setNewPasswordInput] = useState('');
+  const [resetSuccessMsg, setResetSuccessMsg] = useState('');
 
   // Form State
   const initialFormState = {
@@ -126,6 +129,25 @@ export default function UserManager() {
     setFormData(prev => ({ ...prev, permissions: [] }));
   };
 
+  const handleResetPasswordSubmit = (e) => {
+    e.preventDefault();
+    if (!newPasswordInput || newPasswordInput.length < 8) {
+      alert('পাসওয়ার্ড অবশ্যই কমপক্ষে ৮ অক্ষরের হতে হবে!');
+      return;
+    }
+    if (!/^(?=.*[A-Za-z])(?=.*\d)/.test(newPasswordInput)) {
+      alert('পাসওয়ার্ডে অন্তত একটি ইংরেজি বর্ণ (letter) ও একটি সংখ্যা (number) থাকতে হবে!');
+      return;
+    }
+    updateUser(resetModalUser.id, { password: newPasswordInput });
+    setResetSuccessMsg(`"${resetModalUser.nameBn}" এর পাসওয়ার্ড সফলভাবে রিসেট করা হয়েছে!`);
+    setTimeout(() => {
+      setResetSuccessMsg('');
+      setResetModalUser(null);
+      setNewPasswordInput('');
+    }, 1500);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.username.trim() || !formData.password || !formData.nameBn.trim()) {
@@ -133,9 +155,13 @@ export default function UserManager() {
       return;
     }
 
-    // Minimum 8 characters password check (A7)
+    // Minimum 8 characters with letters & numbers (N4 / A7)
     if (formData.password.length < 8) {
       alert('নিরাপত্তার স্বার্থে পাসওয়ার্ড অবশ্যই কমপক্ষে ৮ অক্ষরের হতে হবে!');
+      return;
+    }
+    if (!/^(?=.*[A-Za-z])(?=.*\d)/.test(formData.password)) {
+      alert('পাসওয়ার্ডে অবশ্যই অন্তত একটি ইংরেজি বর্ণ (letter) ও একটি সংখ্যা (number) থাকতে হবে!');
       return;
     }
 
@@ -318,7 +344,19 @@ export default function UserManager() {
                       </div>
                       <div className="grid grid-cols-12 gap-1 items-center">
                         <span className="col-span-5 text-[#4B5563] text-xs">পাসওয়ার্ড:</span>
-                        <span className="col-span-7 font-mono text-[#4B5563] bg-white px-2 py-0.5 rounded border border-[#E5E7EB] text-xs inline-block w-fit">•••••••• ({user.password})</span>
+                        <div className="col-span-7 flex items-center gap-2">
+                          <span className="font-mono text-[#4B5563] bg-white px-2 py-0.5 rounded border border-[#E5E7EB] text-xs inline-block tracking-widest">••••••••</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setResetModalUser(user);
+                              setNewPasswordInput('');
+                            }}
+                            className="text-[11px] font-bold text-[#166534] hover:text-[#0B3D2E] underline font-bangla cursor-pointer"
+                          >
+                            রিসেট করুন
+                          </button>
+                        </div>
                       </div>
                       {user.phone && (
                         <div className="grid grid-cols-12 gap-1 items-center">
@@ -780,6 +818,70 @@ export default function UserManager() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Password Reset Modal (N1 & N4) */}
+      {resetModalUser && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white max-w-md w-full rounded-2xl shadow-2xl border border-[#E5E7EB] p-6 space-y-4 font-bangla">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
+              <h3 className="font-bold text-[#1F2937] text-base flex items-center gap-2">
+                <Key className="w-5 h-5 text-[#166534]" />
+                <span>পাসওয়ার্ড রিসেট: {resetModalUser.nameBn}</span>
+              </h3>
+              <button 
+                onClick={() => setResetModalUser(null)} 
+                className="text-[#4B5563] hover:text-[#1F2937] p-1 rounded-lg cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {resetSuccessMsg ? (
+              <div className="p-4 bg-emerald-50 text-emerald-800 rounded-xl text-xs font-bold border border-emerald-200">
+                {resetSuccessMsg}
+              </div>
+            ) : (
+              <form onSubmit={handleResetPasswordSubmit} className="space-y-4">
+                <p className="text-xs text-[#4B5563]">
+                  ইউজারনেম: <strong className="font-mono text-[#1F2937]">{resetModalUser.username}</strong>
+                </p>
+                <div>
+                  <label className="block text-xs font-bold text-[#1F2937] mb-1">
+                    নতুন পাসওয়ার্ড লিখুন *
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={newPasswordInput}
+                    onChange={(e) => setNewPasswordInput(e.target.value)}
+                    placeholder="কমপক্ষে ৮ অক্ষর (বর্ণ ও সংখ্যা)"
+                    className="w-full rounded-lg border border-[#D1D5DB] p-2.5 text-xs focus:ring-2 focus:ring-[#166534]"
+                  />
+                  <p className="text-[11px] text-[#4B5563] mt-1">
+                    পাসওয়ার্ডে অন্তত একটি ইংরেজি বর্ণ (letter) ও একটি সংখ্যা (number) থাকতে হবে।
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E5E7EB]">
+                  <button
+                    type="button"
+                    onClick={() => setResetModalUser(null)}
+                    className="btn-secondary px-4 py-2 text-xs cursor-pointer"
+                  >
+                    বাতিল
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn-primary px-5 py-2 text-xs font-bold cursor-pointer"
+                  >
+                    পাসওয়ার্ড সংরক্ষণ করুন
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}

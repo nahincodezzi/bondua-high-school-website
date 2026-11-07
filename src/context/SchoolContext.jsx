@@ -21,6 +21,33 @@ import {
 } from '../data/initialData';
 
 export function SchoolProvider({ children }) {
+  // Global cache sanitization on app start to eliminate legacy cached names/vision texts
+  if (typeof window !== 'undefined') {
+    try {
+      const rawAuth = localStorage.getItem('bdhs_auth');
+      if (rawAuth && (rawAuth.includes('রবিউল') || rawAuth.includes('Rabiul') || rawAuth.includes('মজুমদার') || rawAuth.includes('মুজুমদার'))) {
+        localStorage.removeItem('bdhs_auth');
+      }
+      const rawUsers = localStorage.getItem('bdhs_system_users');
+      if (rawUsers && (rawUsers.includes('রবিউল') || rawUsers.includes('Rabiul') || !rawUsers.includes('বাহার'))) {
+        localStorage.setItem('bdhs_system_users', JSON.stringify(initialUsers));
+      }
+      const rawInfo = localStorage.getItem('bdhs_info');
+      if (rawInfo && (rawInfo.includes('রবিউল') || rawInfo.includes('Rabiul') || rawInfo.includes('নোয়াখালী') || rawInfo.includes('নোয়াখালী') || rawInfo.includes('বৃহত্তর'))) {
+        const p = JSON.parse(rawInfo);
+        p.headmasterNameBn = 'জনাব বাহার উদ্দিন ভূঁইয়া';
+        p.headmasterNameEn = 'Mr. Bahar Uddin Bhuiyan';
+        p.headmasterDesignationBn = 'ভারপ্রাপ্ত প্রধান শিক্ষক';
+        p.headmasterDesignationEn = 'Acting Headmaster';
+        p.visionBn = initialSchoolInfo.visionBn;
+        p.visionEn = initialSchoolInfo.visionEn;
+        localStorage.setItem('bdhs_info', JSON.stringify(p));
+      }
+    } catch (e) {
+      console.error('Cache migration cleanup error:', e);
+    }
+  }
+
   // Auto-select Bangla ('bn') on first load / new session; user can toggle to English anytime
   const [lang, setLang] = useState(() => {
     const sessionActive = sessionStorage.getItem('bdhs_session_active');
@@ -74,6 +101,27 @@ export function SchoolProvider({ children }) {
           parsed.designationEn = 'Acting Headmaster';
           localStorage.setItem('bdhs_auth', JSON.stringify(parsed));
         }
+
+        // Anti-Tampering Check (A1): Verify against system registry
+        const uSaved = localStorage.getItem('bdhs_system_users');
+        const authenticUsers = uSaved ? JSON.parse(uSaved) : initialUsers;
+        const matched = Array.isArray(authenticUsers) && authenticUsers.find(
+          u => u.username?.toLowerCase() === parsed.username?.toLowerCase()
+        );
+
+        if (!matched || matched.status === 'inactive') {
+          localStorage.removeItem('bdhs_auth');
+          return null;
+        }
+
+        // Enforce authentic role and permissions from system registry!
+        parsed.role = matched.role;
+        parsed.permissions = matched.permissions || [];
+        parsed.nameBn = matched.nameBn;
+        parsed.designationBn = matched.designationBn;
+        parsed.designationEn = matched.designationEn;
+        localStorage.setItem('bdhs_auth', JSON.stringify(parsed));
+
         return parsed;
       } catch {
         return null;
@@ -110,9 +158,10 @@ export function SchoolProvider({ children }) {
           parsed.headmasterDesignationBn = 'ভারপ্রাপ্ত প্রধান শিক্ষক';
           parsed.headmasterDesignationEn = 'Acting Headmaster';
         }
-        if (!parsed.visionBn || parsed.visionBn.includes('নোয়াখালী') || parsed.visionBn.includes('বৃহত্তর')) {
+        if (!parsed.visionBn || parsed.visionBn.includes('নোয়াখালী') || parsed.visionBn.includes('নোয়াখালী') || parsed.visionBn.includes('বৃহত্তর')) {
           parsed.visionBn = initialSchoolInfo.visionBn;
           parsed.visionEn = initialSchoolInfo.visionEn;
+          localStorage.setItem('bdhs_info', JSON.stringify(parsed));
         }
         if (!parsed.missionBn) {
           parsed.missionBn = initialSchoolInfo.missionBn;
@@ -229,6 +278,27 @@ export function SchoolProvider({ children }) {
 
   const [routines] = useState(initialRoutines);
 
+  // Idle Session Expiration after 30 minutes of inactivity (N8)
+  useEffect(() => {
+    if (!authUser) return;
+    let timer;
+    const resetTimer = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        alert(lang === 'bn' ? 'নিরাপত্তার স্বার্থে ৩০ মিনিট নিষ্ক্রিয় থাকার পর সেশন সমাপ্ত হয়েছে।' : 'Session expired after 30 minutes of inactivity.');
+        setAuthUser(null);
+        setActiveTab('home');
+      }, 30 * 60 * 1000); // 30 minutes
+    };
+    const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
+    events.forEach(ev => window.addEventListener(ev, resetTimer, { passive: true }));
+    resetTimer();
+    return () => {
+      clearTimeout(timer);
+      events.forEach(ev => window.removeEventListener(ev, resetTimer));
+    };
+  }, [authUser, lang]);
+
   // Sync to LocalStorage on updates & update html lang attribute (M3)
   useEffect(() => {
     localStorage.setItem('bdhs_lang', lang);
@@ -237,26 +307,28 @@ export function SchoolProvider({ children }) {
     }
   }, [lang]);
 
-  // URL Hash routing synchronization (H4)
+  // URL Hash routing synchronization with pushState & popstate (H1 / H4 / TC06)
   useEffect(() => {
     if (typeof window !== 'undefined' && activeTab) {
-      const currentHash = window.location.hash.replace('#', '');
+      const currentHash = window.location.hash.replace('#', '') || 'home';
       if (currentHash !== activeTab) {
-        window.history.replaceState(null, '', `#${activeTab}`);
+        window.history.pushState({ tab: activeTab }, '', `#${activeTab}`);
       }
     }
   }, [activeTab]);
 
   useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '');
-      if (hash && hash !== activeTab) {
-        setActiveTab(hash);
-      }
+    const handlePopState = () => {
+      const hash = window.location.hash.replace('#', '') || 'home';
+      setActiveTab(hash);
     };
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, [activeTab]);
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('hashchange', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('hashchange', handlePopState);
+    };
+  }, []);
 
   useEffect(() => {
     if (authUser) {
@@ -368,17 +440,63 @@ export function SchoolProvider({ children }) {
     setLang(prev => (prev === 'bn' ? 'en' : 'bn'));
   };
 
-  // Authentication & Access Control (RBAC)
+  // Authentication & Access Control (RBAC with N2 Rate-limiting Lockout)
   const authenticate = (username, password) => {
+    // Check lockout status (N2)
+    const lockDataRaw = localStorage.getItem('bdhs_lockout');
+    if (lockDataRaw) {
+      try {
+        const lockData = JSON.parse(lockDataRaw);
+        if (lockData.lockedUntil && Date.now() < lockData.lockedUntil) {
+          const remainingMinutes = Math.ceil((lockData.lockedUntil - Date.now()) / 60000);
+          return {
+            success: false,
+            message: `একাধিক ভুল পাসওয়ার্ড দেওয়ায় অ্যাকাউন্টটি সাময়িকভাবে ১৫ মিনিটের জন্য লক করা হয়েছে। আরও ${remainingMinutes} মিনিট পর চেষ্টা করুন।`
+          };
+        }
+      } catch {}
+    }
+
     const user = systemUsers.find(
       u => u.username.toLowerCase() === username.trim().toLowerCase() && u.password === password
     );
+
     if (!user) {
-      return { success: false, message: 'ইউজারনেম অথবা পাসওয়ার্ড সঠিক নয়।' };
+      let attempts = 1;
+      const prevRaw = localStorage.getItem('bdhs_lockout');
+      if (prevRaw) {
+        try {
+          const prev = JSON.parse(prevRaw);
+          if (prev.lockedUntil && Date.now() >= prev.lockedUntil) {
+            attempts = 1;
+          } else {
+            attempts = (prev.attempts || 0) + 1;
+          }
+        } catch {}
+      }
+
+      if (attempts >= 5) {
+        const lockedUntil = Date.now() + 15 * 60 * 1000; // 15 minutes lockout
+        localStorage.setItem('bdhs_lockout', JSON.stringify({ attempts, lockedUntil }));
+        return {
+          success: false,
+          message: 'টানা ৫ বার ভুল পাসওয়ার্ড দেওয়ায় অ্যাকাউন্টটি ১৫ মিনিটের জন্য লক করা হয়েছে।'
+        };
+      } else {
+        localStorage.setItem('bdhs_lockout', JSON.stringify({ attempts, lockedUntil: 0 }));
+        return {
+          success: false,
+          message: `ইউজারনেম অথবা পাসওয়ার্ড সঠিক নয়। (ভুল প্রচেষ্টা: ${attempts}/৫)`
+        };
+      }
     }
+
     if (user.status === 'inactive') {
       return { success: false, message: 'আপনার অ্যাকাউন্টটি নিষ্ক্রিয় করা হয়েছে। অনুগ্রহ করে প্রধান সিস্টেম প্রশাসকের সাথে যোগাযোগ করুন।' };
     }
+
+    // Reset lockout counter upon successful login
+    localStorage.removeItem('bdhs_lockout');
     const authData = {
       id: user.id,
       username: user.username,
@@ -455,7 +573,7 @@ export function SchoolProvider({ children }) {
     const created = {
       ...newUser,
       id: `usr-${Date.now()}`,
-      createdAt: new Date().toISOString().split('T')[0],
+      createdAt: getDhakaDateString(),
       status: newUser.status || 'active'
     };
     setSystemUsers(prev => [created, ...prev]);

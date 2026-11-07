@@ -96,9 +96,10 @@ export default function AdmissionManager() {
         </div>
       </div>
 
-      {/* Table */}
+      {/* Table & Mobile Cards */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Desktop & Tablet Table (>= sm) */}
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-left text-xs font-bangla">
             <thead className="bg-emerald-950 text-white uppercase text-[11px] font-bold">
               <tr>
@@ -173,6 +174,75 @@ export default function AdmissionManager() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card Layout (< sm) (N5) */}
+        <div className="block sm:hidden divide-y divide-slate-100 font-bangla">
+          {filtered.length > 0 ? (
+            filtered.map((app) => (
+              <div key={app.id} className="p-4 space-y-2.5 hover:bg-slate-50 transition">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono font-bold text-xs text-[#166534]">
+                    {app.trackingId}
+                  </span>
+                  <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                    app.status === 'Approved'
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : 'bg-amber-100 text-amber-800'
+                  }`}>
+                    {app.status === 'Approved' ? 'অনুমোদিত' : 'অপেক্ষমাণ'}
+                  </span>
+                </div>
+
+                <div>
+                  <h4 className="font-bold text-slate-900 text-sm">{app.studentNameBn || app.studentNameEn}</h4>
+                  <p className="text-xs text-slate-600">পিতা: {app.fatherName}</p>
+                </div>
+
+                <div className="flex items-center justify-between text-xs text-slate-600 bg-[#F7F9F8] p-2.5 rounded-lg border border-slate-100">
+                  <span className="font-semibold text-emerald-800">{app.applyingClass} শ্রেণি</span>
+                  <span className="font-mono text-slate-500 text-[11px]">{app.guardianPhone}</span>
+                </div>
+
+                <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                  <span className="text-[11px] font-mono text-slate-400">
+                    তারিখ: {app.submissionDate}
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => setViewModalApp(app)}
+                      className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>বিস্তারিত</span>
+                    </button>
+
+                    {app.status === 'Pending' ? (
+                      <button
+                        onClick={() => handleApprove(app)}
+                        className="px-2.5 py-1 bg-[#166534] hover:bg-[#14532D] text-white rounded-lg text-xs font-bold cursor-pointer flex items-center gap-1"
+                        title="অনুমোদন ও শিক্ষার্থী তৈরি করুন"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                        <span>অনুমোদন</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => updateAdmissionStatus(app.id, 'Pending')}
+                        className="px-2 py-1 bg-[#FEF3C7] text-[#92400E] hover:bg-amber-200 rounded-lg text-[10px] font-bold cursor-pointer"
+                      >
+                        রিভার্ট
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="py-8 text-center text-slate-500 text-xs font-bangla">
+              কোনো ভর্তি আবেদন পাওয়া যায়নি।
+            </div>
+          )}
         </div>
       </div>
 

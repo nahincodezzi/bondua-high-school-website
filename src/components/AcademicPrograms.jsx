@@ -163,9 +163,9 @@ export default function AcademicPrograms() {
         </div>
 
         {/* Group Tab Switcher (Science, Commerce, Arts) */}
-        <div className="mb-10">
-          <div className="flex justify-center mb-6">
-            <div className="glass-pill p-1.5 rounded-full border border-slate-200 shadow-sm flex items-center gap-1 sm:gap-2">
+        <div className="mb-10 max-w-full overflow-hidden">
+          <div className="flex justify-center mb-6 overflow-x-auto py-1 px-1">
+            <div className="glass-pill p-1.5 rounded-2xl sm:rounded-full border border-slate-200 shadow-sm flex flex-wrap sm:flex-nowrap items-center justify-center gap-1 sm:gap-2 max-w-full">
               {groups.map((grp) => {
                 const IconComponent = grp.icon;
                 const isActive = activeGroupTab === grp.id;
@@ -173,13 +173,13 @@ export default function AcademicPrograms() {
                   <button
                     key={grp.id}
                     onClick={() => setActiveGroupTab(grp.id)}
-                    className={`px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-2 font-bangla cursor-pointer ${
+                    className={`px-3 sm:px-6 py-2 rounded-xl sm:rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer shrink-0 ${
                       isActive
                         ? 'btn-gold shadow-md'
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                     }`}
                   >
-                    <IconComponent className={`w-4 h-4 ${isActive ? 'text-slate-950' : 'text-emerald-700'}`} />
+                    <IconComponent className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isActive ? 'text-slate-950' : 'text-emerald-700'}`} />
                     <span>{lang === 'bn' ? grp.titleBn : grp.titleEn}</span>
                   </button>
                 );

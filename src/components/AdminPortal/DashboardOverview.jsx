@@ -22,6 +22,7 @@ export default function DashboardOverview({ onNavigate }) {
     teachers, 
     admissions, 
     fees, 
+    notices,
     authUser, 
     hasPermission,
     approveAdmissionAndCreateStudent
@@ -42,7 +43,7 @@ export default function DashboardOverview({ onNavigate }) {
     return { bn: 'শুভ সন্ধ্যা', en: 'Good Evening' };
   });
 
-  // KPIs using real data from context/database (A13)
+  // KPIs using real data from context/database (A13 & N3/A2)
   const kpis = [
     {
       titleBn: 'মোট শিক্ষার্থী',
@@ -65,8 +66,10 @@ export default function DashboardOverview({ onNavigate }) {
     {
       titleBn: 'অপেক্ষমাণ ভর্তি আবেদন',
       titleEn: 'Pending Admissions',
-      value: lang === 'bn' ? toBanglaNumerals(pendingAdmissions.length) : pendingAdmissions.length,
-      subtextBn: '২০২৭ শিক্ষাবর্ষ',
+      value: hasPermission('admissions')
+        ? (lang === 'bn' ? toBanglaNumerals(pendingAdmissions.length) : pendingAdmissions.length)
+        : '🔒 সংরক্ষিত',
+      subtextBn: hasPermission('admissions') ? '২০২৬ শিক্ষাবর্ষ' : 'ভর্তি কমিটির জন্য সংরক্ষিত',
       icon: FileCheck,
       action: 'admissions',
       perm: 'admissions'
@@ -74,8 +77,10 @@ export default function DashboardOverview({ onNavigate }) {
     {
       titleBn: 'মোট ফি আদায়',
       titleEn: 'Fee Collection',
-      value: lang === 'bn' ? `৳${toBanglaNumerals(totalFeeCollected.toLocaleString())}` : `৳${totalFeeCollected.toLocaleString()}`,
-      subtextBn: 'সংরক্ষিত মানি রিসিট',
+      value: hasPermission('fees')
+        ? (lang === 'bn' ? `৳${toBanglaNumerals(totalFeeCollected.toLocaleString())}` : `৳${totalFeeCollected.toLocaleString()}`)
+        : '🔒 সংরক্ষিত',
+      subtextBn: hasPermission('fees') ? 'সংরক্ষিত মানি রিসিট' : 'হিসাব বিভাগের জন্য সংরক্ষিত',
       icon: DollarSign,
       action: 'fees',
       perm: 'fees'
@@ -118,8 +123,8 @@ export default function DashboardOverview({ onNavigate }) {
           </div>
           <h2 className="text-lg sm:text-2xl font-bold font-bangla text-[#1F2937] mt-1.5">
             {lang === 'bn' 
-              ? `স্বাগতম, ${authUser?.nameBn || authUser?.name || 'সম্মানিত ব্যবহারকারী'} (${authUser?.designationBn || authUser?.designation || authUser?.role || 'প্রশাসক'})` 
-              : `Welcome, ${authUser?.nameEn || authUser?.name || 'Authorized User'} (${authUser?.designationEn || authUser?.designation || authUser?.role || 'Administrator'})`
+              ? `স্বাগতম, ${(authUser?.nameBn && !authUser.nameBn.includes('রবিউল')) ? authUser.nameBn : (authUser?.role === 'superadmin' ? 'প্রধান সিস্টেম অ্যাডমিনিস্ট্রেটর' : 'জনাব বাহার উদ্দিন ভূঁইয়া')} (${authUser?.designationBn || authUser?.designation || authUser?.role || 'প্রশাসক'})` 
+              : `Welcome, ${(authUser?.nameEn && !authUser.nameEn.includes('Rabiul')) ? authUser.nameEn : (authUser?.role === 'superadmin' ? 'Super Administrator' : 'Mr. Bahar Uddin Bhuiyan')} (${authUser?.designationEn || authUser?.designation || authUser?.role || 'Administrator'})`
             }
           </h2>
           <p className="text-xs text-[#4B5563] font-bangla mt-1">
@@ -192,80 +197,137 @@ export default function DashboardOverview({ onNavigate }) {
 
       {/* Two Column Section: Recent Admission Applications & Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Recent Online Admission Applications */}
+        {/* Left Column: Recent Online Admission Applications OR Academic Notices for Teachers (N3/A2) */}
         <div className="lg:col-span-8 card-base rounded-2xl p-6 border border-[#E5E7EB] shadow-xs space-y-4 bg-white">
-          <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
-            <div>
-              <h3 className="text-sm sm:text-base font-bold font-bangla text-[#1F2937] flex items-center gap-2">
-                <FileCheck className="w-4 h-4 text-[#166534]" />
-                <span>সাম্প্রতিক অনলাইন ভর্তি আবেদন সমূহ</span>
-              </h3>
-              <p className="text-[11px] text-[#4B5563] font-bangla">ওয়েবসাইটের মাধ্যমে শিক্ষার্থীদের পাঠানো আবেদন</p>
-            </div>
-            {hasPermission('admissions') && (
-              <button
-                onClick={() => onNavigate('admissions')}
-                className="text-xs font-bold text-[#166534] hover:underline flex items-center gap-1 font-bangla cursor-pointer"
-              >
-                <span>সকল দেখুন</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
+          {hasPermission('admissions') ? (
+            <>
+              <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold font-bangla text-[#1F2937] flex items-center gap-2">
+                    <FileCheck className="w-4 h-4 text-[#166534]" />
+                    <span>সাম্প্রতিক অনলাইন ভর্তি আবেদন সমূহ</span>
+                  </h3>
+                  <p className="text-[11px] text-[#4B5563] font-bangla">ওয়েবসাইটের মাধ্যমে শিক্ষার্থীদের পাঠানো আবেদন</p>
+                </div>
+                <button
+                  onClick={() => onNavigate('admissions')}
+                  className="text-xs font-bold text-[#166534] hover:underline flex items-center gap-1 font-bangla cursor-pointer"
+                >
+                  <span>সকল দেখুন</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
 
-          <div className="overflow-x-auto rounded-xl border border-[#E5E7EB]">
-            <table className="w-full text-left text-xs font-bangla">
-              <thead className="bg-[#F3F4F6] text-[#1F2937] font-bold border-b border-[#E5E7EB]">
-                <tr>
-                  <th className="py-3 px-3">ট্র্যাকিং আইডি</th>
-                  <th className="py-3 px-3">শিক্ষার্থীর নাম</th>
-                  <th className="py-3 px-3">শ্রেণি</th>
-                  <th className="py-3 px-3">অভিভাবকের মোবাইল</th>
-                  <th className="py-3 px-3 text-center">স্ট্যাটাস</th>
-                  <th className="py-3 px-3 text-center">কার্যক্রম</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#E5E7EB]">
-                {admissions.slice(0, 5).map((app) => (
-                  <tr key={app.id} className="hover:bg-[#F7F9F8] transition-colors">
-                    <td className="py-3 px-3 font-mono font-bold text-[#166534]">{app.trackingId}</td>
-                    <td className="py-3 px-3 font-semibold text-[#1F2937]">{app.studentNameBn || app.studentNameEn}</td>
-                    <td className="py-3 px-3 font-medium text-slate-700">
-                      {lang === 'bn' ? `${toBanglaNumerals(app.applyingClass)} শ্রেণি` : `Class ${app.applyingClass}`}
-                    </td>
-                    <td className="py-3 px-3 font-mono text-[#4B5563]">{app.guardianPhone}</td>
-                    <td className="py-3 px-3 text-center">
-                      <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                        app.status === 'Approved' ? 'bg-[#DCFCE7] text-[#14532D] border border-emerald-300' : 'bg-[#FEF3C7] text-[#92400E] border border-amber-300'
-                      }`}>
-                        {app.status === 'Approved' ? 'অনুমোদিত' : 'অপেক্ষমাণ'}
-                      </span>
-                    </td>
-                    <td className="py-3 px-3 text-center">
-                      {app.status === 'Pending' ? (
-                        hasPermission('admissions') ? (
-                          <button
-                            onClick={() => handleApprove(app)}
-                            className="btn-accent px-2.5 py-0.5 rounded text-[10px] font-bold transition cursor-pointer shadow-xs"
-                            title="অনুমোদন ও শিক্ষার্থী তৈরি করুন"
-                          >
-                            অনুমোদন ও ভর্তি
-                          </button>
-                        ) : (
-                          <span className="text-[10px] text-slate-400">সীমিত</span>
-                        )
-                      ) : (
-                        <span className="text-[10px] text-[#15803D] font-bold flex items-center justify-center gap-0.5">
-                          <CheckCircle2 className="w-3 h-3 text-[#15803D]" />
-                          <span>ভর্তি সম্পন্ন</span>
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              <div className="overflow-x-auto rounded-xl border border-[#E5E7EB]">
+                <table className="w-full text-left text-xs font-bangla">
+                  <thead className="bg-[#F3F4F6] text-[#1F2937] font-bold border-b border-[#E5E7EB]">
+                    <tr>
+                      <th className="py-3 px-3">ট্র্যাকিং আইডি</th>
+                      <th className="py-3 px-3">শিক্ষার্থীর নাম</th>
+                      <th className="py-3 px-3">শ্রেণি</th>
+                      <th className="py-3 px-3">অভিভাবকের মোবাইল</th>
+                      <th className="py-3 px-3 text-center">স্ট্যাটাস</th>
+                      <th className="py-3 px-3 text-center">কার্যক্রম</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#E5E7EB]">
+                    {admissions.slice(0, 5).map((app) => (
+                      <tr key={app.id} className="hover:bg-[#F7F9F8] transition-colors">
+                        <td className="py-3 px-3 font-mono font-bold text-[#166534]">{app.trackingId}</td>
+                        <td className="py-3 px-3 font-semibold text-[#1F2937]">{app.studentNameBn || app.studentNameEn}</td>
+                        <td className="py-3 px-3 font-medium text-slate-700">
+                          {lang === 'bn' ? `${toBanglaNumerals(app.applyingClass)} শ্রেণি` : `Class ${app.applyingClass}`}
+                        </td>
+                        <td className="py-3 px-3 font-mono text-[#4B5563]">{app.guardianPhone}</td>
+                        <td className="py-3 px-3 text-center">
+                          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                            app.status === 'Approved' ? 'bg-[#DCFCE7] text-[#14532D] border border-emerald-300' : 'bg-[#FEF3C7] text-[#92400E] border border-amber-300'
+                          }`}>
+                            {app.status === 'Approved' ? 'অনুমোদিত' : 'অপেক্ষমাণ'}
+                          </span>
+                        </td>
+                        <td className="py-3 px-3 text-center">
+                          {app.status === 'Pending' ? (
+                            <button
+                              onClick={() => handleApprove(app)}
+                              className="btn-accent px-2.5 py-0.5 rounded text-[10px] font-bold transition cursor-pointer shadow-xs"
+                              title="অনুমোদন ও শিক্ষার্থী তৈরি করুন"
+                            >
+                              অনুমোদন ও ভর্তি
+                            </button>
+                          ) : (
+                            <span className="text-[10px] text-[#15803D] font-bold flex items-center justify-center gap-0.5">
+                              <CheckCircle2 className="w-3 h-3 text-[#15803D]" />
+                              <span>ভর্তি সম্পন্ন</span>
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold font-bangla text-[#1F2937] flex items-center gap-2">
+                    <Bell className="w-4 h-4 text-[#166534]" />
+                    <span>সাম্প্রতিক নোটিশ ও সার্কুলার</span>
+                  </h3>
+                  <p className="text-[11px] text-[#4B5563] font-bangla">শিক্ষক ও কর্মকর্তা ড্যাশবোর্ড আপডেট</p>
+                </div>
+                {hasPermission('notices') && (
+                  <button
+                    onClick={() => onNavigate('notices')}
+                    className="text-xs font-bold text-[#166534] hover:underline flex items-center gap-1 font-bangla cursor-pointer"
+                  >
+                    <span>সকল নোটিশ</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              <div className="overflow-x-auto rounded-xl border border-[#E5E7EB]">
+                <table className="w-full text-left text-xs font-bangla">
+                  <thead className="bg-[#F3F4F6] text-[#1F2937] font-bold border-b border-[#E5E7EB]">
+                    <tr>
+                      <th className="py-3 px-3">শিরোনাম / বিষয়</th>
+                      <th className="py-3 px-3">বিভাগ</th>
+                      <th className="py-3 px-3">প্রকাশের তারিখ</th>
+                      <th className="py-3 px-3 text-center">কার্যক্রম</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#E5E7EB]">
+                    {(notices || []).slice(0, 5).map((n) => (
+                      <tr key={n.id} className="hover:bg-[#F7F9F8] transition-colors">
+                        <td className="py-3 px-3 font-semibold text-[#1F2937]">{n.titleBn || n.titleEn}</td>
+                        <td className="py-3 px-3">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                            {n.category === 'exam' ? 'পরীক্ষা' : n.category === 'academic' ? 'একাডেমিক' : 'সাধারণ'}
+                          </span>
+                        </td>
+                        <td className="py-3 px-3 font-mono text-slate-500">{n.date}</td>
+                        <td className="py-3 px-3 text-center">
+                          {hasPermission('notices') ? (
+                            <button
+                              onClick={() => onNavigate('notices')}
+                              className="text-[#166534] hover:underline font-bold text-xs"
+                            >
+                              সম্পাদনা
+                            </button>
+                          ) : (
+                            <span className="text-slate-400">পর্যবেক্ষণ</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Right Column: Quick ERP Navigation Tiles (Filtered by RBAC - A2) */}

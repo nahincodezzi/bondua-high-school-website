@@ -36,14 +36,14 @@ export default function RoutinesDownload() {
     };
   }, [activeRoutineModal]);
 
-  // Weekly class schedule data
+  // Weekly class schedule data (Sunday - Thursday, Friday & Saturday weekly holiday)
   const scheduleData = [
-    { period: '১ম (১০:০০ - ১০:৪৫)', sat: 'বাংলা ১ম', sun: 'ইংরেজি ১ম', mon: 'গণিত', tue: 'বিজ্ঞান', wed: 'বাংলাদেশ ও বিশ্বপরিচয়', thu: 'তথ্য ও প্রযুক্তি' },
-    { period: '২য় (১০:৪৫ - ১১:৩০)', sat: 'ইংরেজি ২য়', sun: 'বাংলা ২য়', mon: 'পদার্থবিজ্ঞান/হিসাব', tue: 'উচ্চতর গণিত', wed: 'রসায়ন', thu: 'জীববিজ্ঞান' },
-    { period: '৩য় (১১:৩০ - ১২:১৫)', sat: 'গণিত', sun: 'বিজ্ঞান', mon: 'ধর্ম ও নৈতিক শিক্ষা', tue: 'ইংরেজি ১ম', wed: 'বাংলা ১ম', thu: 'শারীরিক শিক্ষা' },
-    { period: 'টিফিন (১২:১৫ - ০১:০০)', sat: 'নামাজ ও বিরতি', sun: 'নামাজ ও বিরতি', mon: 'নামাজ ও বিরতি', tue: 'নামাজ ও বিরতি', wed: 'নামাজ ও বিরতি', thu: 'নামাজ ও বিরতি' },
-    { period: '৪র্থ (০১:০০ - ০১:৪৫)', sat: 'পদার্থ/হিসাব', sun: 'রসায়ন/অর্থনীতি', mon: 'জীববিজ্ঞান/ব্যবসায়', tue: 'সাধারণ গণিত', wed: 'ইংরেজি ২য়', thu: 'আইসিটি ল্যাব' },
-    { period: '৫ম (০১:৪৫ - ০২:৩০)', sat: 'উচ্চতর গণিত', sun: 'ইতিহাস', mon: 'ইংরেজি ১ম', tue: 'জীববিজ্ঞান', wed: 'বিজ্ঞান', thu: 'ডিবেট ও ক্লাব' }
+    { period: '১ম (১০:০০ - ১০:৪৫)', sun: 'বাংলা ১ম', mon: 'গণিত', tue: 'বিজ্ঞান', wed: 'বাংলাদেশ ও বিশ্বপরিচয়', thu: 'তথ্য ও প্রযুক্তি' },
+    { period: '২য় (১০:৪৫ - ১১:৩০)', sun: 'বাংলা ২য়', mon: 'পদার্থবিজ্ঞান/হিসাব', tue: 'উচ্চতর গণিত', wed: 'রসায়ন', thu: 'জীববিজ্ঞান' },
+    { period: '৩য় (১১:৩০ - ১২:১৫)', sun: 'বিজ্ঞান', mon: 'ধর্ম ও নৈতিক শিক্ষা', tue: 'ইংরেজি ১ম', wed: 'বাংলা ১ম', thu: 'শারীরিক শিক্ষা' },
+    { period: 'টিফিন (১২:১৫ - ০১:০০)', sun: 'নামাজ ও বিরতি', mon: 'নামাজ ও বিরতি', tue: 'নামাজ ও বিরতি', wed: 'নামাজ ও বিরতি', thu: 'নামাজ ও বিরতি' },
+    { period: '৪র্থ (০১:০০ - ০১:৪৫)', sun: 'রসায়ন/অর্থনীতি', mon: 'জীববিজ্ঞান/ব্যবসায়', tue: 'সাধারণ গণিত', wed: 'ইংরেজি ২য়', thu: 'আইসিটি ল্যাব' },
+    { period: '৫ম (০১:৪৫ - ০২:৩০)', sun: 'ইতিহাস', mon: 'ইংরেজি ১ম', tue: 'জীববিজ্ঞান', wed: 'বিজ্ঞান', thu: 'ডিবেট ও ক্লাব' }
   ];
 
   const handlePrint = () => {
@@ -92,7 +92,6 @@ export default function RoutinesDownload() {
           <thead>
             <tr>
               <th>পিরিয়ড / সময়</th>
-              <th>শনিবার</th>
               <th>রবিবার</th>
               <th>সোমবার</th>
               <th>মঙ্গলবার</th>
@@ -104,7 +103,6 @@ export default function RoutinesDownload() {
             ${scheduleData.map(row => `
               <tr>
                 <td><strong>${row.period}</strong></td>
-                <td>${row.sat}</td>
                 <td>${row.sun}</td>
                 <td>${row.mon}</td>
                 <td>${row.tue}</td>
@@ -258,7 +256,7 @@ export default function RoutinesDownload() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-[#E5E7EB]">
             <div>
               <span className="text-xs font-bold text-[#166534] uppercase tracking-wider block font-bangla">
-                {lang === 'bn' ? 'সাপ্তাহিক ক্লাস রুটিন ২০২৭ (নমুনা: দশম শ্রেণি)' : 'Weekly Routine 2027 (Class 10)'}
+                {lang === 'bn' ? 'সাপ্তাহিক ক্লাস রুটিন ২০২৬ (নমুনা: দশম শ্রেণি)' : 'Weekly Routine 2026 (Class 10)'}
               </span>
               <h3 className="text-lg sm:text-xl font-bold font-bangla text-slate-900 mt-1">
                 {lang === 'bn' ? 'বিজ্ঞান ও মানবিক শাখা সময়সূচি' : 'Science & Humanities Routine'}
@@ -279,7 +277,6 @@ export default function RoutinesDownload() {
               <thead className="bg-[#14532D] text-white border-b border-[#166534] font-bold uppercase text-[11px]">
                 <tr>
                   <th className="py-3 px-3">পিরিয়ড / সময়</th>
-                  <th className="py-3 px-3">শনিবার</th>
                   <th className="py-3 px-3">রবিবার</th>
                   <th className="py-3 px-3">সোমবার</th>
                   <th className="py-3 px-3">মঙ্গলবার</th>
@@ -291,7 +288,6 @@ export default function RoutinesDownload() {
                 {scheduleData.map((row, idx) => (
                   <tr key={idx} className="hover:bg-[#F7F9F8] transition-colors">
                     <td className="py-3 px-3 font-mono font-bold text-[#166534]">{row.period}</td>
-                    <td className="py-3 px-3 text-slate-700">{row.sat}</td>
                     <td className="py-3 px-3 text-slate-700">{row.sun}</td>
                     <td className="py-3 px-3 text-slate-700">{row.mon}</td>
                     <td className="py-3 px-3 text-slate-700">{row.tue}</td>

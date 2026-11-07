@@ -51,6 +51,23 @@ export default function NoticeBoard() {
     { id: 'event', labelBn: 'অনুষ্ঠান ও ছুটি', labelEn: 'Events & Holidays' },
   ];
 
+  // Category translation helper for localized chips (L3)
+  const getCategoryLabel = (cat, language) => {
+    const map = {
+      academic: { bn: 'একাডেমিক', en: 'Academic' },
+      exam: { bn: 'পরীক্ষা', en: 'Exam' },
+      admission: { bn: 'ভর্তি', en: 'Admission' },
+      event: { bn: 'অনুষ্ঠান ও ছুটি', en: 'Events' },
+      holiday: { bn: 'ছুটি', en: 'Holiday' },
+      general: { bn: 'সাধারণ', en: 'General' }
+    };
+    const key = (cat || '').toLowerCase();
+    if (map[key]) {
+      return language === 'bn' ? map[key].bn : map[key].en;
+    }
+    return cat;
+  };
+
   const filteredNotices = notices.filter((notice) => {
     const matchesCategory = selectedCategory === 'all' || notice.category === selectedCategory;
     const matchesSearch = 
@@ -104,7 +121,7 @@ export default function NoticeBoard() {
               </span>
             </span>
             <span className="badge-neutral text-[11px] uppercase tracking-wider">
-              {lang === 'bn' ? 'বিভাগ: ' : 'Category: '}{activeNoticeModal.category}
+              {lang === 'bn' ? 'বিভাগ: ' : 'Category: '}{getCategoryLabel(activeNoticeModal.category, lang)}
             </span>
           </div>
         </div>
@@ -288,8 +305,8 @@ export default function NoticeBoard() {
                           </div>
                         </td>
                         <td className="py-3.5 px-4 text-center">
-                          <span className="badge-neutral text-[11px] px-2.5 py-0.5 rounded-full capitalize">
-                            {notice.category}
+                          <span className="badge-neutral text-[11px] px-2.5 py-0.5 rounded-full">
+                            {getCategoryLabel(notice.category, lang)}
                           </span>
                         </td>
                         <td className="py-3.5 px-4 text-center" onClick={(e) => e.stopPropagation()}>
@@ -334,8 +351,8 @@ export default function NoticeBoard() {
                         <Calendar className="w-3.5 h-3.5 text-[#166534] shrink-0" />
                         <span>{formattedDate}</span>
                       </span>
-                      <span className="badge-neutral text-[10px] px-2 py-0.5 rounded-full capitalize">
-                        {notice.category}
+                      <span className="badge-neutral text-[10px] px-2 py-0.5 rounded-full">
+                        {getCategoryLabel(notice.category, lang)}
                       </span>
                     </div>
 
