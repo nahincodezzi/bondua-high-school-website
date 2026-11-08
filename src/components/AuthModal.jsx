@@ -105,7 +105,7 @@ export default function AuthModal() {
           </div>
 
           <h3 id="auth-modal-title" className="text-xl font-bold font-bangla text-white">
-            {lang === 'bn' ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়' : 'Bandua Daulatpur High School'}
+            {lang === 'bn' ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়' : 'Bondua Daulatpur High School'}
           </h3>
           <p className="text-xs text-soft font-mono mt-0.5">
             EIIN: 106644 • Management ERP & CMS System

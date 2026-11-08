@@ -1,5 +1,5 @@
 -- ============================================================================
--- Bandua Daulatpur High School: Supabase migration v2
+-- Bondua Daulatpur High School: Supabase migration v2
 -- Run once in Supabase Dashboard -> SQL Editor -> New query -> Run
 --
 -- Why: the app code (src/lib/supabase.js) now sends extra fields, but the

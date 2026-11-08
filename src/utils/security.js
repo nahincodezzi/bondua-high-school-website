@@ -1,5 +1,5 @@
 /**
- * Cryptographic security utilities for Bandua Daulatpur High School
+ * Cryptographic security utilities for Bondua Daulatpur High School
  * Uses native Web Crypto API (SHA-256) for collision-resistant password hashing
  */
 

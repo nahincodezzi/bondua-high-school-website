@@ -1,5 +1,5 @@
 /**
- * Date and Numeral formatting utilities for Bandua Daulatpur High School
+ * Date and Numeral formatting utilities for Bondua Daulatpur High School
  * Complies with Bengali (Bangla) standard typography and Asia/Dhaka timezone
  */
 

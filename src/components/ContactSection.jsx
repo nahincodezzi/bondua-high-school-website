@@ -92,7 +92,7 @@ export default function ContactSection() {
                   </div>
                   <div>
                     <span className="font-bold text-ink block">{lang === 'bn' ? 'অবস্থান:' : 'Address:'}</span>
-                    <p className="text-muted mt-0.5">{lang === 'bn' ? schoolInfo.addressBn : (schoolInfo.addressEn || 'Along Feni-Parshuram Road, Bandua Daulatpur, Anandapur Union, Fulgazi, Feni, Bangladesh')}</p>
+                    <p className="text-muted mt-0.5">{lang === 'bn' ? schoolInfo.addressBn : (schoolInfo.addressEn || 'Along Feni-Parshuram Road, Bondua Daulatpur, Anandapur Union, Fulgazi, Feni, Bangladesh')}</p>
                     <p className="text-[11px] text-primary font-mono mt-0.5 font-bold">EIIN: {schoolInfo.eiin} • MPO: {schoolInfo.mpoCode}</p>
                   </div>
                 </div>
@@ -138,7 +138,7 @@ export default function ContactSection() {
                 <span>{lang === 'bn' ? 'অফিসিয়াল ফেসবুক গ্রুপ' : 'Official Facebook Group'}</span>
               </div>
               <h4 className="text-base font-bold font-bangla mb-1 text-white">
-                {lang === 'bn' ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় পরিবার' : 'Bandua Daulatpur High School Family'}
+                {lang === 'bn' ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় পরিবার' : 'Bondua Daulatpur High School Family'}
               </h4>
               <p className="text-xs text-soft font-bangla mb-4">
                 {lang === 'bn' ? 'আমাদের গ্রুপে যুক্ত হয়ে নিয়মিত বিদ্যালয়ের কার্যক্রমের ভিডিও ও ছবি দেখুন।' : 'Join our group to connect and view latest school events.'}

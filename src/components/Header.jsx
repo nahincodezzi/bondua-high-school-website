@@ -223,14 +223,14 @@ export default function Header() {
               <h1 className={`text-white font-bold font-bangla whitespace-nowrap leading-tight tracking-normal transition-all duration-300 group-hover:text-accent ${
                 isScrolled ? 'text-xs sm:text-sm' : 'text-xs sm:text-base'
               }`}>
-                {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || 'Bandua Daulatpur High School')}
+                {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || 'Bondua Daulatpur High School')}
               </h1>
               <p className={`text-white/90 font-sans tracking-wide whitespace-nowrap transition-all duration-300 overflow-hidden ${
                 isScrolled 
                   ? 'opacity-0 max-h-0 -translate-y-1' 
                   : 'opacity-100 max-h-4 text-[10px] sm:text-[11px] mt-0.5 translate-y-0'
               }`}>
-                {schoolInfo.nameEn || 'Bandua Daulatpur High School'}
+                {schoolInfo.nameEn || 'Bondua Daulatpur High School'}
               </p>
             </div>
           </div>

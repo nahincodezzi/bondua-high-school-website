@@ -202,9 +202,9 @@ export function SchoolProvider({ children }) {
         parsed.roadBn = parsed.roadBn || 'ফেনী-পরশুরাম রোড সংলগ্ন';
         parsed.roadEn = parsed.roadEn || 'Along Feni-Parshuram Road';
         parsed.addressBn = parsed.addressBn || 'ফেনী-পরশুরাম রোড সংলগ্ন, বন্দুয়া দৌলতপুর, আনন্দপুর ইউনিয়ন, ফুলগাজী উপজেলা, ফেনী জেলা, বাংলাদেশ';
-        parsed.addressEn = parsed.addressEn || 'Along Feni-Parshuram Road, Bandua Daulatpur, Anandapur Union, Fulgazi, Feni, Bangladesh';
+        parsed.addressEn = parsed.addressEn || 'Along Feni-Parshuram Road, Bondua Daulatpur, Anandapur Union, Fulgazi, Feni, Bangladesh';
         parsed.nameBn = parsed.nameBn || 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়';
-        parsed.nameEn = parsed.nameEn || 'Bandua Daulatpur High School';
+        parsed.nameEn = parsed.nameEn || 'Bondua Daulatpur High School';
 
         if (!parsed.email || parsed.email.includes('fulgazi')) {
           parsed.email = 'bonduas106644@gmail.com';

@@ -272,7 +272,7 @@ export default function ResultSearch() {
                   </div>
                 </div>
                 <h3 className="text-2xl sm:text-3xl print:text-[12pt] font-extrabold font-bangla text-deep leading-tight">
-                  {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || 'Bandua Daulatpur High School')}
+                  {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || 'Bondua Daulatpur High School')}
                 </h3>
                 <p className="text-xs sm:text-sm print:text-[7.5pt] text-ink font-semibold font-bangla print:leading-none print:mt-0.5">
                   {schoolInfo.addressBn}
@@ -424,7 +424,7 @@ export default function ResultSearch() {
 
                 {/* Institute Seal Stamp (Center) */}
                 <div className="w-16 h-16 print:w-9 print:h-9 rounded-full border-2 border-dashed border-primary text-primary flex flex-col items-center justify-center p-0.5 text-[7px] print:text-[4.5pt] text-center font-bold">
-                  <span>BANDUA DAULATPUR</span>
+                  <span>BONDUA DAULATPUR</span>
                   <span>HIGH SCHOOL</span>
                   <span>SEAL</span>
                 </div>
@@ -599,7 +599,7 @@ export default function ResultSearch() {
               </div>
 
               <div className="w-10 h-10 rounded-full border-2 border-dashed border-emerald-600 text-emerald-700 flex flex-col items-center justify-center p-0.5 text-[5pt] text-center font-bold">
-                <span>BANDUA</span>
+                <span>BONDUA</span>
                 <span>SEAL</span>
               </div>
 

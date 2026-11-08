@@ -1,9 +1,9 @@
 import { createEducatorAvatar } from '../utils/avatarGenerator';
 
-// School Information and Seed Data for Bandua Daulatpur High School (EIIN: 106644)
+// School Information and Seed Data for Bondua Daulatpur High School (EIIN: 106644)
 export const initialSchoolInfo = {
   nameBn: "বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়",
-  nameEn: "Bandua Daulatpur High School",
+  nameEn: "Bondua Daulatpur High School",
   nameAlt: "Bondua Doulatpur High School",
   shortName: "BDHS",
   eiin: "106644",
@@ -35,7 +35,7 @@ export const initialSchoolInfo = {
   roadBn: "ফেনী-পরশুরাম রোড সংলগ্ন",
   roadEn: "Along Feni-Parshuram Road",
   addressBn: "ফেনী-পরশুরাম রোড সংলগ্ন, বন্দুয়া দৌলতপুর, আনন্দপুর ইউনিয়ন, ফুলগাজী উপজেলা, ফেনী জেলা, বাংলাদেশ",
-  addressEn: "Along Feni-Parshuram Road, Bandua Daulatpur, Anandapur Union, Fulgazi, Feni, Bangladesh",
+  addressEn: "Along Feni-Parshuram Road, Bondua Daulatpur, Anandapur Union, Fulgazi, Feni, Bangladesh",
   phone: "+880 1819-204561",
   phoneAlt: "+880 1712-893042",
   email: "bonduas106644@gmail.com",

@@ -21,7 +21,7 @@ export default function AboutSection() {
             <span>{lang === 'bn' ? 'আমাদের ইতিহাস ও ঐতিহ্য' : 'Heritage & History'}</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-extrabold font-bangla text-ink leading-tight">
-            {lang === 'bn' ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় পরিচিতি' : 'About Bandua Daulatpur High School'}
+            {lang === 'bn' ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় পরিচিতি' : 'About Bondua Daulatpur High School'}
           </h2>
           <p className="text-xs sm:text-sm text-muted font-bangla mt-2">
             {lang === 'bn' 
@@ -42,7 +42,7 @@ export default function AboutSection() {
               <p>
                 {lang === 'bn' 
                   ? 'ফেনী জেলার ফুলগাজী উপজেলার ঐতিহ্যবাহী আনন্দপুর ইউনিয়নের বন্দুয়া দৌলতপুর গ্রামে ১৯৯০ সালের ৮ জানুয়ারি বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় প্রতিষ্ঠিত হয়। এলাকার শিক্ষানুরাগী, সমাজসেবক ও গুণীজনদের নিরলস প্রচেষ্টায় অবহেলিত গ্রামীণ জনপদে শিক্ষার আলো প্রজ্বলন করাই ছিল এই প্রতিষ্ঠানের মূল লক্ষ্য।'
-                  : 'Bandua Daulatpur High School was established on January 8, 1990, in the scenic village of Bandua Daulatpur under Anandapur Union, Fulgazi Upazila, Feni District.'}
+                  : 'Bondua Daulatpur High School was established on January 8, 1990, in the scenic village of Bondua Daulatpur under Anandapur Union, Fulgazi Upazila, Feni District.'}
               </p>
 
               <p>

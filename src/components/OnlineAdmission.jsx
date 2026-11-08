@@ -253,7 +253,7 @@ export default function OnlineAdmission() {
                   <SchoolLogo logo={schoolInfo.logo} />
                 </div>
                 <h3 className="text-2xl sm:text-3xl print:text-lg font-extrabold font-bangla text-deep">
-                  {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || 'Bandua Daulatpur High School')}
+                  {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || 'Bondua Daulatpur High School')}
                 </h3>
                 <p className="text-xs sm:text-sm print:text-[9pt] text-ink font-semibold font-bangla">
                   {schoolInfo.addressBn}
@@ -376,7 +376,7 @@ export default function OnlineAdmission() {
 
                 {/* Institute Seal Stamp (Center) */}
                 <div className="w-14 h-14 print:w-11 print:h-11 rounded-full border-2 border-dashed border-primary text-primary flex flex-col items-center justify-center p-0.5 text-[6px] text-center font-bold">
-                  <span>BANDUA DAULATPUR</span>
+                  <span>BONDUA DAULATPUR</span>
                   <span>HIGH SCHOOL</span>
                   <span>SEAL</span>
                 </div>
@@ -409,7 +409,7 @@ export default function OnlineAdmission() {
               <p className="text-soft text-xs sm:text-sm font-bangla mt-1 max-w-xl mx-auto">
                 {lang === 'bn' 
                   ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়ে ৬ষ্ঠ থেকে ৯ম শ্রেণিতে ভর্তির জন্য নিচের সঠিক তথ্য প্রদান করুন।'
-                  : 'Please complete all required fields carefully for admission into Bandua Daulatpur High School.'}
+                  : 'Please complete all required fields carefully for admission into Bondua Daulatpur High School.'}
               </p>
             </div>
 

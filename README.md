@@ -1,11 +1,11 @@
-# বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় (Bandua Daulatpur High School)
+# বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় (Bondua Daulatpur High School)
 ### Official Institutional Portal & School ERP Management System
 **EIIN: 106644 • MPO: 105476301 • কুমিল্লা শিক্ষাবোর্ড • আনন্দপুর, ফুলগাজী, ফেনী**
 
 ---
 
 ## 🌟 Overview
-A modern, bug-free, fully responsive, dual-language (Bangla & English) School Portal & ERP System built specifically for **Bandua Daulatpur High School** (বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়), Fulgazi, Feni, Bangladesh.
+A modern, bug-free, fully responsive, dual-language (Bangla & English) School Portal & ERP System built specifically for **Bondua Daulatpur High School** (বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়), Fulgazi, Feni, Bangladesh.
 
 The platform integrates the school's public website with an administrative ERP suite, online admission workflow, interactive marksheet generator, and direct integration with their official Facebook community: [Official Facebook Group](https://www.facebook.com/groups/887015382052811/).
 

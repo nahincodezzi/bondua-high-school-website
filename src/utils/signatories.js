@@ -1,5 +1,5 @@
 /**
- * Dynamic Signatory Provider for Bandua Daulatpur High School Reports
+ * Dynamic Signatory Provider for Bondua Daulatpur High School Reports
  * Automatically resolves current Headmaster, Exam Controller, Accountant, and Convener
  * Updates automatically when school settings, user management, or teachers change.
  */

@@ -136,7 +136,7 @@ export default function DashboardOverview({ onNavigate }) {
           <p className="text-xs text-muted font-bangla mt-1">
             {lang === 'bn'
               ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় ডিজিটাল ম্যানেজমেন্ট সফটওয়্যারে আপনাকে স্বাগতম।'
-              : 'Welcome to Bandua Daulatpur High School Digital Management ERP.'
+              : 'Welcome to Bondua Daulatpur High School Digital Management ERP.'
             }
           </p>
         </div>

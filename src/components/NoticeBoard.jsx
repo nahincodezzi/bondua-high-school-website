@@ -242,7 +242,7 @@ export default function NoticeBoard() {
 
             {/* Institute Official Seal Stamp (Center) */}
             <div className="w-16 h-16 rounded-full border-2 border-dashed border-primary text-primary flex flex-col items-center justify-center p-1 text-[7px] text-center font-bold">
-              <span>BANDUA DAULATPUR</span>
+              <span>BONDUA DAULATPUR</span>
               <span>HIGH SCHOOL</span>
               <span>SEAL</span>
             </div>

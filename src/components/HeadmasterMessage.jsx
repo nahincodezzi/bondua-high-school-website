@@ -39,7 +39,7 @@ export default function HeadmasterMessage() {
                     {lang === 'bn' ? schoolInfo.headmasterNameBn : schoolInfo.headmasterNameEn}
                   </h3>
                   <p className="text-xs text-white/80 font-bangla">
-                    {lang === 'bn' ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়' : 'Bandua Daulatpur High School'}
+                    {lang === 'bn' ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়' : 'Bondua Daulatpur High School'}
                   </p>
                 </div>
               </div>

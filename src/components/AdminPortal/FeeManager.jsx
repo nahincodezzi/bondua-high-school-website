@@ -233,7 +233,7 @@ export default function FeeManager() {
 
             {/* School Seal (Center) */}
             <div className="w-12 h-12 rounded-full border-2 border-dashed border-primary text-primary flex flex-col items-center justify-center p-0.5 text-[6px] text-center font-bold">
-              <span>BANDUA DAULATPUR</span>
+              <span>BONDUA DAULATPUR</span>
               <span>SEAL</span>
             </div>
 

@@ -1,5 +1,5 @@
 -- ==============================================================================
--- Bandua Daulatpur High School (EIIN: 106644) - Supabase Database Schema
+-- Bondua Daulatpur High School (EIIN: 106644) - Supabase Database Schema
 -- Run this script in the Supabase SQL Editor to initialize all 9 tables.
 -- ==============================================================================
 
