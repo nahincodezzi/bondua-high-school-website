@@ -13,6 +13,7 @@ import {
   seedCloudIfEmpty,
   mappers
 } from '../lib/supabase';
+import { DEFAULT_SCHOOL_LOGO } from '../utils/branding';
 import {
   initialSchoolInfo,
   initialUniformInfo,
@@ -264,14 +265,15 @@ export function SchoolProvider({ children }) {
           parsed.campusImage = initialSchoolInfo.campusImage;
         }
 
-        // Theme-aware Logos & White-Label CMS Migration
-        if (!parsed.logos || typeof parsed.logos !== 'object') {
-          const fallbackLogo = parsed.logo || initialSchoolInfo.logo || '/brand/logo-emerald.png';
-          parsed.logos = {
-            emerald: { onDark: fallbackLogo, onLight: fallbackLogo },
-            indigo: { onDark: fallbackLogo, onLight: fallbackLogo },
-          };
+        // Centralized Single School Logo & Migration
+        if (!parsed.schoolLogo) {
+          parsed.schoolLogo = parsed.logo || parsed.logos?.emerald?.onLight || parsed.logos?.emerald?.onDark || initialSchoolInfo.schoolLogo || DEFAULT_SCHOOL_LOGO;
         }
+        parsed.logo = parsed.schoolLogo;
+        parsed.logos = {
+          emerald: { onDark: parsed.schoolLogo, onLight: parsed.schoolLogo },
+          indigo: { onDark: parsed.schoolLogo, onLight: parsed.schoolLogo },
+        };
         if (!parsed.hero || typeof parsed.hero !== 'object') {
           parsed.hero = initialSchoolInfo.hero;
         }
@@ -583,13 +585,15 @@ export function SchoolProvider({ children }) {
           cleanInfo.nameAlt = cleanInfo.nameAlt || 'Bondua Doulatpur High School';
           if (cleanInfo.addressEn) cleanInfo.addressEn = cleanInfo.addressEn.replace(/Bandua/g, 'Bondua');
 
-          if (!cleanInfo.logos || typeof cleanInfo.logos !== 'object') {
-            const fallbackLogo = cleanInfo.logo || initialSchoolInfo.logo || '/brand/logo-emerald.png';
-            cleanInfo.logos = {
-              emerald: { onDark: fallbackLogo, onLight: fallbackLogo },
-              indigo: { onDark: fallbackLogo, onLight: fallbackLogo },
-            };
+          // Centralized Single School Logo & Migration
+          if (!cleanInfo.schoolLogo) {
+            cleanInfo.schoolLogo = cleanInfo.logo || cleanInfo.logos?.emerald?.onLight || cleanInfo.logos?.emerald?.onDark || initialSchoolInfo.schoolLogo || DEFAULT_SCHOOL_LOGO;
           }
+          cleanInfo.logo = cleanInfo.schoolLogo;
+          cleanInfo.logos = {
+            emerald: { onDark: cleanInfo.schoolLogo, onLight: cleanInfo.schoolLogo },
+            indigo: { onDark: cleanInfo.schoolLogo, onLight: cleanInfo.schoolLogo },
+          };
           if (!cleanInfo.hero || typeof cleanInfo.hero !== 'object') cleanInfo.hero = initialSchoolInfo.hero;
           if (!Array.isArray(cleanInfo.stats) || cleanInfo.stats.length === 0) cleanInfo.stats = initialSchoolInfo.stats;
           if (!cleanInfo.admissionYear) cleanInfo.admissionYear = initialSchoolInfo.admissionYear || '২০২৭';
@@ -1708,9 +1712,17 @@ export function SchoolProvider({ children }) {
   };
 
   const updateSchoolSettings = (newInfo) => {
-    setSchoolInfo(newInfo);
+    const updatedInfo = { ...newInfo };
+    if (updatedInfo.schoolLogo) {
+      updatedInfo.logo = updatedInfo.schoolLogo;
+      updatedInfo.logos = {
+        emerald: { onDark: updatedInfo.schoolLogo, onLight: updatedInfo.schoolLogo },
+        indigo: { onDark: updatedInfo.schoolLogo, onLight: updatedInfo.schoolLogo },
+      };
+    }
+    setSchoolInfo(updatedInfo);
     if (supabase) {
-      supabase.from('school_info').upsert({ id: 'main', data: newInfo }).then(({ error }) => {
+      supabase.from('school_info').upsert({ id: 'main', data: updatedInfo }).then(({ error }) => {
         if (error) console.warn('Supabase upsert school_info warning:', error.message);
       });
     }
@@ -2035,6 +2047,8 @@ export function SchoolProvider({ children }) {
       phone: wizardData.phone || '',
       email: wizardData.email || '',
       defaultTheme: targetTheme,
+      schoolLogo: logoVal,
+      logo: logoVal,
       logos: wizardData.logos || {
         emerald: { onDark: logoVal, onLight: logoVal },
         indigo: { onDark: logoVal, onLight: logoVal },

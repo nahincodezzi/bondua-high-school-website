@@ -1,18 +1,18 @@
 import React from 'react';
 import { useSchool } from '../../context/useSchool';
-import { resolveLogo } from '../../utils/resolveLogo';
+import { getSchoolLogo } from '../../utils/branding';
 
 export default function SchoolLogo({ 
   logo = null, 
-  surface = 'dark',
+  _surface = 'dark', // kept for backwards prop compatibility
   className = "w-full h-full", 
   alt = "School Logo",
   showFallbackText = true 
 }) {
   const { schoolInfo = {}, theme = 'emerald' } = useSchool() || {};
 
-  // Resolve logo: explicit prop takes precedence, otherwise use theme/surface resolver
-  const resolved = logo || resolveLogo(schoolInfo, theme, surface);
+  // Resolve logo from single source of truth (theme-independent)
+  const resolved = logo || getSchoolLogo(schoolInfo);
 
   if (resolved) {
     return (

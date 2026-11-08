@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useSchool } from '../context/useSchool';
+import { getSchoolLogo } from '../utils/branding';
 import { 
   Calendar, 
   Download, 
@@ -83,6 +84,7 @@ export default function RoutinesDownload() {
     const effective = item.effectiveDate;
     const isExam = item.id === 'rt-02' || item.titleBn?.includes('পরীক্ষা');
     const isSyllabus = item.id === 'rt-03' || item.titleBn?.includes('NCTB');
+    const schoolLogoUrl = getSchoolLogo(schoolInfo);
 
     let tableHtml = '';
     if (isExam) {
@@ -176,6 +178,7 @@ export default function RoutinesDownload() {
       </head>
       <body>
         <div class="header">
+          ${schoolLogoUrl ? `<div style="display:flex;justify-content:center;margin-bottom:8px;"><img src="${schoolLogoUrl}" alt="School Logo" style="width:48px;height:48px;object-fit:contain;border-radius:50%;border:1px solid #cbd5e1;padding:2px;" /></div>` : ''}
           <h1>${schoolInfo.nameBn}</h1>
           <p>${schoolInfo.addressBn} • EIIN: ${schoolInfo.eiin}</p>
         </div>

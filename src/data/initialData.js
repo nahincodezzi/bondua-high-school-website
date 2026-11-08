@@ -1,4 +1,5 @@
 import { createEducatorAvatar } from '../utils/avatarGenerator';
+import { DEFAULT_SCHOOL_LOGO } from '../utils/branding';
 
 // School Information and Seed Data for Bondua Daulatpur High School (EIIN: 106644)
 export const initialSchoolInfo = {
@@ -25,10 +26,11 @@ export const initialSchoolInfo = {
   mottoBn: "জ্ঞানই আলো, শিক্ষাই শক্তি",
   mottoEn: "Knowledge is Light, Education is Power",
   defaultTheme: "emerald",
-  logo: "/brand/logo-emerald.png",
+  schoolLogo: DEFAULT_SCHOOL_LOGO,
+  logo: DEFAULT_SCHOOL_LOGO,
   logos: {
-    emerald: { onDark: "/brand/logo-emerald.png", onLight: "/brand/logo-emerald.png" },
-    indigo:  { onDark: "/brand/logo-indigo.png",  onLight: "/brand/logo-indigo.png" }
+    emerald: { onDark: DEFAULT_SCHOOL_LOGO, onLight: DEFAULT_SCHOOL_LOGO },
+    indigo:  { onDark: DEFAULT_SCHOOL_LOGO,  onLight: DEFAULT_SCHOOL_LOGO }
   },
   headerSubtitleBn: "",
   headerSubtitleEn: "",

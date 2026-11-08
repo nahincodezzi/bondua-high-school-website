@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { resolveLogo } from '../utils/resolveLogo';
+import { getSchoolLogo } from '../utils/branding';
 
 /**
  * Dynamically keeps browser tab title, favicon, meta description, and theme-color in sync with CMS and active theme.
@@ -41,9 +41,12 @@ export function useDocumentMeta(schoolInfo, theme = 'emerald', lang = 'bn') {
     const themeColor = theme === 'indigo' ? '#1E1B4B' : '#0B3D2E';
     updateMeta('meta[name="theme-color"]', 'content', themeColor);
 
-    // 4. Dynamic Favicon & Apple Touch Icon
-    const activeFavicon = resolveLogo(schoolInfo, theme, 'light') || resolveLogo(schoolInfo, theme, 'dark');
+    // 4. Dynamic Favicon & Apple Touch Icon (Single Centralized School Logo)
+    const activeFavicon = getSchoolLogo(schoolInfo);
     if (activeFavicon) {
+      updateMeta('meta[property="og:image"]', 'content', activeFavicon);
+      updateMeta('meta[name="twitter:image"]', 'content', activeFavicon);
+
       let iconLink = document.querySelector('link[rel="icon"]');
       if (!iconLink) {
         iconLink = document.createElement('link');

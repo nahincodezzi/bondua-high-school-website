@@ -21,6 +21,7 @@ export default function SetupWizardModal({ isOpen, onClose, onApply }) {
     phone: '',
     email: '',
     defaultTheme: 'emerald',
+    schoolLogo: null,
     logo: null,
   }));
 
@@ -39,7 +40,8 @@ export default function SetupWizardModal({ isOpen, onClose, onApply }) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (event) => {
-      setFormData(prev => ({ ...prev, logo: event.target.result }));
+      const dataUrl = event.target.result;
+      setFormData(prev => ({ ...prev, schoolLogo: dataUrl, logo: dataUrl }));
     };
     reader.readAsDataURL(file);
   };
