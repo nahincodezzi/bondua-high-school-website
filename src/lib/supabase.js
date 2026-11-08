@@ -445,6 +445,15 @@ export async function fetchAllCloudData() {
       }
     } catch {}
 
+    // Academic Config cloud load (Exams & Classes)
+    let academicConfig = null;
+    try {
+      const academicDoc = await supabase.from('school_info').select('*').eq('id', 'academic_config').single();
+      if (academicDoc.data?.data) {
+        academicConfig = academicDoc.data.data;
+      }
+    } catch {}
+
     return {
       notices: noticesRes.data?.map(mappers.notice.fromDb) || null,
       teachers: teachersRes.data?.map(mappers.teacher.fromDb) || null,
@@ -456,6 +465,7 @@ export async function fetchAllCloudData() {
       gallery: galleryRes.data?.map(mappers.gallery.fromDb) || null,
       schoolInfo: schoolInfoRes.data?.data || null,
       uniformInfo,
+      academicConfig,
       contactMessages,
       videos,
       systemUsers,

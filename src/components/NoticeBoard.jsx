@@ -97,6 +97,7 @@ export default function NoticeBoard() {
 
   useEffect(() => {
     if (!activeNoticeModal) return;
+    document.body.classList.add('printing-notice');
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
         e.preventDefault();
@@ -104,7 +105,10 @@ export default function NoticeBoard() {
       }
     };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.classList.remove('printing-notice');
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [activeNoticeModal]);
 
   const modalElement = activeNoticeModal ? (

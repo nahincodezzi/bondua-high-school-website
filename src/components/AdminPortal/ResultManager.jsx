@@ -15,7 +15,8 @@ import {
   Download,
   FileUp,
   X,
-  FileCheck
+  FileCheck,
+  Plus
 } from 'lucide-react';
 
 const SUBJECT_CONFIGS = {
@@ -113,7 +114,18 @@ const findRoll = (row) => {
 };
 
 export default function ResultManager() {
-  const { results, addResult, bulkAddResults, deleteResult, students, lang } = useSchool();
+  const { 
+    results, 
+    addResult, 
+    bulkAddResults, 
+    deleteResult, 
+    students, 
+    availableExams = [], 
+    availableClasses = [], 
+    addExam, 
+    addClass, 
+    lang 
+  } = useSchool();
   const [entryMode, setEntryMode] = useState('single'); // 'single' | 'bulk'
   const [examName, setExamName] = useState('SSC Test Examination 2026');
   const [selectedClass, setSelectedClass] = useState('10');
@@ -130,6 +142,44 @@ export default function ResultManager() {
   const [parsedRows, setParsedRows] = useState([]);
   const [parseErrors, setParseErrors] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Add New Exam Modal State
+  const [showAddExamModal, setShowAddExamModal] = useState(false);
+  const [newExamNameInput, setNewExamNameInput] = useState('');
+  const [newExamLabelBnInput, setNewExamLabelBnInput] = useState('');
+
+  // Add New Class Modal State
+  const [showAddClassModal, setShowAddClassModal] = useState(false);
+  const [newClassKeyInput, setNewClassKeyInput] = useState('');
+  const [newClassLabelBnInput, setNewClassLabelBnInput] = useState('');
+
+  const handleAddNewExamSubmit = (e) => {
+    e.preventDefault();
+    if (!newExamNameInput.trim()) return;
+    if (addExam) {
+      const created = addExam(newExamNameInput, newExamLabelBnInput);
+      if (created) {
+        setExamName(created.name);
+      }
+    }
+    setNewExamNameInput('');
+    setNewExamLabelBnInput('');
+    setShowAddExamModal(false);
+  };
+
+  const handleAddNewClassSubmit = (e) => {
+    e.preventDefault();
+    if (!newClassKeyInput.trim()) return;
+    if (addClass) {
+      const created = addClass(newClassKeyInput, newClassLabelBnInput);
+      if (created) {
+        setSelectedClass(created.key);
+      }
+    }
+    setNewClassKeyInput('');
+    setNewClassLabelBnInput('');
+    setShowAddClassModal(false);
+  };
 
   // Auto student preview
   const activeStudent = students.find(
@@ -492,34 +542,69 @@ export default function ResultManager() {
               {/* Exam and Class Selectors */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block font-bold text-ink mb-1">পরীক্ষার নাম</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="font-bold text-ink">পরীক্ষার নাম</label>
+                    <button
+                      type="button"
+                      onClick={() => setShowAddExamModal(true)}
+                      className="text-xs text-primary hover:underline font-bold flex items-center gap-0.5 cursor-pointer"
+                      title="নতুন পরীক্ষার নাম যোগ করুন"
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>নতুন</span>
+                    </button>
+                  </div>
                   <select
                     value={examName}
-                    onChange={(e) => setExamName(e.target.value)}
+                    onChange={(e) => {
+                      if (e.target.value === '__ADD_NEW__') {
+                        setShowAddExamModal(true);
+                      } else {
+                        setExamName(e.target.value);
+                      }
+                    }}
                     className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
                   >
-                    <option value="SSC Test Examination 2026">এসএসসি টেস্ট পরীক্ষা ২০২৬</option>
-                    <option value="Annual Examination 2025">বার্ষিক পরীক্ষা ২০২৫</option>
-                    <option value="Pre-Test Examination 2026">প্রাক-নির্বাচনী পরীক্ষা ২০২৬</option>
-                    <option value="Half-Yearly Examination 2026">অর্ধবার্ষিক পরীক্ষা ২০২৬</option>
+                    {availableExams.map((ex) => (
+                      <option key={ex.name || ex.id} value={ex.name}>
+                        {ex.labelBn || ex.name}
+                      </option>
+                    ))}
+                    <option value="__ADD_NEW__">➕ নতুন পরীক্ষা যোগ করুন...</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block font-bold text-ink mb-1">শ্রেণি</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="font-bold text-ink">শ্রেণি</label>
+                    <button
+                      type="button"
+                      onClick={() => setShowAddClassModal(true)}
+                      className="text-xs text-primary hover:underline font-bold flex items-center gap-0.5 cursor-pointer"
+                      title="নতুন শ্রেণি যোগ করুন"
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>নতুন</span>
+                    </button>
+                  </div>
                   <select
                     value={selectedClass}
                     onChange={(e) => {
-                      setSelectedClass(e.target.value);
-                      setFormError('');
+                      if (e.target.value === '__ADD_NEW__') {
+                        setShowAddClassModal(true);
+                      } else {
+                        setSelectedClass(e.target.value);
+                        setFormError('');
+                      }
                     }}
                     className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
                   >
-                    <option value="10">১০ম শ্রেণি</option>
-                    <option value="9">৯ম শ্রেণি</option>
-                    <option value="8">৮ম শ্রেণি</option>
-                    <option value="7">৭ম শ্রেণি</option>
-                    <option value="6">৬ষ্ঠ শ্রেণি</option>
+                    {availableClasses.map((cls) => (
+                      <option key={cls.key || cls.id} value={cls.key}>
+                        {cls.labelBn || `${toBanglaNumerals(cls.key)} শ্রেণি`}
+                      </option>
+                    ))}
+                    <option value="__ADD_NEW__">➕ নতুন শ্রেণি যোগ করুন...</option>
                   </select>
                 </div>
 
@@ -668,35 +753,70 @@ export default function ResultManager() {
               {/* Target Class & Exam Selectors for Bulk Upload */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block font-bold text-ink mb-1">পরীক্ষার নাম</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="font-bold text-ink">পরীক্ষার নাম</label>
+                    <button
+                      type="button"
+                      onClick={() => setShowAddExamModal(true)}
+                      className="text-xs text-primary hover:underline font-bold flex items-center gap-0.5 cursor-pointer"
+                      title="নতুন পরীক্ষার নাম যোগ করুন"
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>নতুন</span>
+                    </button>
+                  </div>
                   <select
                     value={examName}
-                    onChange={(e) => setExamName(e.target.value)}
+                    onChange={(e) => {
+                      if (e.target.value === '__ADD_NEW__') {
+                        setShowAddExamModal(true);
+                      } else {
+                        setExamName(e.target.value);
+                      }
+                    }}
                     className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
                   >
-                    <option value="SSC Test Examination 2026">এসএসসি টেস্ট পরীক্ষা ২০২৬</option>
-                    <option value="Annual Examination 2025">বার্ষিক পরীক্ষা ২০২৫</option>
-                    <option value="Pre-Test Examination 2026">প্রাক-নির্বাচনী পরীক্ষা ২০২৬</option>
-                    <option value="Half-Yearly Examination 2026">অর্ধবার্ষিক পরীক্ষা ২০২৬</option>
+                    {availableExams.map((ex) => (
+                      <option key={ex.name || ex.id} value={ex.name}>
+                        {ex.labelBn || ex.name}
+                      </option>
+                    ))}
+                    <option value="__ADD_NEW__">➕ নতুন পরীক্ষা যোগ করুন...</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block font-bold text-ink mb-1">শ্রেণি</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="font-bold text-ink">শ্রেণি</label>
+                    <button
+                      type="button"
+                      onClick={() => setShowAddClassModal(true)}
+                      className="text-xs text-primary hover:underline font-bold flex items-center gap-0.5 cursor-pointer"
+                      title="নতুন শ্রেণি যোগ করুন"
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>নতুন</span>
+                    </button>
+                  </div>
                   <select
                     value={selectedClass}
                     onChange={(e) => {
-                      setSelectedClass(e.target.value);
-                      setParsedRows([]);
-                      setParseErrors([]);
+                      if (e.target.value === '__ADD_NEW__') {
+                        setShowAddClassModal(true);
+                      } else {
+                        setSelectedClass(e.target.value);
+                        setParsedRows([]);
+                        setParseErrors([]);
+                      }
                     }}
                     className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
                   >
-                    <option value="10">১০ম শ্রেণি</option>
-                    <option value="9">৯ম শ্রেণি</option>
-                    <option value="8">৮ম শ্রেণি</option>
-                    <option value="7">৭ম শ্রেণি</option>
-                    <option value="6">৬ষ্ঠ শ্রেণি</option>
+                    {availableClasses.map((cls) => (
+                      <option key={cls.key || cls.id} value={cls.key}>
+                        {cls.labelBn || `${toBanglaNumerals(cls.key)} শ্রেণি`}
+                      </option>
+                    ))}
+                    <option value="__ADD_NEW__">➕ নতুন শ্রেণি যোগ করুন...</option>
                   </select>
                 </div>
 
@@ -987,6 +1107,126 @@ export default function ResultManager() {
                 বুঝেছি, বন্ধ করুন
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add New Exam Modal */}
+      {showAddExamModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-line">
+            <div className="p-4 bg-deep text-white flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Plus className="w-5 h-5 text-accent" />
+                <h3 className="font-bold font-bangla">নতুন পরীক্ষা যোগ করুন</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAddExamModal(false)}
+                className="p-1 rounded-lg hover:bg-white/10 text-white/80 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleAddNewExamSubmit} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-ink mb-1">পরীক্ষার নাম (English / ID) *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Model Test 2026 or First Term 2026"
+                  value={newExamNameInput}
+                  onChange={(e) => setNewExamNameInput(e.target.value)}
+                  className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none text-sm"
+                  autoFocus
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-ink mb-1">বাংলা নাম (ঐচ্ছিক)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. মডেল টেস্ট পরীক্ষা ২০২৬"
+                  value={newExamLabelBnInput}
+                  onChange={(e) => setNewExamLabelBnInput(e.target.value)}
+                  className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none text-sm"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-2 border-t border-line">
+                <button
+                  type="button"
+                  onClick={() => setShowAddExamModal(false)}
+                  className="btn-secondary px-4 py-2 rounded-xl text-xs font-bold cursor-pointer"
+                >
+                  বাতিল
+                </button>
+                <button
+                  type="submit"
+                  className="btn-primary px-5 py-2 rounded-xl text-xs font-bold cursor-pointer"
+                >
+                  যোগ করুন
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add New Class Modal */}
+      {showAddClassModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-line">
+            <div className="p-4 bg-deep text-white flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Plus className="w-5 h-5 text-accent" />
+                <h3 className="font-bold font-bangla">নতুন শ্রেণি যোগ করুন</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAddClassModal(false)}
+                className="p-1 rounded-lg hover:bg-white/10 text-white/80 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleAddNewClassSubmit} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-ink mb-1">শ্রেণির কোড / নম্বর (Class Key) *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. 5 or 11 or Pre-Primary"
+                  value={newClassKeyInput}
+                  onChange={(e) => setNewClassKeyInput(e.target.value)}
+                  className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none text-sm"
+                  autoFocus
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-ink mb-1">বাংলা লেবেল (ঐচ্ছিক)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. ৫ম শ্রেণি বা একাদশ শ্রেণি"
+                  value={newClassLabelBnInput}
+                  onChange={(e) => setNewClassLabelBnInput(e.target.value)}
+                  className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none text-sm"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-2 border-t border-line">
+                <button
+                  type="button"
+                  onClick={() => setShowAddClassModal(false)}
+                  className="btn-secondary px-4 py-2 rounded-xl text-xs font-bold cursor-pointer"
+                >
+                  বাতিল
+                </button>
+                <button
+                  type="submit"
+                  className="btn-primary px-5 py-2 rounded-xl text-xs font-bold cursor-pointer"
+                >
+                  যোগ করুন
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

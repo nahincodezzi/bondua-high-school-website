@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 
 export default function ResultSearch() {
-  const { lang, results, schoolInfo, teachers, systemUsers } = useSchool();
+  const { lang, results, schoolInfo, teachers, systemUsers, availableExams = [], availableClasses = [] } = useSchool();
   const signatories = getSignatories(schoolInfo, teachers, systemUsers);
   const [examType, setExamType] = useState('SSC Test Examination 2026');
   const [targetClass, setTargetClass] = useState('10');
@@ -134,10 +134,11 @@ export default function ResultSearch() {
                 onChange={(e) => setExamType(e.target.value)}
                 className="w-full text-xs font-bangla rounded-lg p-3 bg-bg border border-line text-ink focus:ring-2 focus:ring-primary focus:outline-none"
               >
-                <option value="SSC Test Examination 2026">এসএসসি টেস্ট পরীক্ষা ২০২৬</option>
-                <option value="Annual Examination 2025">বার্ষিক পরীক্ষা ২০২৫</option>
-                <option value="Pre-Test Examination 2026">প্রাক-নির্বাচনী পরীক্ষা ২০২৬</option>
-                <option value="Half-Yearly Examination 2026">অর্ধবার্ষিক পরীক্ষা ২০২৬</option>
+                {availableExams.map((ex) => (
+                  <option key={ex.name || ex.id} value={ex.name}>
+                    {lang === 'bn' ? (ex.labelBn || ex.name) : ex.name}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -152,19 +153,14 @@ export default function ResultSearch() {
                 onChange={(e) => {
                   const val = e.target.value;
                   setTargetClass(val);
-                  if (val === '10' && examType === 'Half-Yearly Examination 2026') {
-                    setExamType('SSC Test Examination 2026');
-                  } else if (val !== '10' && examType === 'SSC Test Examination 2026') {
-                    setExamType('Half-Yearly Examination 2026');
-                  }
                 }}
                 className="w-full text-xs font-bangla rounded-lg p-3 bg-bg border border-line text-ink focus:ring-2 focus:ring-primary focus:outline-none"
               >
-                <option value="10">দশম শ্রেণি (Class 10)</option>
-                <option value="9">নবম শ্রেণি (Class 9)</option>
-                <option value="8">অষ্টম শ্রেণি (Class 8)</option>
-                <option value="7">সপ্তম শ্রেণি (Class 7)</option>
-                <option value="6">ষষ্ঠ শ্রেণি (Class 6)</option>
+                {availableClasses.map((cls) => (
+                  <option key={cls.key || cls.id} value={cls.key}>
+                    {cls.labelBn || `${toBanglaNumerals(cls.key)} শ্রেণি`} ({cls.labelEn || `Class ${cls.key}`})
+                  </option>
+                ))}
               </select>
             </div>
 

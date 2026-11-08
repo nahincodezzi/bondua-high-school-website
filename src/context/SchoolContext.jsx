@@ -243,6 +243,33 @@ export function SchoolProvider({ children }) {
     return saved ? JSON.parse(saved) : initialUniformInfo;
   });
 
+  const [academicConfig, setAcademicConfig] = useState(() => {
+    const defaultExams = [
+      { id: 'ex-1', name: 'SSC Test Examination 2026', labelBn: 'এসএসসি টেস্ট পরীক্ষা ২০২৬' },
+      { id: 'ex-2', name: 'Annual Examination 2025', labelBn: 'বার্ষিক পরীক্ষা ২০২৫' },
+      { id: 'ex-3', name: 'Pre-Test Examination 2026', labelBn: 'প্রাক-নির্বাচনী পরীক্ষা ২০২৬' },
+      { id: 'ex-4', name: 'Half-Yearly Examination 2026', labelBn: 'অর্ধবার্ষিক পরীক্ষা ২০২৬' },
+    ];
+    const defaultClasses = [
+      { id: 'cls-10', key: '10', labelBn: '১০ম শ্রেণি', labelEn: 'Class 10' },
+      { id: 'cls-9', key: '9', labelBn: '৯ম শ্রেণি', labelEn: 'Class 9' },
+      { id: 'cls-8', key: '8', labelBn: '৮ম শ্রেণি', labelEn: 'Class 8' },
+      { id: 'cls-7', key: '7', labelBn: '৭ম শ্রেণি', labelEn: 'Class 7' },
+      { id: 'cls-6', key: '6', labelBn: '৬ষ্ঠ শ্রেণি', labelEn: 'Class 6' },
+    ];
+    try {
+      const saved = localStorage.getItem('bdhs_academic_config');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed.exams) && Array.isArray(parsed.classes)) return parsed;
+      }
+    } catch {}
+    return {
+      exams: defaultExams,
+      classes: defaultClasses
+    };
+  });
+
   const [heroSlides, setHeroSlides] = useState(() => {
     const saved = localStorage.getItem('bdhs_slides');
     return saved ? JSON.parse(saved) : initialHeroSlides;
@@ -432,6 +459,10 @@ export function SchoolProvider({ children }) {
         if (cloud.gallery && cloud.gallery.length > 0) setGallery(cloud.gallery);
         if (cloud.schoolInfo) setSchoolInfo(cloud.schoolInfo);
         if (cloud.uniformInfo) setUniformInfo(cloud.uniformInfo);
+        if (cloud.academicConfig) {
+          setAcademicConfig(cloud.academicConfig);
+          localStorage.setItem('bdhs_academic_config', JSON.stringify(cloud.academicConfig));
+        }
         if (cloud.contactMessages && cloud.contactMessages.length > 0) setContactMessages(cloud.contactMessages);
         if (cloud.videos && cloud.videos.length > 0) setVideos(cloud.videos);
         if (cloud.systemUsers && cloud.systemUsers.length > 0) setSystemUsers(cloud.systemUsers);
@@ -1342,6 +1373,95 @@ export function SchoolProvider({ children }) {
     }
   };
 
+  const addExam = (name, labelBn = '') => {
+    if (!name || !name.trim()) return null;
+    const cleanName = name.trim();
+    const cleanBn = (labelBn || cleanName).trim();
+    const newExamObj = { id: `ex-${Date.now()}`, name: cleanName, labelBn: cleanBn };
+
+    setAcademicConfig(prev => {
+      const existing = prev?.exams || [];
+      if (existing.some(e => e.name.toLowerCase() === cleanName.toLowerCase())) return prev;
+      const nextConfig = {
+        ...prev,
+        exams: [...existing, newExamObj]
+      };
+      localStorage.setItem('bdhs_academic_config', JSON.stringify(nextConfig));
+      if (supabase) {
+        supabase.from('school_info').upsert({ id: 'academic_config', data: nextConfig }).then(({ error }) => {
+          if (error) console.warn('Supabase upsert academic_config warning:', error.message);
+        });
+      }
+      return nextConfig;
+    });
+    return newExamObj;
+  };
+
+  const addClass = (key, labelBn = '') => {
+    if (!key || !key.trim()) return null;
+    const cleanKey = key.trim();
+    const cleanBn = (labelBn || `${toBanglaNumerals(cleanKey)} শ্রেণি`).trim();
+    const newClassObj = { id: `cls-${cleanKey}`, key: cleanKey, labelBn: cleanBn, labelEn: `Class ${cleanKey}` };
+
+    setAcademicConfig(prev => {
+      const existing = prev?.classes || [];
+      if (existing.some(c => String(c.key).toLowerCase() === cleanKey.toLowerCase())) return prev;
+      const nextConfig = {
+        ...prev,
+        classes: [newClassObj, ...existing]
+      };
+      localStorage.setItem('bdhs_academic_config', JSON.stringify(nextConfig));
+      if (supabase) {
+        supabase.from('school_info').upsert({ id: 'academic_config', data: nextConfig }).then(({ error }) => {
+          if (error) console.warn('Supabase upsert academic_config warning:', error.message);
+        });
+      }
+      return nextConfig;
+    });
+    return newClassObj;
+  };
+
+  const availableExams = React.useMemo(() => {
+    const defaultExams = [
+      { id: 'ex-1', name: 'SSC Test Examination 2026', labelBn: 'এসএসসি টেস্ট পরীক্ষা ২০২৬' },
+      { id: 'ex-2', name: 'Annual Examination 2025', labelBn: 'বার্ষিক পরীক্ষা ২০২৫' },
+      { id: 'ex-3', name: 'Pre-Test Examination 2026', labelBn: 'প্রাক-নির্বাচনী পরীক্ষা ২০২৬' },
+      { id: 'ex-4', name: 'Half-Yearly Examination 2026', labelBn: 'অর্ধবার্ষিক পরীক্ষা ২০২৬' },
+    ];
+    const list = [...(academicConfig?.exams || defaultExams)];
+    const existingNames = new Set(list.map(e => e.name.toLowerCase()));
+    if (Array.isArray(results)) {
+      results.forEach(r => {
+        if (r.exam && !existingNames.has(r.exam.toLowerCase())) {
+          existingNames.add(r.exam.toLowerCase());
+          list.push({ id: `ex-res-${r.exam}`, name: r.exam, labelBn: r.exam });
+        }
+      });
+    }
+    return list;
+  }, [academicConfig?.exams, results]);
+
+  const availableClasses = React.useMemo(() => {
+    const defaultClasses = [
+      { id: 'cls-10', key: '10', labelBn: '১০ম শ্রেণি', labelEn: 'Class 10' },
+      { id: 'cls-9', key: '9', labelBn: '৯ম শ্রেণি', labelEn: 'Class 9' },
+      { id: 'cls-8', key: '8', labelBn: '৮ম শ্রেণি', labelEn: 'Class 8' },
+      { id: 'cls-7', key: '7', labelBn: '৭ম শ্রেণি', labelEn: 'Class 7' },
+      { id: 'cls-6', key: '6', labelBn: '৬ষ্ঠ শ্রেণি', labelEn: 'Class 6' },
+    ];
+    const list = [...(academicConfig?.classes || defaultClasses)];
+    const existingKeys = new Set(list.map(c => String(c.key).toLowerCase()));
+    if (Array.isArray(students)) {
+      students.forEach(s => {
+        if (s.class && !existingKeys.has(String(s.class).toLowerCase())) {
+          existingKeys.add(String(s.class).toLowerCase());
+          list.push({ id: `cls-${s.class}`, key: String(s.class), labelBn: `${toBanglaNumerals(s.class)} শ্রেণি`, labelEn: `Class ${s.class}` });
+        }
+      });
+    }
+    return list;
+  }, [academicConfig?.classes, students]);
+
   const updateHeroSlides = (slides) => {
     setHeroSlides(slides);
     if (supabase) {
@@ -1493,6 +1613,10 @@ export function SchoolProvider({ children }) {
         addResult,
         bulkAddResults,
         deleteResult,
+        availableExams,
+        availableClasses,
+        addExam,
+        addClass,
         gallery,
         addGalleryItem,
         deleteGalleryItem,

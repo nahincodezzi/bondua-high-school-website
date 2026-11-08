@@ -432,7 +432,9 @@ section, [id] {
   body.printing-marksheet #root,
   body.printing-notice #root,
   body.printing-receipt #root,
-  body.printing-idcard #root {
+  body.printing-idcard #root,
+  body:has(#official-notice-modal) #root,
+  body:has(#official-money-receipt) #root {
     display: none !important;
     height: 0 !important;
     min-height: 0 !important;
@@ -446,7 +448,9 @@ section, [id] {
   body.printing-modal div[role="dialog"],
   body.printing-notice div[role="dialog"],
   body.printing-receipt div[role="dialog"],
-  body.printing-idcard div[role="dialog"] {
+  body.printing-idcard div[role="dialog"],
+  body:has(#official-notice-modal) div[role="dialog"],
+  body:has(#official-money-receipt) div[role="dialog"] {
     position: static !important;
     inset: auto !important;
     top: 0 !important;
@@ -637,12 +641,20 @@ section, [id] {
   #official-notice-modal .screen-only,
   #official-notice-modal .modal-footer,
   #official-notice-modal button,
-  #official-notice-modal .no-print {
+  #official-notice-modal .no-print,
+  body.printing-notice .modal-footer,
+  body.printing-notice button,
+  body:has(#official-notice-modal) .modal-footer,
+  body:has(#official-notice-modal) button {
     display: none !important;
+    visibility: hidden !important;
     height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
     padding: 0 !important;
     margin: 0 !important;
     overflow: hidden !important;
+    border: none !important;
   }
 
   #official-notice-modal .print-only-letterhead {
