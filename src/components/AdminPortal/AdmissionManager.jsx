@@ -28,10 +28,16 @@ export default function AdmissionManager() {
   }, [viewModalApp]);
 
   const handleApprove = (app) => {
+    if (app.status === 'Approved') {
+      alert('এই আবেদনটি ইতোমধ্যেই অনুমোদিত হয়েছে!');
+      return;
+    }
     if (confirm(`আপনি কি "${app.studentNameBn || app.studentNameEn}"-এর ভর্তি আবেদন অনুমোদন করে শিক্ষার্থী ডাটাবেজে রেকর্ড তৈরি করতে চান?`)) {
       const createdStudent = approveAdmissionAndCreateStudent(app);
-      setActionSuccess(`আবেদন সফলভাবে অনুমোদিত হয়েছে! ${createdStudent.nameBn}-কে শ্রেণি ${createdStudent.class}, রোল ${createdStudent.roll} ও স্টুডেন্ট আইডি ${createdStudent.studentId} বরাদ্দ করা হয়েছে।`);
-      setTimeout(() => setActionSuccess(''), 6000);
+      if (createdStudent) {
+        setActionSuccess(`আবেদন সফলভাবে অনুমোদিত হয়েছে! ${createdStudent.nameBn}-কে শ্রেণি ${createdStudent.class}, রোল ${createdStudent.roll} ও স্টুডেন্ট আইডি ${createdStudent.studentId} বরাদ্দ করা হয়েছে।`);
+        setTimeout(() => setActionSuccess(''), 6000);
+      }
     }
   };
 

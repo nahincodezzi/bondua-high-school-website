@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import SchoolLogo from '../common/SchoolLogo';
 import { useSchool } from '../../context/useSchool';
 import { 
@@ -7,7 +8,8 @@ import {
   Trash2, 
   CreditCard, 
   Printer, 
-  X
+  X,
+  AlertCircle
 } from 'lucide-react';
 
 export default function StudentManager() {
@@ -16,6 +18,7 @@ export default function StudentManager() {
   const [selectedClass, setSelectedClass] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [activeIdCardStudent, setActiveIdCardStudent] = useState(null);
+  const [formError, setFormError] = useState('');
 
   const [newStudent, setNewStudent] = useState({
     roll: '',
@@ -43,12 +46,51 @@ export default function StudentManager() {
 
   const handleAddSubmit = (e) => {
     e.preventDefault();
-    if (!newStudent.nameBn || !newStudent.roll) return;
+    setFormError('');
+
+    // 1. Roll Validation: positive integer between 1 and 9999 (Senior QA H3)
+    const rollNum = parseInt(newStudent.roll, 10);
+    if (isNaN(rollNum) || rollNum <= 0 || rollNum > 9999) {
+      setFormError('রোল নম্বর অবশ্যই ১ থেকে ৯৯৯৯-এর মধ্যে একটি ধনাত্মক সংখ্যা হতে হবে।');
+      return;
+    }
+
+    // 2. Duplicate Roll Validation: Same class cannot have duplicate roll (Senior QA H2)
+    const isDuplicate = students.some(
+      s => String(s.class) === String(newStudent.class) && Number(s.roll) === rollNum
+    );
+    if (isDuplicate) {
+      setFormError(`${newStudent.class} শ্রেণিতে রোল নম্বর ${rollNum} ইতোমধ্যেই বিদ্যমান! একই শ্রেণিতে ডুপ্লিকেট রোল বরাদ্দ করা সম্ভব নয়।`);
+      return;
+    }
+
+    // 3. Name Validation: Bangla Name must contain valid Bengali characters (Senior QA H3)
+    const banglaPattern = /^[\u0980-\u09FF\s.'"-]+$/;
+    if (!newStudent.nameBn.trim()) {
+      setFormError('শিক্ষার্থীর বাংলা নাম প্রদান করুন।');
+      return;
+    }
+    if (!banglaPattern.test(newStudent.nameBn.trim())) {
+      setFormError('বাংলা নামের ঘরে শুধুমাত্র বাংলা অক্ষর ও যতিচিহ্ন ব্যবহার করুন (ইংরেজি নয়)।');
+      return;
+    }
+
+    // 4. Phone Number Validation: Bangladeshi 11-digit mobile (013-019) (Senior QA H3)
+    const phoneClean = (newStudent.guardianPhone || '').trim();
+    const phonePattern = /^01[3-9]\d{8}$/;
+    if (!phonePattern.test(phoneClean)) {
+      setFormError('অভিভাবকের মোবাইল নম্বর সঠিক নয়। অনুগ্রহ করে ১১ ডিজিটের বৈধ নম্বর দিন (যেমন: 01712345678)।');
+      return;
+    }
+
     addStudent({
       ...newStudent,
-      roll: Number(newStudent.roll)
+      roll: rollNum,
+      guardianPhone: phoneClean
     });
+
     setShowAddModal(false);
+    setFormError('');
     setNewStudent({
       roll: '',
       nameBn: '',
@@ -65,11 +107,18 @@ export default function StudentManager() {
   };
 
   const handlePrintIdCard = () => {
+    document.body.classList.add('printing-modal');
+    const cleanup = () => {
+      document.body.classList.remove('printing-modal');
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
     window.print();
+    setTimeout(cleanup, 1200);
   };
 
   return (
-    <div className={`space-y-6 ${activeIdCardStudent ? 'no-print' : ''}`}>
+    <div className="space-y-6">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
@@ -345,10 +394,20 @@ export default function StudentManager() {
                 </div>
               </div>
 
+              {formError && (
+                <div className="p-3 bg-danger-soft text-danger rounded-xl text-xs font-semibold flex items-center gap-2 border border-danger-soft">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{formError}</span>
+                </div>
+              )}
+
               <div className="flex justify-end gap-2 pt-2 border-t">
                 <button
                   type="button"
-                  onClick={() => setShowAddModal(false)}
+                  onClick={() => {
+                    setShowAddModal(false);
+                    setFormError('');
+                  }}
                   className="px-4 py-2 bg-line text-ink rounded-lg"
                 >
                   বাতিল
@@ -365,24 +424,28 @@ export default function StudentManager() {
         </div>
       )}
 
-      {/* Student ID Card Modal (Official & Printable) */}
-      {activeIdCardStudent && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white max-w-sm w-full rounded-3xl overflow-y-auto max-h-[92vh] shadow-2xl border border-line">
+      {/* Student ID Card Modal (Official & Printable via Portal - Senior QA H1) */}
+      {typeof document !== 'undefined' && activeIdCardStudent && createPortal(
+        <div 
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 print:static print:inset-auto print:p-0 print:m-0 print:bg-transparent print:backdrop-blur-none print:block print:w-full print:h-auto"
+        >
+          <div className="bg-white max-w-sm w-full rounded-3xl overflow-y-auto max-h-[92vh] shadow-2xl border border-line print:max-w-full print:shadow-none print:border-none print:rounded-none print:m-0 print:max-h-none print:static">
             {/* Modal Controls */}
-            <div className="bg-ink text-white p-3 flex justify-between items-center text-xs no-print">
+            <div className="bg-ink text-white p-3 flex justify-between items-center text-xs no-print print:hidden">
               <span className="font-semibold">ডিজিটাল স্টুডেন্ট আইডি কার্ড</span>
               <div className="flex gap-2">
                 <button
                   onClick={handlePrintIdCard}
-                  className="bg-primary hover:bg-soft0 text-white px-2.5 py-1 rounded text-xs font-bold flex items-center gap-1"
+                  className="bg-primary hover:bg-soft text-white px-2.5 py-1 rounded text-xs font-bold flex items-center gap-1 cursor-pointer"
                 >
                   <Printer className="w-3.5 h-3.5" />
                   <span>প্রিন্ট</span>
                 </button>
                 <button
                   onClick={() => setActiveIdCardStudent(null)}
-                  className="text-muted hover:text-white"
+                  className="text-muted hover:text-white cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -390,7 +453,7 @@ export default function StudentManager() {
             </div>
 
             {/* Official ID Card Layout */}
-            <div className="p-6 bg-gradient-to-b from-deep via-deep to-deep text-white text-center space-y-4 rounded-b-3xl relative overflow-hidden" id="student-id-card">
+            <div className="p-6 bg-gradient-to-b from-deep via-deep to-deep text-white text-center space-y-4 rounded-b-3xl relative overflow-hidden print:p-4 print:rounded-none print:block print:w-[320px] print:mx-auto" id="student-id-card">
               <div className="absolute top-0 left-0 right-0 h-2 bg-accent"></div>
 
               {/* School Emblem & Name */}
@@ -461,7 +524,8 @@ export default function StudentManager() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.getElementById('root') || document.body
       )}
     </div>
   );

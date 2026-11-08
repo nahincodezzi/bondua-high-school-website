@@ -1025,20 +1025,37 @@ export function SchoolProvider({ children }) {
   const updateAdmissionStatus = (id, status) => {
     setAdmissions(prev => prev.map(a => {
       if (a.id === id || a.trackingId === id) {
-        if (supabase) {
-          supabase.from('admissions').update({ status }).or(`id.eq.${id},tracking_id.eq.${id}`).then(({ error }) => {
-            if (error) console.warn('Supabase update admission warning:', error.message);
-          });
-        }
         return { ...a, status };
       }
       return a;
     }));
+
+    if (supabase) {
+      // Direct updates with reliable fallback (Senior QA H4)
+      supabase.from('admissions').update({ status }).eq('id', id).then(({ error }) => {
+        if (error) {
+          supabase.from('admissions').update({ status }).eq('tracking_id', id).catch(e => console.warn(e));
+        }
+      }).catch(e => console.warn(e));
+    }
   };
 
   const approveAdmissionAndCreateStudent = (admissionApp) => {
-    // 1. Mark status as Approved
-    updateAdmissionStatus(admissionApp.id || admissionApp.trackingId, 'Approved');
+    // 1. Prevent double approval race conditions (Senior QA H4)
+    if (admissionApp.status === 'Approved') {
+      const alreadyCreated = students.find(s => 
+        (s.nameBn === admissionApp.studentNameBn || s.nameBn === admissionApp.applicantNameBn) && 
+        String(s.class) === String(admissionApp.applyingClass || '6')
+      );
+      if (alreadyCreated) return alreadyCreated;
+    }
+
+    // Mark status as Approved in local state and cloud
+    const targetId = admissionApp.id || admissionApp.trackingId;
+    updateAdmissionStatus(targetId, 'Approved');
+    if (admissionApp.trackingId && admissionApp.trackingId !== targetId) {
+      updateAdmissionStatus(admissionApp.trackingId, 'Approved');
+    }
 
     // 2. Find next roll in target class
     const targetClass = String(admissionApp.applyingClass || '6');
@@ -1079,22 +1096,19 @@ export function SchoolProvider({ children }) {
           const base = {
             id: createdStudent.id,
             roll: String(createdStudent.roll),
+            student_id: createdStudent.studentId,
             name_bn: createdStudent.nameBn,
             name_en: createdStudent.nameEn,
-            class: String(createdStudent.class),
+            class: createdStudent.class,
             section: createdStudent.section,
-            shift: 'দিবা',
-            gender: createdStudent.gender,
-            father_name: createdStudent.fatherName,
-            guardian_phone: createdStudent.guardianPhone,
-            status: 'নিয়মিত'
+            guardian_name: createdStudent.guardianName,
+            guardian_phone: createdStudent.guardianPhone
           };
-          supabase.from('students').insert(base).then(({ error: err2 }) => {
-            if (err2) console.warn('Supabase fallback insert student warning:', err2.message);
-          });
+          supabase.from('students').insert(base).catch(err => console.warn('Supabase insert student fallback error:', err));
         }
       });
     }
+
     return createdStudent;
   };
 
@@ -1147,6 +1161,24 @@ export function SchoolProvider({ children }) {
       });
     }
     return newFee;
+  };
+
+  const voidFeeReceipt = (feeId, reason = 'ভুল এন্ট্রি / বাতিল') => {
+    setFees(prev => prev.map(f => f.id === feeId ? { ...f, status: 'Voided', voidReason: reason } : f));
+    if (supabase) {
+      supabase.from('fee_receipts').update({ status: 'Voided' }).eq('id', feeId).then(({ error }) => {
+        if (error) console.warn('Supabase void fee warning:', error.message);
+      });
+    }
+  };
+
+  const deleteFeeReceipt = (feeId) => {
+    setFees(prev => prev.filter(f => f.id !== feeId));
+    if (supabase) {
+      supabase.from('fee_receipts').delete().eq('id', feeId).then(({ error }) => {
+        if (error) console.warn('Supabase delete fee warning:', error.message);
+      });
+    }
   };
 
   const submitContactMessage = (msg) => {
@@ -1352,6 +1384,8 @@ export function SchoolProvider({ children }) {
         approveAdmissionAndCreateStudent,
         fees,
         addFee,
+        voidFeeReceipt,
+        deleteFeeReceipt,
         contactMessages,
         submitContactMessage,
         routines,

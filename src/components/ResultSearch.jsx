@@ -68,7 +68,14 @@ export default function ResultSearch() {
   };
 
   const handlePrint = () => {
+    document.body.classList.add('printing-marksheet');
+    const cleanup = () => {
+      document.body.classList.remove('printing-marksheet');
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
     window.print();
+    setTimeout(cleanup, 1200);
   };
 
   const handleReset = () => {
@@ -212,9 +219,9 @@ export default function ResultSearch() {
 
         {/* Result Marksheet Display */}
         {searchedResult ? (
-          <div className="bg-white rounded-2xl shadow-md border border-line overflow-hidden relative print:rounded-none print:shadow-none print:border-none print:m-0 print:p-0" id="official-marksheet">
+          <div className="bg-white rounded-2xl shadow-md border border-line overflow-hidden relative" id="official-marksheet-screen">
             {/* Top Toolbar for Result */}
-            <div className="bg-deep text-white px-6 py-3.5 flex items-center justify-between no-print print:hidden border-b border-primary">
+            <div className="bg-deep text-white px-6 py-3.5 flex items-center justify-between no-print border-b border-primary">
               <div className="flex items-center gap-2 text-xs font-semibold">
                 <FileCheck className="w-4 h-4 text-accent" />
                 <span className="text-white font-bangla">{lang === 'bn' ? 'অনলাইন ট্রান্সক্রিপ্ট ও গ্রেড শিট' : 'Academic Grade Sheet'}</span>

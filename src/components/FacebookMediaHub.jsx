@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 
 export default function FacebookMediaHub() {
-  const { lang, schoolInfo, gallery, addGalleryItem, setActiveTab } = useSchool();
+  const { lang, schoolInfo, gallery, addGalleryItem, setActiveTab, authUser } = useSchool();
 
   const [imageUrl, setImageUrl] = useState('');
   const [titleBn, setTitleBn] = useState('');
@@ -46,6 +46,10 @@ export default function FacebookMediaHub() {
 
   const handleImportSubmit = (e) => {
     e.preventDefault();
+    if (!authUser) {
+      alert(lang === 'bn' ? 'শুধুমাত্র অনুমোদিত শিক্ষক/কর্মকর্তা গ্যালারিতে ছবি যুক্ত করতে পারবেন। অনুগ্রহ করে লগইন করুন।' : 'Only authorized staff can import gallery photos. Please login.');
+      return;
+    }
     if (!imageUrl.trim()) return;
 
     addGalleryItem({
@@ -137,132 +141,156 @@ export default function FacebookMediaHub() {
           </div>
         </div>
 
-        {/* Import Media Form */}
-        <div className="glass-card rounded-3xl p-6 sm:p-8 border border-line shadow-xs mb-12">
-          <div className="max-w-2xl mb-6">
-            <div className="inline-flex items-center gap-2 text-primary text-xs font-bold font-mono mb-1">
-              <UploadCloud className="w-4 h-4 text-primary" />
-              <span>COMMUNITY MEDIA IMPORTER</span>
+        {/* Import Media Form - Restricted to Authenticated Staff Only (Senior QA C1) */}
+        {authUser ? (
+          <div className="glass-card rounded-3xl p-6 sm:p-8 border border-line shadow-xs mb-12">
+            <div className="max-w-2xl mb-6">
+              <div className="inline-flex items-center gap-2 text-primary text-xs font-bold font-mono mb-1">
+                <UploadCloud className="w-4 h-4 text-primary" />
+                <span>COMMUNITY MEDIA IMPORTER (STAFF ONLY)</span>
+              </div>
+              <h3 className="text-xl font-bold font-bangla text-ink">
+                ফেসবুক গ্রুপ থেকে যেকোনো ছবি ওয়েবসাইটে যুক্ত করুন
+              </h3>
+              <p className="text-xs text-muted font-bangla mt-1">
+                ফেসবুকে পোস্ট করা ছবির লিংক বা যেকোনো ইমেজ ইউআরএল (Image URL) দিয়ে মুহূর্তেই ওয়েবসাইট গ্যালারিতে যোগ করুন।
+              </p>
             </div>
-            <h3 className="text-xl font-bold font-bangla text-ink">
-              ফেসবুক গ্রুপ থেকে যেকোনো ছবি ওয়েবসাইটে যুক্ত করুন
-            </h3>
-            <p className="text-xs text-muted font-bangla mt-1">
-              ফেসবুকে পোস্ট করা ছবির লিংক বা যেকোনো ইমেজ ইউআরএল (Image URL) দিয়ে মুহূর্তেই ওয়েবসাইট গ্যালারিতে যোগ করুন।
-            </p>
-          </div>
 
-          {/* Preset Buttons */}
-          <div className="mb-6">
-            <span className="text-xs font-bold text-muted block mb-2 font-bangla flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-accent" />
-              <span>অথবা নিচের নমুনা অ্যালবাম থেকে এক ক্লিকে লোড করুন:</span>
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {samplePresets.map((preset, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => handleLoadPreset(preset)}
-                  className="bg-bg hover:bg-line text-ink px-3 py-1.5 rounded-full text-xs font-bangla transition border border-line flex items-center gap-1.5 cursor-pointer"
-                >
-                  <Plus className="w-3 h-3 text-primary" />
-                  <span>{preset.titleBn}</span>
-                </button>
-              ))}
+            {/* Preset Buttons */}
+            <div className="mb-6">
+              <span className="text-xs font-bold text-muted block mb-2 font-bangla flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-accent" />
+                <span>অথবা নিচের নমুনা অ্যালবাম থেকে এক ক্লিকে লোড করুন:</span>
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {samplePresets.map((preset, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => handleLoadPreset(preset)}
+                    className="bg-bg hover:bg-line text-ink px-3 py-1.5 rounded-full text-xs font-bangla transition border border-line flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Plus className="w-3 h-3 text-primary" />
+                    <span>{preset.titleBn}</span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          <form onSubmit={handleImportSubmit} className="space-y-4 text-xs font-bangla">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block font-bold text-ink mb-1.5">
-                  ছবির ডিরেক্ট লিংক (Image URL) *
-                </label>
-                <input
-                  type="url"
-                  required
-                  placeholder="https://images.unsplash.com/... or FB photo URL"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  className="w-full rounded-xl p-3 border border-line bg-white text-ink placeholder-slate-400 font-mono focus:ring-2 focus:ring-primary"
-                />
+            <form onSubmit={handleImportSubmit} className="space-y-4 text-xs font-bangla">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    ছবির ডিরেক্ট লিংক (Image URL) *
+                  </label>
+                  <input
+                    type="url"
+                    required
+                    placeholder="https://images.unsplash.com/... or FB photo URL"
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    className="w-full rounded-xl p-3 border border-line bg-white text-ink placeholder-slate-400 font-mono focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    ক্যাটাগরি নির্বাচন করুন
+                  </label>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full rounded-xl p-3 border border-line bg-white text-ink focus:ring-2 focus:ring-primary"
+                  >
+                    <option value="campus">ক্যাম্পাস ও প্রাঙ্গণ (Campus)</option>
+                    <option value="sports">ক্রীড়া ও খেলাধুলা (Sports)</option>
+                    <option value="cultural">সাংস্কৃতিক ও জাতীয় দিবস (Events)</option>
+                    <option value="academic">ক্লাস ও বিজ্ঞানাগার (Academic)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    ছবির শিরোনাম (বাংলায়)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="যেমন: আন্তঃশ্রেণি বিজ্ঞান অলিম্পিয়াড ২০২৬"
+                    value={titleBn}
+                    onChange={(e) => setTitleBn(e.target.value)}
+                    className="w-full rounded-xl p-3 border border-line bg-white text-ink placeholder-slate-400 focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    ছবির শিরোনাম (ইংরেজিতে)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Science Olympiad 2026"
+                    value={titleEn}
+                    onChange={(e) => setTitleEn(e.target.value)}
+                    className="w-full rounded-xl p-3 border border-line bg-white text-ink placeholder-slate-400 focus:ring-2 focus:ring-primary"
+                  />
+                </div>
               </div>
 
               <div>
                 <label className="block font-bold text-ink mb-1.5">
-                  ক্যাটাগরি নির্বাচন করুন
+                  সংক্ষিপ্ত বিবরণ
                 </label>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full rounded-xl p-3 border border-line bg-white text-ink focus:ring-2 focus:ring-primary"
-                >
-                  <option value="campus">ক্যাম্পাস ও প্রাঙ্গণ (Campus)</option>
-                  <option value="sports">ক্রীড়া ও খেলাধুলা (Sports)</option>
-                  <option value="cultural">সাংস্কৃতিক ও জাতীয় দিবস (Events)</option>
-                  <option value="academic">ক্লাস ও বিজ্ঞানাগার (Academic)</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block font-bold text-ink mb-1.5">
-                  ছবির শিরোনাম (বাংলায়)
-                </label>
-                <input
-                  type="text"
-                  placeholder="যেমন: আন্তঃশ্রেণি বিজ্ঞান অলিম্পিয়াড ২০২৬"
-                  value={titleBn}
-                  onChange={(e) => setTitleBn(e.target.value)}
+                <textarea
+                  rows="2"
+                  placeholder="ছবি সম্পর্কে বিস্তারিত তথ্য..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                   className="w-full rounded-xl p-3 border border-line bg-white text-ink placeholder-slate-400 focus:ring-2 focus:ring-primary"
-                />
+                ></textarea>
               </div>
 
-              <div>
-                <label className="block font-bold text-ink mb-1.5">
-                  ছবির শিরোনাম (ইংরেজিতে)
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Science Olympiad 2026"
-                  value={titleEn}
-                  onChange={(e) => setTitleEn(e.target.value)}
-                  className="w-full rounded-xl p-3 border border-line bg-white text-ink placeholder-slate-400 focus:ring-2 focus:ring-primary"
-                />
-              </div>
+              {successMsg && (
+                <div className="p-3.5 bg-soft text-primary rounded-xl text-xs font-semibold flex items-center gap-2 border border-soft-border">
+                  <CheckCircle className="w-4 h-4 text-primary shrink-0" />
+                  <span>ছবিটি সফলভাবে প্রধান ওয়েবসাইট গ্যালারিতে যুক্ত করা হয়েছে!</span>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="btn-gold py-3 px-8 rounded-full text-xs font-bold shadow-xs flex items-center gap-2 cursor-pointer"
+              >
+                <UploadCloud className="w-4 h-4 text-ink" />
+                <span>গ্যালারিতে যুক্ত করুন (Import Photo)</span>
+              </button>
+            </form>
+          </div>
+        ) : (
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-line shadow-xs mb-12 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="space-y-1.5 text-center sm:text-left">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                🔒 {lang === 'bn' ? 'শুধুমাত্র অনুমোদিত শিক্ষক/কর্মকর্তা' : 'Authorized Staff Only'}
+              </span>
+              <h3 className="text-lg font-bold font-bangla text-ink">
+                {lang === 'bn' ? 'গ্যালারিতে ছবি যোগ করার অনুমতি সংরক্ষিত' : 'Gallery Upload Restricted'}
+              </h3>
+              <p className="text-xs text-muted font-bangla max-w-xl">
+                {lang === 'bn' 
+                  ? 'নিরাপত্তা ও কনটেন্ট সততার স্বার্থে বিদ্যালয়ের ওয়েবসাইটে ছবি আপলোড করার সুযোগ শুধুমাত্র লগইন করা শিক্ষক ও প্রশাসনিক কর্মকর্তাদের জন্য উন্মুক্ত।' 
+                  : 'To preserve content integrity and security, media uploads are restricted to authenticated teachers and administrators.'}
+              </p>
             </div>
-
-            <div>
-              <label className="block font-bold text-ink mb-1.5">
-                সংক্ষিপ্ত বিবরণ
-              </label>
-              <textarea
-                rows="2"
-                placeholder="ছবি সম্পর্কে বিস্তারিত তথ্য..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full rounded-xl p-3 border border-line bg-white text-ink placeholder-slate-400 focus:ring-2 focus:ring-primary"
-              ></textarea>
-            </div>
-
-            {successMsg && (
-              <div className="p-3.5 bg-soft text-primary rounded-xl text-xs font-semibold flex items-center gap-2 border border-soft-border">
-                <CheckCircle className="w-4 h-4 text-primary shrink-0" />
-                <span>ছবিটি সফলভাবে প্রধান ওয়েবসাইট গ্যালারিতে যুক্ত করা হয়েছে!</span>
-              </div>
-            )}
-
             <button
-              type="submit"
-              className="btn-gold py-3 px-8 rounded-full text-xs font-bold shadow-xs flex items-center gap-2 cursor-pointer"
+              onClick={() => setActiveTab('admin')}
+              className="btn-primary shrink-0 px-6 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2"
             >
-              <UploadCloud className="w-4 h-4 text-ink" />
-              <span>গ্যালারিতে যুক্ত করুন (Import Photo)</span>
+              <span>{lang === 'bn' ? 'শিক্ষক/স্টাফ লগইন' : 'Staff Login'}</span>
             </button>
-          </form>
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );

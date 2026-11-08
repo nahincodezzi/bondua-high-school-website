@@ -256,7 +256,8 @@ export const mappers = {
       amount: Number(row.amount) || 0,
       paidDate: row.paid_date ? row.paid_date.split('T')[0] : '',
       method: row.method || 'Cash',
-      status: 'Paid',
+      status: row.status || 'Paid',
+      voidReason: row.void_reason || null,
     }),
     toDb: (f) => ({
       id: String(f.id),
@@ -268,6 +269,9 @@ export const mappers = {
       fee_type: f.feeType || 'বেতন',
       amount: Number(f.amount) || 0,
       paid_date: f.paidDate || new Date().toISOString().split('T')[0],
+      method: f.method || 'Cash',
+      status: f.status || 'Paid',
+      void_reason: f.voidReason || null,
     }),
   },
 

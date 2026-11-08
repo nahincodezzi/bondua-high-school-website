@@ -426,26 +426,46 @@ section, [id] {
     max-width: 100% !important;
   }
 
-  /* When printing any modal, hide everything except the modal dialog to guarantee Page 1 is NOT blank */
-  body:has(#official-notice-modal) #root,
-  body:has(#official-money-receipt) #root,
-  body:has(#student-id-card) #root,
+  /* When printing any modal, hide the entire #root and all body siblings EXCEPT the modal dialog */
+  /* This guarantees Page 1 is NOT blank and the modal content prints starting at top of Page 1 */
   body.printing-modal #root,
-  body:has(#official-notice-modal) > *:not(div[role="dialog"]),
-  body:has(#official-money-receipt) > *:not(div[role="dialog"]),
   body.printing-modal > *:not(div[role="dialog"]) {
     display: none !important;
     height: 0 !important;
     min-height: 0 !important;
     max-height: 0 !important;
     overflow: hidden !important;
-    position: absolute !important;
+    position: fixed !important;
     left: -99999px !important;
     top: -99999px !important;
+    visibility: hidden !important;
+  }
+
+  /* ── Result Marksheet: use visibility trick to show only marksheet ── */
+  /* body.printing-marksheet makes #root invisible but #official-marksheet visible via child override */
+  body.printing-marksheet {
+    visibility: hidden !important;
+  }
+  body.printing-marksheet #official-marksheet-screen,
+  body.printing-marksheet #official-marksheet-screen * {
+    visibility: visible !important;
+  }
+  body.printing-marksheet #official-marksheet-screen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    z-index: 9999 !important;
+    background: white !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
   }
 
   /* Reset modal overlay container so it starts at the top of Page 1 */
-  div[role="dialog"] {
+  body.printing-modal div[role="dialog"] {
     position: static !important;
     inset: auto !important;
     top: 0 !important;
@@ -463,11 +483,11 @@ section, [id] {
     break-before: avoid !important;
   }
 
-  div[role="dialog"] > div[aria-hidden="true"] {
+  body.printing-modal div[role="dialog"] > div[aria-hidden="true"] {
     display: none !important;
   }
 
-  div[role="dialog"] > div {
+  body.printing-modal div[role="dialog"] > div {
     max-width: 100% !important;
     box-shadow: none !important;
     border: none !important;

@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 
 export default function FeeManager() {
-  const { fees, addFee, schoolInfo, students, lang, teachers, systemUsers } = useSchool();
+  const { fees, addFee, voidFeeReceipt, schoolInfo, students, lang, teachers, systemUsers } = useSchool();
   const signatories = getSignatories(schoolInfo, teachers, systemUsers);
   const [studentRoll, setStudentRoll] = useState('');
   const [targetClass, setTargetClass] = useState('10');
@@ -55,11 +55,23 @@ export default function FeeManager() {
       return;
     }
 
-    // Amount Validation > 0 (A5)
+    // Amount Validation > 0 & Maximum Cap (Senior QA H6)
     const numAmount = Number(amount);
     if (isNaN(numAmount) || numAmount <= 0) {
       setErrorMessage('ফি আদায়ের পরিমাণ অবশ্যই শূন্যের চেয়ে বেশি (ধনাত্মক সংখ্যা) হতে হবে।');
       return;
+    }
+
+    const MAX_FEE_LIMIT = 50000; // সর্বোচ্চ ৫০,০০০ টাকা
+    if (numAmount > MAX_FEE_LIMIT) {
+      setErrorMessage(`একক রসিদে ফি আদায়ের পরিমাণ সর্বোচ্চ ৳${toBanglaNumerals(MAX_FEE_LIMIT.toLocaleString())} হতে পারে। অনুগ্রহ করে সঠিক অঙ্ক লিখুন।`);
+      return;
+    }
+
+    if (numAmount >= 10000) {
+      if (!confirm(`আপনি কি নিশ্চিত যে ৳${numAmount.toLocaleString()}-এর বড় অঙ্কের ফি রসিদ তৈরি করতে চান?`)) {
+        return;
+      }
     }
 
     const createdReceipt = addFee({
@@ -74,6 +86,16 @@ export default function FeeManager() {
     setActiveReceipt(createdReceipt);
     setStudentRoll('');
     setAmount('500');
+  };
+
+  const handleVoidReceipt = (fee) => {
+    if (fee.status === 'Voided') {
+      alert('এই রসিদটি ইতোমধ্যে বাতিল করা হয়েছে।');
+      return;
+    }
+    if (confirm(`আপনি কি নিশ্চিত যে রসিদ নং "${fee.receiptNo}" (৳${fee.amount}) বাতিল করতে চান? এটি মোট হিসাব থেকে বাদ দেওয়া হবে।`)) {
+      voidFeeReceipt(fee.id, 'ভুল এন্ট্রি হেতু বাতিল');
+    }
   };
 
   const handlePrint = () => {
@@ -118,6 +140,11 @@ export default function FeeManager() {
 
         {/* Printable Receipt Paper */}
         <div className="p-6 sm:p-8 bg-white space-y-4 font-bangla print:p-4 print:space-y-3" id="official-money-receipt">
+          {activeReceipt.status === 'Voided' && (
+            <div className="bg-danger-soft text-danger border-2 border-danger font-bold text-center py-1.5 px-3 rounded-lg text-xs tracking-wider uppercase">
+              ⚠️ বাতিলকৃত রসিদ (VOID / CANCELLED) — হিসাবভুক্ত নয়
+            </div>
+          )}
           <div className="text-center border-b-2 border-deep pb-3 print:pb-2">
             {/* Dynamic School Logo */}
             <div className="flex justify-center mb-1.5">
@@ -345,7 +372,7 @@ export default function FeeManager() {
               <p className="text-[11px] text-muted">সর্বশেষ সংরক্ষিত ফি ট্রানজেকশন</p>
             </div>
             <span className="font-mono font-bold text-xs bg-soft text-deep px-3 py-1 rounded-full border border-soft-border">
-              মোট: ৳{toBanglaNumerals(fees.reduce((sum, f) => sum + Number(f.amount || 0), 0).toLocaleString())}
+              মোট কার্যকর আদায়: ৳{toBanglaNumerals(fees.filter(f => f.status !== 'Voided').reduce((sum, f) => sum + Number(f.amount || 0), 0).toLocaleString())}
             </span>
           </div>
 
@@ -358,27 +385,54 @@ export default function FeeManager() {
                   <th className="py-3 px-3">শ্রেণি ও রোল</th>
                   <th className="py-3 px-3">ফি এর ধরণ</th>
                   <th className="py-3 px-3 text-right">পরিমাণ</th>
-                  <th className="py-3 px-3 text-center">রশিদ</th>
+                  <th className="py-3 px-3 text-center">কার্যক্রম</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
-                {fees.map((f) => (
-                  <tr key={f.id} className="hover:bg-bg transition-colors">
-                    <td className="py-3 px-3 font-mono font-bold text-primary">{f.receiptNo}</td>
-                    <td className="py-3 px-3 font-semibold text-ink">{f.studentName}</td>
-                    <td className="py-3 px-3 text-muted">{f.class} শ্রেণি • রোল: {f.studentRoll}</td>
-                    <td className="py-3 px-3 text-ink">{f.feeType}</td>
-                    <td className="py-3 px-3 text-right font-mono font-bold text-deep">৳{f.amount}</td>
-                    <td className="py-3 px-3 text-center">
-                      <button
-                        onClick={() => setActiveReceipt(f)}
-                        className="bg-soft hover:bg-soft text-deep px-2.5 py-1 rounded text-[11px] font-semibold transition cursor-pointer border border-soft-border"
-                      >
-                        রশিদ দেখুন
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {fees.map((f) => {
+                  const isVoided = f.status === 'Voided';
+                  return (
+                    <tr key={f.id} className={`hover:bg-bg transition-colors ${isVoided ? 'opacity-60 bg-slate-50' : ''}`}>
+                      <td className="py-3 px-3 font-mono font-bold">
+                        <span className={isVoided ? 'line-through text-muted' : 'text-primary'}>
+                          {f.receiptNo}
+                        </span>
+                        {isVoided && (
+                          <span className="ml-1.5 px-1.5 py-0.5 rounded text-[9px] font-bold bg-danger-soft text-danger uppercase">
+                            বাতিল
+                          </span>
+                        )}
+                      </td>
+                      <td className={`py-3 px-3 font-semibold ${isVoided ? 'line-through text-muted' : 'text-ink'}`}>
+                        {f.studentName}
+                      </td>
+                      <td className="py-3 px-3 text-muted">{f.class} শ্রেণি • রোল: {f.studentRoll}</td>
+                      <td className="py-3 px-3 text-ink">{f.feeType}</td>
+                      <td className={`py-3 px-3 text-right font-mono font-bold ${isVoided ? 'line-through text-muted' : 'text-deep'}`}>
+                        ৳{f.amount}
+                      </td>
+                      <td className="py-3 px-3 text-center">
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button
+                            onClick={() => setActiveReceipt(f)}
+                            className="bg-soft hover:bg-soft text-deep px-2.5 py-1 rounded text-[11px] font-semibold transition cursor-pointer border border-soft-border"
+                          >
+                            রশিদ
+                          </button>
+                          {!isVoided && (
+                            <button
+                              onClick={() => handleVoidReceipt(f)}
+                              className="px-2 py-1 rounded text-[10px] font-bold text-danger hover:bg-danger-soft transition cursor-pointer border border-danger-soft"
+                              title="ভুল রসিদ বাতিল করুন"
+                            >
+                              বাতিল
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -386,7 +440,7 @@ export default function FeeManager() {
       </div>
 
       {/* Portal-Rendered Receipt Modal */}
-      {typeof document !== 'undefined' && receiptModal && createPortal(receiptModal, document.body)}
+      {typeof document !== 'undefined' && receiptModal && createPortal(receiptModal, document.getElementById('root') || document.body)}
     </div>
   );
 }

@@ -469,7 +469,7 @@ export default function NoticeBoard() {
         </div>
 
         {/* Portal-Rendered Notice Details Modal (C7, M6) */}
-        {typeof document !== 'undefined' && modalElement && createPortal(modalElement, document.body)}
+        {typeof document !== 'undefined' && modalElement && createPortal(modalElement, document.getElementById('root') || document.body)}
       </div>
     </section>
   );
