@@ -539,8 +539,20 @@ export function SchoolProvider({ children }) {
 
         if (cloud.notices && cloud.notices.length > 0) setNotices(cloud.notices);
         if (cloud.teachers && cloud.teachers.length > 0) setTeachers(cloud.teachers);
-        if (cloud.students && cloud.students.length > 0) setStudents(cloud.students);
-        if (cloud.admissions && cloud.admissions.length > 0) setAdmissions(cloud.admissions);
+        if (cloud.students && cloud.students.length > 0) {
+          const cleanStudents = cloud.students.filter(s => {
+            const name = (s.nameBn || s.nameEn || '').trim().toLowerCase();
+            return name !== 'ক' && name !== 'nn' && name !== 'hjhbbbb';
+          });
+          setStudents(cleanStudents);
+        }
+        if (cloud.admissions && cloud.admissions.length > 0) {
+          const cleanAdmissions = cloud.admissions.filter(a => {
+            const name = (a.studentNameBn || a.studentNameEn || '').trim().toLowerCase();
+            return name !== 'ক' && name !== 'nn' && name !== 'hjhbbbb';
+          });
+          setAdmissions(cleanAdmissions);
+        }
         if (cloud.results && cloud.results.length > 0) setResults(cloud.results);
         if (cloud.fees && cloud.fees.length > 0) setFees(cloud.fees);
         if (cloud.heroSlides && cloud.heroSlides.length > 0) {
@@ -750,7 +762,7 @@ export function SchoolProvider({ children }) {
 
     let passwordMatches = false;
     if (user) {
-      passwordMatches = await verifyPassword(password, user.passwordHash || user.password);
+      passwordMatches = await verifyPassword(password, user.passwordHash || user.password, cleanUser);
     }
 
     if (!user || !passwordMatches) {
@@ -860,10 +872,10 @@ export function SchoolProvider({ children }) {
     return Array.isArray(authUser.permissions) && authUser.permissions.includes(moduleKey);
   };
 
-  // User Management Actions (Superadmin Controlled & Cloud Synced with SHA-256 Hashing)
+  // User Management Actions (Superadmin Controlled & Cloud Synced with Salted Hashing)
   const addUser = async (newUser) => {
     const rawPass = newUser.password || 'admin2026';
-    const passHash = await hashPassword(rawPass);
+    const passHash = await hashPassword(rawPass, newUser.username);
     const created = {
       ...newUser,
       id: `usr-${Date.now()}`,
@@ -886,7 +898,8 @@ export function SchoolProvider({ children }) {
     let data = isIdFirst ? optionalData : updatedUserOrId;
 
     if (data.password) {
-      const passHash = await hashPassword(data.password);
+      const targetUser = systemUsers.find(u => u.id === targetId);
+      const passHash = await hashPassword(data.password, targetUser?.username);
       data = { ...data, passwordHash: passHash };
       delete data.password;
     }

@@ -33,3 +33,4 @@ export function resolveLogo(schoolInfo, theme = 'emerald', surface = 'dark') {
   // 6. Null triggers generic dynamic monogram
   return null;
 }
+

@@ -329,22 +329,20 @@ export default function Header() {
                 </button>
                 <button
                   onClick={logout}
-                  className={`rounded-full bg-white/10 hover:bg-danger-soft hover:text-danger border border-white/15 text-white/90 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-accent ${
-                    isScrolled ? 'w-8.5 h-8.5 xl:w-9 xl:h-9' : 'w-8.5 h-8.5 sm:w-9 sm:h-9 xl:w-10 xl:h-10'
-                  }`}
+                  className="min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-danger-soft hover:text-danger border border-white/15 text-white/90 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-accent"
                   title="লগআউট (Logout)"
                   aria-label="লগআউট"
                 >
-                  <LogOut className="w-3.5 h-3.5 text-white/80" />
+                  <LogOut className="w-4 h-4 text-white/80" />
                 </button>
               </div>
             ) : (
               <button
                 onClick={() => setAuthModalOpen(true)}
-                className={`bg-accent hover:bg-accent-hover text-accent-ink font-bold rounded-full transition-all duration-300 flex items-center gap-1.5 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
+                className={`min-h-[44px] bg-accent hover:bg-accent-hover text-accent-ink font-bold rounded-full transition-all duration-300 flex items-center gap-1.5 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
                   isScrolled 
-                    ? 'px-3 sm:px-3.5 xl:px-4 py-1.5 text-xs' 
-                    : 'px-3 sm:px-4 xl:px-5 py-1.5 xl:py-2 text-xs sm:text-sm'
+                    ? 'px-3 sm:px-3.5 xl:px-4 py-2 text-xs' 
+                    : 'px-3 sm:px-4 xl:px-5 py-2 xl:py-2.5 text-xs sm:text-sm'
                 }`}
                 title="School Portal Login"
               >
@@ -352,24 +350,20 @@ export default function Header() {
               </button>
             )}
 
-            {/* Language Switcher - Round Icon Button */}
+            {/* Language Switcher - Round Icon Button (Min 44px for accessibility BUG-L3) */}
             <button
               onClick={toggleLanguage}
-              className={`rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
-                isScrolled ? 'w-8.5 h-8.5 xl:w-9 xl:h-9' : 'w-8.5 h-8.5 sm:w-9 sm:h-9 xl:w-10 xl:h-10'
-              }`}
+              className="min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
               title="ভাষা পরিবর্তন (Toggle Language)"
               aria-label="ভাষা পরিবর্তন (Toggle Language)"
             >
-              <Globe className="w-3.5 h-3.5 xl:w-4 xl:h-4 text-white" />
+              <Globe className="w-4 h-4 text-white" />
             </button>
 
             {/* Theme Toggle Button - Round Icon Button with Palette & Preview Dot */}
             <button
               onClick={toggleTheme}
-              className={`rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
-                isScrolled ? 'w-8.5 h-8.5 xl:w-9 xl:h-9' : 'w-8.5 h-8.5 sm:w-9 sm:h-9 xl:w-10 xl:h-10'
-              }`}
+              className="min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
               title={
                 theme === 'emerald'
                   ? (lang === 'bn' ? 'ইন্ডিগো থিম' : 'Switch to Indigo theme')
@@ -377,9 +371,9 @@ export default function Header() {
               }
               aria-label="রঙের থিম পরিবর্তন করুন"
             >
-              <Palette className="w-3.5 h-3.5 xl:w-4 xl:h-4 text-white" />
+              <Palette className="w-4 h-4 text-white" />
               <span
-                className={`absolute top-1.5 right-1.5 w-2 h-2 rounded-full ring-1 ring-white/60 ${
+                className={`absolute top-2 right-2 w-2 h-2 rounded-full ring-1 ring-white/60 ${
                   theme === 'emerald' ? 'bg-[#FACC15]' : 'bg-[#E8B931]'
                 }`}
                 aria-hidden="true"
@@ -392,28 +386,24 @@ export default function Header() {
                 setHasUnreadNotice(false);
                 handleNavClick('notices');
               }}
-              className={`rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
-                isScrolled ? 'w-8.5 h-8.5 xl:w-9 xl:h-9' : 'w-8.5 h-8.5 sm:w-9 sm:h-9 xl:w-10 xl:h-10'
-              }`}
+              className="min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
               title="নোটিফিকেশন (Notification)"
               aria-label="নোটিফিকেশন (Notification)"
             >
-              <Bell className="w-3.5 h-3.5 xl:w-4 xl:h-4 text-white" />
+              <Bell className="w-4 h-4 text-white" />
               {hasUnreadNotice && (
-                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-accent ring-2 ring-deep"></span>
+                <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-accent ring-2 ring-deep"></span>
               )}
             </button>
 
-            {/* Mobile Hamburger Menu Button */}
+            {/* Mobile Hamburger Menu Button (Min 44px for accessibility BUG-L3) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`lg:hidden rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 ${
-                isScrolled ? 'w-8.5 h-8.5' : 'w-9 h-9 sm:w-10 sm:h-10'
-              }`}
+              className="min-w-[44px] min-h-[44px] lg:hidden rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95"
               aria-label="মেনু খুলুন / বন্ধ করুন"
               aria-expanded={mobileMenuOpen}
             >
-              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              {mobileMenuOpen ? <X className="w-4.5 h-4.5" /> : <Menu className="w-4.5 h-4.5" />}
             </button>
           </div>
         </nav>

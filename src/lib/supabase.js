@@ -402,50 +402,31 @@ export async function fetchAllCloudData() {
       supabase.from('fee_receipts').select('*').order('paid_date', { ascending: false }),
       supabase.from('hero_slides').select('*').order('order', { ascending: true }),
       supabase.from('gallery').select('*'),
-      supabase.from('school_info').select('*').eq('id', 'main').single(),
+      supabase.from('school_info').select('*').eq('id', 'main').maybeSingle(),
     ]);
 
-    // Optional tables (if created by migration)
+    // Contact messages (stored in school_info 'contact_messages' document to prevent 404 BUG-M1)
     let contactMessages = null;
     try {
-      const contactsRes = await supabase.from('contact_messages').select('*').order('created_at', { ascending: false });
-      if (!contactsRes.error && contactsRes.data) {
-        contactMessages = contactsRes.data.map(mappers.contact.fromDb);
+      const contactDoc = await supabase.from('school_info').select('*').eq('id', 'contact_messages').maybeSingle();
+      if (contactDoc.data?.data && Array.isArray(contactDoc.data.data)) {
+        contactMessages = contactDoc.data.data;
       }
     } catch {}
 
-    // Fallback for contactMessages from school_info if dedicated table not created yet
-    if (!contactMessages) {
-      try {
-        const contactDoc = await supabase.from('school_info').select('*').eq('id', 'contact_messages').single();
-        if (contactDoc.data?.data && Array.isArray(contactDoc.data.data)) {
-          contactMessages = contactDoc.data.data;
-        }
-      } catch {}
-    }
-
+    // Videos (stored in school_info 'videos' document to prevent 404 BUG-M1)
     let videos = null;
     try {
-      const videosRes = await supabase.from('videos').select('*').order('created_at', { ascending: true });
-      if (!videosRes.error && videosRes.data && videosRes.data.length > 0) {
-        videos = videosRes.data.map(mappers.video.fromDb);
+      const videosDoc = await supabase.from('school_info').select('*').eq('id', 'videos').maybeSingle();
+      if (videosDoc.data?.data && Array.isArray(videosDoc.data.data)) {
+        videos = videosDoc.data.data;
       }
     } catch {}
-
-    // Fallback for videos from school_info if dedicated table not created yet
-    if (!videos) {
-      try {
-        const videosDoc = await supabase.from('school_info').select('*').eq('id', 'videos').single();
-        if (videosDoc.data?.data && Array.isArray(videosDoc.data.data)) {
-          videos = videosDoc.data.data;
-        }
-      } catch {}
-    }
 
     // System Users cloud load (school_info 'system_users' document)
     let systemUsers = null;
     try {
-      const usersDoc = await supabase.from('school_info').select('*').eq('id', 'system_users').single();
+      const usersDoc = await supabase.from('school_info').select('*').eq('id', 'system_users').maybeSingle();
       if (usersDoc.data?.data && Array.isArray(usersDoc.data.data) && usersDoc.data.data.length > 0) {
         systemUsers = usersDoc.data.data;
       }
@@ -454,7 +435,7 @@ export async function fetchAllCloudData() {
     // Uniform Info cloud load (Senior QA M2)
     let uniformInfo = null;
     try {
-      const uniformDoc = await supabase.from('school_info').select('*').eq('id', 'uniform').single();
+      const uniformDoc = await supabase.from('school_info').select('*').eq('id', 'uniform').maybeSingle();
       if (uniformDoc.data?.data) {
         uniformInfo = uniformDoc.data.data;
       }
@@ -463,7 +444,7 @@ export async function fetchAllCloudData() {
     // Academic Config cloud load (Exams & Classes)
     let academicConfig = null;
     try {
-      const academicDoc = await supabase.from('school_info').select('*').eq('id', 'academic_config').single();
+      const academicDoc = await supabase.from('school_info').select('*').eq('id', 'academic_config').maybeSingle();
       if (academicDoc.data?.data) {
         academicConfig = academicDoc.data.data;
       }
@@ -472,7 +453,7 @@ export async function fetchAllCloudData() {
     // Academic Groups & Subjects (Science, Business, Humanities)
     let academicGroups = null;
     try {
-      const groupsDoc = await supabase.from('school_info').select('*').eq('id', 'academic_groups').single();
+      const groupsDoc = await supabase.from('school_info').select('*').eq('id', 'academic_groups').maybeSingle();
       if (groupsDoc.data?.data) {
         academicGroups = groupsDoc.data.data;
       }
@@ -557,13 +538,13 @@ export async function seedCloudIfEmpty(initialData) {
     }
 
     // 9. Check & Seed School Info
-    const { data: infoRow } = await supabase.from('school_info').select('*').eq('id', 'main').single();
+    const { data: infoRow } = await supabase.from('school_info').select('*').eq('id', 'main').maybeSingle();
     if (!infoRow && initialData.schoolInfo) {
       await supabase.from('school_info').upsert({ id: 'main', data: initialData.schoolInfo });
     }
 
     // 10. Check & Seed System Users (Cloud Sync - strictly without plaintext passwords)
-    const { data: usersRow } = await supabase.from('school_info').select('*').eq('id', 'system_users').single();
+    const { data: usersRow } = await supabase.from('school_info').select('*').eq('id', 'system_users').maybeSingle();
     if (!usersRow && initialData.systemUsers?.length) {
       const sanitized = initialData.systemUsers.map(u => {
         const c = { ...u };

@@ -65,3 +65,4 @@ export function setStoredItem(keySuffix, value) {
     console.warn('Error saving to storage:', err);
   }
 }
+

@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 
 export default function OnlineAdmission() {
-  const { lang, submitAdmission, schoolInfo, teachers, systemUsers } = useSchool();
+  const { lang, submitAdmission, schoolInfo, teachers, systemUsers, admissions = [] } = useSchool();
   const signatories = getSignatories(schoolInfo, teachers, systemUsers);
 
   const [formData, setFormData] = useState({
@@ -169,6 +169,30 @@ export default function OnlineAdmission() {
 
     if (!validateForm()) {
       window.scrollTo({ top: 300, behavior: 'smooth' });
+      return;
+    }
+
+    // Check for duplicate submission (BUG-M3 fix)
+    const cleanPhone = formData.guardianPhone.trim().replace(/[^0-9]/g, '');
+    const cleanNameBn = formData.studentNameBn.trim().toLowerCase();
+    const cleanNameEn = formData.studentNameEn.trim().toLowerCase();
+    const cleanClass = formData.applyingClass;
+
+    const existing = Array.isArray(admissions) && admissions.find(a => {
+      const aPhone = (a.guardianPhone || '').replace(/[^0-9]/g, '');
+      const aNameBn = (a.studentNameBn || '').trim().toLowerCase();
+      const aNameEn = (a.studentNameEn || '').trim().toLowerCase();
+      const aClass = a.applyingClass;
+      return aClass === cleanClass && aPhone === cleanPhone && (aNameBn === cleanNameBn || aNameEn === cleanNameEn);
+    });
+
+    if (existing) {
+      alert(lang === 'bn' 
+        ? `এই শিক্ষার্থী ও মোবাইল নম্বর দিয়ে ইতোমধ্যে একটি আবেদন জমা রয়েছে (ট্র্যাকিং নম্বর: ${existing.trackingId})। আপনার পূর্বের আবেদন স্লিপটি প্রদর্শিত হলো।`
+        : `An application already exists for this student and mobile number (Tracking: ${existing.trackingId}). Showing your existing application slip.`
+      );
+      setSubmittedApplication(existing);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 

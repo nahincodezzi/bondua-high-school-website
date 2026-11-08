@@ -424,7 +424,7 @@ export default function RoutinesDownload() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
-                {scheduleData.map((row, idx) => (
+                {classScheduleData.map((row, idx) => (
                   <tr key={idx} className="hover:bg-bg transition-colors">
                     <td className="py-3 px-3 font-mono font-bold text-primary">{row.period}</td>
                     <td className="py-3 px-3 text-ink">{row.sun}</td>

@@ -37,3 +37,4 @@ export const uiLabels = {
 export function getUiLabel(key, lang = 'bn', fallback = '') {
   return uiLabels[key]?.[lang] || fallback || uiLabels[key]?.bn || '';
 }
+

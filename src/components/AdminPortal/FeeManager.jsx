@@ -107,9 +107,13 @@ export default function FeeManager() {
       alert('এই রসিদটি ইতোমধ্যে বাতিল করা হয়েছে।');
       return;
     }
-    if (confirm(`আপনি কি নিশ্চিত যে রসিদ নং "${fee.receiptNo}" (৳${fee.amount}) বাতিল করতে চান? এটি মোট হিসাব থেকে বাদ দেওয়া হবে।`)) {
-      voidFeeReceipt(fee.id, 'ভুল এন্ট্রি হেতু বাতিল');
-    }
+    const userReason = window.prompt(
+      `রসিদ নং "${fee.receiptNo}" (৳${fee.amount}) বাতিল করার সুনির্দিষ্ট কারণ লিখুন:`,
+      'ভুল এন্ট্রি সংশোধন'
+    );
+    if (userReason === null) return; // User cancelled prompt
+    const finalReason = userReason.trim() || 'ভুল এন্ট্রি হেতু বাতিল';
+    voidFeeReceipt(fee.id, finalReason);
   };
 
   const handlePrint = () => {
