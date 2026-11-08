@@ -261,12 +261,19 @@ export function SchoolProvider({ children }) {
       const saved = localStorage.getItem('bdhs_academic_config');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed.exams) && Array.isArray(parsed.classes)) return parsed;
+        if (Array.isArray(parsed.exams) && Array.isArray(parsed.classes)) {
+          return {
+            exams: parsed.exams,
+            classes: parsed.classes,
+            subjects: Array.isArray(parsed.subjects) ? parsed.subjects : []
+          };
+        }
       }
     } catch {}
     return {
       exams: defaultExams,
-      classes: defaultClasses
+      classes: defaultClasses,
+      subjects: []
     };
   });
 
@@ -1421,6 +1428,62 @@ export function SchoolProvider({ children }) {
     return newClassObj;
   };
 
+  const addSubject = (subjectObj) => {
+    if (!subjectObj || !subjectObj.name || !subjectObj.name.trim()) return null;
+    const cleanName = subjectObj.name.trim();
+    const cleanBn = (subjectObj.labelBn || cleanName).trim();
+    const cleanCode = (subjectObj.code || '').trim();
+    const maxMarks = Number(subjectObj.max) || 100;
+    const targetClass = subjectObj.targetClass || 'all';
+    const group = subjectObj.group || 'all';
+
+    const newSub = {
+      id: `sub-${Date.now()}`,
+      name: cleanName,
+      labelBn: cleanBn,
+      code: cleanCode,
+      max: maxMarks,
+      targetClass,
+      group
+    };
+
+    setAcademicConfig(prev => {
+      const existing = prev?.subjects || [];
+      if (existing.some(s => s.name.toLowerCase() === cleanName.toLowerCase() && (s.targetClass || 'all') === targetClass && (s.group || 'all') === group)) {
+        return prev;
+      }
+      const nextConfig = {
+        ...prev,
+        subjects: [...existing, newSub]
+      };
+      localStorage.setItem('bdhs_academic_config', JSON.stringify(nextConfig));
+      if (supabase) {
+        supabase.from('school_info').upsert({ id: 'academic_config', data: nextConfig }).then(({ error }) => {
+          if (error) console.warn('Supabase upsert academic_config warning:', error.message);
+        });
+      }
+      return nextConfig;
+    });
+    return newSub;
+  };
+
+  const deleteSubject = (id) => {
+    setAcademicConfig(prev => {
+      const existing = prev?.subjects || [];
+      const nextConfig = {
+        ...prev,
+        subjects: existing.filter(s => s.id !== id)
+      };
+      localStorage.setItem('bdhs_academic_config', JSON.stringify(nextConfig));
+      if (supabase) {
+        supabase.from('school_info').upsert({ id: 'academic_config', data: nextConfig }).then(({ error }) => {
+          if (error) console.warn('Supabase upsert academic_config warning:', error.message);
+        });
+      }
+      return nextConfig;
+    });
+  };
+
   const availableExams = React.useMemo(() => {
     const defaultExams = [
       { id: 'ex-1', name: 'SSC Test Examination 2026', labelBn: 'এসএসসি টেস্ট পরীক্ষা ২০২৬' },
@@ -1617,6 +1680,9 @@ export function SchoolProvider({ children }) {
         availableClasses,
         addExam,
         addClass,
+        customSubjects: academicConfig?.subjects || [],
+        addSubject,
+        deleteSubject,
         gallery,
         addGalleryItem,
         deleteGalleryItem,

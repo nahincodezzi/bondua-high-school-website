@@ -124,6 +124,9 @@ export default function ResultManager() {
     availableClasses = [], 
     addExam, 
     addClass, 
+    customSubjects = [],
+    addSubject,
+    deleteSubject,
     lang 
   } = useSchool();
   const [entryMode, setEntryMode] = useState('single'); // 'single' | 'bulk'
@@ -153,6 +156,15 @@ export default function ResultManager() {
   const [newClassKeyInput, setNewClassKeyInput] = useState('');
   const [newClassLabelBnInput, setNewClassLabelBnInput] = useState('');
 
+  // Add New Subject Modal State
+  const [showAddSubjectModal, setShowAddSubjectModal] = useState(false);
+  const [newSubNameInput, setNewSubNameInput] = useState('');
+  const [newSubLabelBnInput, setNewSubLabelBnInput] = useState('');
+  const [newSubCodeInput, setNewSubCodeInput] = useState('');
+  const [newSubMaxInput, setNewSubMaxInput] = useState('100');
+  const [newSubTargetClass, setNewSubTargetClass] = useState('all');
+  const [newSubGroup, setNewSubGroup] = useState('all');
+
   const handleAddNewExamSubmit = (e) => {
     e.preventDefault();
     if (!newExamNameInput.trim()) return;
@@ -181,17 +193,64 @@ export default function ResultManager() {
     setShowAddClassModal(false);
   };
 
+  const handleAddNewSubjectSubmit = (e) => {
+    e.preventDefault();
+    if (!newSubNameInput.trim()) return;
+    if (addSubject) {
+      addSubject({
+        name: newSubNameInput.trim(),
+        labelBn: newSubLabelBnInput.trim() || newSubNameInput.trim(),
+        code: newSubCodeInput.trim(),
+        max: Number(newSubMaxInput) || 100,
+        targetClass: newSubTargetClass,
+        group: newSubGroup
+      });
+    }
+    setNewSubNameInput('');
+    setNewSubLabelBnInput('');
+    setNewSubCodeInput('');
+    setNewSubMaxInput('100');
+    setShowAddSubjectModal(false);
+  };
+
   // Auto student preview
   const activeStudent = students.find(
     s => String(s.roll) === toEnglishNumerals(selectedStudentRoll.trim()) && String(s.class) === String(selectedClass)
   );
 
-  // Determine active subjects list based on class and group (M2 / H7 Fix)
+  // Determine active subjects list based on class, group, and custom subjects
   const isSecondary = selectedClass === '9' || selectedClass === '10';
   const effectiveGroup = isSecondary ? (activeStudent?.group || selectedGroup || 'Science') : 'General';
-  const currentSubjectList = isSecondary 
+  
+  const baseSubjectList = isSecondary 
     ? (SUBJECT_CONFIGS.secondary[effectiveGroup] || SUBJECT_CONFIGS.secondary.Science)
     : SUBJECT_CONFIGS.general;
+
+  const currentSubjectList = React.useMemo(() => {
+    const list = [...baseSubjectList];
+    const existingNames = new Set(list.map(s => s.name.toLowerCase()));
+
+    customSubjects.forEach(cs => {
+      const classMatches = !cs.targetClass || cs.targetClass === 'all' || String(cs.targetClass) === String(selectedClass);
+      const groupMatches = !isSecondary 
+        ? (!cs.group || cs.group === 'all' || cs.group === 'General')
+        : (!cs.group || cs.group === 'all' || cs.group === effectiveGroup);
+
+      if (classMatches && groupMatches && !existingNames.has(cs.name.toLowerCase())) {
+        existingNames.add(cs.name.toLowerCase());
+        list.push({
+          id: cs.id,
+          code: cs.code || '',
+          name: cs.name,
+          labelBn: cs.labelBn || cs.name,
+          max: Number(cs.max) || 100,
+          isCustom: true
+        });
+      }
+    });
+
+    return list;
+  }, [baseSubjectList, customSubjects, selectedClass, effectiveGroup, isSecondary]);
 
   const [marks, setMarks] = useState({});
 
@@ -273,6 +332,7 @@ export default function ResultManager() {
         name: sub.name,
         labelBn: sub.labelBn,
         marks: markVal,
+        max: sub.max,
         ...calculateSubjectGrade(markVal, sub.max)
       };
     });
@@ -396,6 +456,7 @@ export default function ResultManager() {
                 name: sub.name,
                 labelBn: sub.labelBn,
                 marks: clampedMark,
+                max: sub.max,
                 ...calculateSubjectGrade(clampedMark, sub.max)
               };
             }
@@ -404,6 +465,7 @@ export default function ResultManager() {
               name: sub.name,
               labelBn: sub.labelBn,
               marks: 0,
+              max: sub.max,
               ...calculateSubjectGrade(0, sub.max)
             };
           });
@@ -665,22 +727,44 @@ export default function ResultManager() {
 
               {/* Subject Marks Inputs */}
               <div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="font-bold text-ink block">
-                    {isSecondary ? `${effectiveGroup} বিভাগের নির্ধারিত বিষয়ভিত্তিক নম্বর:` : '৬ষ্ঠ-৮ম শ্রেণির নির্ধারিত বিষয়ভিত্তিক নম্বর:'}
-                  </span>
-                  <span className="text-[11px] text-muted font-medium">
-                    {currentSubjectList.length}টি বিষয়
-                  </span>
+                <div className="flex flex-wrap justify-between items-center gap-2 mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-ink block">
+                      {isSecondary ? `${effectiveGroup} বিভাগের নির্ধারিত বিষয়ভিত্তিক নম্বর:` : 'নির্ধারিত বিষয়ভিত্তিক নম্বর:'}
+                    </span>
+                    <span className="text-[11px] text-muted font-medium">
+                      ({currentSubjectList.length}টি বিষয়)
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddSubjectModal(true)}
+                    className="text-xs text-primary font-bold hover:underline flex items-center gap-1 cursor-pointer bg-primary/5 hover:bg-primary/10 px-2.5 py-1 rounded-lg border border-primary/20 transition"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>নতুন বিষয় যোগ করুন</span>
+                  </button>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {currentSubjectList.map((sub) => (
                     <div key={sub.name} className="bg-bg p-2.5 rounded-xl border border-line">
                       <div className="flex justify-between items-center mb-1">
-                        <label className="block font-bold text-ink text-[11px] truncate" title={sub.labelBn}>
+                        <label className="block font-bold text-ink text-[11px] truncate" title={sub.labelBn || sub.name}>
                           {sub.labelBn || sub.name}
                         </label>
-                        <span className="text-[10px] text-muted">/{sub.max}</span>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[10px] text-muted font-mono">/{sub.max}</span>
+                          {sub.isCustom && deleteSubject && (
+                            <button
+                              type="button"
+                              onClick={() => deleteSubject(sub.id)}
+                              className="text-danger hover:text-danger/80 cursor-pointer p-0.5"
+                              title="কাস্টম বিষয়টি মুছুন"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          )}
+                        </div>
                       </div>
                       <input
                         type="number"
@@ -726,8 +810,18 @@ export default function ResultManager() {
                   </div>
                 </div>
 
-                {/* The "i" Info Button Requested by User */}
-                <div className="flex items-center gap-2 shrink-0">
+                {/* The "i" Info Button and Add Subject Button */}
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddSubjectModal(true)}
+                    className="p-2 rounded-xl bg-white text-primary border border-primary/30 hover:bg-primary/5 transition flex items-center gap-1.5 text-xs font-bold shadow-xs cursor-pointer"
+                    title="নতুন বিষয় যোগ করুন (এক্সেলে অন্তর্ভুক্ত হবে)"
+                  >
+                    <Plus className="w-3.5 h-3.5 text-primary" />
+                    <span>নতুন বিষয়</span>
+                  </button>
+
                   <button
                     type="button"
                     onClick={() => setShowInfoModal(true)}
@@ -1061,15 +1155,41 @@ export default function ResultManager() {
                   </div>
 
                   <div className="space-y-1 pt-1">
-                    <span className="font-bold text-ink block">২. বিষয়ভিত্তিক নম্বরের কলামসমূহ (ইংরেজি বা বাংলা যেকোনো একটি):</span>
-                    <div className="grid grid-cols-2 gap-2 pt-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-ink block">২. বিষয়ভিত্তিক নম্বরের কলামসমূহ (ইংরেজি বা বাংলা যেকোনো একটি):</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowInfoModal(false);
+                          setShowAddSubjectModal(true);
+                        }}
+                        className="text-xs text-primary font-bold hover:underline flex items-center gap-1 cursor-pointer"
+                        title="নতুন কোনো বিষয় যুক্ত করতে ক্লিক করুন"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>নতুন বিষয় যোগ</span>
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 pt-1 max-h-56 overflow-y-auto pr-1">
                       {currentSubjectList.map((sub) => (
                         <div key={sub.name} className="p-2 bg-white rounded-lg border border-line flex items-center justify-between">
                           <div>
                             <span className="font-bold text-ink block font-mono text-[11px]">{sub.name}</span>
-                            <span className="text-[10px] text-muted">বা {sub.labelBn}</span>
+                            <span className="text-[10px] text-muted">বা {sub.labelBn || sub.name}</span>
                           </div>
-                          <span className="text-[10px] font-mono text-primary font-bold">Max {sub.max}</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] font-mono text-primary font-bold">Max {sub.max}</span>
+                            {sub.isCustom && deleteSubject && (
+                              <button
+                                type="button"
+                                onClick={() => deleteSubject(sub.id)}
+                                className="text-danger hover:bg-danger/10 p-1 rounded transition cursor-pointer"
+                                title="কাস্টম বিষয়টি মুছুন"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            )}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -1224,6 +1344,132 @@ export default function ResultManager() {
                   className="btn-primary px-5 py-2 rounded-xl text-xs font-bold cursor-pointer"
                 >
                   যোগ করুন
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add New Subject Modal */}
+      {showAddSubjectModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-line">
+            <div className="p-4 bg-deep text-white flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Plus className="w-5 h-5 text-accent" />
+                <h3 className="font-bold font-bangla text-base">নতুন বিষয় যোগ করুন (Add New Subject)</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAddSubjectModal(false)}
+                className="p-1 rounded-lg hover:bg-white/10 text-white/80 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleAddNewSubjectSubmit} className="p-6 space-y-4 font-bangla">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-ink mb-1">বিষয়ের ইংরেজি নাম (Excel Header) *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Higher Math or Agriculture"
+                    value={newSubNameInput}
+                    onChange={(e) => setNewSubNameInput(e.target.value)}
+                    className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none text-xs"
+                    autoFocus
+                  />
+                  <p className="text-[10px] text-muted mt-0.5">এক্সেলে এই কলাম নাম অনুযায়ী স্বয়ংক্রিয়ভাবে নম্বর যুক্ত হবে।</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-ink mb-1">বিষয়ের বাংলা নাম (ঐচ্ছিক)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. উচ্চতর গণিত বা কৃষিশিক্ষা"
+                    value={newSubLabelBnInput}
+                    onChange={(e) => setNewSubLabelBnInput(e.target.value)}
+                    className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-ink mb-1">বিষয় কোড (ঐচ্ছিক)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 126"
+                    value={newSubCodeInput}
+                    onChange={(e) => setNewSubCodeInput(e.target.value)}
+                    className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none text-xs font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-ink mb-1">পূর্ণমান (Max Marks) *</label>
+                  <select
+                    value={newSubMaxInput}
+                    onChange={(e) => setNewSubMaxInput(e.target.value)}
+                    className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none text-xs font-mono font-bold"
+                  >
+                    <option value="100">100</option>
+                    <option value="50">50</option>
+                    <option value="75">75</option>
+                    <option value="25">25</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-ink mb-1">প্রযোজ্য শ্রেণি</label>
+                  <select
+                    value={newSubTargetClass}
+                    onChange={(e) => setNewSubTargetClass(e.target.value)}
+                    className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none text-xs"
+                  >
+                    <option value="all">সকল শ্রেণি (All Classes)</option>
+                    {availableClasses.map((cls) => (
+                      <option key={cls.key} value={cls.key}>
+                        {cls.labelBn || `${cls.key} শ্রেণি`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {isSecondary && (
+                <div>
+                  <label className="block text-xs font-bold text-ink mb-1">প্রযোজ্য বিভাগ (Group)</label>
+                  <select
+                    value={newSubGroup}
+                    onChange={(e) => setNewSubGroup(e.target.value)}
+                    className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none text-xs"
+                  >
+                    <option value="all">সকল বিভাগ (All Groups)</option>
+                    <option value="Science">বিজ্ঞান (Science)</option>
+                    <option value="Business Studies">ব্যবসায় শিক্ষা (Business Studies)</option>
+                    <option value="Humanities">মানবিক (Humanities)</option>
+                  </select>
+                </div>
+              )}
+
+              <div className="p-3 bg-soft rounded-xl border border-soft-border text-[11px] text-muted">
+                <p className="font-semibold text-deep mb-0.5">💡 স্বয়ংক্রিয় এক্সেল ও ইনপুট সুবিধা:</p>
+                নতুন বিষয়টি যোগ করার সাথে সাথে এক্সেল বাল্ক আপলোড কলামে এটি ম্যাচ হবে, "নমুনা টেমপ্লেট" ডাউনলোড করলে স্বয়ংক্রিয়ভাবে এই বিষয়ের কলাম তৈরি হবে এবং তথ্য নির্দেশিকা (i)-তে তাৎক্ষণিক দেখাবে।
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-line">
+                <button
+                  type="button"
+                  onClick={() => setShowAddSubjectModal(false)}
+                  className="btn-secondary px-4 py-2 rounded-xl text-xs font-bold cursor-pointer"
+                >
+                  বাতিল
+                </button>
+                <button
+                  type="submit"
+                  className="btn-primary px-5 py-2 rounded-xl text-xs font-bold cursor-pointer"
+                >
+                  বিষয় যোগ করুন
                 </button>
               </div>
             </form>
