@@ -1747,7 +1747,7 @@ export function SchoolProvider({ children }) {
     });
   };
 
-  const updateSchoolSettings = (newInfo) => {
+  const updateSchoolSettings = async (newInfo) => {
     const updatedInfo = { ...newInfo };
     if (updatedInfo.schoolLogo) {
       updatedInfo.logo = updatedInfo.schoolLogo;
@@ -1757,11 +1757,21 @@ export function SchoolProvider({ children }) {
       };
     }
     setSchoolInfo(updatedInfo);
+    try {
+      localStorage.setItem('bdhs_info', JSON.stringify(updatedInfo));
+    } catch {}
+
     if (supabase) {
-      supabase.from('school_info').upsert({ id: 'main', data: updatedInfo }).then(({ error }) => {
+      try {
+        const { error } = await supabase.from('school_info').upsert({ id: 'main', data: updatedInfo });
         if (error) console.warn('Supabase upsert school_info warning:', error.message);
-      });
+        return { success: !error, error };
+      } catch (err) {
+        console.warn('Supabase upsert school_info catch:', err);
+        return { success: false, error: err };
+      }
     }
+    return { success: true };
   };
 
   const updateUniformSettings = (newUniform) => {
@@ -1961,19 +1971,26 @@ export function SchoolProvider({ children }) {
     return list;
   }, [academicConfig?.classes, students]);
 
-  const updateHeroSlides = (slides) => {
+  const updateHeroSlides = async (slides) => {
     setHeroSlides(slides);
-    localStorage.setItem('bdhs_slides', JSON.stringify(slides));
+    try {
+      localStorage.setItem('bdhs_slides', JSON.stringify(slides));
+    } catch {}
+
     if (supabase) {
-      // 1. Upsert into hero_slides table with schema-compliant columns
-      supabase.from('hero_slides').upsert(slides.map(mappers.slide.toDb)).then(({ error }) => {
-        if (error) console.warn('Supabase upsert hero_slides warning:', error.message);
-      });
-      // 2. Also upsert full bilingual slides into school_info 'hero_slides' document
-      supabase.from('school_info').upsert({ id: 'hero_slides', data: slides }).then(({ error }) => {
-        if (error) console.warn('Supabase upsert school_info hero_slides warning:', error.message);
-      });
+      try {
+        // 1. Upsert into hero_slides table with schema-compliant columns
+        const dbSlides = slides.map(mappers.slide.toDb);
+        await supabase.from('hero_slides').upsert(dbSlides);
+        // 2. Also upsert full bilingual slides into school_info 'hero_slides' document
+        await supabase.from('school_info').upsert({ id: 'hero_slides', data: slides });
+        return { success: true };
+      } catch (err) {
+        console.warn('Supabase upsert hero_slides warning:', err);
+        return { success: false, error: err };
+      }
     }
+    return { success: true };
   };
 
   const addGalleryItem = (item) => {

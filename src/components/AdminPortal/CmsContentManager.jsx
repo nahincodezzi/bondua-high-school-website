@@ -190,22 +190,22 @@ export default function CmsContentManager() {
     setTimeout(() => setSavedMessage(false), 3000);
   };
 
-  const handleSlidesSave = (e) => {
-    e.preventDefault();
+  const handleSlidesSave = async (e) => {
+    if (e) e.preventDefault();
     if (updateHeroSlides) {
-      updateHeroSlides(slidesForm);
+      await updateHeroSlides(slidesForm);
     } else {
       setHeroSlides(slidesForm);
     }
     if (updateSchoolSettings) {
-      updateSchoolSettings({
+      await updateSchoolSettings({
         ...schoolInfo,
         hero: heroConfig,
         stats: statsList
       });
     }
     setSavedMessage(true);
-    setTimeout(() => setSavedMessage(false), 3000);
+    setTimeout(() => setSavedMessage(false), 3500);
   };
 
   const moveSlide = (index, direction) => {

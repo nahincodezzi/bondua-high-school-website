@@ -66,16 +66,34 @@ export default function CommitteeManager() {
 
   const [memberFormData, setMemberFormData] = useState(defaultMemberState);
 
+  // Sync with schoolInfo if loaded asynchronously from cloud
+  const [prevSchoolInfo, setPrevSchoolInfo] = useState(schoolInfo);
+  if (schoolInfo !== prevSchoolInfo) {
+    setPrevSchoolInfo(schoolInfo);
+    if (schoolInfo?.chairmanNameBn) {
+      setPresidentForm(prev => ({
+        chairmanNameBn: prev.chairmanNameBn || schoolInfo.chairmanNameBn || '',
+        chairmanNameEn: prev.chairmanNameEn || schoolInfo.chairmanNameEn || '',
+        chairmanDesignationBn: prev.chairmanDesignationBn || schoolInfo.chairmanDesignationBn || 'সভাপতি, পরিচালনা পর্ষদ',
+        chairmanDesignationEn: prev.chairmanDesignationEn || schoolInfo.chairmanDesignationEn || 'President, Managing Committee',
+        chairmanPhone: prev.chairmanPhone || schoolInfo.chairmanPhone || '',
+        chairmanImage: prev.chairmanImage || schoolInfo.chairmanImage || '',
+        chairmanMessageBn: prev.chairmanMessageBn || schoolInfo.chairmanMessageBn || '',
+        chairmanMessageEn: prev.chairmanMessageEn || schoolInfo.chairmanMessageEn || ''
+      }));
+    }
+  }
+
   // --- President Handlers ---
-  const handlePresidentSave = (e) => {
+  const handlePresidentSave = async (e) => {
     e.preventDefault();
     if (updateSchoolSettings) {
-      updateSchoolSettings({
+      await updateSchoolSettings({
         ...schoolInfo,
         ...presidentForm
       });
       setPresidentSavedToast(true);
-      setTimeout(() => setPresidentSavedToast(false), 3000);
+      setTimeout(() => setPresidentSavedToast(false), 3500);
     }
   };
 
