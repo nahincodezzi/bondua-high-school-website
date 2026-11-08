@@ -28,6 +28,7 @@ import {
   initialRoutines,
   initialUsers,
   initialAcademicGroups,
+  initialCommittee,
   SYSTEM_MODULES,
   ROLE_DEFINITIONS
 } from '../data/initialData';
@@ -427,6 +428,16 @@ export function SchoolProvider({ children }) {
     return saved ? JSON.parse(saved) : initialFees;
   });
 
+  const [committee, setCommittee] = useState(() => {
+    const saved = localStorage.getItem('bdhs_committee') || localStorage.getItem('site_committee');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {}
+    }
+    return initialCommittee || [];
+  });
+
   const [systemUsers, setSystemUsers] = useState(() => {
     const saved = localStorage.getItem('bdhs_system_users');
     if (saved) {
@@ -606,6 +617,10 @@ export function SchoolProvider({ children }) {
         }
         if (cloud.contactMessages && cloud.contactMessages.length > 0) setContactMessages(cloud.contactMessages);
         if (cloud.videos && cloud.videos.length > 0) setVideos(cloud.videos);
+        if (cloud.committee && Array.isArray(cloud.committee)) {
+          setCommittee(cloud.committee);
+          localStorage.setItem('bdhs_committee', JSON.stringify(cloud.committee));
+        }
         if (cloud.systemUsers && cloud.systemUsers.length > 0) {
           setSystemUsers(prev => {
             return cloud.systemUsers.map(cu => {
@@ -1265,6 +1280,49 @@ export function SchoolProvider({ children }) {
         if (error) console.warn('Supabase delete teacher warning:', error.message);
       });
     }
+  };
+
+  // Managing Committee Cloud Sync & Actions (Option A: school_info 'committee' document)
+  const syncCommitteeToCloud = (list) => {
+    if (!supabase) return;
+    supabase.from('school_info').upsert({ id: 'committee', data: list }).then(({ error }) => {
+      if (error) console.warn('Supabase sync committee warning:', error.message);
+    });
+  };
+
+  const addCommitteeMember = (member) => {
+    const newMember = {
+      ...member,
+      id: member.id || `cm_${Date.now()}`,
+      order: Number(member.order) || (committee.length + 1),
+      status: member.status || 'active'
+    };
+    setCommittee(prev => {
+      const updated = [...prev, newMember].sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+      localStorage.setItem('bdhs_committee', JSON.stringify(updated));
+      syncCommitteeToCloud(updated);
+      return updated;
+    });
+    return newMember;
+  };
+
+  const updateCommitteeMember = (id, updatedData) => {
+    setCommittee(prev => {
+      const updated = prev.map(m => m.id === id ? { ...m, ...updatedData } : m)
+        .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+      localStorage.setItem('bdhs_committee', JSON.stringify(updated));
+      syncCommitteeToCloud(updated);
+      return updated;
+    });
+  };
+
+  const deleteCommitteeMember = (id) => {
+    setCommittee(prev => {
+      const updated = prev.filter(m => m.id !== id);
+      localStorage.setItem('bdhs_committee', JSON.stringify(updated));
+      syncCommitteeToCloud(updated);
+      return updated;
+    });
   };
 
   const submitAdmission = (formData) => {
@@ -2048,6 +2106,11 @@ export function SchoolProvider({ children }) {
         addTeacher,
         updateTeacher,
         deleteTeacher,
+        committee,
+        setCommittee,
+        addCommitteeMember,
+        updateCommitteeMember,
+        deleteCommitteeMember,
         students,
         addStudent,
         bulkAddStudents,

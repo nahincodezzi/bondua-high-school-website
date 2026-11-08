@@ -82,10 +82,24 @@ In today's digital era, we emphasize not only standard textbook curriculum but a
   chairmanNameBn: "আলহাজ্ব মো. মজিবুর রহমান",
   chairmanNameEn: "Alhaj Md. Mozibur Rahman",
   chairmanDesignationBn: "সভাপতি, পরিচালনা পর্ষদ",
-  chairmanDesignationEn: "Chairman, Managing Committee",
+  chairmanDesignationEn: "President, Managing Committee",
+  chairmanImage: "",
+  chairmanPhone: "",
   chairmanMessageBn: `বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় ফুলগাজী উপজেলার একটি গর্বের প্রতিষ্ঠান। পরিচালনা পর্ষদের পক্ষ থেকে আমরা শিক্ষক ও শিক্ষার্থীদের আধুনিক শিক্ষার উপযুক্ত পরিবেশ নিশ্চিত করতে সর্বদা প্রতিশ্রুতিবদ্ধ।`,
   chairmanMessageEn: `Bondua Doulatpur High School is a matter of pride for Fulgazi upazila. The Managing Committee remains steadfastly committed to maintaining an exceptional educational environment for our students.`
 };
+
+// Managing Committee (Optional List - starts empty as per §10)
+export const initialCommittee = [];
+
+export const demoCommitteeSeed = [
+  { id: "cm_1", nameBn: "জনাব আবুল কাশেম", nameEn: "Mr. Abul Kashem", designationBn: "সহ-সভাপতি", designationEn: "Vice President", categoryBn: "সহ-সভাপতি", categoryEn: "Vice President", phone: "", image: "", order: 1, status: "active" },
+  { id: "cm_2", nameBn: "প্রধান শিক্ষক (পদাধিকারবলে)", nameEn: "Head Master (Ex-officio)", designationBn: "সদস্য-সচিব", designationEn: "Member Secretary", categoryBn: "শিক্ষক প্রতিনিধি", categoryEn: "Teacher Representative", phone: "", image: "", order: 2, status: "active" },
+  { id: "cm_3", nameBn: "জনাব আব্দুল মালেক", nameEn: "Mr. Abdul Malek", designationBn: "অভিভাবক সদস্য", designationEn: "Guardian Member", categoryBn: "অভিভাবক সদস্য", categoryEn: "Guardian Representative", phone: "", image: "", order: 3, status: "active" },
+  { id: "cm_4", nameBn: "জনাবা রাশিদা বেগম", nameEn: "Mrs. Rashida Begum", designationBn: "অভিভাবক সদস্য (মহিলা)", designationEn: "Guardian Member (Female)", categoryBn: "অভিভাবক সদস্য", categoryEn: "Guardian Representative", phone: "", image: "", order: 4, status: "active" },
+  { id: "cm_5", nameBn: "জনাব নূরুল ইসলাম", nameEn: "Mr. Nurul Islam", designationBn: "শিক্ষক প্রতিনিধি", designationEn: "Teacher Representative", categoryBn: "শিক্ষক প্রতিনিধি", categoryEn: "Teacher Representative", phone: "", image: "", order: 5, status: "active" },
+  { id: "cm_6", nameBn: "জনাব মোস্তফা কামাল", nameEn: "Mr. Mostafa Kamal", designationBn: "দাতা সদস্য", designationEn: "Donor Member", categoryBn: "দাতা সদস্য", categoryEn: "Donor Member", phone: "", image: "", order: 6, status: "active" },
+];
 
 // Student Uniform & Dress Code Configuration (CMS Editable)
 export const initialUniformInfo = {
@@ -823,6 +837,7 @@ export const initialRoutines = [
 // System Modules & Granular Permission Definitions
 export const SYSTEM_MODULES = [
   { id: 'cms', labelBn: 'ওয়েবসাইট কনটেন্ট (CMS)', labelEn: 'Website Content CMS', descBn: 'ব্যানার, স্লাইডার, ইউনিফর্ম ও পরিচিতি পরিবর্তন' },
+  { id: 'committee', labelBn: 'পরিচালনা পর্ষদ CMS', labelEn: 'Managing Committee CMS', descBn: 'সভাপতি ও পরিচালনা পর্ষদের তথ্য সংযোজন ও সম্পাদনা' },
   { id: 'teachers', labelBn: 'শিক্ষক পরিষদ CMS', labelEn: 'Faculty Directory CMS', descBn: 'শিক্ষকদের তথ্য সংযোজন, সম্পাদনা ও অপসারণ' },
   { id: 'students', labelBn: 'শিক্ষার্থী ও আইডি কার্ড', labelEn: 'Student Management & ID Cards', descBn: 'শিক্ষার্থী তালিকা ও আইডি কার্ড প্রিন্ট' },
   { id: 'admissions', labelBn: 'ভর্তি আবেদন যাচাই', labelEn: 'Admission Review', descBn: 'অনলাইন ভর্তি ফরম যাচাই, অনুমোদন ও বাতিল' },

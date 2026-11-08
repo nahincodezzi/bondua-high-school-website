@@ -459,6 +459,15 @@ export async function fetchAllCloudData() {
       }
     } catch {}
 
+    // Managing Committee cloud load (Option A: school_info 'committee' document)
+    let committee = null;
+    try {
+      const committeeDoc = await supabase.from('school_info').select('*').eq('id', 'committee').maybeSingle();
+      if (committeeDoc.data?.data && Array.isArray(committeeDoc.data.data)) {
+        committee = committeeDoc.data.data;
+      }
+    } catch {}
+
     return deepSanitizeBondua({
       notices: noticesRes.data?.map(mappers.notice.fromDb) || null,
       teachers: teachersRes.data?.map(mappers.teacher.fromDb) || null,
@@ -472,6 +481,7 @@ export async function fetchAllCloudData() {
       uniformInfo,
       academicConfig,
       academicGroups,
+      committee,
       contactMessages,
       videos,
       systemUsers,

@@ -17,7 +17,8 @@ import {
   ChevronRight,
   Sliders,
   Key,
-  ShieldAlert
+  ShieldAlert,
+  UserCheck
 } from 'lucide-react';
 import DashboardOverview from './DashboardOverview';
 import StudentManager from './StudentManager';
@@ -27,6 +28,7 @@ import NoticeManager from './NoticeManager';
 import FeeManager from './FeeManager';
 import SchoolSettings from './SchoolSettings';
 import CmsContentManager from './CmsContentManager';
+import CommitteeManager from './CommitteeManager';
 import TeacherManager from './TeacherManager';
 import UserManager from './UserManager';
 import ErrorBoundary from '../common/ErrorBoundary';
@@ -53,6 +55,7 @@ export default function AdminLayout() {
     { id: 'overview', labelBn: 'ড্যাশবোর্ড ওভারভিউ', labelEn: 'Dashboard Overview', icon: LayoutDashboard },
     { id: 'users', labelBn: 'ইউজার ও এক্সেস কন্ট্রোল', labelEn: 'User & Access Control', icon: Key, badge: 'SUPER', superadminOnly: true },
     { id: 'cms', labelBn: 'কনটেন্ট ও গ্যালারি (CMS)', labelEn: 'Content & Gallery CMS', icon: Sliders, badge: 'CMS' },
+    { id: 'committee', labelBn: 'পরিচালনা পর্ষদ (Committee)', labelEn: 'Managing Committee', icon: UserCheck },
     { id: 'teachers', labelBn: 'শিক্ষক পরিষদ (Faculty CMS)', labelEn: 'Faculty Directory CMS', icon: School },
     { id: 'students', labelBn: 'শিক্ষার্থী ব্যবস্থাপনা', labelEn: 'Student Management', icon: Users },
     { id: 'admissions', labelBn: 'ভর্তি আবেদন যাচাই', labelEn: 'Admission Review', icon: FileCheck },
@@ -66,6 +69,7 @@ export default function AdminLayout() {
   const accessibleMenuItems = menuItems.filter(item => {
     if (item.id === 'overview') return true;
     if (item.superadminOnly) return authUser?.role === 'superadmin';
+    if (item.id === 'committee') return hasPermission('committee') || hasPermission('cms') || hasPermission('teachers');
     return hasPermission(item.id);
   });
 
@@ -344,6 +348,7 @@ export default function AdminLayout() {
                 )
               )}
               {activeModule === 'cms' && <CmsContentManager />}
+              {activeModule === 'committee' && <CommitteeManager />}
               {activeModule === 'teachers' && <TeacherManager />}
               {activeModule === 'students' && <StudentManager initialOpenAdd={openStudentAdd} />}
               {activeModule === 'admissions' && <AdmissionManager />}
