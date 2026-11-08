@@ -123,6 +123,7 @@ export const mappers = {
       guardianPhone: row.guardian_phone || '',
       address: row.address || '',
       status: row.status || 'নিয়মিত',
+      photo: row.photo || row.image || null,
     }),
     toDb: (s) => ({
       id: String(s.id),
@@ -142,6 +143,7 @@ export const mappers = {
       guardian_phone: s.guardianPhone || '',
       address: s.address || null,
       status: s.status || 'নিয়মিত',
+      photo: s.photo || s.image || null,
     }),
   },
 
@@ -167,6 +169,7 @@ export const mappers = {
       address: row.address || '',
       status: row.status || 'Pending',
       submissionDate: row.applied_date ? row.applied_date.split('T')[0] : '',
+      photo: row.photo || row.image || null,
     }),
     toDb: (a) => ({
       id: String(a.id || a.trackingId),
@@ -185,6 +188,7 @@ export const mappers = {
       mother_name: a.motherName || null,
       previous_gpa: a.previousGpa ? String(a.previousGpa) : null,
       address: a.address || null,
+      photo: a.photo || a.image || null,
     }),
   },
 

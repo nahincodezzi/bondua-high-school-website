@@ -7,7 +7,8 @@ import {
   CheckCircle2, 
   Eye, 
   X,
-  UserCheck
+  UserCheck,
+  User
 } from 'lucide-react';
 
 export default function AdmissionManager() {
@@ -259,8 +260,22 @@ export default function AdmissionManager() {
                       />
                     </td>
                     <td className="py-3 px-3 font-mono font-bold text-ink">{app.trackingId}</td>
-                    <td className="py-3 px-3 font-semibold text-ink">
-                      {app.studentNameBn || app.studentNameEn}
+                    <td className="py-3 px-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-9 rounded-md border border-line bg-bg overflow-hidden shrink-0 flex items-center justify-center">
+                          {app.photo ? (
+                            <img src={app.photo} alt={app.studentNameBn} className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="text-[10px] font-bold text-muted font-sans uppercase">
+                              {(app.studentNameEn || app.studentNameBn || 'S').charAt(0)}
+                            </span>
+                          )}
+                        </div>
+                        <div>
+                          <span className="font-semibold text-ink block">{app.studentNameBn || app.studentNameEn}</span>
+                          {app.studentNameEn && <span className="text-[10px] text-muted uppercase font-mono block">{app.studentNameEn}</span>}
+                        </div>
+                      </div>
                     </td>
                     <td className="py-3 px-3 font-medium text-primary">{app.applyingClass} শ্রেণি</td>
                     <td className="py-3 px-3 text-muted">{app.fatherName}</td>
@@ -346,9 +361,20 @@ export default function AdmissionManager() {
                   </span>
                 </div>
 
-                <div>
-                  <h4 className="font-bold text-ink text-sm">{app.studentNameBn || app.studentNameEn}</h4>
-                  <p className="text-xs text-muted">পিতা: {app.fatherName}</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-12 rounded-lg border border-line bg-bg overflow-hidden shrink-0 flex items-center justify-center">
+                    {app.photo ? (
+                      <img src={app.photo} alt={app.studentNameBn} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-xs font-bold text-muted font-sans uppercase">
+                        {(app.studentNameEn || app.studentNameBn || 'S').charAt(0)}
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-ink text-sm">{app.studentNameBn || app.studentNameEn}</h4>
+                    <p className="text-xs text-muted">পিতা: {app.fatherName}</p>
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-between text-xs text-muted bg-bg p-2.5 rounded-lg border border-line">
@@ -417,6 +443,36 @@ export default function AdmissionManager() {
               >
                 <X className="w-5 h-5" />
               </button>
+            </div>
+
+            {/* Student Photo & Header in View Modal */}
+            <div className="flex items-center gap-4 p-3 bg-soft/50 rounded-xl border border-line">
+              <div className="w-16 h-20 rounded-lg border-2 border-primary/30 overflow-hidden bg-white shrink-0 shadow-2xs flex items-center justify-center">
+                {viewModalApp.photo ? (
+                  <img src={viewModalApp.photo} alt={viewModalApp.studentNameBn} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="text-center p-1 text-muted flex flex-col items-center">
+                    <User className="w-6 h-6 text-muted/40 mb-0.5" />
+                    <span className="text-[8px] text-muted block">ছবি নেই</span>
+                  </div>
+                )}
+              </div>
+              <div className="min-w-0">
+                <h4 className="font-bold text-ink text-sm sm:text-base truncate">
+                  {viewModalApp.studentNameBn}
+                </h4>
+                <p className="text-xs uppercase font-mono text-muted truncate">
+                  {viewModalApp.studentNameEn}
+                </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">
+                    {toBanglaNumerals(viewModalApp.applyingClass)} শ্রেণি
+                  </span>
+                  <span className="text-[10px] text-muted font-mono">
+                    ID: {viewModalApp.trackingId}
+                  </span>
+                </div>
+              </div>
             </div>
 
             <div className="space-y-3 text-xs">

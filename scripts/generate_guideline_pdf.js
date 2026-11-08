@@ -1,6 +1,5 @@
 import puppeteer from 'puppeteer-core';
 import path from 'path';
-import fs from 'fs';
 
 const EDGE_PATH = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
 const OUTPUT_PDF_ROOT = path.resolve('USER_GUIDELINE_BDHS.pdf');
@@ -504,3 +503,4 @@ generatePdf().catch(err => {
   console.error('PDF error:', err);
   process.exit(1);
 });
+

@@ -11,7 +11,10 @@ import {
   Phone, 
   User,
   GraduationCap,
-  AlertCircle
+  AlertCircle,
+  Upload,
+  Camera,
+  X
 } from 'lucide-react';
 
 export default function OnlineAdmission() {
@@ -32,13 +35,42 @@ export default function OnlineAdmission() {
     guardianPhone: '',
     previousSchool: '',
     previousGpa: '',
-    address: ''
+    address: '',
+    photo: ''
   });
 
   const [formErrors, setFormErrors] = useState({});
   const [submittedApplication, setSubmittedApplication] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isSubmittingRef = useRef(false);
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert(lang === 'bn' ? 'অনুগ্রহ করে শুধুমাত্র ছবি ফাইল (JPG, PNG, WebP) নির্বাচন করুন।' : 'Please select a valid image file (JPG, PNG, WebP).');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert(lang === 'bn' ? 'ছবির সাইজ সর্বোচ্চ ২ মেগাবাইট (2MB) হতে পারবে।' : 'Image size must be 2MB or less.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (uploadEvent) => {
+      const dataUrl = uploadEvent.target?.result;
+      if (typeof dataUrl === 'string') {
+        setFormData(prev => ({ ...prev, photo: dataUrl }));
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemovePhoto = () => {
+    setFormData(prev => ({ ...prev, photo: '' }));
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -178,7 +210,8 @@ export default function OnlineAdmission() {
       guardianPhone: '',
       previousSchool: '',
       previousGpa: '',
-      address: ''
+      address: '',
+      photo: ''
     });
   };
 
@@ -257,53 +290,74 @@ export default function OnlineAdmission() {
                 </div>
               </div>
 
-              {/* Candidate Info Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 print:gap-1.5 text-xs print:text-[8.5pt] font-bangla bg-bg print:bg-white p-5 print:p-2 rounded-xl print:rounded-md border border-line print:border-slate-300">
-                <div>
-                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'শিক্ষার্থীর নাম (বাংলা):' : 'Candidate Name (Bangla):'}</span>
-                  <span className="font-bold text-ink text-sm print:text-[9pt]">{submittedApplication.studentNameBn || '-'}</span>
+              {/* Candidate Info Grid with Student Photo on Admit Slip */}
+              <div className="flex flex-col-reverse sm:flex-row gap-4 bg-bg print:bg-white p-5 print:p-2 rounded-xl print:rounded-md border border-line print:border-slate-300">
+                <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 print:gap-1.5 text-xs print:text-[8.5pt] font-bangla">
+                  <div>
+                    <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'শিক্ষার্থীর নাম (বাংলা):' : 'Candidate Name (Bangla):'}</span>
+                    <span className="font-bold text-ink text-sm print:text-[9pt]">{submittedApplication.studentNameBn || '-'}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'শিক্ষার্থীর নাম (ইংরেজি):' : 'Candidate Name (English):'}</span>
+                    <span className="font-bold text-ink text-sm uppercase font-mono print:text-[9pt]">{submittedApplication.studentNameEn}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'আবেদনকৃত শ্রেণি:' : 'Applied Class:'}</span>
+                    <span className="font-bold text-primary print:text-[9pt]">
+                      {lang === 'bn' 
+                        ? `${{ '6': '৬ষ্ঠ', '7': '৭ম', '8': '৮ম', '9': '৯ম', '10': '১০ম' }[submittedApplication.applyingClass] || submittedApplication.applyingClass} শ্রেণি` 
+                        : `Class ${submittedApplication.applyingClass}`}
+                      {submittedApplication.group && submittedApplication.group !== 'General' && ` (${submittedApplication.group})`}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'লিঙ্গ ও রক্তগ্রুপ:' : 'Gender & Blood Group:'}</span>
+                    <span className="font-semibold text-ink">
+                      {lang === 'bn'
+                        ? ({ 'Male': 'ছাত্র', 'Female': 'ছাত্রী' }[submittedApplication.gender] || submittedApplication.gender)
+                        : submittedApplication.gender
+                      } {submittedApplication.bloodGroup && `• ${submittedApplication.bloodGroup}`}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'পিতার নাম:' : "Father's Name:"}</span>
+                    <span className="font-semibold text-ink">{submittedApplication.fatherName}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'মাতার নাম:' : "Mother's Name:"}</span>
+                    <span className="font-semibold text-ink">{submittedApplication.motherName}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'অভিভাবকের মোবাইল নম্বর:' : 'Guardian Phone:'}</span>
+                    <span className="font-mono font-bold text-primary">{submittedApplication.guardianPhone}</span>
+                  </div>
+                  <div>
+                    <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'পূর্ববর্তী প্রতিষ্ঠান ও জিপিএ:' : 'Previous School & GPA:'}</span>
+                    <span className="font-semibold text-ink">{submittedApplication.previousSchool || 'N/A'} (GPA: {submittedApplication.previousGpa || 'N/A'})</span>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'স্থায়ী ঠিকানা:' : 'Address:'}</span>
+                    <span className="font-medium text-ink">{submittedApplication.address}</span>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'শিক্ষার্থীর নাম (ইংরেজি):' : 'Candidate Name (English):'}</span>
-                  <span className="font-bold text-ink text-sm uppercase font-mono print:text-[9pt]">{submittedApplication.studentNameEn}</span>
-                </div>
-                <div>
-                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'আবেদনকৃত শ্রেণি:' : 'Applied Class:'}</span>
-                  <span className="font-bold text-primary print:text-[9pt]">
-                    {lang === 'bn' 
-                      ? `${{ '6': '৬ষ্ঠ', '7': '৭ম', '8': '৮ম', '9': '৯ম', '10': '১০ম' }[submittedApplication.applyingClass] || submittedApplication.applyingClass} শ্রেণি` 
-                      : `Class ${submittedApplication.applyingClass}`}
-                    {submittedApplication.group && submittedApplication.group !== 'General' && ` (${submittedApplication.group})`}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'লিঙ্গ ও রক্তগ্রুপ:' : 'Gender & Blood Group:'}</span>
-                  <span className="font-semibold text-ink">
-                    {lang === 'bn'
-                      ? ({ 'Male': 'ছাত্র', 'Female': 'ছাত্রী' }[submittedApplication.gender] || submittedApplication.gender)
-                      : submittedApplication.gender
-                    } {submittedApplication.bloodGroup && `• ${submittedApplication.bloodGroup}`}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'পিতার নাম:' : "Father's Name:"}</span>
-                  <span className="font-semibold text-ink">{submittedApplication.fatherName}</span>
-                </div>
-                <div>
-                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'মাতার নাম:' : "Mother's Name:"}</span>
-                  <span className="font-semibold text-ink">{submittedApplication.motherName}</span>
-                </div>
-                <div>
-                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'অভিভাবকের মোবাইল নম্বর:' : 'Guardian Phone:'}</span>
-                  <span className="font-mono font-bold text-primary">{submittedApplication.guardianPhone}</span>
-                </div>
-                <div>
-                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'পূর্ববর্তী প্রতিষ্ঠান ও জিপিএ:' : 'Previous School & GPA:'}</span>
-                  <span className="font-semibold text-ink">{submittedApplication.previousSchool || 'N/A'} (GPA: {submittedApplication.previousGpa || 'N/A'})</span>
-                </div>
-                <div className="sm:col-span-2">
-                  <span className="text-muted block print:text-[7pt]">{lang === 'bn' ? 'স্থায়ী ঠিকানা:' : 'Address:'}</span>
-                  <span className="font-medium text-ink">{submittedApplication.address}</span>
+
+                {/* Candidate Passport Photo Box */}
+                <div className="flex flex-col items-center justify-start shrink-0">
+                  <div className="w-24 h-28 sm:w-28 sm:h-32 print:w-20 print:h-24 rounded-lg border-2 border-primary/50 overflow-hidden bg-white shadow-xs p-1 flex items-center justify-center">
+                    {submittedApplication.photo ? (
+                      <img 
+                        src={submittedApplication.photo} 
+                        alt="Candidate Photo" 
+                        className="w-full h-full object-cover rounded" 
+                      />
+                    ) : (
+                      <div className="text-center p-2 text-muted">
+                        <User className="w-8 h-8 text-muted/50 mx-auto mb-1" />
+                        <span className="text-[9px] font-bangla text-muted block">ছবি সংযুক্ত নেই</span>
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-[9px] print:text-[7pt] text-muted font-bangla mt-1">শিক্ষার্থীর ছবি</span>
                 </div>
               </div>
 
@@ -367,6 +421,65 @@ export default function OnlineAdmission() {
                   <User className="w-4 h-4 text-primary" />
                   <span>{lang === 'bn' ? '১. শিক্ষার্থীর ব্যক্তিগত তথ্য' : '1. Student Personal Information'}</span>
                 </h3>
+
+                {/* Student Photo Upload Section */}
+                <div className="mb-6 p-4 rounded-xl border border-line bg-bg/50 flex flex-col sm:flex-row items-center gap-5">
+                  <div className="relative group shrink-0">
+                    <div className="w-24 h-28 rounded-xl border-2 border-dashed border-primary/40 bg-white overflow-hidden shadow-xs flex items-center justify-center">
+                      {formData.photo ? (
+                        <img 
+                          src={formData.photo} 
+                          alt="Student Preview" 
+                          className="w-full h-full object-cover" 
+                        />
+                      ) : (
+                        <div className="text-center p-2 text-muted flex flex-col items-center">
+                          <Camera className="w-6 h-6 text-primary/60 mb-1" />
+                          <span className="text-[10px] font-bangla font-semibold">পাসপোর্ট সাইজ ছবি</span>
+                        </div>
+                      )}
+                    </div>
+                    {formData.photo && (
+                      <button
+                        type="button"
+                        onClick={handleRemovePhoto}
+                        className="absolute -top-2 -right-2 bg-rose-600 hover:bg-rose-700 text-white p-1 rounded-full shadow cursor-pointer transition"
+                        title={lang === 'bn' ? 'ছবি মুছে ফেলুন' : 'Remove photo'}
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex-1 text-center sm:text-left space-y-1.5 font-bangla">
+                    <label className="block text-xs font-bold text-ink">
+                      {lang === 'bn' ? 'শিক্ষার্থীর পাসপোর্ট আকারের ছবি (ঐচ্ছিক/প্রস্তাবিত)' : "Student's Passport Size Photo (Recommended)"}
+                    </label>
+                    <p className="text-[11px] text-muted leading-relaxed">
+                      {lang === 'bn' 
+                        ? 'সাদা বা হালকা ব্যাকগ্রাউন্ডের পাসপোর্ট সাইজ ছবি আপলোড করুন (সর্বোচ্চ ২MB)। ভর্তি সম্পন্ন হলে এই ছবিটি স্বয়ংক্রিয়ভাবে শিক্ষার্থীর অফিসিয়াল আইডি কার্ডে যুক্ত হবে।'
+                        : 'Upload a clear passport size photo (max 2MB). This image will automatically be printed on the official Student ID Card.'}
+                    </p>
+                    <div className="pt-1 flex items-center justify-center sm:justify-start gap-2">
+                      <label className="btn-secondary px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-2xs border border-line bg-white hover:bg-soft text-ink">
+                        <Upload className="w-3.5 h-3.5 text-primary" />
+                        <span>{formData.photo ? (lang === 'bn' ? 'ছবি পরিবর্তন করুন' : 'Change Photo') : (lang === 'bn' ? 'ছবি নির্বাচন করুন' : 'Choose Photo')}</span>
+                        <input
+                          type="file"
+                          accept="image/png, image/jpeg, image/jpg, image/webp"
+                          onChange={handlePhotoUpload}
+                          className="hidden"
+                        />
+                      </label>
+                      {formData.photo && (
+                        <span className="text-[11px] text-emerald-700 font-bold flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>{lang === 'bn' ? 'ছবি যুক্ত হয়েছে' : 'Photo Attached'}</span>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bangla">
                   <div>

@@ -18,7 +18,10 @@ import {
   Info,
   CheckCircle2,
   FileUp,
-  FileCheck
+  FileCheck,
+  Edit,
+  Camera,
+  Upload
 } from 'lucide-react';
 
 const normalizeKey = (key = '') => {
@@ -40,6 +43,7 @@ export default function StudentManager({ initialOpenAdd = false }) {
   const { 
     students, 
     addStudent, 
+    updateStudent,
     bulkAddStudents, 
     bulkDeleteStudents, 
     deleteStudent, 
@@ -54,6 +58,10 @@ export default function StudentManager({ initialOpenAdd = false }) {
   const [activeIdCardStudent, setActiveIdCardStudent] = useState(null);
   const [formError, setFormError] = useState('');
   const [actionSuccess, setActionSuccess] = useState('');
+
+  // Edit Student State
+  const [editingStudent, setEditingStudent] = useState(null);
+  const [editError, setEditError] = useState('');
 
   // Bulk Selection State
   const [selectedIds, setSelectedIds] = useState(new Set());
@@ -83,7 +91,8 @@ export default function StudentManager({ initialOpenAdd = false }) {
     dob: '2010-01-01',
     guardianName: '',
     guardianPhone: '',
-    address: 'বন্দুয়া দৌলতপুর, ফুলগাজী'
+    address: 'বন্দুয়া দৌলতপুর, ফুলগাজী',
+    photo: ''
   });
 
   const handleOpenAddModal = () => {
@@ -100,10 +109,94 @@ export default function StudentManager({ initialOpenAdd = false }) {
       dob: '2010-01-01',
       guardianName: '',
       guardianPhone: '',
-      address: 'বন্দুয়া দৌলতপুর, ফুলগাজী'
+      address: 'বন্দুয়া দৌলতপুর, ফুলগাজী',
+      photo: ''
     });
     setFormError('');
     setShowAddModal(true);
+  };
+
+  const handlePhotoUpload = (e, target) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('অনুগ্রহ করে শুধুমাত্র ছবি ফাইল (JPG, PNG, WebP) নির্বাচন করুন।');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert('ছবির সাইজ সর্বোচ্চ ২ মেগাবাইট (2MB) হতে পারবে।');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (uploadEvent) => {
+      const dataUrl = uploadEvent.target?.result;
+      if (typeof dataUrl === 'string') {
+        if (target === 'edit') {
+          setEditingStudent(prev => prev ? ({ ...prev, photo: dataUrl }) : null);
+        } else {
+          setNewStudent(prev => ({ ...prev, photo: dataUrl }));
+        }
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveEdit = (e) => {
+    e.preventDefault();
+    if (!editingStudent) return;
+    setEditError('');
+
+    if (!editingStudent.nameBn?.trim() && !editingStudent.nameEn?.trim()) {
+      setEditError('শিক্ষার্থীর বাংলা বা ইংরেজি নাম দেওয়া আবশ্যক।');
+      return;
+    }
+
+    const rollNum = parseInt(editingStudent.roll, 10);
+    if (isNaN(rollNum) || rollNum <= 0 || rollNum > 9999) {
+      setEditError('রোল নম্বর অবশ্যই ১ থেকে ৯৯৯৯-এর মধ্যে একটি ধনাত্মক সংখ্যা হতে হবে।');
+      return;
+    }
+
+    // Duplicate roll check (excluding current student)
+    const isDuplicate = students.some(
+      s => s.id !== editingStudent.id && 
+           String(s.class) === String(editingStudent.class) && 
+           Number(s.roll) === rollNum
+    );
+    if (isDuplicate) {
+      setEditError(`শ্রেণি ${editingStudent.class}-এ রোল ${rollNum} ইতোমধ্যেই অন্য শিক্ষার্থীর রয়েছে!`);
+      return;
+    }
+
+    if (editingStudent.guardianPhone) {
+      const cleanPhone = toEnglishNumerals(editingStudent.guardianPhone).replace(/\D/g, '');
+      if (cleanPhone && !/^01[3-9]\d{8}$/.test(cleanPhone)) {
+        setEditError('অভিভাবকের মোবাইল নম্বর ১১ ডিজিটের সঠিক নম্বর হতে হবে (যেমন: 01819204561)।');
+        return;
+      }
+    }
+
+    if (updateStudent) {
+      updateStudent(editingStudent.id, {
+        ...editingStudent,
+        roll: rollNum
+      });
+    }
+
+    // Live update active ID card if opened
+    if (activeIdCardStudent && activeIdCardStudent.id === editingStudent.id) {
+      setActiveIdCardStudent({
+        ...editingStudent,
+        roll: rollNum
+      });
+    }
+
+    setActionSuccess(`"${editingStudent.nameBn || editingStudent.nameEn}"-এর তথ্য ও ছবি সফলভাবে হালনাগাদ করা হয়েছে!`);
+    setTimeout(() => setActionSuccess(''), 5000);
+    setEditingStudent(null);
   };
 
   const filteredStudents = students.filter(s => {
@@ -581,8 +674,21 @@ export default function StudentManager({ initialOpenAdd = false }) {
                     </td>
                     <td className="py-3 px-3 font-mono text-muted">{stu.studentId}</td>
                     <td className="py-3 px-3">
-                      <span className="font-bold text-ink block">{stu.nameBn}</span>
-                      <span className="text-[10px] text-muted uppercase font-mono">{stu.nameEn}</span>
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-9 rounded-md border border-line bg-bg overflow-hidden shrink-0 flex items-center justify-center">
+                          {stu.photo ? (
+                            <img src={stu.photo} alt={stu.nameBn} className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="text-[10px] font-bold text-muted font-sans uppercase">
+                              {(stu.nameEn || stu.nameBn || 'S').charAt(0)}
+                            </span>
+                          )}
+                        </div>
+                        <div>
+                          <span className="font-bold text-ink block">{stu.nameBn}</span>
+                          <span className="text-[10px] text-muted uppercase font-mono">{stu.nameEn}</span>
+                        </div>
+                      </div>
                     </td>
                     <td className="py-3 px-3 font-medium text-ink">
                       {stu.class} শ্রেণি (শাখা {stu.section})
@@ -596,7 +702,7 @@ export default function StudentManager({ initialOpenAdd = false }) {
                       <div className="flex items-center justify-center gap-1.5">
                         <button
                           onClick={() => setActiveIdCardStudent(stu)}
-                          className="p-1.5 bg-soft text-deep hover:bg-soft rounded-lg text-xs font-bold transition flex items-center gap-1"
+                          className="p-1.5 bg-soft text-deep hover:bg-soft rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer"
                           title="Generate Student ID Card"
                         >
                           <CreditCard className="w-3.5 h-3.5 text-primary" />
@@ -604,11 +710,22 @@ export default function StudentManager({ initialOpenAdd = false }) {
                         </button>
                         <button
                           onClick={() => {
+                            setEditingStudent({ ...stu });
+                            setEditError('');
+                          }}
+                          className="p-1.5 bg-bg hover:bg-line text-ink rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                          title="তথ্য ও ছবি সম্পাদনা করুন"
+                        >
+                          <Edit className="w-3.5 h-3.5 text-primary" />
+                          <span className="hidden sm:inline">এডিট</span>
+                        </button>
+                        <button
+                          onClick={() => {
                             if (confirm(`আপনি কি "${stu.nameBn}" এর তথ্য মুছে ফেলতে নিশ্চিত?`)) {
                               deleteStudent(stu.id);
                             }
                           }}
-                          className="p-1.5 text-danger hover:bg-danger-soft rounded-lg transition"
+                          className="p-1.5 text-danger hover:bg-danger-soft rounded-lg transition cursor-pointer"
                           title="Delete Student"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -650,9 +767,20 @@ export default function StudentManager({ initialOpenAdd = false }) {
                   </span>
                 </div>
 
-                <div>
-                  <h4 className="font-bold text-ink text-sm">{stu.nameBn}</h4>
-                  <p className="text-[10px] text-muted uppercase font-mono">{stu.nameEn}</p>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-11 rounded-lg border border-line bg-bg overflow-hidden shrink-0 flex items-center justify-center">
+                    {stu.photo ? (
+                      <img src={stu.photo} alt={stu.nameBn} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-xs font-bold text-muted font-sans uppercase">
+                        {(stu.nameEn || stu.nameBn || 'S').charAt(0)}
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-ink text-sm">{stu.nameBn}</h4>
+                    <p className="text-[10px] text-muted uppercase font-mono">{stu.nameEn}</p>
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-between text-xs text-muted bg-bg p-2.5 rounded-lg border border-line">
@@ -668,10 +796,20 @@ export default function StudentManager({ initialOpenAdd = false }) {
                 <div className="flex items-center justify-end gap-2 pt-2 border-t border-line">
                   <button
                     onClick={() => setActiveIdCardStudent(stu)}
-                    className="px-3 py-1.5 bg-soft text-deep hover:bg-soft rounded-lg text-xs font-bold transition flex items-center gap-1"
+                    className="px-2.5 py-1.5 bg-soft text-deep hover:bg-soft rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer"
                   >
                     <CreditCard className="w-3.5 h-3.5 text-primary" />
                     <span>আইডি কার্ড</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditingStudent({ ...stu });
+                      setEditError('');
+                    }}
+                    className="px-2.5 py-1.5 bg-bg hover:bg-line text-ink rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                  >
+                    <Edit className="w-3.5 h-3.5 text-primary" />
+                    <span>এডিট</span>
                   </button>
                   <button
                     onClick={() => {
@@ -679,7 +817,7 @@ export default function StudentManager({ initialOpenAdd = false }) {
                         deleteStudent(stu.id);
                       }
                     }}
-                    className="p-1.5 text-danger hover:bg-danger-soft rounded-lg transition"
+                    className="p-1.5 text-danger hover:bg-danger-soft rounded-lg transition cursor-pointer"
                     title="Delete Student"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -709,6 +847,45 @@ export default function StudentManager({ initialOpenAdd = false }) {
             </div>
 
             <form onSubmit={handleAddSubmit} className="space-y-4 text-xs font-bangla">
+              {/* Photo Upload in Add Student Modal */}
+              <div className="p-3 bg-bg rounded-xl border border-line flex items-center gap-3">
+                <div className="w-16 h-20 rounded-lg border-2 border-dashed border-primary/40 bg-white overflow-hidden shrink-0 flex items-center justify-center">
+                  {newStudent.photo ? (
+                    <img src={newStudent.photo} alt="Preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="text-center p-1 text-muted">
+                      <Camera className="w-5 h-5 mx-auto text-muted/60 mb-0.5" />
+                      <span className="text-[9px] block">ছবি</span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 space-y-1">
+                  <span className="font-bold text-ink block text-xs">শিক্ষার্থীর পাসপোর্ট সাইজ ছবি (ঐচ্ছিক)</span>
+                  <p className="text-[10px] text-muted">আপলোডকৃত ছবিটি স্বয়ংক্রিয়ভাবে শিক্ষার্থীর আইডি কার্ডে প্রদর্শিত হবে।</p>
+                  <div className="pt-0.5 flex items-center gap-2">
+                    <label className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-line text-xs font-bold text-primary hover:bg-soft cursor-pointer shadow-2xs">
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>{newStudent.photo ? 'ছবি পরিবর্তন' : 'ছবি আপলোড'}</span>
+                      <input
+                        type="file"
+                        accept="image/png, image/jpeg, image/jpg, image/webp"
+                        onChange={(e) => handlePhotoUpload(e, 'new')}
+                        className="hidden"
+                      />
+                    </label>
+                    {newStudent.photo && (
+                      <button
+                        type="button"
+                        onClick={() => setNewStudent(prev => ({ ...prev, photo: '' }))}
+                        className="text-danger hover:underline text-[11px] font-bold"
+                      >
+                        মুছে ফেলুন
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-ink mb-1">শ্রেণি *</label>
@@ -892,6 +1069,247 @@ export default function StudentManager({ initialOpenAdd = false }) {
         </div>
       )}
 
+      {/* Edit Student Modal */}
+      {editingStudent && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white max-w-xl w-full rounded-2xl overflow-y-auto max-h-[92vh] shadow-2xl border border-line p-5 sm:p-6 space-y-4 font-bangla">
+            <div className="flex items-center justify-between border-b pb-3">
+              <div>
+                <h3 className="font-bold text-ink text-base">
+                  শিক্ষার্থীর তথ্য ও ছবি সম্পাদনা (Edit Profile)
+                </h3>
+                <p className="text-[11px] text-muted font-mono">
+                  ID: {editingStudent.studentId}
+                </p>
+              </div>
+              <button 
+                onClick={() => {
+                  setEditingStudent(null);
+                  setEditError('');
+                }} 
+                className="text-muted hover:text-ink cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {editError && (
+              <div className="p-3 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                <span>{editError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSaveEdit} className="space-y-4 text-xs">
+              {/* Photo Upload & Preview in Edit Modal */}
+              <div className="p-3.5 bg-bg rounded-xl border border-line flex items-center gap-4">
+                <div className="w-16 h-20 rounded-xl border-2 border-primary/40 bg-white overflow-hidden shrink-0 shadow-xs flex items-center justify-center">
+                  {editingStudent.photo ? (
+                    <img 
+                      src={editingStudent.photo} 
+                      alt="Student" 
+                      className="w-full h-full object-cover" 
+                    />
+                  ) : (
+                    <div className="text-center p-1 text-muted">
+                      <Camera className="w-6 h-6 mx-auto text-muted/60 mb-0.5" />
+                      <span className="text-[9px] block">ছবি নেই</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex-1 space-y-1">
+                  <span className="font-bold text-ink block text-xs">শিক্ষার্থীর পাসপোর্ট সাইজ ছবি</span>
+                  <p className="text-[11px] text-muted">
+                    নতুন ছবি আপলোড করলে তা স্বয়ংক্রিয়ভাবে শিক্ষার্থীর আইডি কার্ডে প্রদর্শিত হবে।
+                  </p>
+                  <div className="pt-1 flex items-center gap-2">
+                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-line text-xs font-bold text-primary hover:bg-soft cursor-pointer shadow-2xs">
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>{editingStudent.photo ? 'নতুন ছবি আপলোড করুন' : 'ছবি আপলোড করুন'}</span>
+                      <input
+                        type="file"
+                        accept="image/png, image/jpeg, image/jpg, image/webp"
+                        onChange={(e) => handlePhotoUpload(e, 'edit')}
+                        className="hidden"
+                      />
+                    </label>
+                    {editingStudent.photo && (
+                      <button
+                        type="button"
+                        onClick={() => setEditingStudent(prev => prev ? ({ ...prev, photo: '' }) : null)}
+                        className="text-danger hover:underline text-xs font-bold cursor-pointer"
+                      >
+                        ছবি সরান
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Editable Fields */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-ink mb-1">শিক্ষার্থীর নাম (বাংলা) *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingStudent.nameBn || ''}
+                    onChange={(e) => setEditingStudent({ ...editingStudent, nameBn: e.target.value })}
+                    className="w-full rounded-lg border border-line p-2 bg-white text-ink"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-ink mb-1">শিক্ষার্থীর নাম (English)</label>
+                  <input
+                    type="text"
+                    value={editingStudent.nameEn || ''}
+                    onChange={(e) => setEditingStudent({ ...editingStudent, nameEn: e.target.value.toUpperCase() })}
+                    className="w-full rounded-lg border border-line p-2 bg-white text-ink font-mono uppercase"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-ink mb-1">শ্রেণি *</label>
+                  <select
+                    value={editingStudent.class}
+                    onChange={(e) => {
+                      const cls = e.target.value;
+                      const grp = ['9', '10'].includes(cls) ? (editingStudent.group === 'General' ? 'Science' : editingStudent.group) : 'General';
+                      setEditingStudent({ ...editingStudent, class: cls, group: grp });
+                    }}
+                    className="w-full rounded-lg border border-line p-2 bg-white"
+                  >
+                    <option value="10">১০ম শ্রেণি</option>
+                    <option value="9">৯ম শ্রেণি</option>
+                    <option value="8">৮ম শ্রেণি</option>
+                    <option value="7">৭ম শ্রেণি</option>
+                    <option value="6">৬ষ্ঠ শ্রেণি</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-ink mb-1">রোল নম্বর *</label>
+                  <input
+                    type="number"
+                    required
+                    value={editingStudent.roll || ''}
+                    onChange={(e) => setEditingStudent({ ...editingStudent, roll: e.target.value })}
+                    className="w-full rounded-lg border border-line p-2 font-mono bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-ink mb-1">শাখা (Section)</label>
+                  <input
+                    type="text"
+                    value={editingStudent.section || 'A'}
+                    onChange={(e) => setEditingStudent({ ...editingStudent, section: e.target.value })}
+                    className="w-full rounded-lg border border-line p-2 bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-ink mb-1">বিভাগ (Group)</label>
+                  {['9', '10'].includes(editingStudent.class) ? (
+                    <select
+                      value={editingStudent.group || 'Science'}
+                      onChange={(e) => setEditingStudent({ ...editingStudent, group: e.target.value })}
+                      className="w-full rounded-lg border border-line p-2 bg-white"
+                    >
+                      <option value="Science">বিজ্ঞান (Science)</option>
+                      <option value="Business Studies">ব্যবসায় শিক্ষা (Business Studies)</option>
+                      <option value="Humanities">মানবিক (Humanities)</option>
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      disabled
+                      value="General"
+                      className="w-full rounded-lg border border-line p-2 bg-bg text-muted cursor-not-allowed"
+                    />
+                  )}
+                </div>
+
+                <div>
+                  <label className="block font-bold text-ink mb-1">লিঙ্গ</label>
+                  <select
+                    value={editingStudent.gender || 'Male'}
+                    onChange={(e) => setEditingStudent({ ...editingStudent, gender: e.target.value })}
+                    className="w-full rounded-lg border border-line p-2 bg-white"
+                  >
+                    <option value="Male">ছাত্র (Male)</option>
+                    <option value="Female">ছাত্রী (Female)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-ink mb-1">রক্তের গ্রুপ</label>
+                  <input
+                    type="text"
+                    value={editingStudent.bloodGroup || ''}
+                    placeholder="যেমন: B+, O+"
+                    onChange={(e) => setEditingStudent({ ...editingStudent, bloodGroup: e.target.value })}
+                    className="w-full rounded-lg border border-line p-2 bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-ink mb-1">অভিভাবকের নাম</label>
+                  <input
+                    type="text"
+                    value={editingStudent.guardianName || editingStudent.fatherName || ''}
+                    onChange={(e) => setEditingStudent({ ...editingStudent, guardianName: e.target.value })}
+                    className="w-full rounded-lg border border-line p-2 bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-ink mb-1">অভিভাবকের মোবাইল (১১ ডিজিট)</label>
+                  <input
+                    type="text"
+                    value={editingStudent.guardianPhone || ''}
+                    placeholder="01819204561"
+                    onChange={(e) => setEditingStudent({ ...editingStudent, guardianPhone: e.target.value })}
+                    className="w-full rounded-lg border border-line p-2 font-mono bg-white"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block font-bold text-ink mb-1">ঠিকানা</label>
+                  <input
+                    type="text"
+                    value={editingStudent.address || ''}
+                    onChange={(e) => setEditingStudent({ ...editingStudent, address: e.target.value })}
+                    className="w-full rounded-lg border border-line p-2 bg-white"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingStudent(null);
+                    setEditError('');
+                  }}
+                  className="px-4 py-2 bg-line hover:bg-line/80 text-ink rounded-lg font-bold cursor-pointer transition"
+                >
+                  বাতিল
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-primary hover:bg-primary-hover text-white font-bold rounded-lg shadow cursor-pointer transition"
+                >
+                  পরিবর্তনসমূহ সংরক্ষণ করুন
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Student ID Card Modal (Official & Printable via Portal - Senior QA H1) */}
       {typeof document !== 'undefined' && activeIdCardStudent && createPortal(
         <div 
@@ -940,13 +1358,51 @@ export default function StudentManager({ initialOpenAdd = false }) {
                 </span>
               </div>
 
-              {/* Student Photo Placeholder */}
-              <div className="w-24 h-24 mx-auto rounded-2xl bg-white p-1 shadow-lg ring-2 ring-accent/80 overflow-hidden">
+              {/* Student Photo */}
+              <div className="w-24 h-24 mx-auto rounded-2xl bg-white p-1 shadow-lg ring-2 ring-accent/80 overflow-hidden flex items-center justify-center">
                 <img
-                  src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=300&auto=format&fit=crop&q=80"
-                  alt="Student"
+                  src={activeIdCardStudent.photo || activeIdCardStudent.studentPhoto || "https://images.unsplash.com/photo-1544717305-2782549b5136?w=300&auto=format&fit=crop&q=80"}
+                  alt={activeIdCardStudent.nameBn || "Student"}
                   className="w-full h-full object-cover rounded-xl"
                 />
+              </div>
+
+              {/* Photo Change Option on ID card */}
+              <div className="no-print print:hidden">
+                <label className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 hover:bg-white/20 text-accent rounded-lg text-[10px] font-bangla font-bold border border-white/20 cursor-pointer transition">
+                  <Camera className="w-3.5 h-3.5" />
+                  <span>{activeIdCardStudent.photo ? 'আইডি কার্ডের ছবি পরিবর্তন করুন' : 'ছবি যুক্ত করুন'}</span>
+                  <input
+                    type="file"
+                    accept="image/png, image/jpeg, image/jpg, image/webp"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      if (!file.type.startsWith('image/')) {
+                        alert('অনুগ্রহ করে শুধুমাত্র ছবি ফাইল (JPG, PNG, WebP) নির্বাচন করুন।');
+                        return;
+                      }
+                      if (file.size > 2 * 1024 * 1024) {
+                        alert('ছবির সাইজ সর্বোচ্চ ২ মেগাবাইট (2MB) হতে পারবে।');
+                        return;
+                      }
+                      const reader = new FileReader();
+                      reader.onload = (ev) => {
+                        const dataUrl = ev.target?.result;
+                        if (typeof dataUrl === 'string') {
+                          if (updateStudent) {
+                            updateStudent(activeIdCardStudent.id, { photo: dataUrl });
+                          }
+                          setActiveIdCardStudent(prev => prev ? ({ ...prev, photo: dataUrl }) : null);
+                          setActionSuccess('আইডি কার্ডের ছবি সফলভাবে আপডেট করা হয়েছে!');
+                          setTimeout(() => setActionSuccess(''), 5000);
+                        }
+                      };
+                      reader.readAsDataURL(file);
+                    }}
+                  />
+                </label>
               </div>
 
               {/* Student Name & ID */}

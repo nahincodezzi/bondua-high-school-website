@@ -1189,7 +1189,8 @@ export function SchoolProvider({ children }) {
       fatherName: admissionApp.fatherName || admissionApp.guardianName || '',
       guardianName: admissionApp.fatherName || admissionApp.motherName || admissionApp.guardianName || '',
       guardianPhone: admissionApp.guardianPhone || '',
-      address: admissionApp.address || ''
+      address: admissionApp.address || '',
+      photo: admissionApp.photo || admissionApp.studentPhoto || ''
     };
 
     setStudents(prev => [createdStudent, ...prev]);
@@ -1257,7 +1258,8 @@ export function SchoolProvider({ children }) {
         fatherName: app.fatherName || app.guardianName || '',
         guardianName: app.fatherName || app.motherName || app.guardianName || '',
         guardianPhone: app.guardianPhone || '',
-        address: app.address || ''
+        address: app.address || '',
+        photo: app.photo || app.studentPhoto || ''
       };
 
       approvedStudents.push(createdStudent);
