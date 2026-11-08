@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import * as XLSX from 'xlsx';
 import SchoolLogo from '../common/SchoolLogo';
 import { useSchool } from '../../context/useSchool';
 import { getSignatories } from '../../utils/signatories';
+import { toBanglaNumerals, toEnglishNumerals } from '../../utils/dateFormatter';
 import { 
   Search, 
   Plus, 
@@ -10,17 +12,59 @@ import {
   CreditCard, 
   Printer, 
   X,
-  AlertCircle
+  AlertCircle,
+  FileSpreadsheet,
+  Download,
+  Info,
+  CheckCircle2,
+  FileUp,
+  FileCheck
 } from 'lucide-react';
 
+const normalizeKey = (key = '') => {
+  return String(key).trim().toLowerCase().replace(/[\s_\-()/\\.]+/g, '');
+};
+
+const findVal = (row, targetKeys) => {
+  for (const [k, v] of Object.entries(row)) {
+    if (v === '' || v === null || v === undefined) continue;
+    const normK = normalizeKey(k);
+    if (targetKeys.some(tk => normK === tk || normK.startsWith(tk) || tk.startsWith(normK))) {
+      return String(v).trim();
+    }
+  }
+  return '';
+};
+
 export default function StudentManager({ initialOpenAdd = false }) {
-  const { students, addStudent, deleteStudent, schoolInfo, teachers, systemUsers } = useSchool();
+  const { 
+    students, 
+    addStudent, 
+    bulkAddStudents, 
+    bulkDeleteStudents, 
+    deleteStudent, 
+    schoolInfo, 
+    teachers, 
+    systemUsers 
+  } = useSchool();
   const signatories = getSignatories(schoolInfo, teachers, systemUsers);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedClass, setSelectedClass] = useState('all');
   const [showAddModal, setShowAddModal] = useState(initialOpenAdd);
   const [activeIdCardStudent, setActiveIdCardStudent] = useState(null);
   const [formError, setFormError] = useState('');
+  const [actionSuccess, setActionSuccess] = useState('');
+
+  // Bulk Selection State
+  const [selectedIds, setSelectedIds] = useState(new Set());
+
+  // Bulk Excel Upload States
+  const [showExcelModal, setShowExcelModal] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [excelFile, setExcelFile] = useState(null);
+  const [parsedStudents, setParsedStudents] = useState([]);
+  const [parseErrors, setParseErrors] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const getNextRollForClass = (cls) => {
     const sameClass = students.filter(s => String(s.class) === String(cls));
@@ -147,6 +191,267 @@ export default function StudentManager({ initialOpenAdd = false }) {
     setTimeout(cleanup, 1200);
   };
 
+  // Selection Logic
+  const allFilteredSelected = filteredStudents.length > 0 && filteredStudents.every(s => selectedIds.has(s.id));
+  const someFilteredSelected = filteredStudents.some(s => selectedIds.has(s.id));
+
+  const toggleSelectAll = (checked) => {
+    if (checked) {
+      setSelectedIds(new Set(filteredStudents.map(s => s.id)));
+    } else {
+      setSelectedIds(new Set());
+    }
+  };
+
+  const toggleSelectOne = (id) => {
+    const next = new Set(selectedIds);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    setSelectedIds(next);
+  };
+
+  // Bulk Delete
+  const handleBulkDelete = () => {
+    if (selectedIds.size === 0) return;
+    if (confirm(`আপনি কি নিশ্চিত যে নির্বাচিত ${toBanglaNumerals(selectedIds.size)} জন শিক্ষার্থীর তথ্য সম্পূর্ণ মুছে ফেলতে চান?`)) {
+      if (bulkDeleteStudents) {
+        bulkDeleteStudents(Array.from(selectedIds));
+      } else {
+        selectedIds.forEach(id => deleteStudent(id));
+      }
+      setSelectedIds(new Set());
+      setActionSuccess('নির্বাচিত শিক্ষার্থীদের তথ্য সফলভাবে মুছে ফেলা হয়েছে!');
+      setTimeout(() => setActionSuccess(''), 5000);
+    }
+  };
+
+  // Bulk Export to Excel
+  const handleExportSelected = () => {
+    if (selectedIds.size === 0) return;
+    const selectedStudents = students.filter(s => selectedIds.has(s.id));
+    const exportRows = selectedStudents.map(s => ({
+      'আইডি (Student ID)': s.studentId,
+      'রোল (Roll)': s.roll,
+      'নাম (বাংলা)': s.nameBn,
+      'Name (English)': s.nameEn,
+      'শ্রেণি (Class)': s.class,
+      'শাখা (Section)': s.section,
+      'বিভাগ (Group)': s.group,
+      'লিঙ্গ (Gender)': s.gender,
+      'অভিভাবকের মোবাইল': s.guardianPhone,
+      'অভিভাবকের নাম': s.guardianName,
+      'রক্তের গ্রুপ': s.bloodGroup || '',
+      'জন্ম তারিখ': s.dob || '',
+      'ঠিকানা': s.address || ''
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportRows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Students_List');
+    XLSX.writeFile(wb, `BDHS_Selected_Students_${Date.now()}.xlsx`);
+  };
+
+  // Download Sample Template for Excel Upload
+  const handleDownloadTemplate = () => {
+    const headers = [
+      'রোল (Roll) *',
+      'শিক্ষার্থীর নাম বাংলা (Name Bn) *',
+      'শিক্ষার্থীর নাম ইংরেজি (Name En)',
+      'শ্রেণি (Class) *',
+      'শাখা (Section)',
+      'বিভাগ (Group)',
+      'লিঙ্গ (Gender)',
+      'অভিভাবকের মোবাইল (Phone) *',
+      'অভিভাবকের নাম (Guardian)',
+      'পিতার নাম (Father)',
+      'মাতার নাম (Mother)',
+      'রক্তের গ্রুপ (Blood Group)',
+      'জন্ম তারিখ (YYYY-MM-DD)',
+      'ঠিকানা (Address)'
+    ];
+
+    const targetClsNum = selectedClass === 'all' ? 10 : Number(selectedClass) || 10;
+    const sampleRows = [
+      {
+        'রোল (Roll) *': 1,
+        'শিক্ষার্থীর নাম বাংলা (Name Bn) *': 'তানভীর হোসেন',
+        'শিক্ষার্থীর নাম ইংরেজি (Name En)': 'Tanvir Hossain',
+        'শ্রেণি (Class) *': targetClsNum,
+        'শাখা (Section)': 'A',
+        'বিভাগ (Group)': targetClsNum >= 9 ? 'Science' : 'General',
+        'লিঙ্গ (Gender)': 'Male',
+        'অভিভাবকের মোবাইল (Phone) *': '01815112233',
+        'অভিভাবকের নাম (Guardian)': 'আবুল কাশেম',
+        'পিতার নাম (Father)': 'আবুল কাশেম',
+        'মাতার নাম (Mother)': 'সালমা বেগম',
+        'রক্তের গ্রুপ (Blood Group)': 'A+',
+        'জন্ম তারিখ (YYYY-MM-DD)': '2010-02-15',
+        'ঠিকানা (Address)': 'বন্দুয়া দৌলতপুর, ফুলগাজী'
+      },
+      {
+        'রোল (Roll) *': 2,
+        'শিক্ষার্থীর নাম বাংলা (Name Bn) *': 'সুমাইয়া আক্তার',
+        'শিক্ষার্থীর নাম ইংরেজি (Name En)': 'Sumaiya Akter',
+        'শ্রেণি (Class) *': targetClsNum,
+        'শাখা (Section)': 'A',
+        'বিভাগ (Group)': targetClsNum >= 9 ? 'Science' : 'General',
+        'লিঙ্গ (Gender)': 'Female',
+        'অভিভাবকের মোবাইল (Phone) *': '01712893042',
+        'অভিভাবকের নাম (Guardian)': 'রফিকুল ইসলাম',
+        'পিতার নাম (Father)': 'রফিকুল ইসলাম',
+        'মাতার নাম (Mother)': 'নাজমা আক্তার',
+        'রক্তের গ্রুপ (Blood Group)': 'B+',
+        'জন্ম তারিখ (YYYY-MM-DD)': '2010-05-20',
+        'ঠিকানা (Address)': 'আনন্দপুর, ফুলগাজী'
+      }
+    ];
+
+    const ws = XLSX.utils.json_to_sheet(sampleRows, { header: headers });
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Students_Template');
+    XLSX.writeFile(wb, `BDHS_Student_Registration_Template_Class_${targetClsNum}.xlsx`);
+  };
+
+  // Excel File Parsing Logic
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setExcelFile(file);
+    setIsProcessing(true);
+    setParseErrors([]);
+    setParsedStudents([]);
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const rows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+
+        if (rows.length === 0) {
+          setParseErrors(['এক্সেল ফাইলটিতে কোনো শিক্ষার্থীর ডাটা পাওয়া যায়নি।']);
+          setIsProcessing(false);
+          return;
+        }
+
+        const validList = [];
+        const errorList = [];
+        const seenClassRoll = new Set();
+
+        rows.forEach((row, idx) => {
+          const rowNum = idx + 2;
+
+          // 1. Roll
+          const rawRoll = findVal(row, ['roll', 'rollno', 'studentroll', 'রোল', 'রোলনম্বর', 'রোলনং']);
+          const cleanRoll = toEnglishNumerals(rawRoll);
+          const rollNum = parseInt(cleanRoll, 10);
+          if (isNaN(rollNum) || rollNum <= 0 || rollNum > 9999) {
+            errorList.push(`সারি ${rowNum}: রোল নম্বর ১-৯৯৯৯-এর মধ্যে সঠিক সংখ্যা হতে হবে (পাওয়া গেছে: "${rawRoll || 'খালি'}").`);
+            return;
+          }
+
+          // 2. Class
+          const rawClass = findVal(row, ['class', 'classname', 'শ্রেণি', 'শ্রেণী']);
+          const targetCls = rawClass ? toEnglishNumerals(rawClass).replace(/\D/g, '') : (selectedClass === 'all' ? '10' : selectedClass);
+          if (!targetCls) {
+            errorList.push(`সারি ${rowNum}: শ্রেণি নির্দিষ্ট করা নেই।`);
+            return;
+          }
+
+          // 3. Duplicate Roll Check (within file & against DB)
+          const classRollKey = `${targetCls}-${rollNum}`;
+          if (seenClassRoll.has(classRollKey)) {
+            errorList.push(`সারি ${rowNum}: একই শ্রেণিতে (${targetCls}) রোল ${rollNum} এক্সেল ফাইলেই একাধিকবার রয়েছে!`);
+            return;
+          }
+          seenClassRoll.add(classRollKey);
+
+          const isDuplicateInDb = students.some(
+            s => String(s.class) === String(targetCls) && Number(s.roll) === rollNum
+          );
+          if (isDuplicateInDb) {
+            errorList.push(`সারি ${rowNum}: শ্রেণি ${targetCls}-এ রোল ${rollNum} ইতোমধ্যেই ডাটাবেজে বিদ্যমান!`);
+            return;
+          }
+
+          // 4. Name
+          const nameBn = findVal(row, ['namebn', 'namebangla', 'banglaname', 'বাংলানাম', 'নামবাংলা', 'নাম']);
+          const nameEn = findVal(row, ['nameen', 'nameenglish', 'englishname', 'ইংলেজিনাম', 'ইংরেজিনাম', 'name']);
+          if (!nameBn && !nameEn) {
+            errorList.push(`সারি ${rowNum}: শিক্ষার্থীর বাংলা অথবা ইংরেজি নাম দেওয়া আবশ্যক।`);
+            return;
+          }
+
+          // 5. Phone
+          const rawPhone = findVal(row, ['phone', 'guardianphone', 'mobile', 'মোবাইল', 'ফোন', 'অভিভাবকেরমোবাইল', 'contact']);
+          const cleanPhone = toEnglishNumerals(rawPhone).replace(/\D/g, '');
+          const phonePattern = /^01[3-9]\d{8}$/;
+          if (cleanPhone && !phonePattern.test(cleanPhone)) {
+            errorList.push(`সারি ${rowNum}: অভিভাবকের মোবাইল নম্বর সঠিক নয় (${rawPhone})। ১১ ডিজিটের সঠিক নম্বর হতে হবে।`);
+            return;
+          }
+
+          const section = findVal(row, ['section', 'শাখা', 'sec']) || 'A';
+          const isSec = ['9', '10'].includes(targetCls);
+          const rawGroup = findVal(row, ['group', 'বিভাগ', 'discipline']);
+          const group = isSec ? (rawGroup || 'Science') : 'General';
+          const gender = findVal(row, ['gender', 'লিঙ্গ', 'sex']) || 'Male';
+          const bloodGroup = findVal(row, ['bloodgroup', 'blood', 'রক্তেরগ্রুপ', 'রক্ত']) || '';
+          const dob = findVal(row, ['dob', 'birthdate', 'dateofbirth', 'জন্মতারিখ']) || '2010-01-01';
+          const guardianName = findVal(row, ['guardianname', 'guardian', 'অভিভাবকেরনাম', 'অভিভাবক', 'fathername', 'পিতারনাম']) || '';
+          const fatherName = findVal(row, ['fathername', 'father', 'পিতারনাম', 'পিতা']) || guardianName;
+          const motherName = findVal(row, ['mothername', 'mother', 'মাতারনাম', 'মাতা']) || '';
+          const address = findVal(row, ['address', 'ঠিকানা', 'গ্রাম']) || 'বন্দুয়া দৌলতপুর, ফুলগাজী';
+
+          validList.push({
+            roll: rollNum,
+            nameBn: nameBn || nameEn,
+            nameEn: nameEn || nameBn,
+            class: targetCls,
+            section,
+            group,
+            gender,
+            guardianPhone: cleanPhone || '01819204561',
+            guardianName: guardianName || fatherName,
+            fatherName,
+            motherName,
+            bloodGroup,
+            dob,
+            address
+          });
+        });
+
+        setParsedStudents(validList);
+        setParseErrors(errorList);
+      } catch (err) {
+        setParseErrors(['এক্সেল ফাইলটি পড়তে সমস্যা হয়েছে: ' + err.message]);
+      } finally {
+        setIsProcessing(false);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  const handleConfirmBulkSave = () => {
+    if (parsedStudents.length === 0) return;
+    if (bulkAddStudents) {
+      bulkAddStudents(parsedStudents);
+    } else {
+      parsedStudents.forEach(stu => addStudent(stu));
+    }
+    setActionSuccess(`একসাথে ${toBanglaNumerals(parsedStudents.length)} জন শিক্ষার্থী সফলভাবে ডাটাবেজে যুক্ত করা হয়েছে!`);
+    setParsedStudents([]);
+    setParseErrors([]);
+    setExcelFile(null);
+    setShowExcelModal(false);
+    setTimeout(() => setActionSuccess(''), 6000);
+  };
+
   useEffect(() => {
     if (!activeIdCardStudent) return;
     const handleKeyDown = (e) => {
@@ -172,14 +477,31 @@ export default function StudentManager({ initialOpenAdd = false }) {
           </p>
         </div>
 
-        <button
-          onClick={handleOpenAddModal}
-          className="bg-primary hover:bg-primary text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center gap-2 transition shadow font-bangla cursor-pointer"
-        >
-          <Plus className="w-4 h-4 text-accent" />
-          <span>নতুন শিক্ষার্থী ভর্তি করুন</span>
-        </button>
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          <button
+            onClick={() => setShowExcelModal(true)}
+            className="flex-1 sm:flex-none bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow font-bangla cursor-pointer"
+          >
+            <FileSpreadsheet className="w-4 h-4 text-emerald-200" />
+            <span>এক্সেল বাল্ক আপলোড</span>
+          </button>
+          <button
+            onClick={handleOpenAddModal}
+            className="flex-1 sm:flex-none bg-primary hover:bg-primary-hover text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow font-bangla cursor-pointer"
+          >
+            <Plus className="w-4 h-4 text-accent" />
+            <span>নতুন শিক্ষার্থী ভর্তি করুন</span>
+          </button>
+        </div>
       </div>
+
+      {/* Action Success Notification */}
+      {actionSuccess && (
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs font-bangla flex items-center gap-2 shadow-xs animate-fadeIn">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+          <span className="font-semibold">{actionSuccess}</span>
+        </div>
+      )}
 
       {/* Filter and Search Bar */}
       <div className="bg-white p-4 rounded-2xl border border-line shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -221,6 +543,18 @@ export default function StudentManager({ initialOpenAdd = false }) {
           <table className="w-full text-left text-xs font-bangla">
             <thead className="bg-deep text-white uppercase text-[11px] font-bold">
               <tr>
+                <th className="py-3 px-3 text-center w-10">
+                  <input
+                    type="checkbox"
+                    checked={allFilteredSelected}
+                    ref={(el) => {
+                      if (el) el.indeterminate = someFilteredSelected && !allFilteredSelected;
+                    }}
+                    onChange={(e) => toggleSelectAll(e.target.checked)}
+                    className="w-4 h-4 text-primary rounded border-line focus:ring-accent cursor-pointer accent-primary"
+                    title="সকল শিক্ষার্থী নির্বাচন করুন"
+                  />
+                </th>
                 <th className="py-3 px-3 text-center">রোল</th>
                 <th className="py-3 px-3">আইডি</th>
                 <th className="py-3 px-3">শিক্ষার্থীর নাম</th>
@@ -233,7 +567,15 @@ export default function StudentManager({ initialOpenAdd = false }) {
             <tbody className="divide-y divide-line">
               {filteredStudents.length > 0 ? (
                 filteredStudents.map((stu) => (
-                  <tr key={stu.id} className="hover:bg-bg">
+                  <tr key={stu.id} className={`hover:bg-bg transition ${selectedIds.has(stu.id) ? 'bg-primary/5' : ''}`}>
+                    <td className="py-3 px-3 text-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.has(stu.id)}
+                        onChange={() => toggleSelectOne(stu.id)}
+                        className="w-4 h-4 text-primary rounded border-line focus:ring-accent cursor-pointer accent-primary"
+                      />
+                    </td>
                     <td className="py-3 px-3 text-center font-mono font-bold text-ink bg-bg">
                       {stu.roll}
                     </td>
@@ -277,7 +619,7 @@ export default function StudentManager({ initialOpenAdd = false }) {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="7" className="py-8 text-center text-muted">
+                  <td colSpan="8" className="py-8 text-center text-muted">
                     কোনো শিক্ষার্থী পাওয়া যায়নি।
                   </td>
                 </tr>
@@ -290,11 +632,19 @@ export default function StudentManager({ initialOpenAdd = false }) {
         <div className="block sm:hidden divide-y divide-line">
           {filteredStudents.length > 0 ? (
             filteredStudents.map((stu) => (
-              <div key={stu.id} className="p-4 space-y-2 hover:bg-bg transition">
+              <div key={stu.id} className={`p-4 space-y-2 hover:bg-bg transition ${selectedIds.has(stu.id) ? 'bg-primary/5' : ''}`}>
                 <div className="flex items-center justify-between">
-                  <span className="font-mono font-bold text-xs bg-bg px-2.5 py-1 rounded-md text-ink">
-                    রোল: {stu.roll}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(stu.id)}
+                      onChange={() => toggleSelectOne(stu.id)}
+                      className="w-4 h-4 text-primary rounded border-line focus:ring-accent cursor-pointer accent-primary"
+                    />
+                    <span className="font-mono font-bold text-xs bg-bg px-2.5 py-1 rounded-md text-ink">
+                      রোল: {stu.roll}
+                    </span>
+                  </div>
                   <span className="text-[11px] font-mono text-muted">
                     ID: {stu.studentId}
                   </span>
@@ -646,6 +996,305 @@ export default function StudentManager({ initialOpenAdd = false }) {
           </div>
         </div>,
         document.body
+      )}
+
+      {/* Sticky Floating Action Bar for Selected Students */}
+      {selectedIds.size > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-deep/95 backdrop-blur-md text-white px-5 py-3 rounded-2xl shadow-2xl border border-white/20 flex items-center gap-3 sm:gap-4 text-xs font-bangla animate-bounce-short">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span className="font-bold whitespace-nowrap">
+              {toBanglaNumerals(selectedIds.size)} জন নির্বাচিত
+            </span>
+          </div>
+
+          <div className="h-4 w-px bg-white/20" />
+
+          <button
+            onClick={handleExportSelected}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-bold transition cursor-pointer"
+            title="নির্বাচিত শিক্ষার্থীদের এক্সেলে এক্সপোর্ট করুন"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">এক্সেলে ডাউনলোড</span>
+            <span className="sm:hidden">এক্সেল</span>
+          </button>
+
+          <button
+            onClick={handleBulkDelete}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 font-bold transition cursor-pointer"
+            title="নির্বাচিত শিক্ষার্থীদের মুছে ফেলুন"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">একসাথে মুছুন</span>
+            <span className="sm:hidden">মুছুন</span>
+          </button>
+
+          <button
+            onClick={() => setSelectedIds(new Set())}
+            className="p-1 rounded-lg text-white/70 hover:text-white transition cursor-pointer"
+            title="নির্বাচন বাতিল করুন"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Excel Bulk Upload Modal */}
+      {showExcelModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white max-w-2xl w-full rounded-2xl overflow-hidden shadow-2xl border border-line flex flex-col max-h-[92vh]">
+            {/* Modal Header */}
+            <div className="p-4 sm:p-5 border-b border-line flex items-center justify-between bg-bg">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-emerald-100 text-emerald-800">
+                  <FileSpreadsheet className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold font-bangla text-ink text-sm sm:text-base">
+                    এক্সেল থেকে শিক্ষার্থী বাল্ক আপলোড (Excel Bulk Upload)
+                  </h3>
+                  <p className="text-[11px] text-muted font-bangla">
+                    এক্সেলে তৈরি তালিকা সরাসরি সিস্টেমে আপলোড করে একসাথে একাধিক শিক্ষার্থী যুক্ত করুন
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setShowExcelModal(false);
+                  setExcelFile(null);
+                  setParsedStudents([]);
+                  setParseErrors([]);
+                }}
+                className="text-muted hover:text-ink p-1 rounded-lg hover:bg-line/40 transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-4 sm:p-6 overflow-y-auto space-y-4 font-bangla text-xs">
+              {/* Quick Action Buttons: Template & Info */}
+              <div className="flex flex-wrap items-center justify-between gap-2 p-3 bg-soft/50 rounded-xl border border-line">
+                <button
+                  type="button"
+                  onClick={() => setShowInfoModal(true)}
+                  className="inline-flex items-center gap-1.5 text-primary hover:text-deep font-bold transition cursor-pointer"
+                >
+                  <Info className="w-4 h-4 text-primary" />
+                  <span>কলামের নিয়ম ও তথ্য নির্দেশিকা (i)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleDownloadTemplate}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition shadow-2xs cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5 text-emerald-100" />
+                  <span>নমুনা এক্সেল টেমপ্লেট ডাউনলোড</span>
+                </button>
+              </div>
+
+              {/* Upload Drag & Drop Box */}
+              <div className="border-2 border-dashed border-line hover:border-primary/50 rounded-2xl p-6 text-center bg-bg/50 transition">
+                <input
+                  type="file"
+                  id="student-excel-file-input"
+                  accept=".xlsx, .xls"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="student-excel-file-input"
+                  className="flex flex-col items-center justify-center gap-2 cursor-pointer"
+                >
+                  <div className="p-3 bg-primary/10 text-primary rounded-full">
+                    <FileUp className="w-6 h-6" />
+                  </div>
+                  <span className="font-bold text-ink text-sm">
+                    {excelFile ? excelFile.name : 'এক্সেল ফাইল নির্বাচন করতে ক্লিক করুন বা ড্র্যাগ করুন'}
+                  </span>
+                  <span className="text-[11px] text-muted">
+                    শুধুমাত্র .xlsx বা .xls ফরম্যাটের ফাইল গ্রহণযোগ্য
+                  </span>
+                </label>
+              </div>
+
+              {/* Loading Indicator */}
+              {isProcessing && (
+                <div className="p-4 text-center text-primary font-bold animate-pulse">
+                  এক্সেল ফাইলের ডেটা যাচাই করা হচ্ছে...
+                </div>
+              )}
+
+              {/* Parse Errors Alert */}
+              {parseErrors.length > 0 && (
+                <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-rose-900">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>ফাইলে কিছু অসঙ্গতি রয়েছে:</span>
+                  </div>
+                  <ul className="list-disc pl-5 text-[11px] space-y-0.5">
+                    {parseErrors.slice(0, 5).map((err, idx) => (
+                      <li key={idx}>{err}</li>
+                    ))}
+                    {parseErrors.length > 5 && (
+                      <li className="font-bold">... এবং আরও {toBanglaNumerals(parseErrors.length - 5)}টি ত্রুটি রয়েছে।</li>
+                    )}
+                  </ul>
+                </div>
+              )}
+
+              {/* Parsed Students Preview */}
+              {parsedStudents.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs font-bold text-ink">
+                    <span className="flex items-center gap-1.5 text-emerald-800">
+                      <FileCheck className="w-4 h-4 text-emerald-600" />
+                      মোট {toBanglaNumerals(parsedStudents.length)} জন শিক্ষার্থী আপলোডের জন্য প্রস্তুত
+                    </span>
+                    <span className="text-[11px] text-muted">প্রথম ৫ জনের প্রিভিউ</span>
+                  </div>
+
+                  <div className="border border-line rounded-xl overflow-hidden max-h-48 overflow-y-auto">
+                    <table className="w-full text-left text-[11px]">
+                      <thead className="bg-bg text-muted font-bold">
+                        <tr>
+                          <th className="p-2 text-center">রোল</th>
+                          <th className="p-2">নাম (বাংলা)</th>
+                          <th className="p-2">শ্রেণি</th>
+                          <th className="p-2">শাখা</th>
+                          <th className="p-2">মোবাইল</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-line">
+                        {parsedStudents.slice(0, 5).map((s, idx) => (
+                          <tr key={idx} className="hover:bg-bg/50">
+                            <td className="p-2 text-center font-mono font-bold">{s.roll}</td>
+                            <td className="p-2 font-bold text-ink">{s.nameBn}</td>
+                            <td className="p-2">{s.class} শ্রেণি</td>
+                            <td className="p-2">{s.section}</td>
+                            <td className="p-2 font-mono text-muted">{s.guardianPhone}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-line bg-bg flex items-center justify-end gap-2 font-bangla text-xs">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowExcelModal(false);
+                  setExcelFile(null);
+                  setParsedStudents([]);
+                  setParseErrors([]);
+                }}
+                className="px-4 py-2 rounded-xl bg-white border border-line text-muted hover:text-ink font-bold transition cursor-pointer"
+              >
+                বাতিল
+              </button>
+              <button
+                type="button"
+                disabled={parsedStudents.length === 0 || isProcessing}
+                onClick={handleConfirmBulkSave}
+                className="px-5 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white font-bold transition shadow disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 cursor-pointer"
+              >
+                <CheckCircle2 className="w-4 h-4 text-accent" />
+                <span>
+                  সকল শিক্ষার্থী ডাটাবেজে যুক্ত করুন ({toBanglaNumerals(parsedStudents.length)})
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Info Guide Modal (i) */}
+      {showInfoModal && (
+        <div className="fixed inset-0 z-60 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white max-w-lg w-full rounded-2xl overflow-hidden shadow-2xl border border-line flex flex-col max-h-[90vh]">
+            <div className="p-4 border-b border-line flex items-center justify-between bg-bg">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                  <Info className="w-4 h-4" />
+                </div>
+                <h3 className="font-bold font-bangla text-ink text-sm sm:text-base">
+                  এক্সেল কলাম নির্দেশিকা ও নিয়মাবলি
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowInfoModal(false)}
+                className="text-muted hover:text-ink p-1 rounded-lg hover:bg-line/40 transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-4 sm:p-5 overflow-y-auto space-y-3 font-bangla text-xs text-ink leading-relaxed">
+              <p className="text-muted">
+                বাল্ক আপলোডের জন্য নিচের কলামগুলো আপনার এক্সেলে রাখুন। কলামের নাম বাংলা বা ইংরেজিতে হতে পারে:
+              </p>
+
+              <div className="space-y-2 border border-line rounded-xl p-3 bg-bg/50">
+                <div className="flex items-start gap-2">
+                  <span className="font-bold text-primary min-w-[90px]">১. রোল (Roll):</span>
+                  <span className="text-muted">আবশ্যক। ধনাত্মক পূর্ণসংখ্যা (যেমন: ১, ২, ১০)। একই শ্রেণির রোল পুনরাবৃত্তি করা যাবে না।</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="font-bold text-primary min-w-[90px]">২. নাম (Name):</span>
+                  <span className="text-muted">আবশ্যক। বাংলা বা ইংরেজি নাম যেকোনো একটি থাকলেই চলবে।</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="font-bold text-primary min-w-[90px]">৩. শ্রেণি (Class):</span>
+                  <span className="text-muted">৬, ৭, ৮, ৯ বা ১০। ফাইলে শ্রেণি উল্লেখ না থাকলে নির্বাচিত শ্রেণির ডিফল্ট মান বসবে।</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="font-bold text-primary min-w-[90px]">৪. শাখা (Section):</span>
+                  <span className="text-muted">যেমন: A, B (না দিলে স্বয়ংক্রিয়ভাবে A নির্ধারিত হবে)।</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="font-bold text-primary min-w-[90px]">৫. বিভাগ (Group):</span>
+                  <span className="text-muted">৯ম ও ১০ম শ্রেণির জন্য: Science, Business, বা Humanities।</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="font-bold text-primary min-w-[90px]">৬. মোবাইল:</span>
+                  <span className="text-muted">অভিভাবকের ১১ ডিজিটের মোবাইল নম্বর (যেমন: 01819204561)।</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="font-bold text-primary min-w-[90px]">৭. অন্যান্য:</span>
+                  <span className="text-muted">পিতার নাম, মাতার নাম, রক্তের গ্রুপ, জন্মতারিখ ও ঠিকানা (ঐচ্ছিক)।</span>
+                </div>
+              </div>
+
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-[11px]">
+                💡 <strong>পরামর্শ:</strong> সহজে এবং ত্রুটিহীনভাবে আপলোড করতে সরাসরি আমাদের তৈরি নমুনা টেমপ্লেট ডাউনলোড করে পূরণ করুন।
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-line bg-bg flex items-center justify-between gap-2 font-bangla text-xs">
+              <button
+                type="button"
+                onClick={handleDownloadTemplate}
+                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>নমুনা টেমপ্লেট ডাউনলোড</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowInfoModal(false)}
+                className="px-4 py-2 rounded-xl bg-white border border-line text-muted hover:text-ink font-bold transition cursor-pointer"
+              >
+                বুঝেছি
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

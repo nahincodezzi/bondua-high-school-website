@@ -973,6 +973,53 @@ export function SchoolProvider({ children }) {
     }
   };
 
+  const bulkAddStudents = (studentsList) => {
+    if (!Array.isArray(studentsList) || studentsList.length === 0) return 0;
+    const enrichedList = studentsList.map((student, idx) => {
+      const classPad = String(student.class || '6').padStart(2, '0');
+      const rollPad = String(student.roll || '1').padStart(2, '0');
+      const studentId = student.studentId || `BDHS-2026-${classPad}${rollPad}`;
+      return {
+        ...student,
+        id: student.id || `stu-${Date.now()}-${idx}`,
+        studentId: studentId
+      };
+    });
+
+    setStudents(prev => [...enrichedList, ...prev]);
+
+    if (supabase) {
+      supabase.from('students').upsert(enrichedList.map(mappers.student.toDb)).then(({ error }) => {
+        if (error) {
+          const fallback = enrichedList.map(s => ({
+            id: s.id,
+            roll: String(s.roll),
+            class: String(s.class),
+            name_bn: s.nameBn || '',
+            name_en: s.nameEn || '',
+            guardian_phone: s.guardianPhone || ''
+          }));
+          supabase.from('students').upsert(fallback).then(({ error: err2 }) => {
+            if (err2) console.warn('Supabase fallback bulk upsert students warning:', err2.message);
+          });
+        }
+      });
+    }
+
+    return enrichedList.length;
+  };
+
+  const bulkDeleteStudents = (studentIds) => {
+    if (!Array.isArray(studentIds) || studentIds.length === 0) return;
+    const idsSet = new Set(studentIds);
+    setStudents(prev => prev.filter(s => !idsSet.has(s.id)));
+    if (supabase) {
+      supabase.from('students').delete().in('id', studentIds).then(({ error }) => {
+        if (error) console.warn('Supabase bulk delete students warning:', error.message);
+      });
+    }
+  };
+
   const addTeacher = (teacher) => {
     const newTeacher = {
       ...teacher,
@@ -1749,6 +1796,8 @@ export function SchoolProvider({ children }) {
         deleteTeacher,
         students,
         addStudent,
+        bulkAddStudents,
+        bulkDeleteStudents,
         updateStudent,
         deleteStudent,
         results,
