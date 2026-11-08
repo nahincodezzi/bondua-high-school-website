@@ -2,8 +2,11 @@ import { createClient } from '@supabase/supabase-js';
 import { initialNotices, initialHeroSlides } from '../data/initialData';
 import { deepSanitizeBondua } from '../utils/sanitizeData';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const SUPABASE_FALLBACK_URL = 'https://xpzzffxukeisfvuxxyut.supabase.co';
+const SUPABASE_FALLBACK_KEY = 'sb_publishable_PJ_2Riv1q8WIMasbvJMggQ_bKmG7pys';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || SUPABASE_FALLBACK_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || SUPABASE_FALLBACK_KEY;
 
 // Validate that url and key are provided and properly formatted
 export const isSupabaseConfigured = Boolean(
