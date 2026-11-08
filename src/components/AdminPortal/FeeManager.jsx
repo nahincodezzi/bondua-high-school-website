@@ -10,6 +10,7 @@ import {
   Receipt, 
   X,
   AlertCircle,
+  AlertTriangle,
   UserCheck,
   Search
 } from 'lucide-react';
@@ -26,6 +27,11 @@ export default function FeeManager() {
   const [activeReceipt, setActiveReceipt] = useState(null);
   const [feeSearch, setFeeSearch] = useState('');
   const [feeClassFilter, setFeeClassFilter] = useState('all');
+
+  // In-App Void Modal States (BUG 10 fix: eliminates window.prompt)
+  const [voidModalFee, setVoidModalFee] = useState(null);
+  const [voidReasonInput, setVoidReasonInput] = useState('ভুল এন্ট্রি সংশোধন');
+  const [voidError, setVoidError] = useState('');
 
   const filteredFees = fees.filter(f => {
     const matchClass = feeClassFilter === 'all' || String(f.class) === String(feeClassFilter);
@@ -102,18 +108,26 @@ export default function FeeManager() {
     setAmount('500');
   };
 
-  const handleVoidReceipt = (fee) => {
-    if (fee.status === 'Voided') {
-      alert('এই রসিদটি ইতোমধ্যে বাতিল করা হয়েছে।');
+  const handleOpenVoidModal = (fee) => {
+    if (fee.status === 'Voided') return;
+    setVoidModalFee(fee);
+    setVoidReasonInput('ভুল এন্ট্রি সংশোধন');
+    setVoidError('');
+  };
+
+  const handleConfirmVoid = (e) => {
+    e.preventDefault();
+    const cleanReason = voidReasonInput.trim();
+    if (!cleanReason) {
+      setVoidError('বাতিল করার সুনির্দিষ্ট কারণ লেখা আবশ্যক।');
       return;
     }
-    const userReason = window.prompt(
-      `রসিদ নং "${fee.receiptNo}" (৳${fee.amount}) বাতিল করার সুনির্দিষ্ট কারণ লিখুন:`,
-      'ভুল এন্ট্রি সংশোধন'
-    );
-    if (userReason === null) return; // User cancelled prompt
-    const finalReason = userReason.trim() || 'ভুল এন্ট্রি হেতু বাতিল';
-    voidFeeReceipt(fee.id, finalReason);
+    if (voidModalFee) {
+      voidFeeReceipt(voidModalFee.id, cleanReason);
+      setVoidModalFee(null);
+      setVoidReasonInput('');
+      setVoidError('');
+    }
   };
 
   const handlePrint = () => {
@@ -482,7 +496,8 @@ export default function FeeManager() {
                           </button>
                           {!isVoided && (
                             <button
-                              onClick={() => handleVoidReceipt(f)}
+                              type="button"
+                              onClick={() => handleOpenVoidModal(f)}
                               className="px-2 py-1 rounded text-[10px] font-bold text-danger hover:bg-danger-soft transition cursor-pointer border border-danger-soft"
                               title="ভুল রসিদ বাতিল করুন"
                             >
@@ -502,6 +517,82 @@ export default function FeeManager() {
 
       {/* Portal-Rendered Receipt Modal (Direct to body for clean 1-page print) */}
       {typeof document !== 'undefined' && receiptModal && createPortal(receiptModal, document.body)}
+
+      {/* In-App Void Modal (BUG 10 fix: Zero window.prompt, 100% works in webviews) */}
+      {typeof document !== 'undefined' && voidModalFee && createPortal(
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white max-w-md w-full rounded-2xl shadow-2xl border border-line p-6 space-y-4 font-bangla">
+            <div className="flex items-center justify-between border-b border-line pb-3">
+              <h3 className="font-bold text-ink text-base flex items-center gap-2 text-danger">
+                <AlertTriangle className="w-5 h-5 text-danger" />
+                <span>ফি রসিদ বাতিলকরণ (Void Receipt)</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setVoidModalFee(null)}
+                className="text-muted hover:text-ink p-1 rounded-lg hover:bg-bg cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="bg-bg p-3.5 rounded-xl border border-line space-y-1.5 text-xs">
+              <div className="flex justify-between">
+                <span className="text-muted">রসিদ নম্বর:</span>
+                <span className="font-mono font-bold text-ink">{voidModalFee.receiptNo}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted">শিক্ষার্থীর নাম:</span>
+                <span className="font-bold text-ink">{voidModalFee.studentName} ({voidModalFee.class} শ্রেণি • রোল {voidModalFee.studentRoll})</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted">টাকার পরিমাণ:</span>
+                <span className="font-bold text-danger font-mono">৳{voidModalFee.amount}</span>
+              </div>
+            </div>
+
+            <form onSubmit={handleConfirmVoid} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-ink mb-1.5">
+                  বাতিলের সুনির্দিষ্ট কারণ লিখুন *
+                </label>
+                <input
+                  type="text"
+                  required
+                  autoFocus
+                  value={voidReasonInput}
+                  onChange={(e) => setVoidReasonInput(e.target.value)}
+                  placeholder="যেমন: ভুল এন্ট্রি সংশোধন / শিক্ষার্থী পরিবর্তন"
+                  className="w-full rounded-xl border border-line p-2.5 text-xs bg-bg focus:bg-white focus:ring-2 focus:ring-primary focus:outline-none"
+                />
+                {voidError && (
+                  <p className="text-danger text-[11px] mt-1 font-semibold">{voidError}</p>
+                )}
+                <p className="text-muted text-[11px] mt-1">
+                  এই কারণটি রসিদটির অডিট হিস্টোরি এবং প্রিন্ট ভিউতে সংরক্ষিত থাকবে।
+                </p>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-line">
+                <button
+                  type="button"
+                  onClick={() => setVoidModalFee(null)}
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-muted hover:bg-bg border border-line cursor-pointer"
+                >
+                  ফিরে যান
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl text-xs font-bold bg-danger hover:bg-red-700 text-white shadow-xs cursor-pointer"
+                >
+                  রসিদ বাতিল নিশ্চিত করুন
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
