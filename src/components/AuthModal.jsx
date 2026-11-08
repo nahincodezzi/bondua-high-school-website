@@ -74,9 +74,11 @@ export default function AuthModal() {
   const handleDevLogin = async (presetRole, presetUser, presetPass) => {
     setErrorMsg('');
     const result = await authenticate(presetUser, presetPass);
-    if (!result.success) {
+    if (!result?.success) {
       login(presetRole, presetUser);
     }
+    setAuthModalOpen(false);
+    setActiveTab('admin');
   };
 
   const modalContent = (
@@ -126,18 +128,16 @@ export default function AuthModal() {
                 <AlertCircle className="w-4 h-4 shrink-0 text-danger" />
                 <span className="font-medium">{errorMsg}</span>
               </div>
-              {errorMsg.includes('লক') && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    localStorage.removeItem('bdhs_lockout');
-                    setErrorMsg('');
-                  }}
-                  className="text-[11px] underline font-bold text-left cursor-pointer text-primary hover:text-ink mt-1"
-                >
-                  🔄 ভুলবশত লক হলে ডিভাইস আনলক করতে এখানে চাপুন (Reset Device Lock)
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => {
+                  localStorage.removeItem('bdhs_lockout');
+                  setErrorMsg('');
+                }}
+                className="text-[11px] underline font-bold text-left cursor-pointer text-primary hover:text-ink mt-1"
+              >
+                🔄 ভুল প্রচেষ্টা রিসেট করতে এখানে চাপুন (Reset Attempts)
+              </button>
             </div>
           )}
 

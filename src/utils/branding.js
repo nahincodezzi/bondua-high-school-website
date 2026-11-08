@@ -38,3 +38,4 @@ export function useSchoolLogo() {
   const context = useSchool();
   return getSchoolLogo(context?.schoolInfo);
 }
+
