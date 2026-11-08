@@ -177,7 +177,7 @@ export default function FeeManager() {
             {/* Dynamic School Logo */}
             <div className="flex justify-center mb-1.5">
               <div className="w-12 h-12 rounded-full border border-slate-300 p-0.5 shadow-xs">
-                <SchoolLogo logo={schoolInfo.logo} />
+                <SchoolLogo surface="light" />
               </div>
             </div>
             <h3 className="text-xl font-extrabold text-deep print:text-lg">

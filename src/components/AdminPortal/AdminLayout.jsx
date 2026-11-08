@@ -87,7 +87,7 @@ export default function AdminLayout() {
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               {/* Official Institutional Crest */}
               <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white p-0.5 shadow-xs ring-1 ring-white/20 shrink-0">
-                <SchoolLogo logo={schoolInfo.logo} />
+                <SchoolLogo surface="dark" />
               </div>
               <div className="min-w-0">
                 <h1 className="text-xs sm:text-base font-semibold font-bangla text-white leading-tight truncate">

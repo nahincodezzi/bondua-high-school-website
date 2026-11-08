@@ -14,24 +14,35 @@ import {
 
 export default function HeroSlider() {
   const { lang, setActiveTab, schoolInfo, heroSlides } = useSchool();
-  const slides = heroSlides && heroSlides.length > 0 ? heroSlides : [];
+  const slides = heroSlides && heroSlides.length > 0 ? heroSlides.filter(s => s.active !== false) : [];
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
+  const heroConfig = schoolInfo?.hero || {};
+  const statsList = Array.isArray(schoolInfo?.stats) && schoolInfo.stats.length > 0 ? schoolInfo.stats : [
+    { id: '1', valueBn: '১৯৯০', valueEn: '1990', labelBn: 'স্থাপিত শিক্ষাবর্ষ', labelEn: 'Established Year' },
+    { id: '2', valueBn: '৮৫০+', valueEn: '850+', labelBn: 'বর্তমান শিক্ষার্থী', labelEn: 'Enrolled Students' },
+    { id: '3', valueBn: '৯৮.৫%', valueEn: '98.5%', labelBn: 'এসএসসি পাসের হার', labelEn: 'SSC Board Pass Rate' },
+    { id: '4', valueBn: '৩টি বিভাগ', valueEn: '3 Groups', labelBn: 'বিজ্ঞান, ব্যবসায় ও মানবিক', labelEn: 'Science, Business & Humanities' },
+  ];
+
+  const admYear = schoolInfo?.admissionYear || (lang === 'bn' ? '২০২৭' : '2027');
+
   // Auto-slide effect with pause on hover/focus and reduced motion awareness (L3)
   useEffect(() => {
-    if (slides.length <= 1 || isPaused) return;
+    if (slides.length <= 1 || isPaused || heroConfig.autoplay === false) return;
 
     // Check prefers-reduced-motion
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (mediaQuery.matches) return;
 
+    const intervalSec = Number(heroConfig.interval) || 6;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 6000);
+    }, intervalSec * 1000);
     return () => clearInterval(timer);
-  }, [slides.length, isPaused]);
+  }, [slides.length, isPaused, heroConfig.autoplay, heroConfig.interval]);
 
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
@@ -86,9 +97,13 @@ export default function HeroSlider() {
                         <span>{lang === 'bn' ? slide.tagBn : (slide.tagEn || slide.tagBn)}</span>
                       </div>
 
-                      <span className="bg-black/30 text-white/90 text-xs font-semibold px-3 py-1 rounded-full font-bangla hidden sm:inline-flex border border-white/20">
-                        {lang === 'bn' ? (schoolInfo.roadBn || 'ফেনী-পরশুরাম রোড সংলগ্ন') : (schoolInfo.roadEn || 'Situated along Feni-Parshuram Road')}
-                      </span>
+                      {heroConfig.locationBadge?.visible !== false && (heroConfig.locationBadge?.textBn || schoolInfo.roadBn) && (
+                        <span className="bg-black/30 text-white/90 text-xs font-semibold px-3 py-1 rounded-full font-bangla hidden sm:inline-flex border border-white/20">
+                          {lang === 'bn' 
+                            ? (heroConfig.locationBadge?.textBn || schoolInfo.roadBn || '') 
+                            : (heroConfig.locationBadge?.textEn || schoolInfo.roadEn || heroConfig.locationBadge?.textBn || '')}
+                        </span>
+                      )}
                     </div>
 
                     {/* Main Title */}
@@ -101,57 +116,93 @@ export default function HeroSlider() {
                       {lang === 'bn' ? slide.subtitleBn : (slide.subtitleEn || slide.subtitleBn)}
                     </p>
 
-                    {/* Quick Uniform Callout Tag */}
-                    <div className="inline-flex items-center gap-2 bg-black/30 border border-white/20 px-4 py-1.5 rounded-full text-xs text-white font-medium font-bangla">
-                      <Shirt className="w-4 h-4 text-accent shrink-0" />
-                      <span>
-                        {lang === 'bn' 
-                          ? 'নির্ধারিত স্কুল পোশাক: ছাত্র—সাদা শার্ট ও নীল প্যান্ট | ছাত্রী—লাল ড্রেস'
-                          : 'Dress Code: Boys (White Shirt & Blue Pant), Girls (Red Dress)'}
-                      </span>
-                    </div>
+                    {/* Info Pill */}
+                    {heroConfig.infoPill?.visible !== false && (heroConfig.infoPill?.textBn || heroConfig.infoPill?.textEn) && (
+                      <div className="inline-flex items-center gap-2 bg-black/30 border border-white/20 px-4 py-1.5 rounded-full text-xs text-white font-medium font-bangla">
+                        <Shirt className="w-4 h-4 text-accent shrink-0" />
+                        <span>
+                          {lang === 'bn' 
+                            ? (heroConfig.infoPill?.textBn || '') 
+                            : (heroConfig.infoPill?.textEn || heroConfig.infoPill?.textBn || '')}
+                        </span>
+                      </div>
+                    )}
 
-                    {/* Call to Actions - Exactly 1 Amber Button, Secondary Outline (H6: 2027 session) */}
+                    {/* Call to Actions - CMS-Driven Dynamic Buttons */}
                     <div className="pt-2 flex flex-wrap items-center gap-2 sm:gap-3">
-                      <button
-                        tabIndex={isActive ? 0 : -1}
-                        onClick={() => setActiveTab('admission')}
-                        className="btn-accent px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-base flex items-center gap-1.5 sm:gap-2 font-bangla shadow-md cursor-pointer rounded-lg"
-                      >
-                        <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-ink" />
-                        <span>{lang === 'bn' ? 'অনলাইন ভর্তি আবেদন ২০২৭' : 'Apply for Admission'}</span>
-                      </button>
+                      {heroConfig.primaryBtn?.visible !== false && (
+                        <button
+                          tabIndex={isActive ? 0 : -1}
+                          onClick={() => {
+                            const tgt = (heroConfig.primaryBtn?.target || '#admission').replace('#', '');
+                            setActiveTab(tgt);
+                          }}
+                          className="btn-accent px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-base flex items-center gap-1.5 sm:gap-2 font-bangla shadow-md cursor-pointer rounded-lg"
+                        >
+                          <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-ink" />
+                          <span>
+                            {(lang === 'bn' 
+                              ? (heroConfig.primaryBtn?.labelBn || 'অনলাইন ভর্তি আবেদন {year}') 
+                              : (heroConfig.primaryBtn?.labelEn || 'Apply for Admission {year}')
+                            ).replace('{year}', admYear)}
+                          </span>
+                        </button>
+                      )}
 
-                      <button
-                        tabIndex={isActive ? 0 : -1}
-                        onClick={() => setActiveTab('results')}
-                        className="bg-white/10 hover:bg-white/20 text-white font-semibold px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-xs sm:text-base border border-white/40 shadow-sm transition flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer"
-                      >
-                        <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                        <span>{lang === 'bn' ? 'ফলাফল অনুসন্ধান' : 'Check Results'}</span>
-                      </button>
+                      {heroConfig.secondaryBtn?.visible !== false && (
+                        <button
+                          tabIndex={isActive ? 0 : -1}
+                          onClick={() => {
+                            const tgt = (heroConfig.secondaryBtn?.target || '#results').replace('#', '');
+                            setActiveTab(tgt);
+                          }}
+                          className="bg-white/10 hover:bg-white/20 text-white font-semibold px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-xs sm:text-base border border-white/40 shadow-sm transition flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer"
+                        >
+                          <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                          <span>
+                            {lang === 'bn' 
+                              ? (heroConfig.secondaryBtn?.labelBn || 'ফলাফল অনুসন্ধান') 
+                              : (heroConfig.secondaryBtn?.labelEn || 'Check Results')}
+                          </span>
+                        </button>
+                      )}
 
-                      <button
-                        tabIndex={isActive ? 0 : -1}
-                        onClick={() => setActiveTab('uniform')}
-                        className="text-white hover:text-primary px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer"
-                      >
-                        <Shirt className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        <span>{lang === 'bn' ? 'পোশাক নীতিমালা' : 'Dress Code'}</span>
-                      </button>
+                      {heroConfig.tertiaryBtn?.visible !== false && (
+                        <button
+                          tabIndex={isActive ? 0 : -1}
+                          onClick={() => {
+                            const tgt = (heroConfig.tertiaryBtn?.target || '#uniform').replace('#', '');
+                            setActiveTab(tgt);
+                          }}
+                          className="text-white hover:text-primary px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer"
+                        >
+                          <Shirt className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          <span>
+                            {lang === 'bn' 
+                              ? (heroConfig.tertiaryBtn?.labelBn || 'পোশাক নীতিমালা') 
+                              : (heroConfig.tertiaryBtn?.labelEn || 'Dress Code')}
+                          </span>
+                        </button>
+                      )}
 
-                      <a
-                        tabIndex={isActive ? 0 : -1}
-                        href={schoolInfo.facebookGroupUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-white hover:text-accent font-semibold px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 sm:gap-2"
-                        title="Join Facebook Group"
-                        aria-label="ফেসবুক গ্রুপে যান"
-                      >
-                        <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                        <span className="hidden sm:inline">{lang === 'bn' ? 'ফেসবুক গ্রুপ' : 'Facebook'}</span>
-                      </a>
+                      {heroConfig.socialBtn?.visible !== false && (schoolInfo.facebookGroupUrl || heroConfig.socialBtn?.url) && (
+                        <a
+                          tabIndex={isActive ? 0 : -1}
+                          href={heroConfig.socialBtn?.url || schoolInfo.facebookGroupUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-white hover:text-accent font-semibold px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 sm:gap-2"
+                          title="Join Community"
+                          aria-label="ফেসবুক কমিউনিটিতে যান"
+                        >
+                          <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                          <span className="hidden sm:inline">
+                            {lang === 'bn' 
+                              ? (heroConfig.socialBtn?.labelBn || 'ফেসবুক গ্রুপ') 
+                              : (heroConfig.socialBtn?.labelEn || 'Facebook Group')}
+                          </span>
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -203,41 +254,19 @@ export default function HeroSlider() {
         </button>
       </div>
 
-      {/* Stat Bar Bottom Ribbon: Flat Solid Dark Green, Consistent Numerals */}
+      {/* Stat Bar Bottom Ribbon: CMS-Managed Dynamic Statistics */}
       <div className="relative z-20 bg-deep border-t border-white/10 py-4 px-4 sm:px-8 shadow-xs">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-          <div className="border-r border-white/15 last:border-none px-2">
-            <p className="text-2xl sm:text-3xl font-extrabold text-white">
-              {lang === 'bn' ? '১৯৯০' : '1990'}
-            </p>
-            <p className="text-xs sm:text-sm text-soft font-medium font-bangla mt-0.5">
-              {lang === 'bn' ? 'স্থাপিত শিক্ষাবর্ষ (স্বীকৃতি: ১৯৯৪)' : 'Established Year'}
-            </p>
-          </div>
-          <div className="border-r border-white/15 last:border-none px-2">
-            <p className="text-2xl sm:text-3xl font-extrabold text-white">
-              {lang === 'bn' ? '৮৫০+' : '850+'}
-            </p>
-            <p className="text-xs sm:text-sm text-soft font-medium font-bangla mt-0.5">
-              {lang === 'bn' ? 'বর্তমান শিক্ষার্থী' : 'Enrolled Students'}
-            </p>
-          </div>
-          <div className="border-r border-white/15 last:border-none px-2">
-            <p className="text-2xl sm:text-3xl font-extrabold text-white">
-              {lang === 'bn' ? '৯৮.৫%' : '98.5%'}
-            </p>
-            <p className="text-xs sm:text-sm text-soft font-medium font-bangla mt-0.5">
-              {lang === 'bn' ? 'এসএসসি পাশের হার' : 'SSC Board Pass Rate'}
-            </p>
-          </div>
-          <div className="px-2">
-            <p className="text-2xl sm:text-3xl font-extrabold text-white">
-              {lang === 'bn' ? '৩টি বিভাগ' : '3 Groups'}
-            </p>
-            <p className="text-xs sm:text-sm text-soft font-medium font-bangla mt-0.5">
-              {lang === 'bn' ? 'বিজ্ঞান, ব্যবসায় ও মানবিক' : 'Science, Business & Humanities'}
-            </p>
-          </div>
+        <div className={`max-w-7xl mx-auto grid grid-cols-2 ${statsList.length >= 4 ? 'sm:grid-cols-4' : statsList.length === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2'} gap-4 text-center`}>
+          {statsList.map((stat, sIdx) => (
+            <div key={stat.id || sIdx} className="border-r border-white/15 last:border-none px-2">
+              <p className="text-2xl sm:text-3xl font-extrabold text-white">
+                {lang === 'bn' ? stat.valueBn : (stat.valueEn || stat.valueBn)}
+              </p>
+              <p className="text-xs sm:text-sm text-soft font-medium font-bangla mt-0.5">
+                {lang === 'bn' ? stat.labelBn : (stat.labelEn || stat.labelBn)}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </div>

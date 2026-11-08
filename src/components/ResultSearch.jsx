@@ -268,7 +268,7 @@ export default function ResultSearch() {
               <div className="text-center border-b-2 border-deep pb-4 print:pb-1 print:border-b print:border-deep">
                 <div className="flex justify-center mb-2 print:mb-0.5">
                   <div className="w-14 h-14 print:w-8 print:h-8 rounded-full bg-white p-0.5 shadow-sm ring-2 ring-primary">
-                    <SchoolLogo logo={schoolInfo.logo} />
+                    <SchoolLogo surface="light" />
                   </div>
                 </div>
                 <h3 className="text-2xl sm:text-3xl print:text-[12pt] font-extrabold font-bangla text-deep leading-tight">
@@ -472,7 +472,7 @@ export default function ResultSearch() {
             <div className="text-center border-b border-slate-900 pb-1">
               <div className="flex justify-center mb-0.5">
                 <div className="w-8 h-8 rounded-full bg-white p-0.5 ring-1 ring-emerald-600">
-                  <SchoolLogo logo={schoolInfo.logo} />
+                  <SchoolLogo surface="light" />
                 </div>
               </div>
               <h3 className="text-[12pt] font-extrabold font-bangla text-slate-900 leading-tight">

@@ -24,7 +24,34 @@ export const initialSchoolInfo = {
   typeBn: "সহশিক্ষা, মাধ্যমিক (বাংলা মাধ্যম)",
   mottoBn: "জ্ঞানই আলো, শিক্ষাই শক্তি",
   mottoEn: "Knowledge is Light, Education is Power",
-  logo: null,
+  defaultTheme: "emerald",
+  logo: "/brand/logo-emerald.png",
+  logos: {
+    emerald: { onDark: "/brand/logo-emerald.png", onLight: "/brand/logo-emerald.png" },
+    indigo:  { onDark: "/brand/logo-indigo.png",  onLight: "/brand/logo-indigo.png" }
+  },
+  headerSubtitleBn: "",
+  headerSubtitleEn: "",
+  footerAboutBn: "১৯৯০ সাল থেকে ফেনী জেলার ফুলগাজীতে গুণগত শিক্ষার আলোকবর্তিকা হিসেবে সেবা দিয়ে আসছে আমাদের এই ঐতিহ্যবাহী বিদ্যাপীঠ।",
+  footerAboutEn: "Illuminating minds with academic excellence, holistic values, and technological proficiency since 1990.",
+  admissionYear: "২০২৭",
+  academicYear: "2026",
+  hero: {
+    locationBadge: { visible: true, textBn: "ফেনী-পরশুরাম রোড সংলগ্ন", textEn: "Along Feni-Parshuram Road" },
+    infoPill: { visible: true, textBn: "নির্ধারিত স্কুল পোশাক: ছাত্র—সাদা শার্ট ও নীল প্যান্ট | ছাত্রী—লাল ড্রেস", textEn: "Dress Code: Boys (White Shirt & Blue Pant), Girls (Red Dress)" },
+    primaryBtn: { visible: true, labelBn: "অনলাইন ভর্তি আবেদন {year}", labelEn: "Apply for Admission {year}", target: "#admission" },
+    secondaryBtn: { visible: true, labelBn: "ফলাফল অনুসন্ধান", labelEn: "Check Results", target: "#results" },
+    tertiaryBtn: { visible: true, labelBn: "পোশাক নীতিমালা", labelEn: "Dress Code", target: "#uniform" },
+    socialBtn: { visible: true, labelBn: "অফিসিয়াল ফেসবুক গ্রুপ", labelEn: "Official Facebook Group", url: "https://www.facebook.com/groups/887015382052811/" },
+    autoplay: true,
+    interval: 6
+  },
+  stats: [
+    { id: "st-1", valueBn: "১৯৯০", valueEn: "1990", labelBn: "স্থাপিত শিক্ষাবর্ষ (স্বীকৃতি: ১৯৯৪)", labelEn: "Established Year" },
+    { id: "st-2", valueBn: "৮৫০+", valueEn: "850+", labelBn: "বর্তমান শিক্ষার্থী", labelEn: "Enrolled Students" },
+    { id: "st-3", valueBn: "৯৮.৫%", valueEn: "98.5%", labelBn: "এসএসসি পাসের হার", labelEn: "SSC Board Pass Rate" },
+    { id: "st-4", valueBn: "৩টি বিভাগ", valueEn: "3 Groups", labelBn: "বিজ্ঞান, ব্যবসায় ও মানবিক", labelEn: "Science, Business & Humanities" }
+  ],
   campusImage: "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&auto=format&fit=crop&q=80",
   visionBn: "একটি বৈষম্যহীন, আধুনিক প্রযুক্তি-নির্ভর ও আদর্শ বিদ্যাপীঠ হিসেবে কুমিল্লা শিক্ষা বোর্ডের অন্যতম শ্রেষ্ঠ ও মডেল বিদ্যালয়ে রূপান্তরিত হওয়া।",
   visionEn: "To emerge as one of the premier model institutions under the Comilla Education Board, fostering discrimination-free, technology-driven, and holistic moral education.",

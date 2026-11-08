@@ -1345,7 +1345,7 @@ export default function StudentManager({ initialOpenAdd = false }) {
               {/* School Emblem & Name */}
               <div className="flex flex-col items-center">
                 <div className="w-10 h-10 rounded-full bg-white p-0.5 shadow ring-1 ring-accent mb-1 shrink-0">
-                  <SchoolLogo logo={schoolInfo.logo} />
+                  <SchoolLogo surface="light" />
                 </div>
                 <h3 className="text-base font-extrabold font-bangla text-white leading-tight">
                   {schoolInfo.nameBn}

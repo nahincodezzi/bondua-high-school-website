@@ -26,11 +26,11 @@ export default function Footer() {
           <div className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-white p-1 ring-2 ring-accent shrink-0">
-                <SchoolLogo logo={schoolInfo.logo} />
+                <SchoolLogo surface="dark" />
               </div>
               <div>
                 <h3 className="text-base sm:text-lg font-bold font-bangla text-white leading-tight">
-                  {lang === 'bn' ? schoolInfo.nameBn : schoolInfo.nameEn}
+                  {lang === 'bn' ? (schoolInfo.nameBn || 'বিদ্যালয়ের নাম') : (schoolInfo.nameEn || 'School Name')}
                 </h3>
                 <p className="text-xs text-accent font-mono">
                   EIIN: {schoolInfo.eiin} • MPO: {schoolInfo.mpoCode}
@@ -40,8 +40,8 @@ export default function Footer() {
 
             <p className="text-xs text-white/95 font-medium font-bangla leading-relaxed">
               {lang === 'bn'
-                ? '১৯৯০ সাল থেকে ফেনী জেলার ফুলগাজী উপজেলার প্রত্যন্ত অঞ্চলে আদর্শ ও নৈতিকতাসম্পন্ন সুনাগরিক গড়ে তুলতে প্রতিশ্রুতিবদ্ধ এক ঐতিহ্যবাহী বিদ্যাপীঠ।'
-                : 'A dedicated secondary educational seat in Anandapur, Fulgazi, Feni inspiring young generations with knowledge and moral values since 1990.'}
+                ? (schoolInfo.footerAboutBn || schoolInfo.visionBn || '')
+                : (schoolInfo.footerAboutEn || schoolInfo.visionEn || '')}
             </p>
 
             <div className="pt-2">
@@ -142,7 +142,7 @@ export default function Footer() {
               {lang === 'bn' ? 'যোগাযোগের ঠিকানা' : 'School Address'}
             </h4>
             <p className="leading-relaxed">
-              {lang === 'bn' ? schoolInfo.addressBn : (schoolInfo.addressEn || 'Along Feni-Parshuram Road, Bondua Daulatpur, Anandapur Union, Fulgazi, Feni, Bangladesh')}
+              {lang === 'bn' ? schoolInfo.addressBn : (schoolInfo.addressEn || '')}
             </p>
             <p className="font-mono text-accent">
               {lang === 'bn' ? `ফোন: ${schoolInfo.phone}` : `Phone: ${schoolInfo.phone}`}

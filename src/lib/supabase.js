@@ -109,7 +109,7 @@ export const mappers = {
     fromDb: (row) => ({
       id: row.id,
       roll: row.roll,
-      studentId: row.student_id || row.studentId || `BDHS-2026-${row.roll}`,
+      studentId: row.student_id || row.studentId || `STU-${row.class || '10'}-${row.roll}`,
       nameBn: row.name_bn || '',
       nameEn: row.name_en || '',
       class: String(row.class || '10'),
@@ -206,7 +206,7 @@ export const mappers = {
         studentNameBn: row.student_name || marksheet.studentNameBn || '',
         studentNameEn: marksheet.studentNameEn || '',
         studentName: row.student_name || '',
-        studentId: marksheet.studentId || `BDHS-2026-${row.roll}`,
+        studentId: marksheet.studentId || `STU-${row.class || '10'}-${row.roll}`,
         group: marksheet.group || 'Science',
         section: marksheet.section || 'A',
         gpa: row.gpa != null ? Number(row.gpa).toFixed(2) : (marksheet.gpa || '0.00'),

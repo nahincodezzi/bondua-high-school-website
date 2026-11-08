@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { SchoolContext } from './SchoolContextInstance';
 import { deepSanitizeBondua } from '../utils/sanitizeData';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
+import { runStorageMigration, getStoredItem, setStoredItem } from '../utils/storageAdapter';
 import { storeVideoFile, getVideoFile, deleteVideoFile } from '../utils/mediaStorage';
 import { getDhakaDateString } from '../utils/dateFormatter';
 import { hashPassword, verifyPassword } from '../utils/security';
@@ -31,47 +33,39 @@ import {
 } from '../data/initialData';
 
 export function SchoolProvider({ children }) {
-  // Global cache sanitization on app start to eliminate legacy cached names/vision texts and Bandua spelling
+  // Configurable Storage Prefix Migration & Cache Sanitization
   if (typeof window !== 'undefined') {
     try {
-      // Purge all legacy "Bandua" spellings across localStorage
+      runStorageMigration();
+
+      // Purge all legacy "Bandua" spellings across localStorage (one-time idempotent)
       const keysToClean = [
-        'bdhs_info', 'bdhs_slides', 'bdhs_notices', 'bdhs_teachers', 
-        'bdhs_students', 'bdhs_admissions', 'bdhs_results', 'bdhs_fees', 
-        'bdhs_gallery', 'bdhs_academic_groups', 'bdhs_academic_config', 
-        'bdhs_uniform', 'bdhs_system_users'
+        'info', 'slides', 'notices', 'teachers', 
+        'students', 'admissions', 'results', 'fees', 
+        'gallery', 'academic_groups', 'academic_config', 
+        'uniform', 'system_users'
       ];
       for (const k of keysToClean) {
-        const item = localStorage.getItem(k);
+        const item = getStoredItem(k);
         if (item && (item.includes('Bandua') || item.includes('bandua') || item.includes('BANDUA'))) {
           try {
             const parsed = JSON.parse(item);
             const sanitized = deepSanitizeBondua(parsed);
-            localStorage.setItem(k, JSON.stringify(sanitized));
+            setStoredItem(k, sanitized);
           } catch {
-            localStorage.setItem(k, item.replace(/Bandua/g, 'Bondua').replace(/bandua/g, 'bondua').replace(/BANDUA/g, 'BONDUA'));
+            setStoredItem(k, item.replace(/Bandua/g, 'Bondua').replace(/bandua/g, 'bondua').replace(/BANDUA/g, 'BONDUA'));
           }
         }
       }
 
-      const rawAuth = localStorage.getItem('bdhs_auth');
+      const rawAuth = getStoredItem('auth');
       if (rawAuth && (rawAuth.includes('রবিউল') || rawAuth.includes('Rabiul') || rawAuth.includes('মজুমদার') || rawAuth.includes('মুজুমদার'))) {
         localStorage.removeItem('bdhs_auth');
+        localStorage.removeItem('site_auth');
       }
-      const rawUsers = localStorage.getItem('bdhs_system_users');
+      const rawUsers = getStoredItem('system_users');
       if (rawUsers && (rawUsers.includes('রবিউল') || rawUsers.includes('Rabiul') || !rawUsers.includes('বাহার'))) {
-        localStorage.setItem('bdhs_system_users', JSON.stringify(initialUsers));
-      }
-      const rawInfo = localStorage.getItem('bdhs_info');
-      if (rawInfo && (rawInfo.includes('রবিউল') || rawInfo.includes('Rabiul') || rawInfo.includes('নোয়াখালী') || rawInfo.includes('নোয়াখালী') || rawInfo.includes('বৃহত্তর'))) {
-        const p = JSON.parse(rawInfo);
-        p.headmasterNameBn = 'জনাব বাহার উদ্দিন ভূঁইয়া';
-        p.headmasterNameEn = 'Mr. Bahar Uddin Bhuiyan';
-        p.headmasterDesignationBn = 'ভারপ্রাপ্ত প্রধান শিক্ষক';
-        p.headmasterDesignationEn = 'Acting Headmaster';
-        p.visionBn = initialSchoolInfo.visionBn;
-        p.visionEn = initialSchoolInfo.visionEn;
-        localStorage.setItem('bdhs_info', JSON.stringify(p));
+        setStoredItem('system_users', initialUsers);
       }
     } catch (e) {
       console.error('Cache migration cleanup error:', e);
@@ -85,18 +79,32 @@ export function SchoolProvider({ children }) {
         const urlParams = new URLSearchParams(window.location.search);
         const urlTheme = urlParams.get('theme');
         if (urlTheme === 'indigo' || urlTheme === 'emerald') return urlTheme;
-        const savedTheme = localStorage.getItem('bdhs_theme');
-        if (savedTheme === 'indigo') return 'indigo';
+        const savedTheme = getStoredItem('theme');
+        if (savedTheme === 'indigo' || savedTheme === 'emerald') return savedTheme;
       } catch (e) {
         console.error('Error reading theme from localStorage:', e);
       }
     }
-    return 'emerald';
+    return initialSchoolInfo.defaultTheme || 'emerald';
   });
 
   const toggleTheme = () => {
     setTheme(prev => (prev === 'emerald' ? 'indigo' : 'emerald'));
   };
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.body.classList.add('theme-transition');
+      const timer = setTimeout(() => {
+        document.body.classList.remove('theme-transition');
+      }, 300);
+
+      document.documentElement.setAttribute('data-theme', theme);
+      setStoredItem('theme', theme);
+
+      return () => clearTimeout(timer);
+    }
+  }, [theme]);
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
@@ -254,6 +262,28 @@ export function SchoolProvider({ children }) {
         if (!parsed.campusImage) {
           parsed.campusImage = initialSchoolInfo.campusImage;
         }
+
+        // Theme-aware Logos & White-Label CMS Migration
+        if (!parsed.logos || typeof parsed.logos !== 'object') {
+          const fallbackLogo = parsed.logo || initialSchoolInfo.logo || '/brand/logo-emerald.png';
+          parsed.logos = {
+            emerald: { onDark: fallbackLogo, onLight: fallbackLogo },
+            indigo: { onDark: fallbackLogo, onLight: fallbackLogo },
+          };
+        }
+        if (!parsed.hero || typeof parsed.hero !== 'object') {
+          parsed.hero = initialSchoolInfo.hero;
+        }
+        if (!Array.isArray(parsed.stats) || parsed.stats.length === 0) {
+          parsed.stats = initialSchoolInfo.stats;
+        }
+        if (!parsed.admissionYear) parsed.admissionYear = initialSchoolInfo.admissionYear || '২০২৭';
+        if (!parsed.academicYear) parsed.academicYear = initialSchoolInfo.academicYear || '2026';
+        if (parsed.headerSubtitleBn === undefined) parsed.headerSubtitleBn = '';
+        if (parsed.headerSubtitleEn === undefined) parsed.headerSubtitleEn = '';
+        if (!parsed.footerAboutBn) parsed.footerAboutBn = initialSchoolInfo.footerAboutBn;
+        if (!parsed.footerAboutEn) parsed.footerAboutEn = initialSchoolInfo.footerAboutEn;
+
         return parsed;
       } catch {
         return initialSchoolInfo;
@@ -261,6 +291,9 @@ export function SchoolProvider({ children }) {
     }
     return initialSchoolInfo;
   });
+
+  // Keep browser tab title, favicon, meta description, and theme-color updated live
+  useDocumentMeta(schoolInfo, theme, lang);
 
   const [uniformInfo, setUniformInfo] = useState(() => {
     const saved = localStorage.getItem('bdhs_uniform');
@@ -523,13 +556,30 @@ export function SchoolProvider({ children }) {
         if (cloud.gallery && cloud.gallery.length > 0) setGallery(cloud.gallery);
         if (cloud.schoolInfo) {
           const cleanInfo = deepSanitizeBondua(cloud.schoolInfo);
-          cleanInfo.nameEn = 'Bondua Daulatpur High School';
-          cleanInfo.nameAlt = 'Bondua Doulatpur High School';
+          cleanInfo.nameEn = cleanInfo.nameEn || 'Bondua Daulatpur High School';
+          cleanInfo.nameAlt = cleanInfo.nameAlt || 'Bondua Doulatpur High School';
           if (cleanInfo.addressEn) cleanInfo.addressEn = cleanInfo.addressEn.replace(/Bandua/g, 'Bondua');
+
+          if (!cleanInfo.logos || typeof cleanInfo.logos !== 'object') {
+            const fallbackLogo = cleanInfo.logo || initialSchoolInfo.logo || '/brand/logo-emerald.png';
+            cleanInfo.logos = {
+              emerald: { onDark: fallbackLogo, onLight: fallbackLogo },
+              indigo: { onDark: fallbackLogo, onLight: fallbackLogo },
+            };
+          }
+          if (!cleanInfo.hero || typeof cleanInfo.hero !== 'object') cleanInfo.hero = initialSchoolInfo.hero;
+          if (!Array.isArray(cleanInfo.stats) || cleanInfo.stats.length === 0) cleanInfo.stats = initialSchoolInfo.stats;
+          if (!cleanInfo.admissionYear) cleanInfo.admissionYear = initialSchoolInfo.admissionYear || '২০২৭';
+          if (!cleanInfo.academicYear) cleanInfo.academicYear = initialSchoolInfo.academicYear || '2026';
+          if (cleanInfo.headerSubtitleBn === undefined) cleanInfo.headerSubtitleBn = '';
+          if (cleanInfo.headerSubtitleEn === undefined) cleanInfo.headerSubtitleEn = '';
+          if (!cleanInfo.footerAboutBn) cleanInfo.footerAboutBn = initialSchoolInfo.footerAboutBn;
+          if (!cleanInfo.footerAboutEn) cleanInfo.footerAboutEn = initialSchoolInfo.footerAboutEn;
+
           setSchoolInfo(cleanInfo);
-          localStorage.setItem('bdhs_info', JSON.stringify(cleanInfo));
-          // Auto-migrate cloud Supabase row if it contains legacy Bandua
-          if (supabase && (JSON.stringify(cloud.schoolInfo).includes('Bandua') || JSON.stringify(cloud.schoolInfo).includes('BANDUA'))) {
+          setStoredItem('info', cleanInfo);
+          // Auto-migrate cloud Supabase row if it contains legacy Bandua or lacks logos
+          if (supabase && (JSON.stringify(cloud.schoolInfo).includes('Bandua') || JSON.stringify(cloud.schoolInfo).includes('BANDUA') || !cloud.schoolInfo.logos)) {
             supabase.from('school_info').upsert({ id: 'main', data: cleanInfo }).then(() => {}).catch(() => {});
           }
         }
@@ -959,7 +1009,9 @@ export function SchoolProvider({ children }) {
   const addStudent = (student) => {
     const classPad = String(student.class || '6').padStart(2, '0');
     const rollPad = String(student.roll || '1').padStart(2, '0');
-    const studentId = student.studentId || `BDHS-2026-${classPad}${rollPad}`;
+    const prefix = schoolInfo.shortName || 'STU';
+    const year = schoolInfo.academicYear || 2026;
+    const studentId = student.studentId || `${prefix}-${year}-${classPad}${rollPad}`;
     const newStudent = {
       ...student,
       id: student.id || `stu-${Date.now()}`,
@@ -1034,7 +1086,9 @@ export function SchoolProvider({ children }) {
     const enrichedList = studentsList.map((student, idx) => {
       const classPad = String(student.class || '6').padStart(2, '0');
       const rollPad = String(student.roll || '1').padStart(2, '0');
-      const studentId = student.studentId || `BDHS-2026-${classPad}${rollPad}`;
+      const prefix = schoolInfo.shortName || 'STU';
+    const year = schoolInfo.academicYear || 2026;
+    const studentId = student.studentId || `${prefix}-${year}-${classPad}${rollPad}`;
       return {
         ...student,
         id: student.id || `stu-${Date.now()}-${idx}`,
@@ -1147,7 +1201,9 @@ export function SchoolProvider({ children }) {
   const submitAdmission = (formData) => {
     const timestampPart = Date.now().toString().slice(-4);
     const randomPart = Math.floor(100 + Math.random() * 900);
-    const trackingId = `BDHS-ADM-2027-${timestampPart}${randomPart}`;
+    const prefix = schoolInfo.shortName || 'STU';
+    const admYear = schoolInfo.admissionYear?.replace(/\D/g, '') || '2027';
+    const trackingId = `${prefix}-ADM-${admYear}-${timestampPart}${randomPart}`;
     const newApplication = {
       ...formData,
       studentNameEn: (formData.studentNameEn || '').trim().toUpperCase(),
@@ -1228,7 +1284,9 @@ export function SchoolProvider({ children }) {
     // 3. Create student record with authentic preserved data (H3 & N5 fix)
     const classPad = targetClass.padStart(2, '0');
     const rollPad = String(newRoll).padStart(2, '0');
-    const studentId = `BDHS-2026-${classPad}${rollPad}`;
+    const prefix = schoolInfo.shortName || 'STU';
+    const year = schoolInfo.academicYear || 2026;
+    const studentId = `${prefix}-${year}-${classPad}${rollPad}`;
 
     const createdStudent = {
       id: `stu-${Date.now()}`,
@@ -1297,7 +1355,9 @@ export function SchoolProvider({ children }) {
       const assignedRoll = classRollCounters[targetClass];
       const classPad = targetClass.padStart(2, '0');
       const rollPad = String(assignedRoll).padStart(2, '0');
-      const studentId = `BDHS-2026-${classPad}${rollPad}`;
+      const prefix = schoolInfo.shortName || 'STU';
+    const year = schoolInfo.academicYear || 2026;
+    const studentId = `${prefix}-${year}-${classPad}${rollPad}`;
 
       const createdStudent = {
         id: `stu-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
@@ -1806,6 +1866,51 @@ export function SchoolProvider({ children }) {
     return true;
   };
 
+  const resetToBlankTemplate = (wizardData) => {
+    if (authUser?.role !== 'superadmin') {
+      alert('অননুমোদিত এক্সেস: শুধুমাত্র সুপার অ্যাডমিন এই পরিবর্তন করতে পারবেন।');
+      return false;
+    }
+    const targetTheme = wizardData.defaultTheme || 'emerald';
+    const logoVal = wizardData.logo || null;
+    const blankInfo = {
+      ...initialSchoolInfo,
+      nameBn: wizardData.nameBn || 'বিদ্যালয়ের নাম',
+      nameEn: wizardData.nameEn || 'School Name',
+      shortName: wizardData.shortName || 'SCH',
+      eiin: wizardData.eiin || '000000',
+      mpoCode: wizardData.mpoCode || '',
+      established: wizardData.established || new Date().getFullYear(),
+      addressBn: wizardData.addressBn || '',
+      addressEn: wizardData.addressEn || '',
+      phone: wizardData.phone || '',
+      email: wizardData.email || '',
+      defaultTheme: targetTheme,
+      logos: wizardData.logos || {
+        emerald: { onDark: logoVal, onLight: logoVal },
+        indigo: { onDark: logoVal, onLight: logoVal },
+      },
+      hero: {
+        ...initialSchoolInfo.hero,
+        locationBadge: {
+          visible: Boolean(wizardData.addressBn),
+          textBn: wizardData.addressBn || '',
+          textEn: wizardData.addressEn || '',
+        },
+      },
+    };
+
+    setSchoolInfo(blankInfo);
+    setTheme(targetTheme);
+    setStoredItem('info', blankInfo);
+    setStoredItem('theme', targetTheme);
+
+    if (supabase) {
+      supabase.from('school_info').upsert({ id: 'main', data: blankInfo }).then(() => {});
+    }
+    return true;
+  };
+
   return (
     <SchoolContext.Provider
       value={{
@@ -1890,6 +1995,7 @@ export function SchoolProvider({ children }) {
         deleteContactMessage,
         routines,
         resetToDefaults,
+        resetToBlankTemplate,
         isCloudSyncActive: isSupabaseConfigured
       }}
     >

@@ -20,7 +20,12 @@ import {
   RotateCcw,
   FlaskConical,
   Briefcase,
-  Palette
+  Palette,
+  ArrowUp,
+  ArrowDown,
+  Layers,
+  Sparkles,
+  BarChart3
 } from 'lucide-react';
 
 export default function CmsContentManager() {
@@ -150,6 +155,30 @@ export default function CmsContentManager() {
   const slideFileRef = useRef(null);
   const [activeSlideUploadIndex, setActiveSlideUploadIndex] = useState(null);
 
+  const [heroConfig, setHeroConfig] = useState(() => {
+    return schoolInfo?.hero || {
+      autoplay: true,
+      interval: 6,
+      locationBadge: { textBn: '', textEn: '', visible: true },
+      infoPill: { textBn: '', textEn: '', visible: true },
+      primaryBtn: { labelBn: 'অনলাইন ভর্তি আবেদন {year}', labelEn: 'Apply for Admission {year}', target: '#admission', visible: true },
+      secondaryBtn: { labelBn: 'ফলাফল অনুসন্ধান', labelEn: 'Check Results', target: '#results', visible: true },
+      tertiaryBtn: { labelBn: 'পোশাক নীতিমালা', labelEn: 'Dress Code', target: '#uniform', visible: true },
+      socialBtn: { labelBn: 'ফেসবুক গ্রুপ', labelEn: 'Facebook Group', url: '', visible: true }
+    };
+  });
+
+  const [statsList, setStatsList] = useState(() => {
+    return Array.isArray(schoolInfo?.stats) && schoolInfo.stats.length > 0
+      ? schoolInfo.stats
+      : [
+          { id: '1', valueBn: '১৯৯০', valueEn: '1990', labelBn: 'স্থাপিত শিক্ষাবর্ষ (স্বীকৃতি: ১৯৯৪)', labelEn: 'Established Year' },
+          { id: '2', valueBn: '৮৫০+', valueEn: '850+', labelBn: 'বর্তমান শিক্ষার্থী', labelEn: 'Enrolled Students' },
+          { id: '3', valueBn: '৯৮.৫%', valueEn: '98.5%', labelBn: 'এসএসসি পাসের হার', labelEn: 'SSC Board Pass Rate' },
+          { id: '4', valueBn: '৩টি বিভাগ', valueEn: '3 Groups', labelBn: 'বিজ্ঞান, ব্যবসায় ও মানবিক', labelEn: 'Science, Business & Humanities' },
+        ];
+  });
+
   const handleUniformSave = (e) => {
     e.preventDefault();
     if (updateUniformSettings) {
@@ -168,8 +197,104 @@ export default function CmsContentManager() {
     } else {
       setHeroSlides(slidesForm);
     }
+    if (updateSchoolSettings) {
+      updateSchoolSettings({
+        ...schoolInfo,
+        hero: heroConfig,
+        stats: statsList
+      });
+    }
     setSavedMessage(true);
     setTimeout(() => setSavedMessage(false), 3000);
+  };
+
+  const moveSlide = (index, direction) => {
+    const newIndex = index + direction;
+    if (newIndex < 0 || newIndex >= slidesForm.length) return;
+    const newSlides = [...slidesForm];
+    const temp = newSlides[index];
+    newSlides[index] = newSlides[newIndex];
+    newSlides[newIndex] = temp;
+    setSlidesForm(newSlides);
+  };
+
+  const handleAddSlide = () => {
+    const newId = Date.now().toString();
+    const newSlide = {
+      id: newId,
+      tagBn: 'নতুন ব্যানার',
+      tagEn: 'New Banner',
+      titleBn: schoolInfo.nameBn || 'বিদ্যালয়ে স্বাগতম',
+      titleEn: schoolInfo.nameEn || 'Welcome to School',
+      subtitleBn: 'গুণগত শিক্ষা ও নৈতিক মূল্যবোধের আদর্শ বিদ্যাপীঠ',
+      subtitleEn: 'A sanctuary of quality education and moral values',
+      image: 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&q=80&w=1200',
+      active: true,
+      order: slidesForm.length + 1
+    };
+    setSlidesForm([...slidesForm, newSlide]);
+  };
+
+  const handleDeleteSlide = (index) => {
+    if (slidesForm.length <= 1) {
+      alert('কমপক্ষে একটি স্লাইড থাকা আবশ্যক।');
+      return;
+    }
+    if (window.confirm('আপনি কি এই স্লাইডটি মুছে ফেলতে চান?')) {
+      const newSlides = slidesForm.filter((_, i) => i !== index);
+      setSlidesForm(newSlides);
+    }
+  };
+
+  const handleHeroNestedChange = (section, key, value) => {
+    setHeroConfig(prev => ({
+      ...prev,
+      [section]: {
+        ...(prev[section] || {}),
+        [key]: value
+      }
+    }));
+  };
+
+  const handleStatChange = (index, field, value) => {
+    const updated = [...statsList];
+    updated[index] = { ...updated[index], [field]: value };
+    setStatsList(updated);
+  };
+
+  const handleAddStat = () => {
+    if (statsList.length >= 6) {
+      alert('সর্বোচ্চ ৬টি পরিসংখ্যান আইটেম যুক্ত করা সম্ভব।');
+      return;
+    }
+    setStatsList([
+      ...statsList,
+      {
+        id: Date.now().toString(),
+        valueBn: '১০০+',
+        valueEn: '100+',
+        labelBn: 'নতুন পরিসংখ্যান',
+        labelEn: 'New Metric'
+      }
+    ]);
+  };
+
+  const handleDeleteStat = (index) => {
+    if (statsList.length <= 1) {
+      alert('কমপক্ষে একটি পরিসংখ্যান প্রদর্শন থাকতে হবে।');
+      return;
+    }
+    setStatsList(statsList.filter((_, i) => i !== index));
+  };
+
+  const handleMoveStat = (index, direction) => {
+    const newIndex = index + direction;
+    if (newIndex < 0 || newIndex >= statsList.length) return;
+    const newStats = [...statsList];
+    const temp = newStats[index];
+    newStats[index] = newStats[newIndex];
+    newStats[newIndex] = temp;
+    setStatsList(newStats);
   };
 
   const handleInfoSave = (e) => {
@@ -1252,124 +1377,555 @@ export default function CmsContentManager() {
         </form>
       )}
 
-      {/* 3. HERO SLIDER CMS WITH PHOTO UPLOAD */}
+      {/* 3. HERO SLIDER, GLOBAL HERO & STATS CMS */}
       {activeTab === 'slides' && (
-        <form onSubmit={handleSlidesSave} className="bg-white p-6 sm:p-8 rounded-2xl border border-line shadow-2xs space-y-6 font-bangla text-xs">
+        <form onSubmit={handleSlidesSave} className="bg-white p-6 sm:p-8 rounded-2xl border border-line shadow-2xs space-y-8 font-bangla text-xs">
           <div className="flex items-center justify-between pb-3 border-b">
             <div>
-              <h3 className="text-base font-bold text-ink">
-                হোমপেজ ব্যানার স্লাইডার কনটেন্ট ও ছবি পরিবর্তন
+              <h3 className="text-base font-bold text-ink flex items-center gap-2">
+                <Sliders className="w-5 h-5 text-primary" />
+                <span>হোমপেজ ব্যানার, গ্লোবাল বাটন ও পরিসংখ্যান নিয়ন্ত্রণ (Hero CMS)</span>
               </h3>
               <p className="text-[11px] text-muted">
-                মূল ওয়েবসাইটের ৩টি মূল ব্যানার স্লাইডারের ছবি সরাসরি আপলোড করুন বা লিংক প্রদান করুন
+                মূল ওয়েবসাইটের হিরো স্লাইডার, ব্যাজ, অ্যাকশন বাটন এবং কাউন্টার পরিসংখ্যান এখান থেকে কাস্টমাইজ করুন
               </p>
+            </div>
+            <button
+              type="submit"
+              className="bg-primary hover:bg-primary text-white font-bold py-2 px-5 rounded-xl text-xs transition shadow flex items-center gap-2 cursor-pointer"
+            >
+              <Save className="w-4 h-4 text-accent" />
+              <span>সংরক্ষণ করুন</span>
+            </button>
+          </div>
+
+          {/* Part A: Banner Slides */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h4 className="font-bold text-sm text-deep flex items-center gap-2">
+                <Layers className="w-4 h-4 text-primary" />
+                <span>ব্যানার স্লাইডারসমূহ ({slidesForm.length}টি স্লাইড)</span>
+              </h4>
+              <button
+                type="button"
+                onClick={handleAddSlide}
+                className="bg-soft hover:bg-soft text-primary font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>নতুন স্লাইড যোগ করুন</span>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {slidesForm.map((slide, idx) => (
+                <div key={slide.id || idx} className="p-4 bg-bg rounded-2xl border border-line space-y-3">
+                  <div className="flex items-center justify-between border-b border-line/60 pb-2">
+                    <span className="font-bold text-deep text-sm flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-full bg-deep text-white text-[11px] flex items-center justify-center">
+                        {idx + 1}
+                      </span>
+                      <span>স্লাইড #{idx + 1}</span>
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        disabled={idx === 0}
+                        onClick={() => moveSlide(idx, -1)}
+                        className="p-1 text-muted hover:text-ink disabled:opacity-30 rounded hover:bg-white"
+                        title="উপরে নিন"
+                      >
+                        <ArrowUp className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={idx === slidesForm.length - 1}
+                        onClick={() => moveSlide(idx, 1)}
+                        className="p-1 text-muted hover:text-ink disabled:opacity-30 rounded hover:bg-white"
+                        title="নিচে নিন"
+                      >
+                        <ArrowDown className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteSlide(idx)}
+                        className="p-1 text-red-500 hover:text-red-700 rounded hover:bg-red-50 ml-2"
+                        title="স্লাইড মুছে ফেলুন"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block font-bold text-ink mb-1">ট্যাগ / ক্যাটাগরি (বাংলা)</label>
+                      <input
+                        type="text"
+                        value={slide.tagBn || ''}
+                        onChange={(e) => handleSlideChange(idx, 'tagBn', e.target.value)}
+                        className="w-full rounded-lg border border-line p-2.5 bg-white"
+                        placeholder="যেমন: ঐতিহ্য ও আধুনিকতার মেলবন্ধন"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-bold text-ink mb-1">Tag / Category (English)</label>
+                      <input
+                        type="text"
+                        value={slide.tagEn || ''}
+                        onChange={(e) => handleSlideChange(idx, 'tagEn', e.target.value)}
+                        className="w-full rounded-lg border border-line p-2.5 bg-white font-sans"
+                        placeholder="e.g. Tradition & Modern Excellence"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block font-bold text-ink">ব্যাকগ্রাউন্ড ছবি</label>
+                        <button
+                          type="button"
+                          onClick={() => triggerSlideUpload(idx)}
+                          className="text-primary hover:text-deep font-bold text-[11px] flex items-center gap-1 bg-soft hover:bg-soft px-2 py-0.5 rounded transition cursor-pointer"
+                        >
+                          <Upload className="w-3 h-3" />
+                          <span>ডিভাইস থেকে ছবি আপলোড</span>
+                        </button>
+                      </div>
+                      <input
+                        type="text"
+                        value={slide.image || ''}
+                        onChange={(e) => handleSlideChange(idx, 'image', e.target.value)}
+                        className="w-full rounded-lg border border-line p-2.5 bg-white font-mono text-[11px]"
+                        placeholder="Image URL or uploaded image"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-bold text-ink mb-1">প্রধান শিরোনাম (বাংলা) *</label>
+                      <input
+                        type="text"
+                        required
+                        value={slide.titleBn || ''}
+                        onChange={(e) => handleSlideChange(idx, 'titleBn', e.target.value)}
+                        className="w-full rounded-lg border border-line p-2.5 bg-white font-bold"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-bold text-ink mb-1">Main Title (English) *</label>
+                      <input
+                        type="text"
+                        value={slide.titleEn || ''}
+                        onChange={(e) => handleSlideChange(idx, 'titleEn', e.target.value)}
+                        className="w-full rounded-lg border border-line p-2.5 bg-white font-sans font-bold"
+                        placeholder="e.g. Welcome to School"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-bold text-ink mb-1">উপ-শিরোনাম / বিবরণ (বাংলা)</label>
+                      <input
+                        type="text"
+                        value={slide.subtitleBn || ''}
+                        onChange={(e) => handleSlideChange(idx, 'subtitleBn', e.target.value)}
+                        className="w-full rounded-lg border border-line p-2.5 bg-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-bold text-ink mb-1">Subtitle / Summary (English)</label>
+                      <input
+                        type="text"
+                        value={slide.subtitleEn || ''}
+                        onChange={(e) => handleSlideChange(idx, 'subtitleEn', e.target.value)}
+                        className="w-full rounded-lg border border-line p-2.5 bg-white font-sans"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="space-y-6">
-            {slidesForm.map((slide, idx) => (
-              <div key={slide.id} className="p-4 bg-bg rounded-2xl border border-line space-y-3">
-                <span className="font-bold text-deep text-sm block">
-                  স্লাইড #{idx + 1}
-                </span>
+          {/* Part B: Global Hero Badges & Buttons */}
+          <div className="space-y-4 pt-4 border-t border-line">
+            <h4 className="font-bold text-sm text-deep flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-accent" />
+              <span>গ্লোবাল হিরো ব্যাজ, অ্যাকশন বাটন ও সেটিংস</span>
+            </h4>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block font-bold text-ink mb-1">ট্যাগ / ক্যাটাগরি (বাংলা)</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Autoplay & Interval */}
+              <div className="p-3 bg-bg rounded-xl border border-line sm:col-span-2 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <label className="flex items-center gap-2 cursor-pointer font-bold text-ink">
                     <input
-                      type="text"
-                      value={slide.tagBn || ''}
-                      onChange={(e) => handleSlideChange(idx, 'tagBn', e.target.value)}
-                      className="w-full rounded-lg border border-line p-2.5 bg-white"
-                      placeholder="যেমন: ঐতিহ্য ও আধুনিকতার মেলবন্ধন"
+                      type="checkbox"
+                      checked={heroConfig.autoplay !== false}
+                      onChange={(e) => setHeroConfig(prev => ({ ...prev, autoplay: e.target.checked }))}
+                      className="w-4 h-4 accent-primary rounded"
                     />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-ink mb-1">Tag / Category (English)</label>
-                    <input
-                      type="text"
-                      value={slide.tagEn || ''}
-                      onChange={(e) => handleSlideChange(idx, 'tagEn', e.target.value)}
-                      className="w-full rounded-lg border border-line p-2.5 bg-white font-sans"
-                      placeholder="e.g. Tradition & Modern Excellence"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <div className="flex items-center justify-between mb-1">
-                      <label className="block font-bold text-ink">ব্যাকগ্রাউন্ড ছবি</label>
-                      <button
-                        type="button"
-                        onClick={() => triggerSlideUpload(idx)}
-                        className="text-primary hover:text-deep font-bold text-[11px] flex items-center gap-1 bg-soft hover:bg-soft px-2 py-0.5 rounded transition cursor-pointer"
-                      >
-                        <Upload className="w-3 h-3" />
-                        <span>ডিভাইস থেকে ছবি আপলোড</span>
-                      </button>
-                    </div>
-                    <input
-                      type="text"
-                      value={slide.image || ''}
-                      onChange={(e) => handleSlideChange(idx, 'image', e.target.value)}
-                      className="w-full rounded-lg border border-line p-2.5 bg-white font-mono text-[11px]"
-                      placeholder="Image URL or uploaded image"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-ink mb-1">প্রধান শিরোনাম (বাংলা) *</label>
-                    <input
-                      type="text"
-                      required
-                      value={slide.titleBn || ''}
-                      onChange={(e) => handleSlideChange(idx, 'titleBn', e.target.value)}
-                      className="w-full rounded-lg border border-line p-2.5 bg-white font-bold"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-ink mb-1">Main Title (English) *</label>
-                    <input
-                      type="text"
-                      value={slide.titleEn || ''}
-                      onChange={(e) => handleSlideChange(idx, 'titleEn', e.target.value)}
-                      className="w-full rounded-lg border border-line p-2.5 bg-white font-sans font-bold"
-                      placeholder="e.g. Welcome to Bondua Daulatpur High School"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-ink mb-1">উপ-শিরোনাম / বিবরণ (বাংলা)</label>
-                    <input
-                      type="text"
-                      value={slide.subtitleBn || ''}
-                      onChange={(e) => handleSlideChange(idx, 'subtitleBn', e.target.value)}
-                      className="w-full rounded-lg border border-line p-2.5 bg-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-ink mb-1">Subtitle / Summary (English)</label>
-                    <input
-                      type="text"
-                      value={slide.subtitleEn || ''}
-                      onChange={(e) => handleSlideChange(idx, 'subtitleEn', e.target.value)}
-                      className="w-full rounded-lg border border-line p-2.5 bg-white font-sans"
-                    />
-                  </div>
+                    <span>ব্যানার স্লাইডার অটো-প্লে (Autoplay) সক্রিয় রাখুন</span>
+                  </label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted">স্লাইড পরিবর্তনের বিরতি:</span>
+                  <input
+                    type="number"
+                    min="2"
+                    max="30"
+                    value={heroConfig.interval || 6}
+                    onChange={(e) => setHeroConfig(prev => ({ ...prev, interval: Number(e.target.value) }))}
+                    className="w-16 rounded border border-line p-1 text-center bg-white font-mono"
+                  />
+                  <span className="text-muted">সেকেন্ড</span>
                 </div>
               </div>
-            ))}
+
+              {/* Location Badge */}
+              <div className="p-4 bg-bg rounded-xl border border-line space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="font-bold text-deep flex items-center gap-1.5">
+                    <span>১. অবস্থান ব্যাজ (Location Badge)</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 text-[11px] text-muted cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={heroConfig.locationBadge?.visible !== false}
+                      onChange={(e) => handleHeroNestedChange('locationBadge', 'visible', e.target.checked)}
+                      className="accent-primary"
+                    />
+                    <span>দৃশ্যমান রাখুন</span>
+                  </label>
+                </div>
+                <input
+                  type="text"
+                  placeholder="বাংলা লেখা (যেমন: ফেনী-পরশুরাম রোড সংলগ্ন)"
+                  value={heroConfig.locationBadge?.textBn || ''}
+                  onChange={(e) => handleHeroNestedChange('locationBadge', 'textBn', e.target.value)}
+                  className="w-full rounded border border-line p-2 bg-white"
+                />
+                <input
+                  type="text"
+                  placeholder="English text (e.g. Along Feni-Parshuram Road)"
+                  value={heroConfig.locationBadge?.textEn || ''}
+                  onChange={(e) => handleHeroNestedChange('locationBadge', 'textEn', e.target.value)}
+                  className="w-full rounded border border-line p-2 bg-white font-sans"
+                />
+              </div>
+
+              {/* Info Pill */}
+              <div className="p-4 bg-bg rounded-xl border border-line space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="font-bold text-deep flex items-center gap-1.5">
+                    <span>২. নোটিশ পিল / ড্রেসকোড (Info Pill)</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 text-[11px] text-muted cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={heroConfig.infoPill?.visible !== false}
+                      onChange={(e) => handleHeroNestedChange('infoPill', 'visible', e.target.checked)}
+                      className="accent-primary"
+                    />
+                    <span>দৃশ্যমান রাখুন</span>
+                  </label>
+                </div>
+                <input
+                  type="text"
+                  placeholder="বাংলা লেখা (যেমন: নির্ধারিত পোশাক নীতিমালা)"
+                  value={heroConfig.infoPill?.textBn || ''}
+                  onChange={(e) => handleHeroNestedChange('infoPill', 'textBn', e.target.value)}
+                  className="w-full rounded border border-line p-2 bg-white"
+                />
+                <input
+                  type="text"
+                  placeholder="English text"
+                  value={heroConfig.infoPill?.textEn || ''}
+                  onChange={(e) => handleHeroNestedChange('infoPill', 'textEn', e.target.value)}
+                  className="w-full rounded border border-line p-2 bg-white font-sans"
+                />
+              </div>
+
+              {/* Primary Button */}
+              <div className="p-4 bg-bg rounded-xl border border-line space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="font-bold text-deep flex items-center gap-1.5">
+                    <span>৩. প্রধান বাটন (Primary CTA)</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 text-[11px] text-muted cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={heroConfig.primaryBtn?.visible !== false}
+                      onChange={(e) => handleHeroNestedChange('primaryBtn', 'visible', e.target.checked)}
+                      className="accent-primary"
+                    />
+                    <span>দৃশ্যমান রাখুন</span>
+                  </label>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="text"
+                    placeholder="লেবেল বাংলা ({year} ডায়নামিক)"
+                    value={heroConfig.primaryBtn?.labelBn || ''}
+                    onChange={(e) => handleHeroNestedChange('primaryBtn', 'labelBn', e.target.value)}
+                    className="w-full rounded border border-line p-2 bg-white"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Label English"
+                    value={heroConfig.primaryBtn?.labelEn || ''}
+                    onChange={(e) => handleHeroNestedChange('primaryBtn', 'labelEn', e.target.value)}
+                    className="w-full rounded border border-line p-2 bg-white font-sans"
+                  />
+                </div>
+                <input
+                  type="text"
+                  placeholder="লিংক বা টার্গেট সেকশন (যেমন: #admission)"
+                  value={heroConfig.primaryBtn?.target || '#admission'}
+                  onChange={(e) => handleHeroNestedChange('primaryBtn', 'target', e.target.value)}
+                  className="w-full rounded border border-line p-2 bg-white font-mono text-[11px]"
+                />
+              </div>
+
+              {/* Secondary Button */}
+              <div className="p-4 bg-bg rounded-xl border border-line space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="font-bold text-deep flex items-center gap-1.5">
+                    <span>৪. দ্বিতীয় বাটন (Secondary CTA)</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 text-[11px] text-muted cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={heroConfig.secondaryBtn?.visible !== false}
+                      onChange={(e) => handleHeroNestedChange('secondaryBtn', 'visible', e.target.checked)}
+                      className="accent-primary"
+                    />
+                    <span>দৃশ্যমান রাখুন</span>
+                  </label>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="text"
+                    placeholder="লেবেল বাংলা"
+                    value={heroConfig.secondaryBtn?.labelBn || ''}
+                    onChange={(e) => handleHeroNestedChange('secondaryBtn', 'labelBn', e.target.value)}
+                    className="w-full rounded border border-line p-2 bg-white"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Label English"
+                    value={heroConfig.secondaryBtn?.labelEn || ''}
+                    onChange={(e) => handleHeroNestedChange('secondaryBtn', 'labelEn', e.target.value)}
+                    className="w-full rounded border border-line p-2 bg-white font-sans"
+                  />
+                </div>
+                <input
+                  type="text"
+                  placeholder="টার্গেট সেকশন (যেমন: #results)"
+                  value={heroConfig.secondaryBtn?.target || '#results'}
+                  onChange={(e) => handleHeroNestedChange('secondaryBtn', 'target', e.target.value)}
+                  className="w-full rounded border border-line p-2 bg-white font-mono text-[11px]"
+                />
+              </div>
+
+              {/* Tertiary Button */}
+              <div className="p-4 bg-bg rounded-xl border border-line space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="font-bold text-deep flex items-center gap-1.5">
+                    <span>৫. তৃতীয় বাটন / লিংক (Tertiary CTA)</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 text-[11px] text-muted cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={heroConfig.tertiaryBtn?.visible !== false}
+                      onChange={(e) => handleHeroNestedChange('tertiaryBtn', 'visible', e.target.checked)}
+                      className="accent-primary"
+                    />
+                    <span>দৃশ্যমান রাখুন</span>
+                  </label>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="text"
+                    placeholder="লেবেল বাংলা"
+                    value={heroConfig.tertiaryBtn?.labelBn || ''}
+                    onChange={(e) => handleHeroNestedChange('tertiaryBtn', 'labelBn', e.target.value)}
+                    className="w-full rounded border border-line p-2 bg-white"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Label English"
+                    value={heroConfig.tertiaryBtn?.labelEn || ''}
+                    onChange={(e) => handleHeroNestedChange('tertiaryBtn', 'labelEn', e.target.value)}
+                    className="w-full rounded border border-line p-2 bg-white font-sans"
+                  />
+                </div>
+                <input
+                  type="text"
+                  placeholder="টার্গেট সেকশন (যেমন: #uniform)"
+                  value={heroConfig.tertiaryBtn?.target || '#uniform'}
+                  onChange={(e) => handleHeroNestedChange('tertiaryBtn', 'target', e.target.value)}
+                  className="w-full rounded border border-line p-2 bg-white font-mono text-[11px]"
+                />
+              </div>
+
+              {/* Social Button */}
+              <div className="p-4 bg-bg rounded-xl border border-line space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="font-bold text-deep flex items-center gap-1.5">
+                    <span>৬. সামাজিক যোগাযোগ লিংক (Social CTA)</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 text-[11px] text-muted cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={heroConfig.socialBtn?.visible !== false}
+                      onChange={(e) => handleHeroNestedChange('socialBtn', 'visible', e.target.checked)}
+                      className="accent-primary"
+                    />
+                    <span>দৃশ্যমান রাখুন</span>
+                  </label>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="text"
+                    placeholder="লেবেল বাংলা"
+                    value={heroConfig.socialBtn?.labelBn || ''}
+                    onChange={(e) => handleHeroNestedChange('socialBtn', 'labelBn', e.target.value)}
+                    className="w-full rounded border border-line p-2 bg-white"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Label English"
+                    value={heroConfig.socialBtn?.labelEn || ''}
+                    onChange={(e) => handleHeroNestedChange('socialBtn', 'labelEn', e.target.value)}
+                    className="w-full rounded border border-line p-2 bg-white font-sans"
+                  />
+                </div>
+                <input
+                  type="url"
+                  placeholder="URL (যেমন: https://facebook.com/groups/...)"
+                  value={heroConfig.socialBtn?.url || ''}
+                  onChange={(e) => handleHeroNestedChange('socialBtn', 'url', e.target.value)}
+                  className="w-full rounded border border-line p-2 bg-white font-mono text-[11px]"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Part C: Hero Stats Ribbon */}
+          <div className="space-y-4 pt-4 border-t border-line">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-bold text-sm text-deep flex items-center gap-2">
+                  <BarChart3 className="w-4 h-4 text-primary" />
+                  <span>ব্যানার নিচের পরিসংখ্যান রিবন (Stats Bar Ribbon)</span>
+                </h4>
+                <p className="text-[11px] text-muted">
+                  হিরো ব্যানারের ঠিক নিচে প্রদর্শিত সংখ্যা ও লেবেলসমূহ (২ থেকে ৪টি আইটেম সুপারিশকৃত)
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleAddStat}
+                className="bg-soft hover:bg-soft text-primary font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>নতুন পরিসংখ্যান যোগ</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {statsList.map((stat, idx) => (
+                <div key={stat.id || idx} className="p-3 bg-bg rounded-xl border border-line space-y-2">
+                  <div className="flex items-center justify-between border-b border-line/60 pb-1">
+                    <span className="font-bold text-deep text-xs">আইটেম #{idx + 1}</span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        disabled={idx === 0}
+                        onClick={() => handleMoveStat(idx, -1)}
+                        className="p-1 text-muted hover:text-ink disabled:opacity-30 rounded"
+                        title="বামে/উপরে নিন"
+                      >
+                        <ArrowUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={idx === statsList.length - 1}
+                        onClick={() => handleMoveStat(idx, 1)}
+                        className="p-1 text-muted hover:text-ink disabled:opacity-30 rounded"
+                        title="ডানে/নিচে নিন"
+                      >
+                        <ArrowDown className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteStat(idx)}
+                        className="p-1 text-red-500 hover:text-red-700 rounded ml-1"
+                        title="মুছে ফেলুন"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[10px] font-bold text-ink mb-0.5">সংখ্যা / মান (বাংলা)</label>
+                      <input
+                        type="text"
+                        value={stat.valueBn || ''}
+                        onChange={(e) => handleStatChange(idx, 'valueBn', e.target.value)}
+                        className="w-full rounded border border-line p-1.5 bg-white font-bold"
+                        placeholder="যেমন: ৮৫০+"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-ink mb-0.5">Value (English)</label>
+                      <input
+                        type="text"
+                        value={stat.valueEn || ''}
+                        onChange={(e) => handleStatChange(idx, 'valueEn', e.target.value)}
+                        className="w-full rounded border border-line p-1.5 bg-white font-sans font-bold"
+                        placeholder="e.g. 850+"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[10px] font-bold text-ink mb-0.5">বিবরণ / শিরোনাম (বাংলা)</label>
+                      <input
+                        type="text"
+                        value={stat.labelBn || ''}
+                        onChange={(e) => handleStatChange(idx, 'labelBn', e.target.value)}
+                        className="w-full rounded border border-line p-1.5 bg-white"
+                        placeholder="যেমন: বর্তমান শিক্ষার্থী"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-ink mb-0.5">Label (English)</label>
+                      <input
+                        type="text"
+                        value={stat.labelEn || ''}
+                        onChange={(e) => handleStatChange(idx, 'labelEn', e.target.value)}
+                        className="w-full rounded border border-line p-1.5 bg-white font-sans"
+                        placeholder="e.g. Enrolled Students"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="pt-3 border-t flex justify-end">
             <button
               type="submit"
-              className="bg-primary hover:bg-primary text-white font-bold py-2.5 px-6 rounded-xl text-xs transition shadow flex items-center gap-2"
+              className="bg-primary hover:bg-primary text-white font-bold py-2.5 px-6 rounded-xl text-xs transition shadow flex items-center gap-2 cursor-pointer"
             >
               <Save className="w-4 h-4 text-accent" />
-              <span>স্লাইডার সংরক্ষণ করুন</span>
+              <span>হোমপেজ ব্যানার ও পরিসংখ্যান সংরক্ষণ করুন</span>
             </button>
           </div>
         </form>

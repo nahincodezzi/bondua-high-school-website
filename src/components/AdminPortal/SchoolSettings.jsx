@@ -1,38 +1,49 @@
 import React, { useState, useRef } from 'react';
 import { useSchool } from '../../context/useSchool';
-import SchoolLogo from '../common/SchoolLogo';
+import { resolveLogo } from '../../utils/resolveLogo';
+import { initialSchoolInfo } from '../../data/initialData';
+import SetupWizardModal from './SetupWizardModal';
 import { 
   Save, 
   CheckCircle, 
   School, 
-  Share2, 
   AlertTriangle,
   Upload,
   Image as ImageIcon,
   RotateCcw,
-  Target,
-  Eye,
-  Compass,
-  UserCheck,
-  FileText
+  Sparkles,
+  Trash2,
+  UserCheck
 } from 'lucide-react';
 
 export default function SchoolSettings() {
-  const { schoolInfo, setSchoolInfo, updateSchoolSettings, resetToDefaults, authUser } = useSchool();
+  const { schoolInfo, setSchoolInfo, updateSchoolSettings, resetToDefaults, resetToBlankTemplate, authUser } = useSchool();
   const [formData, setFormData] = useState(() => {
     const info = { ...schoolInfo };
-    if (info.nameEn) info.nameEn = info.nameEn.replace(/Bandua/g, 'Bondua');
-    if (info.addressEn) info.addressEn = info.addressEn.replace(/Bandua/g, 'Bondua');
+    if (!info.logos || typeof info.logos !== 'object') {
+      const fb = info.logo || initialSchoolInfo.logo || '/brand/logo-emerald.png';
+      info.logos = {
+        emerald: { onDark: fb, onLight: fb },
+        indigo: { onDark: fb, onLight: fb },
+      };
+    }
     return info;
   });
+
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [logoUploadStatus, setLogoUploadStatus] = useState('');
   const [campusUploadStatus, setCampusUploadStatus] = useState('');
   const [showResetModal, setShowResetModal] = useState(false);
+  const [showWizardModal, setShowWizardModal] = useState(false);
   const [resetConfirmText, setResetConfirmText] = useState('');
   const [resetError, setResetError] = useState('');
-  const logoInputRef = useRef(null);
   const campusInputRef = useRef(null);
+
+  // Hidden refs for the 4 logo upload slots
+  const emeraldDarkInputRef = useRef(null);
+  const emeraldLightInputRef = useRef(null);
+  const indigoDarkInputRef = useRef(null);
+  const indigoLightInputRef = useRef(null);
 
   const [prevSchoolInfo, setPrevSchoolInfo] = useState(schoolInfo);
   if (schoolInfo !== prevSchoolInfo) {
@@ -40,8 +51,7 @@ export default function SchoolSettings() {
     setFormData(prev => ({
       ...schoolInfo,
       ...prev,
-      nameEn: prev.nameEn ? prev.nameEn.replace(/Bandua/g, 'Bondua') : schoolInfo.nameEn,
-      addressEn: prev.addressEn ? prev.addressEn.replace(/Bandua/g, 'Bondua') : schoolInfo.addressEn,
+      logos: prev.logos || schoolInfo.logos,
     }));
   }
 
@@ -50,35 +60,29 @@ export default function SchoolSettings() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Handle Logo Upload (PNG accepted up to 10MB with transparent alpha support)
-  const handleLogoFileChange = (e) => {
+  // Helper for uploading logo slots
+  const handleSlotLogoUpload = (themeKey, surfaceKey, e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Maximum 10MB limit check as requested
-    const MAX_MB = 10;
-    if (file.size > MAX_MB * 1024 * 1024) {
-      alert(`লোগো ফাইলের আকার সর্বোচ্চ ${MAX_MB} মেগাবাইট (10 MB) হতে পারবে। আপনার ফাইলের আকার: ${(file.size / (1024 * 1024)).toFixed(2)} MB`);
+    if (file.size > 10 * 1024 * 1024) {
+      alert('লোগো ফাইলের আকার সর্বোচ্চ ১০ মেগাবাইট (10 MB) হতে পারবে।');
       return;
     }
 
-    setLogoUploadStatus('লোগো অপ্টিমাইজ ও প্রসেস করা হচ্ছে...');
-    const originalSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-
+    setLogoUploadStatus('লোগো প্রস্তুত করা হচ্ছে...');
     const reader = new FileReader();
+
     reader.onload = (event) => {
-      // If SVG, save directly
       if (file.type === 'image/svg+xml') {
-        setFormData(prev => ({ ...prev, logo: event.target.result }));
-        setLogoUploadStatus(`SVG লোগো সফলভাবে লোড হয়েছে (${originalSizeMB} MB)`);
+        applyLogoSlot(themeKey, surfaceKey, event.target.result);
         return;
       }
 
       const img = new Image();
       img.onload = () => {
-        // High quality canvas rendering maintaining alpha transparency
         const canvas = document.createElement('canvas');
-        const MAX_DIM = 512; // 512x512 is ultra crisp for retina badges and preserves memory
+        const MAX_DIM = 512;
         let w = img.width;
         let h = img.height;
 
@@ -98,25 +102,53 @@ export default function SchoolSettings() {
         ctx.clearRect(0, 0, w, h);
         ctx.drawImage(img, 0, 0, w, h);
 
-        // Keep transparent PNG format
         const outputDataUrl = canvas.toDataURL('image/png', 0.95);
-        setFormData(prev => ({ ...prev, logo: outputDataUrl }));
-        setLogoUploadStatus(`PNG লোগো প্রস্তুত (${originalSizeMB} MB থেকে অপ্টিমাইজড)`);
+        applyLogoSlot(themeKey, surfaceKey, outputDataUrl);
       };
       img.src = event.target.result;
     };
     reader.readAsDataURL(file);
   };
 
-  const handleResetLogo = () => {
-    if (confirm('আপনি কি ডিফল্ট অফিশিয়াল মনোগ্রামে ফিরে যেতে চান?')) {
-      setFormData(prev => ({ ...prev, logo: null }));
-      setLogoUploadStatus('');
-      if (logoInputRef.current) logoInputRef.current.value = '';
+  const applyLogoSlot = (themeKey, surfaceKey, dataUrl) => {
+    setFormData(prev => {
+      const currentLogos = prev.logos ? { ...prev.logos } : { ...initialSchoolInfo.logos };
+      currentLogos[themeKey] = {
+        ...(currentLogos[themeKey] || {}),
+        [surfaceKey]: dataUrl,
+      };
+      return {
+        ...prev,
+        logo: dataUrl, // update legacy field too
+        logos: currentLogos,
+      };
+    });
+    setLogoUploadStatus(`${themeKey} (${surfaceKey}) লোগো সফলভাবে আপলোড হয়েছে`);
+  };
+
+  const handleRemoveSlot = (themeKey, surfaceKey) => {
+    setFormData(prev => {
+      const currentLogos = prev.logos ? { ...prev.logos } : { ...initialSchoolInfo.logos };
+      currentLogos[themeKey] = {
+        ...(currentLogos[themeKey] || {}),
+        [surfaceKey]: null,
+      };
+      return { ...prev, logos: currentLogos };
+    });
+  };
+
+  const handleResetDefaultLogos = () => {
+    if (confirm('আপনি কি পূর্বনির্ধারিত অফিশিয়াল ডিফল্ট লোগোতে ফিরে যেতে চান?')) {
+      setFormData(prev => ({
+        ...prev,
+        logo: initialSchoolInfo.logo,
+        logos: JSON.parse(JSON.stringify(initialSchoolInfo.logos)),
+      }));
+      setLogoUploadStatus('ডিফল্ট লোগো পুনরুদ্ধার করা হয়েছে');
     }
   };
 
-  // Handle Campus Photo Upload (High quality up to 10MB)
+  // Handle Campus Photo Upload
   const handleCampusFileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -174,89 +206,294 @@ export default function SchoolSettings() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h2 className="text-xl sm:text-2xl font-bold font-bangla text-ink">
-          প্রতিষ্ঠান তথ্য, লোগো ও সফটওয়্যার সেটিংস (School Settings)
-        </h2>
-        <p className="text-xs text-muted font-bangla mt-0.5">
-          বিদ্যালয়ের প্রাতিষ্ঠানিক লোগো (PNG সর্বোচ্চ 10MB), রূপকল্প (Vision), লক্ষ্য (Mission), ফোন, ইমেইল, ফেসবুক গ্রুপ ও বাণীবহুল তথ্যসমূহ সরাসরি CMS থেকে আপডেট ও প্রকাশ করুন।
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-bold font-bangla text-ink">
+            প্রতিষ্ঠান তথ্য, থিম লোগো ও সফটওয়্যার সেটিংস (School Settings)
+          </h2>
+          <p className="text-xs text-muted font-bangla mt-0.5">
+            বিদ্যালয়ের নাম, থিম-ভিত্তিক লোগো, রূপকল্প, বাৎসরিক তথ্য ও কন্টাক্ট ইনফরমেশন CMS থেকে সরাসরি পরিচালনা করুন।
+          </p>
+        </div>
+
+        {authUser?.role === 'superadmin' && (
+          <button
+            type="button"
+            onClick={() => setShowWizardModal(true)}
+            className="btn-accent px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm flex items-center gap-1.5 cursor-pointer self-start sm:self-auto"
+          >
+            <Sparkles className="w-4 h-4 text-ink" />
+            <span>নতুন বিদ্যালয় সেটআপ উইজার্ড</span>
+          </button>
+        )}
       </div>
 
       <div className="bg-white p-6 sm:p-8 rounded-2xl border border-line shadow-2xs space-y-6">
         <form onSubmit={handleSubmit} className="space-y-8 text-xs font-bangla">
 
-          {/* Section 1: School Logo Upload (Max 10MB PNG) */}
-          <div className="bg-bg p-5 sm:p-6 rounded-2xl border border-line space-y-4">
-            <h3 className="font-bold text-ink text-sm pb-2 border-b flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-primary" />
-                <span>১. প্রাতিষ্ঠানিক লোগো ও মনোগ্রাম (School Logo - PNG Accepted up to 10MB)</span>
-              </span>
-              <span className="text-[10px] text-primary bg-soft font-bold px-2.5 py-0.5 rounded-full">
-                সর্বোচ্চ 10 MB
-              </span>
-            </h3>
-
-            <div className="flex flex-col sm:flex-row items-center gap-6">
-              {/* Logo Preview */}
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white p-2 shadow-md ring-4 ring-primary/30 shrink-0 flex items-center justify-center overflow-hidden">
-                <SchoolLogo logo={formData.logo} className="w-full h-full object-contain" />
+          {/* Section 1: Theme-Aware Logo Manager */}
+          <div className="bg-bg p-5 sm:p-6 rounded-2xl border border-line space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-line">
+              <div>
+                <h3 className="font-bold text-ink text-sm flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-primary" />
+                  <span>১. থিম-ভিত্তিক প্রাতিষ্ঠানিক লোগো ও মনোগ্রাম (Theme-Aware Logos)</span>
+                </h3>
+                <p className="text-[11px] text-muted mt-0.5">
+                  একটি লোগো দিলে সেটাই স্বয়ংক্রিয়ভাবে দুই থিমে ও প্রিন্ট ডকুমেন্টে ব্যবহৃত হবে।
+                </p>
               </div>
 
-              {/* Upload Controls */}
-              <div className="space-y-2 flex-1 text-center sm:text-left">
-                <p className="font-bold text-ink text-xs">
-                  {formData.logo ? 'কাস্টম আপলোডকৃত লোগো সক্রিয় রয়েছে' : 'ডিফল্ট প্রাতিষ্ঠানিক মনোগ্রাম সক্রিয় রয়েছে'}
-                </p>
-                <p className="text-[11px] text-muted leading-relaxed">
-                  ট্রান্সপারেন্ট ব্যাকগ্রাউন্ডযুক্ত <strong>PNG</strong>, <strong>SVG</strong> অথবা <strong>JPG/WebP</strong> ফরম্যাটের লোগো আপলোড করতে পারবেন। ফাইল সাইজ সর্বোচ্চ <strong>১০ মেগাবাইট (10 MB)</strong> পর্যন্ত অনুমোদিত।
-                </p>
-
-                <div className="flex flex-wrap items-center gap-2.5 pt-1">
-                  <input
-                    ref={logoInputRef}
-                    type="file"
-                    accept=".png, .jpg, .jpeg, .webp, .svg"
-                    onChange={handleLogoFileChange}
-                    className="hidden"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => logoInputRef.current?.click()}
-                    className="bg-deep hover:bg-primary text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition shadow"
-                  >
-                    <Upload className="w-3.5 h-3.5 text-accent" />
-                    <span>নতুন লোগো আপলোড করুন (Max 10MB)</span>
-                  </button>
-
-                  {formData.logo && (
-                    <button
-                      type="button"
-                      onClick={handleResetLogo}
-                      className="bg-line hover:bg-line text-ink font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1 transition"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5" />
-                      <span>ডিফল্ট মনোগ্রামে ফিরুন</span>
-                    </button>
-                  )}
-                </div>
-
-                {logoUploadStatus && (
-                  <p className="text-[11px] text-primary font-bold flex items-center gap-1 pt-1">
-                    <CheckCircle className="w-3.5 h-3.5" />
-                    <span>{logoUploadStatus}</span>
-                  </p>
-                )}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleResetDefaultLogos}
+                  className="bg-line hover:bg-soft text-ink font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1 transition cursor-pointer"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>ডিফল্ট লোগোতে ফিরুন</span>
+                </button>
               </div>
             </div>
+
+            {/* Two Theme Cards: Emerald vs Indigo */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* EMERALD THEME CARD */}
+              <div className="bg-white p-5 rounded-2xl border-2 border-emerald-700/20 shadow-xs space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-3.5 h-3.5 rounded-full bg-[#0F6B47] border border-white shadow-xs"></span>
+                    <h4 className="font-bold text-ink text-xs uppercase tracking-wider">
+                      এমারেল্ড থিম লোগো (Emerald Theme)
+                    </h4>
+                  </div>
+                  <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full">
+                    প্রধান থিম
+                  </span>
+                </div>
+
+                {/* Dark BG Surface Slot (Header & Dark Footer) */}
+                <div className="p-4 bg-[#0B3D2E] rounded-xl text-white flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-14 h-14 rounded-full bg-white/10 p-1 ring-2 ring-accent flex items-center justify-center overflow-hidden shrink-0">
+                      <img 
+                        src={resolveLogo(formData, 'emerald', 'dark')} 
+                        alt="Emerald Dark Logo" 
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div>
+                      <span className="font-bold text-xs block text-white">ডার্ক ব্যাকগ্রাউন্ড (onDark)</span>
+                      <span className="text-[10px] text-soft">হেডার, ডার্ক ফুটার ও অ্যাডমিন বারে প্রদর্শন</span>
+                      {!formData.logos?.emerald?.onDark && (
+                        <p className="text-[10px] text-accent mt-0.5">✓ ফলব্যাক থেকে প্রদর্শিত হচ্ছে</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <input
+                      ref={emeraldDarkInputRef}
+                      type="file"
+                      accept=".png, .jpg, .jpeg, .webp, .svg"
+                      onChange={(e) => handleSlotLogoUpload('emerald', 'onDark', e)}
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => emeraldDarkInputRef.current?.click()}
+                      className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg text-xs font-semibold cursor-pointer"
+                      title="আপলোড করুন"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                    </button>
+                    {formData.logos?.emerald?.onDark && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSlot('emerald', 'onDark')}
+                        className="bg-red-500/30 hover:bg-red-500/50 text-white p-2 rounded-lg text-xs cursor-pointer"
+                        title="মুছে ফেলুন"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Light BG Surface Slot (Print & White Surfaces) */}
+                <div className="p-4 bg-slate-50 border border-line rounded-xl flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-14 h-14 rounded-full bg-white p-1 ring-2 ring-line shadow-xs flex items-center justify-center overflow-hidden shrink-0">
+                      <img 
+                        src={resolveLogo(formData, 'emerald', 'light')} 
+                        alt="Emerald Light Logo" 
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div>
+                      <span className="font-bold text-xs block text-ink">লাইট ও প্রিন্ট ডকুমেন্টস (onLight)</span>
+                      <span className="text-[10px] text-muted">মার্কশিট, অ্যাডমিট কার্ড, রিসিট ও আইডি কার্ড</span>
+                      {!formData.logos?.emerald?.onLight && (
+                        <p className="text-[10px] text-primary mt-0.5">✓ ফলব্যাক থেকে প্রদর্শিত হচ্ছে</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <input
+                      ref={emeraldLightInputRef}
+                      type="file"
+                      accept=".png, .jpg, .jpeg, .webp, .svg"
+                      onChange={(e) => handleSlotLogoUpload('emerald', 'onLight', e)}
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => emeraldLightInputRef.current?.click()}
+                      className="bg-bg hover:bg-soft text-ink p-2 rounded-lg text-xs font-semibold border border-line cursor-pointer"
+                      title="আপলোড করুন"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                    </button>
+                    {formData.logos?.emerald?.onLight && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSlot('emerald', 'onLight')}
+                        className="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-lg text-xs cursor-pointer"
+                        title="মুছে ফেলুন"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* INDIGO THEME CARD */}
+              <div className="bg-white p-5 rounded-2xl border-2 border-indigo-700/20 shadow-xs space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-3.5 h-3.5 rounded-full bg-[#4338CA] border border-white shadow-xs"></span>
+                    <h4 className="font-bold text-ink text-xs uppercase tracking-wider">
+                      ইন্ডিগো থিম লোগো (Indigo Theme)
+                    </h4>
+                  </div>
+                  <span className="text-[10px] font-bold text-indigo-800 bg-indigo-50 px-2 py-0.5 rounded-full">
+                    অল্টারনেট থিম
+                  </span>
+                </div>
+
+                {/* Dark BG Surface Slot (Header & Dark Footer) */}
+                <div className="p-4 bg-[#1E1B4B] rounded-xl text-white flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-14 h-14 rounded-full bg-white/10 p-1 ring-2 ring-accent flex items-center justify-center overflow-hidden shrink-0">
+                      <img 
+                        src={resolveLogo(formData, 'indigo', 'dark')} 
+                        alt="Indigo Dark Logo" 
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div>
+                      <span className="font-bold text-xs block text-white">ডার্ক ব্যাকগ্রাউন্ড (onDark)</span>
+                      <span className="text-[10px] text-white/70">ইন্ডিগো হেডার ও ডার্ক বারে প্রদর্শন</span>
+                      {!formData.logos?.indigo?.onDark && (
+                        <p className="text-[10px] text-accent mt-0.5">✓ ফলব্যাক থেকে প্রদর্শিত হচ্ছে</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <input
+                      ref={indigoDarkInputRef}
+                      type="file"
+                      accept=".png, .jpg, .jpeg, .webp, .svg"
+                      onChange={(e) => handleSlotLogoUpload('indigo', 'onDark', e)}
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => indigoDarkInputRef.current?.click()}
+                      className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg text-xs font-semibold cursor-pointer"
+                      title="আপলোড করুন"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                    </button>
+                    {formData.logos?.indigo?.onDark && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSlot('indigo', 'onDark')}
+                        className="bg-red-500/30 hover:bg-red-500/50 text-white p-2 rounded-lg text-xs cursor-pointer"
+                        title="মুছে ফেলুন"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Light BG Surface Slot (Print & White Surfaces) */}
+                <div className="p-4 bg-slate-50 border border-line rounded-xl flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-14 h-14 rounded-full bg-white p-1 ring-2 ring-line shadow-xs flex items-center justify-center overflow-hidden shrink-0">
+                      <img 
+                        src={resolveLogo(formData, 'indigo', 'light')} 
+                        alt="Indigo Light Logo" 
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div>
+                      <span className="font-bold text-xs block text-ink">লাইট ও প্রিন্ট ডকুমেন্টস (onLight)</span>
+                      <span className="text-[10px] text-muted">ইন্ডিগো থিমে প্রিন্ট স্লিপে প্রদর্শন</span>
+                      {!formData.logos?.indigo?.onLight && (
+                        <p className="text-[10px] text-indigo-700 mt-0.5">✓ ফলব্যাক থেকে প্রদর্শিত হচ্ছে</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <input
+                      ref={indigoLightInputRef}
+                      type="file"
+                      accept=".png, .jpg, .jpeg, .webp, .svg"
+                      onChange={(e) => handleSlotLogoUpload('indigo', 'onLight', e)}
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => indigoLightInputRef.current?.click()}
+                      className="bg-bg hover:bg-soft text-ink p-2 rounded-lg text-xs font-semibold border border-line cursor-pointer"
+                      title="আপলোড করুন"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                    </button>
+                    {formData.logos?.indigo?.onLight && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSlot('indigo', 'onLight')}
+                        className="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-lg text-xs cursor-pointer"
+                        title="মুছে ফেলুন"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {logoUploadStatus && (
+              <p className="text-[11px] text-primary font-bold flex items-center gap-1 pt-1">
+                <CheckCircle className="w-3.5 h-3.5" />
+                <span>{logoUploadStatus}</span>
+              </p>
+            )}
           </div>
 
-          {/* Section 2: Basic Institutional Details */}
+          {/* Section 2: Basic Institutional Details & White-Label Fields */}
           <div>
             <h3 className="font-bold text-ink text-sm pb-2 border-b mb-4 flex items-center gap-2">
               <School className="w-4 h-4 text-primary" />
-              <span>২. মৌলিক পরিচিতি ও কোডসমূহ</span>
+              <span>২. মৌলিক পরিচিতি, কোড ও শিরোনামসমূহ</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -266,21 +503,91 @@ export default function SchoolSettings() {
                   type="text"
                   required
                   name="nameBn"
-                  value={formData.nameBn}
+                  value={formData.nameBn || ''}
                   onChange={handleChange}
                   className="w-full rounded-lg border border-line p-2.5"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-ink mb-1">বিদ্যালয়ের নাম (ইংরেজিতে) *</label>
+                <label className="block font-bold text-ink mb-1">School Name (English) *</label>
                 <input
                   type="text"
                   required
                   name="nameEn"
-                  value={formData.nameEn}
+                  value={formData.nameEn || ''}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border border-line p-2.5 font-sans"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-ink mb-1">সংক্ষিপ্ত নাম (Short Name / Prefix)</label>
+                <input
+                  type="text"
+                  name="shortName"
+                  value={formData.shortName || 'BDHS'}
                   onChange={handleChange}
                   className="w-full rounded-lg border border-line p-2.5 font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-ink mb-1">হেডার সাব-টাইটেল (বাংলায় - ঐচ্ছিক)</label>
+                <input
+                  type="text"
+                  name="headerSubtitleBn"
+                  placeholder="ফাঁকা রাখলে ইংরেজি নাম প্রদর্শিত হবে"
+                  value={formData.headerSubtitleBn || ''}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border border-line p-2.5"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-ink mb-1">Header Subtitle (English - Optional)</label>
+                <input
+                  type="text"
+                  name="headerSubtitleEn"
+                  placeholder="Leave empty to use Bangla name"
+                  value={formData.headerSubtitleEn || ''}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border border-line p-2.5 font-sans"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-ink mb-1">ডিফল্ট সাইট থিম (Default Theme)</label>
+                <select
+                  name="defaultTheme"
+                  value={formData.defaultTheme || 'emerald'}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border border-line p-2.5 font-semibold"
+                >
+                  <option value="emerald">এমারেল্ড গ্রিন (Emerald Prestige)</option>
+                  <option value="indigo">রয়্যাল ইন্ডিগো (Royal Indigo & Amber)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-bold text-ink mb-1">ভর্তি শিক্ষাবর্ষ (Admission Year)</label>
+                <input
+                  type="text"
+                  name="admissionYear"
+                  value={formData.admissionYear || '২০২৭'}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border border-line p-2.5 font-mono font-bold"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-ink mb-1">বর্তমান একাডেমিক শিক্ষাবর্ষ (Academic Year)</label>
+                <input
+                  type="text"
+                  name="academicYear"
+                  value={formData.academicYear || '2026'}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border border-line p-2.5 font-mono font-bold"
                 />
               </div>
 
@@ -290,7 +597,7 @@ export default function SchoolSettings() {
                   type="text"
                   required
                   name="eiin"
-                  value={formData.eiin}
+                  value={formData.eiin || ''}
                   onChange={handleChange}
                   className="w-full rounded-lg border border-line p-2.5 font-mono"
                 />
@@ -301,7 +608,7 @@ export default function SchoolSettings() {
                 <input
                   type="text"
                   name="mpoCode"
-                  value={formData.mpoCode}
+                  value={formData.mpoCode || ''}
                   onChange={handleChange}
                   className="w-full rounded-lg border border-line p-2.5 font-mono"
                 />
@@ -312,7 +619,7 @@ export default function SchoolSettings() {
                 <input
                   type="text"
                   name="schoolCode"
-                  value={formData.schoolCode || '4320'}
+                  value={formData.schoolCode || ''}
                   onChange={handleChange}
                   className="w-full rounded-lg border border-line p-2.5 font-mono"
                 />
@@ -334,329 +641,288 @@ export default function SchoolSettings() {
                 <input
                   type="text"
                   name="foundationDate"
-                  value={formData.foundationDate}
+                  value={formData.foundationDate || ''}
                   onChange={handleChange}
                   className="w-full rounded-lg border border-line p-2.5"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-ink mb-1">রাস্তা / সড়ক পরিচিতি (বাংলা)</label>
+                <label className="block font-bold text-ink mb-1">Foundation Date (English)</label>
                 <input
                   type="text"
-                  name="roadBn"
-                  value={formData.roadBn || 'ফেনী-পরশুরাম রোড সংলগ্ন'}
+                  name="foundationDateEn"
+                  value={formData.foundationDateEn || ''}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-line p-2.5"
+                  className="w-full rounded-lg border border-line p-2.5 font-sans"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-ink mb-1">মূল প্রতিপাদ্য / স্লোগান (Motto)</label>
+                <label className="block font-bold text-ink mb-1">মূল বাণী / আদর্শ (বাংলায়)</label>
                 <input
                   type="text"
                   name="mottoBn"
-                  value={formData.mottoBn || 'জ্ঞানই আলো, শিক্ষাই শক্তি'}
+                  value={formData.mottoBn || ''}
                   onChange={handleChange}
                   className="w-full rounded-lg border border-line p-2.5"
                 />
               </div>
 
-              <div className="sm:col-span-2 lg:col-span-3">
-                <label className="block font-bold text-ink mb-1">পূর্ণাঙ্গ প্রাতিষ্ঠানিক ঠিকানা *</label>
+              <div>
+                <label className="block font-bold text-ink mb-1">Institutional Motto (English)</label>
+                <input
+                  type="text"
+                  name="mottoEn"
+                  value={formData.mottoEn || ''}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border border-line p-2.5 font-sans"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Section 3: Location and Contacts */}
+          <div>
+            <h3 className="font-bold text-ink text-sm pb-2 border-b mb-4 flex items-center gap-2">
+              <School className="w-4 h-4 text-primary" />
+              <span>৩. ভৌগোলিক অবস্থান ও যোগাযোগের তথ্য</span>
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="sm:col-span-2">
+                <label className="block font-bold text-ink mb-1">পূর্ণাঙ্গ ঠিকানা (বাংলায়) *</label>
                 <input
                   type="text"
                   required
                   name="addressBn"
-                  value={formData.addressBn}
+                  value={formData.addressBn || ''}
                   onChange={handleChange}
                   className="w-full rounded-lg border border-line p-2.5"
                 />
               </div>
-            </div>
-          </div>
 
-          {/* Section 3: Vision, Mission & Core Values (Updated with Comilla Board Model Institution) */}
-          <div className="bg-soft/50 p-5 sm:p-6 rounded-2xl border border-soft-border space-y-4">
-            <h3 className="font-bold text-ink text-sm pb-2 border-b border-soft-border flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <Target className="w-4 h-4 text-primary" />
-                <span>৩. রূপকল্প (Vision), লক্ষ্য (Mission) ও মূল আদর্শ (Core Values)</span>
-              </span>
-              <span className="text-[10px] text-primary bg-soft font-bold px-2 py-0.5 rounded">
-                কুমিল্লা বোর্ড আদর্শ মডেল বিদ্যালয়
-              </span>
-            </h3>
-
-            <div className="space-y-4">
-              {/* Vision */}
-              <div>
-                <label className="block font-bold text-ink mb-1 flex items-center gap-1.5">
-                  <Eye className="w-3.5 h-3.5 text-primary" />
-                  <span>আমাদের রূপকল্প (Our Vision - বাংলা) *</span>
-                </label>
-                <textarea
-                  rows="2"
-                  required
-                  name="visionBn"
-                  value={formData.visionBn || 'একটি বৈষম্যহীন, আধুনিক প্রযুক্তি-নির্ভর ও আদর্শ বিদ্যাপীঠ হিসেবে কুমিল্লা শিক্ষা বোর্ডের অন্যতম শ্রেষ্ঠ ও মডেল বিদ্যালয়ে রূপান্তরিত হওয়া।'}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-line p-2.5 bg-white"
-                  placeholder="কুমিল্লা বোর্ডের আওতায় শ্রেষ্ঠ মডেল প্রতিষ্ঠান হওয়ার রূপকল্প..."
-                ></textarea>
-              </div>
-
-              <div>
-                <label className="block font-bold text-ink mb-1">Our Vision (English)</label>
+              <div className="sm:col-span-2">
+                <label className="block font-bold text-ink mb-1">Full Address (English) *</label>
                 <input
                   type="text"
-                  name="visionEn"
-                  value={formData.visionEn || 'To emerge as one of the premier model institutions under the Comilla Education Board, fostering discrimination-free, technology-driven, and holistic moral education.'}
+                  required
+                  name="addressEn"
+                  value={formData.addressEn || ''}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-line p-2.5 bg-white font-mono"
+                  className="w-full rounded-lg border border-line p-2.5 font-sans"
                 />
               </div>
 
-              {/* Mission */}
               <div>
-                <label className="block font-bold text-ink mb-1 flex items-center gap-1.5">
-                  <Target className="w-3.5 h-3.5 text-primary" />
-                  <span>আমাদের লক্ষ্য (Our Mission - বাংলা) *</span>
-                </label>
-                <textarea
-                  rows="2"
+                <label className="block font-bold text-ink mb-1">হটলাইন / প্রধান ফোন নম্বর *</label>
+                <input
+                  type="text"
                   required
-                  name="missionBn"
-                  value={formData.missionBn || 'মানসম্মত শিক্ষা, নৈতিক মূল্যবোধ ও ডিজিটাল প্রযুক্তির সমন্বয়ে প্রতিটি শিক্ষার্থীকে আধুনিক বিজ্ঞানমনস্ক, দেশপ্রেমিক ও দক্ষ মানবসম্পদ হিসেবে গড়ে তোলা।'}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-line p-2.5 bg-white"
-                ></textarea>
-              </div>
-
-              {/* Core Values */}
-              <div>
-                <label className="block font-bold text-ink mb-1 flex items-center gap-1.5">
-                  <Compass className="w-3.5 h-3.5 text-primary" />
-                  <span>মূল আদর্শ (Core Values - বাংলা)</span>
-                </label>
-                <input
-                  type="text"
-                  name="coreValuesBn"
-                  value={formData.coreValuesBn || 'শৃঙ্খলা, সততা, সহমর্মিতা, বিজ্ঞানচেতনা এবং মাতৃভূমির সার্বিক উন্নয়নে অবদান রাখার চিরন্তন ব্রত।'}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-line p-2.5 bg-white"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Section 4: Contact & Social Links */}
-          <div>
-            <h3 className="font-bold text-ink text-sm pb-2 border-b mb-4 flex items-center gap-2">
-              <Share2 className="w-4 h-4 text-primary" />
-              <span>৪. যোগাযোগ ও সোশ্যাল মিডিয়া হাব</span>
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div>
-                <label className="block font-bold text-ink mb-1">প্রধান প্রাতিষ্ঠানিক মোবাইল</label>
-                <input
-                  type="text"
                   name="phone"
-                  value={formData.phone}
+                  value={formData.phone || ''}
                   onChange={handleChange}
                   className="w-full rounded-lg border border-line p-2.5 font-mono"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-ink mb-1">বিকল্প মোবাইল নম্বর</label>
+                <label className="block font-bold text-ink mb-1">বিকল্প ফোন নম্বর (অফিস)</label>
                 <input
                   type="text"
                   name="phoneAlt"
-                  value={formData.phoneAlt || '+880 1712-893042'}
+                  value={formData.phoneAlt || ''}
                   onChange={handleChange}
                   className="w-full rounded-lg border border-line p-2.5 font-mono"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-ink mb-1">অফিসিয়াল ইমেইল ঠিকানা</label>
+                <label className="block font-bold text-ink mb-1">অফিশিয়াল ইমেইল *</label>
                 <input
                   type="email"
+                  required
                   name="email"
-                  value={formData.email}
+                  value={formData.email || ''}
                   onChange={handleChange}
                   className="w-full rounded-lg border border-line p-2.5 font-mono"
                 />
               </div>
 
-              <div className="sm:col-span-2 lg:col-span-3">
-                <label className="block font-bold text-ink mb-1">অফিসিয়াল ফেসবুক গ্রুপ লিংক (Official FB Group)</label>
+              <div>
+                <label className="block font-bold text-ink mb-1">ফেসবুক গ্রুপ / পেজ লিংক</label>
                 <input
                   type="url"
                   name="facebookGroupUrl"
-                  value={formData.facebookGroupUrl}
+                  value={formData.facebookGroupUrl || ''}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-line p-2.5 font-mono text-primary"
+                  className="w-full rounded-lg border border-line p-2.5 font-mono"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block font-bold text-ink mb-1">ফুটার পরিচিতি বক্তব্য (Footer About - বাংলা)</label>
+                <textarea
+                  rows={2}
+                  name="footerAboutBn"
+                  value={formData.footerAboutBn || ''}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border border-line p-2.5 leading-relaxed"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block font-bold text-ink mb-1">Footer About Text (English)</label>
+                <textarea
+                  rows={2}
+                  name="footerAboutEn"
+                  value={formData.footerAboutEn || ''}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border border-line p-2.5 leading-relaxed font-sans"
                 />
               </div>
             </div>
           </div>
 
-          {/* Section 5: Campus Photograph Upload */}
-          <div className="bg-bg p-5 sm:p-6 rounded-2xl border border-line space-y-4">
+          {/* Section 4: Campus Photo */}
+          <div className="bg-bg p-5 rounded-2xl border border-line space-y-4">
             <h3 className="font-bold text-ink text-sm pb-2 border-b flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <ImageIcon className="w-4 h-4 text-primary" />
-                <span>৫. ক্যাম্পাস পরিচিতি ছবি (Campus Header Photo)</span>
+                <span>৪. বিদ্যালয় ক্যাম্পাসের মূল ছবি (Homepage & About Campus Photo)</span>
               </span>
-              <span className="text-[10px] text-muted">About সেকশনে প্রদর্শিত</span>
             </h3>
 
             <div className="flex flex-col sm:flex-row items-center gap-6">
-              <div className="w-full sm:w-48 h-28 rounded-xl bg-line overflow-hidden shadow border border-line shrink-0">
+              <div className="w-40 h-24 rounded-xl bg-white border border-line overflow-hidden shadow-xs shrink-0">
                 <img
-                  src={formData.campusImage || "https://images.unsplash.com/photo-1562774053-701939374585?w=800&auto=format&fit=crop&q=80"}
+                  src={formData.campusImage || initialSchoolInfo.campusImage}
                   alt="Campus Preview"
                   className="w-full h-full object-cover"
                 />
               </div>
 
-              <div className="space-y-2 flex-1">
-                <p className="font-bold text-ink text-xs">
-                  বিদ্যালয় ভবনের সুদৃশ্য ক্যাম্পাস ছবি আপলোড করুন
-                </p>
-                <p className="text-[11px] text-muted">
-                  সর্বোচ্চ ১০ মেগাবাইট পর্যন্ত ছবি নির্বাচন করতে পারবেন। সিস্টেম স্বয়ংক্রিয়ভাবে হাই ডেফিনিশনে অপ্টিমাইজ করবে।
-                </p>
-
-                <div>
-                  <input
-                    ref={campusInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleCampusFileChange}
-                    className="hidden"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => campusInputRef.current?.click()}
-                    className="bg-primary hover:bg-primary text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition shadow"
-                  >
-                    <Upload className="w-3.5 h-3.5 text-accent" />
-                    <span>নতুন ক্যাম্পাস ছবি আপলোড</span>
-                  </button>
-                </div>
-
+              <div className="space-y-2 flex-1 text-center sm:text-left">
+                <p className="font-bold text-ink text-xs">হোমপেজ ও পরিচিতি সেকশনের প্রধান ক্যাম্পাস ফটো</p>
+                <input
+                  ref={campusInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCampusFileChange}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => campusInputRef.current?.click()}
+                  className="btn-secondary px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>নতুন ক্যাম্পাস ছবি আপলোড করুন</span>
+                </button>
                 {campusUploadStatus && (
-                  <p className="text-[11px] text-primary font-bold flex items-center gap-1 pt-1">
-                    <CheckCircle className="w-3.5 h-3.5" />
-                    <span>{campusUploadStatus}</span>
-                  </p>
+                  <p className="text-[11px] text-primary font-bold">{campusUploadStatus}</p>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Section 6: Leadership Messages */}
-          <div>
-            <h3 className="font-bold text-ink text-sm pb-2 border-b mb-4 flex items-center gap-2">
+          {/* Section 5: Statements (Headmaster & Chairman) */}
+          <div className="space-y-6">
+            <h3 className="font-bold text-ink text-sm pb-2 border-b flex items-center gap-2">
               <UserCheck className="w-4 h-4 text-primary" />
-              <span>৬. প্রধান শিক্ষক ও পরিচালনা পর্ষদ সভাপতির বাণী</span>
+              <span>৫. প্রধান শিক্ষক ও সভাপতি মহোদয়ের বাণী</span>
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Headmaster */}
-              <div className="space-y-3 p-4 bg-bg rounded-xl border border-line">
-                <div className="flex items-center gap-2 text-deep font-bold text-xs pb-1 border-b">
-                  <FileText className="w-3.5 h-3.5 text-primary" />
-                  <span>ভারপ্রাপ্ত প্রধান শিক্ষকের পরিচিতি ও বাণী</span>
-                </div>
-                <div>
-                  <label className="block font-bold text-ink mb-1">ভারপ্রাপ্ত প্রধান শিক্ষকের নাম *</label>
-                  <input
-                    type="text"
-                    required
-                    name="headmasterNameBn"
-                    value={formData.headmasterNameBn}
-                    onChange={handleChange}
-                    className="w-full rounded-lg border border-line p-2.5 bg-white"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-ink mb-1">বাণী (বাংলায়)</label>
-                  <textarea
-                    rows="5"
-                    name="headmasterMessageBn"
-                    value={formData.headmasterMessageBn}
-                    onChange={handleChange}
-                    className="w-full rounded-lg border border-line p-2.5 bg-white leading-relaxed"
-                  ></textarea>
-                </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block font-bold text-ink mb-1">প্রধান শিক্ষকের নাম (বাংলায়)</label>
+                <input
+                  type="text"
+                  name="headmasterNameBn"
+                  value={formData.headmasterNameBn || ''}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border border-line p-2.5"
+                />
               </div>
 
-              {/* Chairman */}
-              <div className="space-y-3 p-4 bg-bg rounded-xl border border-line">
-                <div className="flex items-center gap-2 text-deep font-bold text-xs pb-1 border-b">
-                  <FileText className="w-3.5 h-3.5 text-primary" />
-                  <span>পরিচালনা পর্ষদের সভাপতির পরিচিতি ও বাণী</span>
-                </div>
-                <div>
-                  <label className="block font-bold text-ink mb-1">সভাপতির নাম</label>
-                  <input
-                    type="text"
-                    name="chairmanNameBn"
-                    value={formData.chairmanNameBn || 'আলহাজ্ব মো. মজিবুর রহমান'}
-                    onChange={handleChange}
-                    className="w-full rounded-lg border border-line p-2.5 bg-white"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-ink mb-1">বাণী (বাংলায়)</label>
-                  <textarea
-                    rows="5"
-                    name="chairmanMessageBn"
-                    value={formData.chairmanMessageBn || ''}
-                    onChange={handleChange}
-                    className="w-full rounded-lg border border-line p-2.5 bg-white leading-relaxed"
-                  ></textarea>
-                </div>
+              <div>
+                <label className="block font-bold text-ink mb-1">Headmaster Name (English)</label>
+                <input
+                  type="text"
+                  name="headmasterNameEn"
+                  value={formData.headmasterNameEn || ''}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border border-line p-2.5 font-sans"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block font-bold text-ink mb-1">প্রধান শিক্ষকের বাণী (বাংলায়)</label>
+                <textarea
+                  rows={4}
+                  name="headmasterMessageBn"
+                  value={formData.headmasterMessageBn || ''}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border border-line p-2.5 leading-relaxed"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block font-bold text-ink mb-1">Headmaster's Message (English)</label>
+                <textarea
+                  rows={4}
+                  name="headmasterMessageEn"
+                  value={formData.headmasterMessageEn || ''}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border border-line p-2.5 leading-relaxed font-sans"
+                />
               </div>
             </div>
           </div>
 
+          {/* Success Banner */}
           {savedSuccess && (
             <div className="p-4 bg-soft text-deep rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm border border-soft-border">
               <CheckCircle className="w-5 h-5 text-primary shrink-0" />
-              <span>প্রতিষ্ঠান সেটিংস, লোগো ও রূপকল্প সফলভাবে আপডেট ও সংরক্ষিত হয়েছে! ওয়েবসাইটের সর্বত্র তা কার্যকর হয়েছে।</span>
+              <span>প্রতিষ্ঠান সেটিংস, লোগো ও রূপকল্প সফলভাবে সংরক্ষিত হয়েছে! ওয়েবসাইটের সর্বত্র তা কার্যকর হয়েছে।</span>
             </div>
           )}
 
+          {/* Form Actions & Danger Zone */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t">
-            {/* Factory Reset only available to SuperAdmin (A9) */}
             {authUser?.role === 'superadmin' ? (
-              <button
-                type="button"
-                onClick={() => {
-                  setResetConfirmText('');
-                  setResetError('');
-                  setShowResetModal(true);
-                }}
-                className="text-danger hover:text-danger font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
-              >
-                <AlertTriangle className="w-4 h-4 text-danger" />
-                <span>সকল ডেটা ফ্যাক্টরি রিসেট করুন (Reset to Defaults)</span>
-              </button>
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowWizardModal(true)}
+                  className="text-primary hover:underline font-bold text-xs flex items-center gap-1 cursor-pointer"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-accent" />
+                  <span>নতুন স্কুল উইজার্ড (Use as Blank Template)</span>
+                </button>
+                <span className="text-muted">|</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResetConfirmText('');
+                    setResetError('');
+                    setShowResetModal(true);
+                  }}
+                  className="text-danger hover:underline font-bold text-xs flex items-center gap-1 cursor-pointer"
+                >
+                  <AlertTriangle className="w-3.5 h-3.5 text-danger" />
+                  <span>ফ্যাক্টরি রিসেট</span>
+                </button>
+              </div>
             ) : (
               <div className="text-xs text-muted">
-                * ফ্যাক্টরি রিসেটের অনুমতি শুধুমাত্র সুপার অ্যাডমিনের রয়েছে।
+                * সেটিংস পরিবর্তন শুধুমাত্র অনুমোদিত কর্মকর্তা করতে পারবেন।
               </div>
             )}
 
             <button
               type="submit"
-              className="w-full sm:w-auto btn-primary py-3.5 px-8 rounded-lg text-xs font-bold transition shadow-xs flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full sm:w-auto btn-primary py-3.5 px-8 rounded-xl text-xs font-bold transition shadow-xs flex items-center justify-center gap-2 cursor-pointer"
             >
               <Save className="w-4 h-4 text-white" />
               <span>পরিবর্তন সংরক্ষণ ও ওয়েবসাইটে প্রকাশ করুন</span>
@@ -664,7 +930,7 @@ export default function SchoolSettings() {
           </div>
         </form>
 
-        {/* SuperAdmin Factory Reset Security Modal (A9) */}
+        {/* SuperAdmin Factory Reset Security Modal */}
         {showResetModal && (
           <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl max-w-md w-full p-6 border border-danger-soft shadow-2xl space-y-4">
@@ -739,6 +1005,19 @@ export default function SchoolSettings() {
             </div>
           </div>
         )}
+
+        {/* Setup Wizard Modal for new-school onboarding */}
+        <SetupWizardModal
+          isOpen={showWizardModal}
+          onClose={() => setShowWizardModal(false)}
+          onApply={(wizardData) => {
+            if (resetToBlankTemplate) {
+              resetToBlankTemplate(wizardData);
+              setSavedSuccess(true);
+              setTimeout(() => setSavedSuccess(false), 3500);
+            }
+          }}
+        />
       </div>
     </div>
   );

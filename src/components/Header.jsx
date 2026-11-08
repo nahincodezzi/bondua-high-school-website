@@ -216,21 +216,23 @@ export default function Header() {
                 isScrolled ? 'w-9 h-9 scale-[0.88]' : 'w-11 h-11 scale-100'
               }`}
             >
-              <SchoolLogo logo={schoolInfo.logo} />
+              <SchoolLogo surface="dark" />
             </div>
 
             <div className="hidden sm:block shrink-0 transition-all duration-300">
               <h1 className={`text-white font-bold font-bangla whitespace-nowrap leading-tight tracking-normal transition-all duration-300 group-hover:text-accent ${
                 isScrolled ? 'text-xs sm:text-sm' : 'text-xs sm:text-base'
               }`}>
-                {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || 'Bondua Daulatpur High School')}
+                {lang === 'bn' ? (schoolInfo.nameBn || 'বিদ্যালয়ের নাম') : (schoolInfo.nameEn || 'School Name')}
               </h1>
               <p className={`text-white/90 font-sans tracking-wide whitespace-nowrap transition-all duration-300 overflow-hidden ${
                 isScrolled 
                   ? 'opacity-0 max-h-0 -translate-y-1' 
                   : 'opacity-100 max-h-4 text-[10px] sm:text-[11px] mt-0.5 translate-y-0'
               }`}>
-                {lang === 'bn' ? (schoolInfo.nameEn || 'Bondua Daulatpur High School') : (schoolInfo.nameBn || 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়')}
+                {lang === 'bn' 
+                  ? (schoolInfo.headerSubtitleBn || schoolInfo.nameEn || '') 
+                  : (schoolInfo.headerSubtitleEn || schoolInfo.nameBn || '')}
               </p>
             </div>
           </div>
@@ -449,15 +451,17 @@ export default function Header() {
               <div className="flex items-center justify-between pb-4 border-b border-white/15">
                 <div className="flex items-center gap-2.5">
                   <div className="w-9 h-9 bg-white rounded-full p-1 ring-2 ring-accent">
-                    <SchoolLogo logo={schoolInfo.logo} />
+                    <SchoolLogo surface="dark" />
                   </div>
                   <div>
                     <h2 className="text-white font-bold text-xs font-bangla leading-tight">
-                      {lang === 'bn' ? schoolInfo.nameBn : schoolInfo.nameEn}
+                      {lang === 'bn' ? (schoolInfo.nameBn || 'বিদ্যালয়ের নাম') : (schoolInfo.nameEn || 'School Name')}
                     </h2>
-                    <p className="text-white/90 text-[10px] font-mono">
-                      EIIN: {schoolInfo.eiin || '106644'}
-                    </p>
+                    {schoolInfo.eiin && (
+                      <p className="text-white/90 text-[10px] font-mono">
+                        EIIN: {schoolInfo.eiin}
+                      </p>
+                    )}
                   </div>
                 </div>
 

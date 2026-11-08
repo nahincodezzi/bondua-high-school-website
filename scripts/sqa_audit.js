@@ -17,7 +17,7 @@ import {
   initialAcademicGroups, 
   initialUniformInfo 
 } from '../src/data/initialData.js';
-import { deepSanitizeBondua, sanitizeBonduaString } from '../src/utils/sanitizeData.js';
+import { deepSanitizeBondua } from '../src/utils/sanitizeData.js';
 import { mappers } from '../src/lib/supabase.js';
 
 let passedTests = 0;
@@ -113,3 +113,4 @@ if (failedTests > 0) {
 } else {
   process.exit(0);
 }
+

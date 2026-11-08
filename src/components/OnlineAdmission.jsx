@@ -250,7 +250,7 @@ export default function OnlineAdmission() {
               {/* Slip Header */}
               <div className="text-center border-b-2 border-deep pb-4 print:pb-2">
                 <div className="w-14 h-14 print:w-10 print:h-10 mx-auto mb-2 print:mb-1 rounded-full bg-white p-0.5 shadow-sm ring-2 ring-primary">
-                  <SchoolLogo logo={schoolInfo.logo} />
+                  <SchoolLogo surface="light" />
                 </div>
                 <h3 className="text-2xl sm:text-3xl print:text-lg font-extrabold font-bangla text-deep">
                   {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || 'Bondua Daulatpur High School')}

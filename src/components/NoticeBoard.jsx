@@ -160,7 +160,7 @@ export default function NoticeBoard() {
         <div className="hidden print:block print-only-letterhead p-4 pb-2 border-b-2 border-slate-900 bg-white">
           <div className="flex items-center justify-center gap-3">
             <div className="w-12 h-12 rounded-full border border-slate-300 p-0.5 shrink-0">
-              <SchoolLogo logo={schoolInfo.logo} />
+              <SchoolLogo surface="light" />
             </div>
             <div className="text-center">
               <h1 className="text-xl font-extrabold text-slate-900 font-bangla leading-tight">
