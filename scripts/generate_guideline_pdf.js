@@ -4,19 +4,20 @@ import path from 'path';
 const EDGE_PATH = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
 const OUTPUT_PDF_ROOT = path.resolve('USER_GUIDELINE_BDHS.pdf');
 const OUTPUT_PDF_PUBLIC = path.resolve('public', 'USER_GUIDELINE_BDHS.pdf');
+const ARTIFACT_PDF = 'C:\\Users\\Skytech\\.gemini\\antigravity\\brain\\48914a8f-5154-44f2-ad74-8e555830a8f4\\USER_GUIDELINE_BDHS.pdf';
 
 const htmlContent = `<!DOCTYPE html>
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <title>ব্যবহারকারী নির্দেশিকা (User Manual) — বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়</title>
+  <title>ব্যবহারকারী নির্দেশিকা (User Manual) — বিদ্যালয় ম্যানেজমেন্ট ও ওয়েবসাইট</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
     @page {
       size: A4;
-      margin: 18mm 14mm 18mm 14mm;
+      margin: 16mm 14mm 16mm 14mm;
       @bottom-right {
         content: counter(page);
       }
@@ -28,8 +29,8 @@ const htmlContent = `<!DOCTYPE html>
     }
     body {
       font-family: 'Hind Siliguri', 'Noto Sans Bengali', -apple-system, sans-serif;
-      font-size: 11pt;
-      line-height: 1.6;
+      font-size: 10.5pt;
+      line-height: 1.55;
       color: #1e293b;
       background: #ffffff;
       -webkit-print-color-adjust: exact;
@@ -38,19 +39,19 @@ const htmlContent = `<!DOCTYPE html>
     .header-banner {
       border-bottom: 2.5px solid #047857;
       padding-bottom: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
     .header-left h1 {
-      font-size: 19pt;
+      font-size: 18pt;
       font-weight: 800;
       color: #064e3b;
       margin-bottom: 3px;
     }
     .header-left h2 {
-      font-size: 13pt;
+      font-size: 12pt;
       font-weight: 700;
       color: #b45309;
       margin-bottom: 6px;
@@ -84,38 +85,38 @@ const htmlContent = `<!DOCTYPE html>
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 22px;
+      padding: 10px 14px;
+      margin-bottom: 20px;
       page-break-inside: avoid;
     }
     .toc-box h3 {
-      font-size: 11pt;
+      font-size: 10.5pt;
       font-weight: 700;
       color: #0f172a;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       border-bottom: 1px solid #e2e8f0;
       padding-bottom: 4px;
     }
     .toc-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 4px 16px;
-      font-size: 9pt;
+      gap: 3px 14px;
+      font-size: 8.5pt;
     }
     .toc-item {
       color: #334155;
     }
     .section {
-      margin-bottom: 22px;
+      margin-bottom: 20px;
       page-break-inside: avoid;
     }
     .section-title {
-      font-size: 13pt;
+      font-size: 12pt;
       font-weight: 700;
       color: #064e3b;
       border-bottom: 1.5px solid #cbd5e1;
       padding-bottom: 4px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -124,37 +125,37 @@ const htmlContent = `<!DOCTYPE html>
       content: '';
       display: inline-block;
       width: 4px;
-      height: 16px;
+      height: 15px;
       background: #047857;
       border-radius: 2px;
     }
     .sub-title {
-      font-size: 11pt;
+      font-size: 10.5pt;
       font-weight: 700;
       color: #0f172a;
-      margin-top: 10px;
-      margin-bottom: 6px;
+      margin-top: 8px;
+      margin-bottom: 5px;
     }
     p, ul, ol {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       color: #334155;
     }
     ul, ol {
-      padding-left: 20px;
+      padding-left: 18px;
     }
     li {
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 10px 0 14px 0;
-      font-size: 9.5pt;
+      margin: 8px 0 12px 0;
+      font-size: 9pt;
       page-break-inside: avoid;
     }
     th, td {
       border: 1px solid #cbd5e1;
-      padding: 7px 10px;
+      padding: 6px 8px;
       text-align: left;
       vertical-align: middle;
     }
@@ -162,7 +163,7 @@ const htmlContent = `<!DOCTYPE html>
       background: #064e3b;
       color: #ffffff;
       font-weight: 700;
-      font-size: 9pt;
+      font-size: 8.5pt;
       text-transform: uppercase;
       letter-spacing: 0.3px;
     }
@@ -171,33 +172,35 @@ const htmlContent = `<!DOCTYPE html>
     }
     .code-pill {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 9pt;
+      font-size: 8.5pt;
       font-weight: 700;
       background: #e2e8f0;
       color: #0f172a;
-      padding: 2px 6px;
+      padding: 1px 5px;
       border-radius: 4px;
       border: 1px solid #cbd5e1;
     }
     .alert-box {
       background: #fffbeb;
       border-left: 4px solid #f59e0b;
-      padding: 10px 14px;
+      padding: 8px 12px;
       border-radius: 4px;
-      margin: 10px 0;
-      font-size: 9.5pt;
+      margin: 8px 0;
+      font-size: 9pt;
       color: #78350f;
     }
-    .alert-box-info {
+    .highlight-card {
       background: #ecfdf5;
-      border-left-color: #059669;
-      color: #064e3b;
+      border: 1px solid #a7f3d0;
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-bottom: 10px;
     }
     .footer-note {
-      margin-top: 30px;
+      margin-top: 25px;
       border-top: 1px solid #e2e8f0;
-      padding-top: 10px;
-      font-size: 8.5pt;
+      padding-top: 8px;
+      font-size: 8pt;
       color: #64748b;
       text-align: center;
     }
@@ -209,7 +212,7 @@ const htmlContent = `<!DOCTYPE html>
   <div class="header-banner">
     <div class="header-left">
       <h1>বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়</h1>
-      <h2>অফিসিয়াল ব্যবহারকারী নির্দেশিকা ও ইউজার ম্যানুয়াল</h2>
+      <h2>সফটওয়্যার ব্যবহারকারী নির্দেশিকা ও ইউজার ম্যানুয়াল (ERP & Website)</h2>
       <div class="meta-badges">
         <span class="badge badge-primary">EIIN: 106644</span>
         <span class="badge badge-primary">MPO: 0403061302</span>
@@ -221,20 +224,20 @@ const htmlContent = `<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- Section 1: User Login Credentials (At the top as requested) -->
+  <!-- Section 1: User Login Credentials -->
   <div class="section">
-    <h2 class="section-title">১. লগইন ক্রেডেনশিয়ালস ও অ্যাক্সেস কন্ট্রোল (User Login Credentials)</h2>
+    <h2 class="section-title">১. লগইন ক্রেডেনশিয়ালস ও এক্সেস কন্ট্রোল (Login Credentials)</h2>
     <p>
-      অ্যাডমিন ও টিচার্স পোর্টালে (<code>/#admin</code>) লগইন করার জন্য সিস্টেমে পূর্বনির্ধারিত ৫টি রোল ভিত্তিক অ্যাকাউন্ট প্রস্তুত রয়েছে:
+      অ্যাডমিন ও টিচার্স পোর্টালে (<code>/#admin</code>) প্রবেশের জন্য সিস্টেমে প্রস্তুত থাকা অ্যাকাউন্টসমূহ:
     </p>
 
     <table>
       <thead>
         <tr>
           <th style="width: 25%;">পদবী / ভূমিকা</th>
-          <th style="width: 20%;">ইউজারনেম (Username)</th>
-          <th style="width: 20%;">পাসওয়ার্ড (Password)</th>
-          <th style="width: 35%;">অনুমোদিত কার্যপরিধি (Permissions)</th>
+          <th style="width: 18%;">ইউজারনেম</th>
+          <th style="width: 18%;">পাসওয়ার্ড</th>
+          <th style="width: 39%;">অনুমোদিত কার্যপরিধি (Permissions)</th>
         </tr>
       </thead>
       <tbody>
@@ -257,22 +260,22 @@ const htmlContent = `<!DOCTYPE html>
           <td>সিএমএস কনটেন্ট, নোটিশ প্রকাশ, ফলাফল যাচাই ও শিক্ষার্থী ভর্তি তদারকি।</td>
         </tr>
         <tr>
-          <td><strong>সহকারী শিক্ষক (রেজাল্ট কন্ট্রোলার)</strong></td>
+          <td><strong>সহকারী শিক্ষক (রেজাল্ট)</strong></td>
           <td><span class="code-pill">teacher</span></td>
           <td><span class="code-pill">teacher2026</span></td>
-          <td>পরীক্ষার বিষয়ভিত্তিক নম্বর এন্ট্রি ও প্রাতিষ্ঠানিক নোটিশ দেখা।</td>
+          <td>পরীক্ষার বিষয়ভিত্তিক নম্বর এন্ট্রি ও প্রাতিষ্ঠানিক নোটিশ দেখা।</td>
         </tr>
         <tr>
-          <td><strong>অফিস সহকারী ও ডাটা এন্ট্রি</strong></td>
+          <td><strong>অফিস সহকারী / হিসাবরক্ষক</strong></td>
           <td><span class="code-pill">office_assistant</span></td>
           <td><span class="code-pill">office2026</span></td>
-          <td>নতুন শিক্ষার্থী ভর্তি ও ডাটা এন্ট্রি, আইডি কার্ড প্রিন্ট, নোটিশ ড্রাফট ও ফি কালেকশন।</td>
+          <td>নতুন শিক্ষার্থী ভর্তি এন্ট্রি, মানি রসিদ ও ফি কালেকশন, আইডি কার্ড প্রিন্ট।</td>
         </tr>
       </tbody>
     </table>
 
     <div class="alert-box">
-      <strong>🔒 নিরাপত্তা সতর্কতা:</strong> সুরক্ষার স্বার্থে টানা ৫ বার ভুল পাসওয়ার্ড দিলে অ্যাকাউন্টটি ১৫ মিনিটের জন্য সাময়িকভাবে লক হয়ে যাবে এবং ৩০ মিনিট নিষ্ক্রিয় থাকলে সেশনটি স্বয়ংক্রিয়ভাবে সমাপ্ত হবে।
+      <strong>🔒 নিরাপত্তা সতর্কতা:</strong> সুরক্ষার স্বার্থে টানা ৫ বার ভুল পাসওয়ার্ড দিলে অ্যাকাউন্টটি ১৫ মিনিটের জন্য সাময়িকভাবে লক হয়ে যাবে এবং ৩০ মিনিট নিষ্ক্রিয় থাকলে সেশন স্বয়ংক্রিয়ভাবে সমাপ্ত হবে।
     </div>
   </div>
 
@@ -280,177 +283,157 @@ const htmlContent = `<!DOCTYPE html>
   <div class="toc-box">
     <h3>সূচিপত্র (Table of Contents)</h3>
     <div class="toc-grid">
-      <div class="toc-item">১. লগইন ক্রেডেনশিয়ালস ও অ্যাক্সেস কন্ট্রোল</div>
-      <div class="toc-item">৮. নতুন পরীক্ষা, শ্রেণি ও বিষয় যুক্তকরণ</div>
-      <div class="toc-item">২. সাধারণ পরিচিতি ও পাবলিক ওয়েবসাইট</div>
+      <div class="toc-item">১. লগইন ক্রেডেনশিয়ালস ও এক্সেস কন্ট্রোল</div>
       <div class="toc-item">৯. শিক্ষার্থী ব্যবস্থাপনা ও আইডি কার্ড</div>
-      <div class="toc-item">৩. অনলাইন ভর্তি আবেদন ও স্লিপ প্রিন্ট</div>
+      <div class="toc-item">২. সাধারণ পরিচিতি ও পাবলিক ওয়েবসাইট</div>
       <div class="toc-item">১০. ভর্তি আবেদন যাচাই ও বাল্ক অনুমোদন</div>
-      <div class="toc-item">৪. অনলাইন রেজাল্ট ও ডিজিটাল মার্কশিট</div>
+      <div class="toc-item">৩. একক সার্বজনীন প্রাতিষ্ঠানিক লোগো</div>
       <div class="toc-item">১১. ফি কালেকশন ও মানি রিসিট বাতিলকরণ</div>
-      <div class="toc-item">৫. অফিসিয়াল নোটিশ বোর্ড ও ১-পৃষ্ঠার প্রিন্ট</div>
-      <div class="toc-item">১২. বিদ্যালয় সেটিংস ও স্বাক্ষরকারী পরিবর্তন</div>
-      <div class="toc-item">৬. ক্লাস ও পরীক্ষার রুটিন ডাউনলোড</div>
-      <div class="toc-item">১৩. সিএমএস (CMS) বিভাগ ও বিষয়সমূহ পরিচালনা</div>
-      <div class="toc-item">৭. ফলাফল ব্যবস্থাপনা ও এক্সেল বাল্ক আপলোড</div>
-      <div class="toc-item">১৪. ওয়েবসাইট থেকে আসা বার্তা (Visitor Messages)</div>
+      <div class="toc-item">৪. সভাপতি ও পরিচালনা পর্ষদ CMS</div>
+      <div class="toc-item">১২. বিদ্যালয় সেটিংস ও স্বাক্ষরকারী পরিবর্তন</div>
+      <div class="toc-item">৫. অনলাইন ভর্তি আবেদন ও প্রবেশপত্র</div>
+      <div class="toc-item">১৩. সিএমএস (CMS) বিভাগ ও বিষয়সমূহ</div>
+      <div class="toc-item">৬. অনলাইন রেজাল্ট ও ডিজিটাল মার্কশিট</div>
+      <div class="toc-item">১৪. ওয়েবসাইট থেকে আসা বার্তা (Messages)</div>
+      <div class="toc-item">৭. অফিসিয়াল নোটিশ বোর্ড ও ১-পৃষ্ঠার প্রিন্ট</div>
+      <div class="toc-item">১৫. সিএমএস (CMS) থেকে যা কিছু পরিবর্তন করা যায়</div>
+      <div class="toc-item">৮. ফলাফল ব্যবস্থাপনা ও এক্সেল বাল্ক আপলোড</div>
+      <div class="toc-item">১৬. অন্য স্কুলে ব্যবহারের সহজ গাইডলাইন</div>
     </div>
   </div>
 
   <!-- Section 2 -->
   <div class="section">
-    <h2 class="section-title">২. সাধারণ পরিচিতি ও পাবলিক ওয়েবসাইট</h2>
+    <h2 class="section-title">২. সাধারণ পরিচিতি ও পাবলিক ওয়েবসাইট</h2>
     <ul>
-      <li><strong>ভাষা পরিবর্তন:</strong> ওয়েবসাইটের উপরে ডানপাশে <code>বাংলা</code> ও <code>English</code> বাটন রয়েছে। এক ক্লিকেই সম্পূর্ণ ওয়েবসাইটের ভাষা পরিবর্তন করা যায়।</li>
-      <li><strong>নোটিশ টিকার:</strong> ওয়েবসাইটের ব্যানারের ঠিক নিচেই লাল-হলুদ নোটিশ টিকারে সর্বশেষ জরুরি নোটিশগুলো স্ক্রল আকারে স্বয়ংক্রিয়ভাবে প্রদর্শিত হয়।</li>
-      <li><strong>প্রধান শিক্ষকের বাণী ও ইতিহাস:</strong> প্রধান শিক্ষক ও সহকারী প্রধান শিক্ষকের বাণী, বিদ্যালয়ের ইতিহাস ও ক্যাম্পাসের পরিসংখ্যান হোমপেজে দেখা যাবে।</li>
+      <li><strong>দ্বি-ভাষিক সাপোর্ট (Bilingual):</strong> উপরে ডানপাশে থাকা <code>বাংলা</code> ও <code>English</code> বাটনে ক্লিক করে তাৎক্ষণিক ভাষা পরিবর্তন করা যায়।</li>
+      <li><strong>থিম পরিবর্তন:</strong> এমারেল্ড (Emerald) ও মার্জিত ইন্ডিগো (Indigo) থিম লাইভ টগল করা যায়।</li>
+      <li><strong>জরুরি নোটিশ টিকার:</strong> ব্যানারের নিচেই লাল-হলুদ টিকারে সর্বশেষ নোটিশগুলো স্ক্রল আকারে প্রদর্শিত হয়।</li>
     </ul>
   </div>
 
   <!-- Section 3 -->
   <div class="section">
-    <h2 class="section-title">৩. অনলাইন ভর্তি আবেদন ও স্লিপ প্রিন্ট</h2>
-    <ol>
-      <li>মেনু থেকে <strong>"ভর্তি"</strong> ট্যাবে ক্লিক করুন।</li>
-      <li>শিক্ষার্থীর বাংলা ও ইংরেজি নাম, জন্ম নিবন্ধন নম্বর, জন্মতারিখ, শ্রেণি, গ্রুপ, পিতা-মাতার নাম ও ১১ ডিজিটের সঠিক মোবাইল নম্বর লিখুন।</li>
-      <li><strong>"আবেদন জমা দিন"</strong> বাটনে ক্লিক করলে তাৎক্ষণিক একটি ট্র্যাকিং নম্বর সহ ভেরিফায়েড <strong>ভর্তি আবেদন স্লিপ</strong> তৈরি হবে।</li>
-      <li><strong>"স্লিপ প্রিন্ট করুন"</strong> বাটনে ক্লিক করলে স্বয়ংক্রিয়ভাবে প্রাতিষ্ঠানিক লোগো ও সিলসহ সুন্দর ১ পৃষ্ঠায় প্রিন্ট/PDF সেভ হবে।</li>
-    </ol>
+    <h2 class="section-title">৩. একক সার্বজনীন প্রাতিষ্ঠানিক লোগো (Single School Logo)</h2>
+    <div class="highlight-card">
+      <p>
+        <strong>Change-Once, Change-Everywhere:</strong> প্রতিষ্ঠানে এখন একটিমাত্র অফিশিয়াল লোগো ব্যবহৃত হয়। সেটিংস থেকে লোগোটি পরিবর্তন করলে তা সাথে সাথে ওয়েবসাইটের হেডার, ফুটার, ব্রাউজার ট্যাব (ফেভিকন) এবং সকল প্রকার প্রিন্ট ডকুমেন্টে (নোটিশ, মার্কশিট, রসিদ, প্রবেশপত্র, আইডি কার্ড ও রুটিন) কার্যকর হয়। থিম পরিবর্তনে লোগোর কোনো বিকৃতি ঘটে না।
+      </p>
+    </div>
   </div>
 
   <!-- Section 4 -->
   <div class="section">
-    <h2 class="section-title">৪. অনলাইন রেজাল্ট ও ডিজিটাল মার্কশিট অনুসন্ধান</h2>
-    <ol>
-      <li>মেনু থেকে <strong>"ফলাফল"</strong> ট্যাবে যান।</li>
-      <li>ড্রপডাউন থেকে <strong>পরীক্ষার নাম</strong> ও <strong>শ্রেণি</strong> নির্বাচন করুন।</li>
-      <li>শিক্ষার্থীর <strong>রোল নম্বর</strong> (বাংলা বা ইংরেজি সংখ্যায়) লিখে <strong>"অনুসন্ধান করুন"</strong> বাটনে ক্লিক করুন।</li>
-      <li>তাৎক্ষণিক কুমিল্লা শিক্ষা বোর্ডের গ্রেডিং স্কেল অনুযায়ী বিষয়ভিত্তিক নম্বর, লেটার গ্রেড, গ্রেড পয়েন্ট এবং সামগ্রিক জিপিএ (GPA) সহ প্রাতিষ্ঠানিক ডিজিটাল মার্কশিট দেখতে পাবেন।</li>
-      <li><strong>"মার্কশিট প্রিন্ট করুন"</strong> বাটনে ক্লিক করলে কোনো ইন্টারঅ্যাক্টিভ বাটন ছাড়া সরাসরি অফিসিয়াল ১-পৃষ্ঠার অফিশিয়াল মার্কশিট প্রিন্ট হবে।</li>
-    </ol>
+    <h2 class="section-title">৪. সভাপতি (President) ও পরিচালনা পর্ষদ (Managing Committee)</h2>
+    <ul>
+      <li><strong>সভাপতির কার্ড:</strong> আমাদের সম্পর্কে (About) পেজের উপরে সভাপতির ছবি, পরিচিতি, পদবি, মোবাইল নম্বর এবং প্রাতিষ্ঠানিক বাণী সর্বদা সুন্দরভাবে প্রদর্শিত হয়।</li>
+      <li><strong>শর্তাধীন পরিচালনা পর্ষদ:</strong> অ্যাডমিন প্যানেল থেকে কমিটি সদস্য যুক্ত করা থাকলে সভাপতির নিচে সুন্দর গ্রিডে অন্যান্য সদস্যদের তালিকা দেখা যাবে। কমিটি তালিকা খালি থাকলে সেকশনটি স্বয়ংক্রিয়ভাবে অদৃশ্য থাকে।</li>
+    </ul>
   </div>
 
   <!-- Section 5 -->
   <div class="section">
-    <h2 class="section-title">৫. অফিসিয়াল নোটিশ বোর্ড ও ১-পৃষ্ঠার নোটিশ প্রিন্ট</h2>
-    <ul>
-      <li>সাধারণ নোটিশ, পরীক্ষা, ভর্তি বা ছুটির নোটিশ ফিল্টার করে দেখা যায়।</li>
-      <li>যেকোনো নোটিশে ক্লিক করলে বিস্তারিত পপআপ ওপেন হবে।</li>
-      <li><strong>"প্রিন্ট করুন"</strong> বাটনে ক্লিক করলে স্ক্রিনের সব বাটন লুকিয়ে যাবে এবং প্রতিষ্ঠানের লোগো, নাম, EIIN, স্মারক নম্বর, নোটিশের বিষয়বস্তু, অফিশিয়াল গোল সিল এবং প্রধান শিক্ষকের স্বাক্ষরসহ সম্পূর্ণ বিজ্ঞপ্তিটি নিখুঁতভাবে ১ম পৃষ্ঠায় প্রিন্ট হবে।</li>
-    </ul>
+    <h2 class="section-title">৫. অনলাইন ভর্তি আবেদন ও প্রবেশপত্র (Admission Slip)</h2>
+    <ol>
+      <li>শিক্ষার্থীরা ভর্তি ফরম পূরণ করে <strong>"আবেদন জমা দিন"</strong> চাপলে ট্র্যাকিং নম্বর সহ ভেরিফায়েড <strong>ভর্তি প্রবেশপত্র (Admit Slip)</strong> তৈরি হয়।</li>
+      <li><strong>"স্লিপ প্রিন্ট করুন"</strong> বাটনে ক্লিক করলে প্রাতিষ্ঠানিক লোগো ও সিলসহ ১ পৃষ্ঠায় প্রিন্ট বা PDF সেভ হয়।</li>
+      <li>একই ছাত্র ও মোবাইলে ডুপ্লিকেট আবেদন স্বয়ংক্রিয়ভাবে সফটওয়্যার আটকে দেয়।</li>
+    </ol>
   </div>
 
   <!-- Section 6 -->
   <div class="section">
-    <h2 class="section-title">৬. ক্লাস ও পরীক্ষার রুটিন ডাউনলোড</h2>
-    <p>
-      <strong>"রুটিন"</strong> সেকশন থেকে ৬ষ্ঠ থেকে ১০ম শ্রেণির সাপ্তাহিক ক্লাস রুটিন এবং পরীক্ষার সময়সূচী সরাসরি ব্রাউজারে দেখা যায় অথবা ১-ক্লিকে প্রিন্ট ও PDF আকারে সংরক্ষণ করা যায়।
-    </p>
+    <h2 class="section-title">৬. অনলাইন রেজাল্ট ও ডিজিটাল মার্কশিট অনুসন্ধান</h2>
+    <ol>
+      <li>পরীক্ষার নাম, শ্রেণি এবং রোল নম্বর লিখে সার্চ করলে মুহূর্তেই বিষয়ভিত্তিক নম্বর, লেটার গ্রেড, গ্রেড পয়েন্ট ও জিপিএ সহ মার্কশিট প্রদর্শিত হয়।</li>
+      <li><strong>"মার্কশিট প্রিন্ট করুন"</strong> চাপলে অফিশিয়াল গোল সিল, লোগো এবং প্রধান শিক্ষক ও পরীক্ষা নিয়ন্ত্রকের স্বাক্ষরসহ নিখুঁত ১-পৃষ্ঠার মার্কশিট প্রিন্ট হয়।</li>
+    </ol>
   </div>
 
   <!-- Section 7 -->
   <div class="section">
-    <h2 class="section-title">৭. ফলাফল ব্যবস্থাপনা (Result Manager)</h2>
-    <h3 class="sub-title">ক. একক নম্বর এন্ট্রি (Single Entry)</h3>
-    <ol>
-      <li>অ্যাডমিন প্যানেল থেকে <strong>"ফলাফল"</strong> ট্যাবে যান।</li>
-      <li>পরীক্ষার নাম, শ্রেণি এবং শিক্ষার্থীর রোল নম্বর লিখুন (সিস্টেম স্বয়ংক্রিয়ভাবে ডাটাবেজ থেকে শিক্ষার্থীর নাম যাচাই করবে)।</li>
-      <li>প্রতিটি বিষয়ের প্রাপ্ত নম্বর ইনপুট দিন।</li>
-      <li><strong>"ফলাফল সংরক্ষণ ও প্রকাশ করুন"</strong> বাটনে ক্লিক করুন। এটি সাথে সাথে ডাটাবেজে সেভ হয়ে পাবলিক রেজাল্ট সার্চে চলে যাবে।</li>
-    </ol>
-
-    <h3 class="sub-title">খ. এক্সেল শিট থেকে বাল্ক আপলোড (Excel Bulk Upload)</h3>
-    <ol>
-      <li><strong>"এক্সেল থেকে বাল্ক আপলোড"</strong> ট্যাবে ক্লিক করুন।</li>
-      <li>পরীক্ষা, শ্রেণি ও বিভাগ নির্বাচন করুন।</li>
-      <li><strong>"নমুনা টেমপ্লেট"</strong> বাটনে ক্লিক করুন। আপনার ওই শ্রেণির সকল শিক্ষার্থীর রোল ও বিষয়ের কলামসহ একটি প্রস্তুতকৃত <code>.xlsx</code> ফাইল ডাউনলোড হবে।</li>
-      <li>এক্সেলে শিক্ষার্থীদের রোল বরাবর নম্বরগুলো বসিয়ে ফাইলটি সেভ করুন।</li>
-      <li><strong>"এক্সেল ফাইল আপলোড করুন"</strong> বক্সে ফাইলটি ড্রপ করুন বা সিলেক্ট করুন। প্রিভিউ দেখে <strong>"সকল ফলাফল নিশ্চিত করুন"</strong> চাপুন।</li>
-    </ol>
+    <h2 class="section-title">৭. অফিসিয়াল নোটিশ বোর্ড ও ১-পৃষ্ঠার প্রিন্ট</h2>
+    <ul>
+      <li>যেকোনো নোটিশে ক্লিক করে <strong>"প্রিন্ট করুন"</strong> চাপলে স্ক্রিনের অনাকাঙ্ক্ষিত বাটন লুকিয়ে প্রতিষ্ঠানের প্যাডের লেটারহেডে নোটিশ প্রিন্ট হয়।</li>
+    </ul>
   </div>
 
   <!-- Section 8 -->
   <div class="section">
-    <h2 class="section-title">৮. নতুন পরীক্ষা, শ্রেণি ও বিষয় যুক্ত করার নিয়ম</h2>
-    <ul>
-      <li><strong>নতুন পরীক্ষা যোগ করা:</strong> পরীক্ষার ড্রপডাউনের পাশে থাকা <code>+ নতুন</code> বাটনে ক্লিক করুন। পরীক্ষার নাম ও বাংলা নাম লিখে সেভ করুন।</li>
-      <li><strong>নতুন শ্রেণি যোগ করা:</strong> শ্রেণির ড্রপডাউনের পাশে <code>+ নতুন</code> বাটনে ক্লিক করে শ্রেণি কোড ও নাম দিন।</li>
-      <li><strong>নতুন বিষয় (Subject) যোগ করা:</strong> বিষয় তালিকার ওপরে থাকা <code>+ নতুন বিষয় যোগ করুন</code> বাটনে ক্লিক করে বিষয়ের ইংরেজি নাম, বাংলা নাম, কোড এবং পূর্ণমান (১০০ বা ৫০) নির্ধারণ করুন।
-      <br><em>স্বয়ংক্রিয় সুবিধা:</em> সাথে সাথেই একক এন্ট্রি ফর্ম, এক্সেল নমুনা টেমপ্লেট এবং তথ্য নির্দেশিকা <code>(i)</code> পপআপে নতুন বিষয়টির নিয়ম অন্তর্ভুক্ত হয়ে যাবে।</li>
-    </ul>
+    <h2 class="section-title">৮. ফলাফল ব্যবস্থাপনা ও এক্সেল বাল্ক আপলোড (Result Manager)</h2>
+    <h3 class="sub-title">ক. একক নম্বর এন্ট্রি (Single Entry)</h3>
+    <p>রোল নম্বর দিলে শিক্ষার্থীর নাম চলে আসে; শুধু প্রাপ্ত নম্বর বসিয়ে সেভ করলেই রেজাল্ট লাইভ হয়ে যায়।</p>
+    <h3 class="sub-title">খ. এক্সেল থেকে বাল্ক আপলোড (Excel Bulk Upload)</h3>
+    <p>নমুনা এক্সেল টেমপ্লেট ডাউনলোড করে নম্বর বসিয়ে আপলোড করলেই এক ক্লিকে পুরো ক্লাসের ফলাফল ডাটাবেজে ও পাবলিক রেজাল্ট সার্চে চলে যায়। নতুন বিষয়, শ্রেণি বা পরীক্ষাও ড্রপডাউনের পাশ থেকে যোগ করা যায়।</p>
   </div>
 
   <!-- Section 9 -->
   <div class="section">
-    <h2 class="section-title">৯. শিক্ষার্থী ব্যবস্থাপনা (Student Manager)</h2>
+    <h2 class="section-title">৯. শিক্ষার্থী ব্যবস্থাপনা ও আইডি কার্ড (Student Manager)</h2>
     <ul>
-      <li><strong>শিক্ষার্থী সংযোজন:</strong> শিক্ষার্থীর নাম, শ্রেণি, রোল, বিভাগ, রক্তের গ্রুপ, জন্ম তারিখ ও মোবাইল নম্বর দিয়ে শিক্ষার্থী ভর্তি করা যায়। একই শ্রেণিতে ডুপ্লিকেট রোল গ্রহণযোগ্য নয়।</li>
-      <li><strong>সিলেক্ট অল (Select All) ও বাল্ক অ্যাকশন:</strong> টেবিলের উপরের চেকবক্সে ক্লিক করে এক ক্লিকে সকল শিক্ষার্থী নির্বাচন করা যায় এবং নিচ থেকে ভেসে ওঠা ফ্লোটিং বার দিয়ে এক্সেলে এক্সপোর্ট বা একসাথে ডাটাবেজ থেকে ডিলিট করা যায়।</li>
-      <li><strong>এক্সেল বাল্ক আপলোড:</strong> <code>[📄 এক্সেল বাল্ক আপলোড]</code> বাটনে ক্লিক করে প্রস্তুতকৃত এক্সেল ফাইল আপলোড করলেই এক সাথে শত শত শিক্ষার্থীর ডাটা যাচাই হয়ে যুক্ত হয়ে যাবে।</li>
-      <li><strong>কলাম তথ্য নির্দেশিকা (i) ও টেমপ্লেট:</strong> পপআপে <code>(i)</code> বাটন চাপলে প্রয়োজনীয় কলামের বিবরণ দেখা যাবে এবং নমুনা টেমপ্লেট ডাউনলোড করা যাবে।</li>
-      <li><strong>আইডি কার্ড প্রিন্ট:</strong> শিক্ষার্থীর নামের পাশে থাকা <strong>আইডি কার্ড</strong> বাটনে ক্লিক করলে ছবি, প্রাতিষ্ঠানিক লোগো ও কিউআর কোডসহ ১ পৃষ্ঠার আকর্ষণীয় স্টুডেন্ট আইডি কার্ড প্রিন্ট করা যাবে।</li>
+      <li><strong>এক্সেলে বাল্ক আপলোড:</strong> এক ক্লিকে এক্সেল ফাইল থেকে শত শত শিক্ষার্থীর তথ্য একবারে যুক্ত করা যায়।</li>
+      <li><strong>সিলেক্ট অল ও বাল্ক অ্যাকশন:</strong> টেবিলের মাস্টার চেকবক্স সিলেক্ট করে একসাথে একাধিক শিক্ষার্থী এক্সপোর্ট বা ডিলিট করা যায়।</li>
+      <li><strong>স্টুডেন্ট আইডি কার্ড:</strong> নামের পাশে "আইডি কার্ড" বাটনে ক্লিক করলে ছবি, রোল ও লোগো সহ প্রফেশনাল আইডি কার্ড প্রিন্ট করা যায়।</li>
     </ul>
   </div>
 
   <!-- Section 10 -->
   <div class="section">
-    <h2 class="section-title">১০. ভর্তি আবেদন যাচাই ও বাল্ক অনুমোদন (Admission Manager)</h2>
-    <ol>
-      <li>অনলাইনে আসা নতুন আবেদনগুলোর স্ট্যাটাস প্রাথমিক অবস্থায় <strong>"Pending"</strong> থাকে।</li>
-      <li>মাস্টার চেকবক্সে ক্লিক করে একসাথে সকল আবেদন সিলেক্ট করে <strong>"নির্বাচিত আবেদনগুলো অনুমোদন করুন"</strong> বাটনে ক্লিক করুন।</li>
-      <li>সিস্টেম স্বয়ংক্রিয়ভাবে প্রতিটি শিক্ষার্থীর জন্য শ্রেণিতে খালি থাকা পরবর্তী রোল নম্বর নির্ধারণ করে সরাসরি মূল শিক্ষার্থী ডাটাবেজে যুক্ত করে দিবে।</li>
-    </ol>
+    <h2 class="section-title">১০. ভর্তি আবেদন যাচাই ও বাল্ক অনুমোদন (Admission Review)</h2>
+    <p>অনলাইনে জমা হওয়া আবেদনগুলো এক ক্লিকে "অনুমোদন (Approve)" চাপলেই স্বয়ংক্রিয়ভাবে পরবর্তী ফাঁকা রোল নম্বর অ্যাসাইন হয়ে মূল শিক্ষার্থী তালিকায় যুক্ত হয়ে যায়।</p>
   </div>
 
   <!-- Section 11 -->
   <div class="section">
     <h2 class="section-title">১১. ফি কালেকশন, মানি রিসিট ও বাতিলকরণ (Fee Manager)</h2>
-    <ol>
-      <li>শিক্ষার্থীর শ্রেণি ও রোল লিখে ফি-এর ধরন ও টাকার পরিমাণ নির্ধারণ করুন (সর্বোচ্চ ১,০০,০০০ টাকার সফটওয়্যার লিমিট রয়েছে)।</li>
-      <li>ফি জমা হওয়ার সাথে সাথেই ২-কপির (অফিস কপি ও শিক্ষার্থী কপি) প্রাতিষ্ঠানিক <strong>মানি রিসিট</strong> তৈরি হবে যাতে লোগো ও হিসাবরক্ষকের স্বাক্ষর থাকবে।</li>
-      <li>ভুল রিসিট তৈরি হলে <strong>"রসিদ বাতিল (Void)"</strong> বাটনে ক্লিক করে কারণ লিখে রসিদটি বাতিল করা যাবে।</li>
-    </ol>
+    <ul>
+      <li>ফি গ্রহণ করলেই ইউনিক ভাউচার নম্বরসহ ২-কপির (অফিস ও ছাত্র কপি) মানি রিসিট তৈরি হয়।</li>
+      <li>ভুল রিসিট তৈরি হলে যথাযথ কারণ লিখে <strong>"রসিদ বাতিল (Void)"</strong> করা যায়।</li>
+    </ul>
   </div>
 
   <!-- Section 12 -->
   <div class="section">
-    <h2 class="section-title">১২. বিদ্যালয় সেটিংস ও স্বাক্ষরকারী পরিবর্তন</h2>
+    <h2 class="section-title">১২. বিদ্যালয় সেটিংস ও স্বাক্ষরকারী পরিবর্তন (School Settings)</h2>
     <ul>
-      <li>অ্যাডমিন পোর্টাল > সেটিংস থেকে প্রতিষ্ঠানের নাম, EIIN, মোবাইল ও ইমেইল আপডেট করা যায়।</li>
-      <li><strong>লোগো পরিবর্তন:</strong> নতুন লোগো আপলোড করলে ওয়েবসাইটের হেডার, নোটিশ, মার্কশিট ও মানি রিসিট—সব জায়গায় নতুন লোগো তাৎক্ষণিক কার্যকর হবে।</li>
-      <li><strong>স্বাক্ষরকারী (Signatories):</strong> প্রধান শিক্ষক, পরীক্ষা নিয়ন্ত্রক কিংবা হিসাবরক্ষকের নাম ও স্বাক্ষর পরিবর্তন করলে সকল প্রিন্ট রিপোর্টে তা স্বয়ংক্রিয়ভাবে হালনাগাদ হবে।</li>
+      <li>প্রতিষ্ঠানের নাম, EIIN, কোড, মোবাইল, ইমেইল এবং প্রধান শিক্ষক ও পরীক্ষা নিয়ন্ত্রকের স্বাক্ষরকারীর নাম পরিবর্তন করা যায়।</li>
     </ul>
   </div>
 
   <!-- Section 13 -->
   <div class="section">
-    <h2 class="section-title">১৩. সিএমএস (CMS) থেকে বিভাগ ও বিষয়সমূহ পরিচালনা</h2>
+    <h2 class="section-title">১৩. সিএমএস (CMS) থেকে যা কিছু পরিবর্তন করা যায় (White-Label Power)</h2>
+    <p>এই সফটওয়্যারটির সবচেয়ে বড় সুবিধা হলো <strong>কোডিং না জেনেও ওয়েবসাইটের ৯৯% কনটেন্ট অ্যাডমিন CMS থেকে পরিবর্তন করা সম্ভব:</strong></p>
     <ul>
-      <li><strong>অবস্থান:</strong> অ্যাডমিন পোর্টাল > <strong>"সিএমএস / কনটেন্ট"</strong> > <strong><code>[বিভাগ ও বিষয়সমূহ (Subjects CMS)]</code></strong> ট্যাব।</li>
-      <li>বিজ্ঞান বিভাগ, ব্যবসায় শিক্ষা বা মানবিক বিভাগের যেকোনো বিষয়ের পাশে থাকা লাল ডিলিট (🗑️) বাটনে ক্লিক করে বিষয় তালিকা থেকে বাদ দেওয়া যায়।</li>
-      <li>নতুন বিষয়ের নাম লিখে <strong><code>[+ বিষয় যোগ করুন]</code></strong> বাটনে ক্লিক করে যুক্ত করা যায়।</li>
-      <li>বিভাগের পরিচিতি বিবরণ পরিবর্তন করে <strong>"পাঠ্যক্রমের পরিবর্তনসমূহ সংরক্ষণ করুন"</strong> বাটনে ক্লিক করলে তা পাবলিক ওয়েবসাইটে সরাসরি আপডেট হয়ে যাবে।</li>
+      <li><strong>১. স্কুলের নাম ও কোড:</strong> বাংলা ও ইংরেজি নাম, EIIN, MPO ও স্কুল কোড।</li>
+      <li><strong>২. প্রাতিষ্ঠানিক লোগো:</strong> যেকোনো স্কুলের লোগো আপলোড করলেই সর্বত্র স্বয়ংক্রিয়ভাবে বদলে যায়।</li>
+      <li><strong>৩. সভাপতি ও প্রধান শিক্ষকের তথ্য:</strong> উভয়ের ছবি, মোবাইল, পদবি ও প্রাতিষ্ঠানিক বাণী।</li>
+      <li><strong>৪. পরিচালনা পর্ষদ সদস্য:</strong> কমিটির সকল সদস্যের ছবি, নাম, পদবি ও মোবাইল নম্বর।</li>
+      <li><strong>৫. শিক্ষক ও স্টাফ পরিষদ:</strong> শিক্ষকদের প্রোফাইল, ছবি, পদবি, শিক্ষাগত যোগ্যতা ও ফোন।</li>
+      <li><strong>৬. হোমপেজ হিরো স্লাইডার ও ব্যানার:</strong> স্লাইডারের ছবি, শিরোনাম, সাব-শিরোনাম ও ট্যাগলাইন।</li>
+      <li><strong>৭. স্কুল ইউনিফর্ম নীতিমালা:</strong> ছাত্র ও ছাত্রীদের নির্ধারিত ড্রেসকোড ও পোশাকের নিয়মাবলী।</li>
+      <li><strong>৮. পাঠ্যক্রম ও বিভাগীয় বিষয় (Curriculum):</strong> বিজ্ঞান, বাণিজ্য ও মানবিক বিভাগের বিষয় ও সিলেবাস।</li>
+      <li><strong>৯. নোটিশ ও বিজ্ঞপ্তি:</strong> নিয়মিত নোটিশ প্রকাশ ও পিডিএফ সংযুক্তি।</li>
+      <li><strong>১০. ফটো গ্যালারি:</strong> স্কুলের বিভিন্ন অনুষ্ঠান ও ক্যাম্পাসের ফটো আপলোড।</li>
+      <li><strong>১১. ভিডিও গ্যালারি:</strong> ইউটিউব বা ফেসবুক ভিডিওর লিংক যুক্তকরণ।</li>
+      <li><strong>১২. বাৎসরিক তথ্য ও পরিসংখ্যান:</strong> মোট ছাত্র-ছাত্রী, শিক্ষক, পাশের হার ও জিপিএ-৫ পরিসংখ্যান।</li>
     </ul>
   </div>
 
   <!-- Section 14 -->
   <div class="section">
-    <h2 class="section-title">১৪. ওয়েবসাইট থেকে আসা বার্তা ও অনুসন্ধান (Visitor Messages)</h2>
-    <p>
-      অ্যাডমিন ড্যাশবোর্ডের হোম পেজে নিচের দিকে <strong>"ওয়েবসাইট থেকে আসা বার্তা ও অনুসন্ধান"</strong> সেকশনে দর্শনার্থীদের বার্তা প্রদর্শিত হয়:
-    </p>
-    <ul>
-      <li><code>name : [প্রেরকের নাম]</code></li>
-      <li><code>phone : [মোবাইল নম্বর]</code> (সরাসরি ক্লিক করে কল দেওয়ার সুবিধা)</li>
-      <li><code>mail : [ইমেইল]</code> <em>(ঐচ্ছিক — দর্শনার্থী ইমেইল দিয়ে থাকলে প্রদর্শিত হবে, না দিলে এই ফিল্ডটি সম্পূর্ণ লুকিয়ে থাকবে)</em></li>
-      <li><code>message sub : [বার্তার বিষয়]</code></li>
-      <li><code>description : [মূল বার্তা]</code></li>
-    </ul>
-    <p>অপ্রয়োজনীয় বার্তা ডিলিট বাটনে (🗑️) চাপ দিয়ে সহজেই মুছে ফেলা যায়।</p>
+    <h2 class="section-title">১৪. অন্য স্কুলে ব্যবহারের সহজ ৩টি ধাপ</h2>
+    <div class="highlight-card">
+      <ol>
+        <li>অ্যাডমিন প্যানেলের <strong>"প্রতিষ্ঠান সেটিংস"</strong>-এ গিয়ে নতুন স্কুলের নাম, EIIN, ঠিকানা ও লোগো আপলোড করুন।</li>
+        <li><strong>"পরিচালনা পর্ষদ"</strong> ও <strong>"শিক্ষক পরিষদ"</strong>-এ নতুন স্কুলের শিক্ষক ও কমিটির তথ্য ইনপুট দিন।</li>
+        <li><strong>"শিক্ষার্থী ব্যবস্থাপনা"</strong>-তে এক্সেল শিট আপলোড করে নতুন স্কুলের শিক্ষার্থীদের যুক্ত করে দিন — ব্যস, নতুন স্কুলের সফটওয়্যার রেডি!</li>
+      </ol>
+    </div>
   </div>
 
   <div class="footer-note">
-    © ২০২৬ বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয় (EIIN: 106644) • ফুলগাজী, ফেনী • সর্বস্বত্ব সংরক্ষিত।
+    © ২০২৬ সর্বস্বত্ব সংরক্ষিত • তৈরি ও পরিচালিত: আধুনিক স্কুল ম্যানেজমেন্ট সিস্টেম ও ডিজিটাল ওয়েব পোর্টাল।
   </div>
 
 </body>
@@ -469,14 +452,14 @@ async function generatePdf() {
   await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
   await new Promise(r => setTimeout(r, 1000));
 
-  console.log('Printing to:', OUTPUT_PDF_ROOT);
+  console.log('Printing to root:', OUTPUT_PDF_ROOT);
   await page.pdf({
     path: OUTPUT_PDF_ROOT,
     format: 'A4',
     printBackground: true,
     margin: {
-      top: '18mm',
-      bottom: '18mm',
+      top: '16mm',
+      bottom: '16mm',
       left: '14mm',
       right: '14mm'
     }
@@ -488,8 +471,21 @@ async function generatePdf() {
     format: 'A4',
     printBackground: true,
     margin: {
-      top: '18mm',
-      bottom: '18mm',
+      top: '16mm',
+      bottom: '16mm',
+      left: '14mm',
+      right: '14mm'
+    }
+  });
+
+  console.log('Printing to artifact directory:', ARTIFACT_PDF);
+  await page.pdf({
+    path: ARTIFACT_PDF,
+    format: 'A4',
+    printBackground: true,
+    margin: {
+      top: '16mm',
+      bottom: '16mm',
       left: '14mm',
       right: '14mm'
     }
@@ -503,4 +499,3 @@ generatePdf().catch(err => {
   console.error('PDF error:', err);
   process.exit(1);
 });
-
