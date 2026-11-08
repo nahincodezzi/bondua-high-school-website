@@ -19,7 +19,12 @@ import {
 
 export default function SchoolSettings() {
   const { schoolInfo, setSchoolInfo, updateSchoolSettings, resetToDefaults, authUser } = useSchool();
-  const [formData, setFormData] = useState({ ...schoolInfo });
+  const [formData, setFormData] = useState(() => {
+    const info = { ...schoolInfo };
+    if (info.nameEn) info.nameEn = info.nameEn.replace(/Bandua/g, 'Bondua');
+    if (info.addressEn) info.addressEn = info.addressEn.replace(/Bandua/g, 'Bondua');
+    return info;
+  });
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [logoUploadStatus, setLogoUploadStatus] = useState('');
   const [campusUploadStatus, setCampusUploadStatus] = useState('');
@@ -28,6 +33,17 @@ export default function SchoolSettings() {
   const [resetError, setResetError] = useState('');
   const logoInputRef = useRef(null);
   const campusInputRef = useRef(null);
+
+  const [prevSchoolInfo, setPrevSchoolInfo] = useState(schoolInfo);
+  if (schoolInfo !== prevSchoolInfo) {
+    setPrevSchoolInfo(schoolInfo);
+    setFormData(prev => ({
+      ...schoolInfo,
+      ...prev,
+      nameEn: prev.nameEn ? prev.nameEn.replace(/Bandua/g, 'Bondua') : schoolInfo.nameEn,
+      addressEn: prev.addressEn ? prev.addressEn.replace(/Bandua/g, 'Bondua') : schoolInfo.addressEn,
+    }));
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;

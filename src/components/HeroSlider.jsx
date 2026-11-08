@@ -83,7 +83,7 @@ export default function HeroSlider() {
                     <div className="flex flex-wrap items-center gap-2">
                       <div className="inline-flex items-center gap-1.5 bg-soft text-deep px-3.5 py-1 text-xs sm:text-sm font-bold shadow-xs rounded-full font-bangla border border-soft-border">
                         <Sparkles className="w-4 h-4 text-primary" />
-                        <span>{lang === 'bn' ? slide.tagBn : slide.tagEn}</span>
+                        <span>{lang === 'bn' ? slide.tagBn : (slide.tagEn || slide.tagBn)}</span>
                       </div>
 
                       <span className="bg-black/30 text-white/90 text-xs font-semibold px-3 py-1 rounded-full font-bangla hidden sm:inline-flex border border-white/20">
@@ -93,12 +93,12 @@ export default function HeroSlider() {
 
                     {/* Main Title */}
                     <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold font-bangla leading-tight text-white drop-shadow-md">
-                      {lang === 'bn' ? slide.titleBn : slide.titleEn}
+                      {lang === 'bn' ? slide.titleBn : (slide.titleEn || slide.titleBn)}
                     </h2>
 
                     {/* Subtitle */}
                     <p className="text-sm sm:text-lg text-white font-medium font-bangla leading-relaxed max-w-xl drop-shadow-md">
-                      {lang === 'bn' ? slide.subtitleBn : slide.subtitleEn}
+                      {lang === 'bn' ? slide.subtitleBn : (slide.subtitleEn || slide.subtitleBn)}
                     </p>
 
                     {/* Quick Uniform Callout Tag */}

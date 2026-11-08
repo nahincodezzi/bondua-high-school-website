@@ -58,7 +58,7 @@ export default function NoticeTicker() {
           {/* Notice Title Preview */}
           {currentNotice && (
             <span className="text-white group-hover:text-accent font-medium font-medium transition-colors text-[11px] sm:text-xs max-w-[180px] sm:max-w-xs md:max-w-md truncate">
-              {lang === 'bn' ? currentNotice.titleBn : currentNotice.titleEn}
+              {lang === 'bn' ? currentNotice.titleBn : (currentNotice.titleEn || currentNotice.titleBn)}
             </span>
           )}
 

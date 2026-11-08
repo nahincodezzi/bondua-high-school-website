@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SchoolContext } from './SchoolContextInstance';
+import { deepSanitizeBondua } from '../utils/sanitizeData';
 import { storeVideoFile, getVideoFile, deleteVideoFile } from '../utils/mediaStorage';
 import { getDhakaDateString } from '../utils/dateFormatter';
 import { hashPassword, verifyPassword } from '../utils/security';
@@ -30,9 +31,29 @@ import {
 } from '../data/initialData';
 
 export function SchoolProvider({ children }) {
-  // Global cache sanitization on app start to eliminate legacy cached names/vision texts
+  // Global cache sanitization on app start to eliminate legacy cached names/vision texts and Bandua spelling
   if (typeof window !== 'undefined') {
     try {
+      // Purge all legacy "Bandua" spellings across localStorage
+      const keysToClean = [
+        'bdhs_info', 'bdhs_slides', 'bdhs_notices', 'bdhs_teachers', 
+        'bdhs_students', 'bdhs_admissions', 'bdhs_results', 'bdhs_fees', 
+        'bdhs_gallery', 'bdhs_academic_groups', 'bdhs_academic_config', 
+        'bdhs_uniform', 'bdhs_system_users'
+      ];
+      for (const k of keysToClean) {
+        const item = localStorage.getItem(k);
+        if (item && (item.includes('Bandua') || item.includes('bandua') || item.includes('BANDUA'))) {
+          try {
+            const parsed = JSON.parse(item);
+            const sanitized = deepSanitizeBondua(parsed);
+            localStorage.setItem(k, JSON.stringify(sanitized));
+          } catch {
+            localStorage.setItem(k, item.replace(/Bandua/g, 'Bondua').replace(/bandua/g, 'bondua').replace(/BANDUA/g, 'BONDUA'));
+          }
+        }
+      }
+
       const rawAuth = localStorage.getItem('bdhs_auth');
       if (rawAuth && (rawAuth.includes('রবিউল') || rawAuth.includes('Rabiul') || rawAuth.includes('মজুমদার') || rawAuth.includes('মুজুমদার'))) {
         localStorage.removeItem('bdhs_auth');
@@ -193,7 +214,8 @@ export function SchoolProvider({ children }) {
     const saved = localStorage.getItem('bdhs_info');
     if (saved) {
       try {
-        const parsed = JSON.parse(saved);
+        const rawParsed = JSON.parse(saved);
+        const parsed = deepSanitizeBondua(rawParsed);
         // Force official school identifiers & foundation date alignment
         parsed.mpoCode = '105476301';
         parsed.eiin = '106644';
@@ -202,9 +224,10 @@ export function SchoolProvider({ children }) {
         parsed.roadBn = parsed.roadBn || 'ফেনী-পরশুরাম রোড সংলগ্ন';
         parsed.roadEn = parsed.roadEn || 'Along Feni-Parshuram Road';
         parsed.addressBn = parsed.addressBn || 'ফেনী-পরশুরাম রোড সংলগ্ন, বন্দুয়া দৌলতপুর, আনন্দপুর ইউনিয়ন, ফুলগাজী উপজেলা, ফেনী জেলা, বাংলাদেশ';
-        parsed.addressEn = parsed.addressEn || 'Along Feni-Parshuram Road, Bondua Daulatpur, Anandapur Union, Fulgazi, Feni, Bangladesh';
+        parsed.addressEn = (parsed.addressEn || initialSchoolInfo.addressEn).replace(/Bandua/g, 'Bondua');
         parsed.nameBn = parsed.nameBn || 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়';
-        parsed.nameEn = parsed.nameEn || 'Bondua Daulatpur High School';
+        parsed.nameEn = 'Bondua Daulatpur High School';
+        parsed.nameAlt = 'Bondua Doulatpur High School';
 
         if (!parsed.email || parsed.email.includes('fulgazi')) {
           parsed.email = 'bonduas106644@gmail.com';
@@ -291,7 +314,20 @@ export function SchoolProvider({ children }) {
 
   const [heroSlides, setHeroSlides] = useState(() => {
     const saved = localStorage.getItem('bdhs_slides');
-    return saved ? JSON.parse(saved) : initialHeroSlides;
+    if (saved) {
+      try {
+        const parsed = deepSanitizeBondua(JSON.parse(saved));
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((s, idx) => ({
+            ...s,
+            titleEn: s.titleEn || initialHeroSlides[idx]?.titleEn || s.titleBn,
+            subtitleEn: s.subtitleEn || initialHeroSlides[idx]?.subtitleEn || s.subtitleBn || '',
+            tagEn: s.tagEn || initialHeroSlides[idx]?.tagEn || s.tagBn || '',
+          }));
+        }
+      } catch {}
+    }
+    return initialHeroSlides;
   });
 
   const [notices, setNotices] = useState(() => {
@@ -474,9 +510,29 @@ export function SchoolProvider({ children }) {
         if (cloud.admissions && cloud.admissions.length > 0) setAdmissions(cloud.admissions);
         if (cloud.results && cloud.results.length > 0) setResults(cloud.results);
         if (cloud.fees && cloud.fees.length > 0) setFees(cloud.fees);
-        if (cloud.heroSlides && cloud.heroSlides.length > 0) setHeroSlides(cloud.heroSlides);
+        if (cloud.heroSlides && cloud.heroSlides.length > 0) {
+          const cleanSlides = deepSanitizeBondua(cloud.heroSlides).map((s, idx) => ({
+            ...s,
+            titleEn: s.titleEn || initialHeroSlides[idx]?.titleEn || s.titleBn,
+            subtitleEn: s.subtitleEn || initialHeroSlides[idx]?.subtitleEn || s.subtitleBn || '',
+            tagEn: s.tagEn || initialHeroSlides[idx]?.tagEn || s.tagBn || '',
+          }));
+          setHeroSlides(cleanSlides);
+          localStorage.setItem('bdhs_slides', JSON.stringify(cleanSlides));
+        }
         if (cloud.gallery && cloud.gallery.length > 0) setGallery(cloud.gallery);
-        if (cloud.schoolInfo) setSchoolInfo(cloud.schoolInfo);
+        if (cloud.schoolInfo) {
+          const cleanInfo = deepSanitizeBondua(cloud.schoolInfo);
+          cleanInfo.nameEn = 'Bondua Daulatpur High School';
+          cleanInfo.nameAlt = 'Bondua Doulatpur High School';
+          if (cleanInfo.addressEn) cleanInfo.addressEn = cleanInfo.addressEn.replace(/Bandua/g, 'Bondua');
+          setSchoolInfo(cleanInfo);
+          localStorage.setItem('bdhs_info', JSON.stringify(cleanInfo));
+          // Auto-migrate cloud Supabase row if it contains legacy Bandua
+          if (supabase && (JSON.stringify(cloud.schoolInfo).includes('Bandua') || JSON.stringify(cloud.schoolInfo).includes('BANDUA'))) {
+            supabase.from('school_info').upsert({ id: 'main', data: cleanInfo }).then(() => {}).catch(() => {});
+          }
+        }
         if (cloud.uniformInfo) setUniformInfo(cloud.uniformInfo);
         if (cloud.academicConfig) {
           setAcademicConfig(cloud.academicConfig);

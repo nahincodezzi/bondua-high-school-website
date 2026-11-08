@@ -1275,22 +1275,34 @@ export default function CmsContentManager() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-bold text-ink mb-1">ট্যাগ / ক্যাটাগরি পিল</label>
+                    <label className="block font-bold text-ink mb-1">ট্যাগ / ক্যাটাগরি (বাংলা)</label>
                     <input
                       type="text"
-                      value={slide.tagBn}
+                      value={slide.tagBn || ''}
                       onChange={(e) => handleSlideChange(idx, 'tagBn', e.target.value)}
                       className="w-full rounded-lg border border-line p-2.5 bg-white"
+                      placeholder="যেমন: ঐতিহ্য ও আধুনিকতার মেলবন্ধন"
                     />
                   </div>
 
                   <div>
+                    <label className="block font-bold text-ink mb-1">Tag / Category (English)</label>
+                    <input
+                      type="text"
+                      value={slide.tagEn || ''}
+                      onChange={(e) => handleSlideChange(idx, 'tagEn', e.target.value)}
+                      className="w-full rounded-lg border border-line p-2.5 bg-white font-sans"
+                      placeholder="e.g. Tradition & Modern Excellence"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
                     <div className="flex items-center justify-between mb-1">
                       <label className="block font-bold text-ink">ব্যাকগ্রাউন্ড ছবি</label>
                       <button
                         type="button"
                         onClick={() => triggerSlideUpload(idx)}
-                        className="text-primary hover:text-deep font-bold text-[11px] flex items-center gap-1 bg-soft hover:bg-soft px-2 py-0.5 rounded transition"
+                        className="text-primary hover:text-deep font-bold text-[11px] flex items-center gap-1 bg-soft hover:bg-soft px-2 py-0.5 rounded transition cursor-pointer"
                       >
                         <Upload className="w-3 h-3" />
                         <span>ডিভাইস থেকে ছবি আপলোড</span>
@@ -1298,30 +1310,52 @@ export default function CmsContentManager() {
                     </div>
                     <input
                       type="text"
-                      value={slide.image}
+                      value={slide.image || ''}
                       onChange={(e) => handleSlideChange(idx, 'image', e.target.value)}
                       className="w-full rounded-lg border border-line p-2.5 bg-white font-mono text-[11px]"
                       placeholder="Image URL or uploaded image"
                     />
                   </div>
 
-                  <div className="sm:col-span-2">
-                    <label className="block font-bold text-ink mb-1">প্রধান শিরোনাম (Title)</label>
+                  <div>
+                    <label className="block font-bold text-ink mb-1">প্রধান শিরোনাম (বাংলা) *</label>
                     <input
                       type="text"
-                      value={slide.titleBn}
+                      required
+                      value={slide.titleBn || ''}
                       onChange={(e) => handleSlideChange(idx, 'titleBn', e.target.value)}
                       className="w-full rounded-lg border border-line p-2.5 bg-white font-bold"
                     />
                   </div>
 
-                  <div className="sm:col-span-2">
-                    <label className="block font-bold text-ink mb-1">উপ-শিরোনাম / বিবরণ (Subtitle)</label>
+                  <div>
+                    <label className="block font-bold text-ink mb-1">Main Title (English) *</label>
                     <input
                       type="text"
-                      value={slide.subtitleBn}
+                      value={slide.titleEn || ''}
+                      onChange={(e) => handleSlideChange(idx, 'titleEn', e.target.value)}
+                      className="w-full rounded-lg border border-line p-2.5 bg-white font-sans font-bold"
+                      placeholder="e.g. Welcome to Bondua Daulatpur High School"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-ink mb-1">উপ-শিরোনাম / বিবরণ (বাংলা)</label>
+                    <input
+                      type="text"
+                      value={slide.subtitleBn || ''}
                       onChange={(e) => handleSlideChange(idx, 'subtitleBn', e.target.value)}
                       className="w-full rounded-lg border border-line p-2.5 bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-ink mb-1">Subtitle / Summary (English)</label>
+                    <input
+                      type="text"
+                      value={slide.subtitleEn || ''}
+                      onChange={(e) => handleSlideChange(idx, 'subtitleEn', e.target.value)}
+                      className="w-full rounded-lg border border-line p-2.5 bg-white font-sans"
                     />
                   </div>
                 </div>

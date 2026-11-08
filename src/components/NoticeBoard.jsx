@@ -190,7 +190,7 @@ export default function NoticeBoard() {
           {/* Subject Line */}
           <div className="p-3 bg-white rounded-xl border border-line shadow-xs print:border-none print:shadow-none print:p-0">
             <h2 className="text-base sm:text-lg font-extrabold font-bangla text-deep border-b border-line pb-2 print:text-base print:border-b-2 print:border-slate-800">
-              বিষয়: {lang === 'bn' ? activeNoticeModal.titleBn : activeNoticeModal.titleEn}
+              বিষয়: {lang === 'bn' ? activeNoticeModal.titleBn : (activeNoticeModal.titleEn || activeNoticeModal.titleBn)}
             </h2>
             <div className="mt-3 text-ink leading-relaxed text-justify print:text-[10.5pt]">
               {lang === 'bn' ? activeNoticeModal.contentBn : (activeNoticeModal.contentEn || activeNoticeModal.contentBn)}
@@ -384,7 +384,7 @@ export default function NoticeBoard() {
                               </span>
                             )}
                             <span className="hover:text-primary transition line-clamp-1">
-                              {lang === 'bn' ? notice.titleBn : notice.titleEn}
+                              {lang === 'bn' ? notice.titleBn : (notice.titleEn || notice.titleBn)}
                             </span>
                             {notice.fileUrl && notice.fileUrl !== '#' && (
                               <span className="text-primary shrink-0 inline-flex items-center gap-0.5" title="ফাইল সংযুক্ত">

@@ -230,7 +230,7 @@ export default function Header() {
                   ? 'opacity-0 max-h-0 -translate-y-1' 
                   : 'opacity-100 max-h-4 text-[10px] sm:text-[11px] mt-0.5 translate-y-0'
               }`}>
-                {schoolInfo.nameEn || 'Bondua Daulatpur High School'}
+                {lang === 'bn' ? (schoolInfo.nameEn || 'Bondua Daulatpur High School') : (schoolInfo.nameBn || 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়')}
               </p>
             </div>
           </div>

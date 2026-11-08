@@ -141,7 +141,7 @@ export default function AcademicPrograms() {
                     }`}
                   >
                     <IconComponent className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isActive ? 'text-ink' : 'text-primary'}`} />
-                    <span>{lang === 'bn' ? grp.titleBn : grp.titleEn}</span>
+                    <span>{lang === 'bn' ? grp.titleBn : (grp.titleEn || grp.titleBn)}</span>
                   </button>
                 );
               })}
@@ -154,10 +154,10 @@ export default function AcademicPrograms() {
               <div className="w-full">
                 <h3 className="text-xl sm:text-2xl font-extrabold font-bangla text-ink mb-2 flex items-center gap-2.5">
                   <span className="text-accent">❖</span>
-                  <span>{lang === 'bn' ? grp.titleBn : grp.titleEn}</span>
+                  <span>{lang === 'bn' ? grp.titleBn : (grp.titleEn || grp.titleBn)}</span>
                 </h3>
                 <p className="text-xs sm:text-sm text-muted font-bangla leading-relaxed mb-6">
-                  {grp.descriptionBn}
+                  {lang === 'bn' ? grp.descriptionBn : (grp.descriptionEn || grp.descriptionBn)}
                 </p>
 
                 <h4 className="text-sm font-bold text-ink mb-3 font-bangla">

@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import { initialNotices } from '../data/initialData';
+import { initialNotices, initialHeroSlides } from '../data/initialData';
+import { deepSanitizeBondua } from '../utils/sanitizeData';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
@@ -281,20 +282,30 @@ export const mappers = {
   },
 
   slide: {
-    fromDb: (row) => ({
-      id: row.id,
-      titleBn: row.title_bn,
-      subtitleBn: row.subtitle_bn || '',
-      tagBn: row.tag_bn || '',
-      image: row.image,
-      order: row.order ?? 1,
-      active: row.active ?? true,
-    }),
+    fromDb: (row) => {
+      const idx = typeof row.order === 'number' ? row.order - 1 : 0;
+      const fallback = initialHeroSlides[idx] || initialHeroSlides[0];
+      return {
+        id: row.id,
+        titleBn: row.title_bn,
+        titleEn: row.title_en || fallback?.titleEn || row.title_bn,
+        subtitleBn: row.subtitle_bn || '',
+        subtitleEn: row.subtitle_en || fallback?.subtitleEn || row.subtitle_bn || '',
+        tagBn: row.tag_bn || '',
+        tagEn: row.tag_en || fallback?.tagEn || row.tag_bn || '',
+        image: row.image,
+        order: row.order ?? 1,
+        active: row.active ?? true,
+      };
+    },
     toDb: (s) => ({
       id: String(s.id),
       title_bn: s.titleBn || '',
+      title_en: s.titleEn || '',
       subtitle_bn: s.subtitleBn || '',
+      subtitle_en: s.subtitleEn || '',
       tag_bn: s.tagBn || '',
+      tag_en: s.tagEn || '',
       image: s.image || '',
       order: Number(s.order) || 1,
       active: s.active ?? true,
@@ -467,7 +478,7 @@ export async function fetchAllCloudData() {
       }
     } catch {}
 
-    return {
+    return deepSanitizeBondua({
       notices: noticesRes.data?.map(mappers.notice.fromDb) || null,
       teachers: teachersRes.data?.map(mappers.teacher.fromDb) || null,
       students: studentsRes.data?.map(mappers.student.fromDb) || null,
@@ -483,7 +494,7 @@ export async function fetchAllCloudData() {
       contactMessages,
       videos,
       systemUsers,
-    };
+    });
   } catch (err) {
     console.warn('Supabase fetchAllCloudData caught error:', err);
     return null;

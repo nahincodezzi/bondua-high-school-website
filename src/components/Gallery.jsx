@@ -189,7 +189,7 @@ export default function Gallery() {
                       <span>{item.date}</span>
                     </span>
                     <h3 className="text-sm font-bold text-ink group-hover:text-primary transition line-clamp-1">
-                      {lang === 'bn' ? item.titleBn : item.titleEn}
+                      {lang === 'bn' ? item.titleBn : (item.titleEn || item.titleBn)}
                     </h3>
                     <p className="text-xs text-muted line-clamp-2 leading-relaxed">
                       {item.description}

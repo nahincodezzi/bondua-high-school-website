@@ -33,10 +33,10 @@ export default function HeadmasterMessage() {
                 {/* Overlay Name on Card */}
                 <div className="absolute bottom-4 left-4 right-4 text-white text-left">
                   <span className="badge-warning text-[10px] px-2 py-0.5 rounded-full uppercase inline-block">
-                    {lang === 'bn' ? schoolInfo.headmasterDesignationBn : schoolInfo.headmasterDesignationEn}
+                    {lang === 'bn' ? schoolInfo.headmasterDesignationBn : (schoolInfo.headmasterDesignationEn || schoolInfo.headmasterDesignationBn)}
                   </span>
                   <h3 className="text-xl font-bold font-bangla mt-1.5 text-white drop-shadow-xs">
-                    {lang === 'bn' ? schoolInfo.headmasterNameBn : schoolInfo.headmasterNameEn}
+                    {lang === 'bn' ? schoolInfo.headmasterNameBn : (schoolInfo.headmasterNameEn || schoolInfo.headmasterNameBn)}
                   </h3>
                   <p className="text-xs text-white/80 font-bangla">
                     {lang === 'bn' ? 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়' : 'Bondua Daulatpur High School'}
@@ -46,7 +46,7 @@ export default function HeadmasterMessage() {
 
               <div className="mt-4 flex items-center gap-2 text-xs font-semibold text-deep bg-soft px-4 py-1.5 rounded-full border border-soft-border shadow-xs">
                 <Award className="w-4 h-4 text-primary" />
-                <span>{lang === 'bn' ? `${schoolInfo.headmasterDesignationBn} • বি.এ (ইংরেজি)` : `${schoolInfo.headmasterDesignationEn} • B.A. (English)`}</span>
+                <span>{lang === 'bn' ? `${schoolInfo.headmasterDesignationBn} • বি.এ (ইংরেজি)` : `${schoolInfo.headmasterDesignationEn || schoolInfo.headmasterDesignationBn} • B.A. (English)`}</span>
               </div>
             </div>
 
@@ -55,7 +55,7 @@ export default function HeadmasterMessage() {
               <div className="space-y-2">
                 <div className="inline-flex items-center gap-2 text-deep font-bold text-xs uppercase tracking-wider font-bangla bg-soft px-3 py-1 rounded-full border border-soft-border">
                   <Quote className="w-3.5 h-3.5 text-primary" />
-                  <span>{lang === 'bn' ? `${schoolInfo.headmasterDesignationBn}-এর বাণী` : `${schoolInfo.headmasterDesignationEn}'s Message`}</span>
+                  <span>{lang === 'bn' ? `${schoolInfo.headmasterDesignationBn}-এর বাণী` : `${schoolInfo.headmasterDesignationEn || schoolInfo.headmasterDesignationBn}'s Message`}</span>
                 </div>
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-bangla text-ink leading-tight">
                   {lang === 'bn' 
@@ -69,7 +69,7 @@ export default function HeadmasterMessage() {
 
               <div className="relative pl-4 border-l-4 border-primary py-1">
                 <p className="text-ink font-bangla text-sm sm:text-base leading-relaxed whitespace-pre-line">
-                  {lang === 'bn' ? schoolInfo.headmasterMessageBn : schoolInfo.headmasterMessageEn}
+                  {lang === 'bn' ? schoolInfo.headmasterMessageBn : (schoolInfo.headmasterMessageEn || schoolInfo.headmasterMessageBn)}
                 </p>
               </div>
 

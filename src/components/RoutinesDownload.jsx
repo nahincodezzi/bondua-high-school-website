@@ -79,7 +79,7 @@ export default function RoutinesDownload() {
       return;
     }
 
-    const title = lang === 'bn' ? item.titleBn : item.titleEn;
+    const title = lang === 'bn' ? item.titleBn : (item.titleEn || item.titleBn);
     const effective = item.effectiveDate;
     const isExam = item.id === 'rt-02' || item.titleBn?.includes('পরীক্ষা');
     const isSyllabus = item.id === 'rt-03' || item.titleBn?.includes('NCTB');
@@ -223,7 +223,7 @@ export default function RoutinesDownload() {
           </button>
 
           <h3 id="routine-modal-title" className="text-lg font-bold text-ink pr-8 leading-tight">
-            {lang === 'bn' ? activeRoutineModal.titleBn : activeRoutineModal.titleEn}
+            {lang === 'bn' ? activeRoutineModal.titleBn : (activeRoutineModal.titleEn || activeRoutineModal.titleBn)}
           </h3>
           <p className="text-xs text-primary font-mono mb-4 font-bold mt-1">
             কার্যকরী তারিখ: {activeRoutineModal.effectiveDate}

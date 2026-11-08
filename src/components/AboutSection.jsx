@@ -141,13 +141,13 @@ export default function AboutSection() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div>
               <span className="text-xs font-bold text-primary uppercase tracking-wider block mb-1 font-mono">
-                {lang === 'bn' ? schoolInfo.chairmanDesignationBn : schoolInfo.chairmanDesignationEn}
+                {lang === 'bn' ? schoolInfo.chairmanDesignationBn : (schoolInfo.chairmanDesignationEn || schoolInfo.chairmanDesignationBn)}
               </span>
               <h3 className="text-xl sm:text-2xl font-bold font-bangla text-ink">
-                {lang === 'bn' ? schoolInfo.chairmanNameBn : schoolInfo.chairmanNameEn}
+                {lang === 'bn' ? schoolInfo.chairmanNameBn : (schoolInfo.chairmanNameEn || schoolInfo.chairmanNameBn)}
               </h3>
               <p className="text-xs sm:text-sm text-muted font-bangla mt-2 leading-relaxed">
-                {lang === 'bn' ? schoolInfo.chairmanMessageBn : schoolInfo.chairmanMessageEn}
+                {lang === 'bn' ? schoolInfo.chairmanMessageBn : (schoolInfo.chairmanMessageEn || schoolInfo.chairmanMessageBn)}
               </p>
             </div>
 

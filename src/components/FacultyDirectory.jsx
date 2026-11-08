@@ -188,7 +188,7 @@ export default function FacultyDirectory() {
                       }`}>
                         {isHead && <ShieldCheck className="w-3 h-3 text-ink" />}
                         {isAsstHead && <Award className="w-3 h-3 text-accent" />}
-                        <span>{lang === 'bn' ? teacher.designationBn : teacher.designationEn}</span>
+                        <span>{lang === 'bn' ? teacher.designationBn : (teacher.designationEn || teacher.designationBn)}</span>
                       </span>
                     </div>
                   </div>
@@ -197,7 +197,7 @@ export default function FacultyDirectory() {
                   <div className="p-5 space-y-3 font-bangla">
                     <div>
                       <h3 className="text-base font-bold font-bangla text-ink group-hover:text-primary transition line-clamp-1">
-                        {lang === 'bn' ? teacher.nameBn : teacher.nameEn}
+                        {lang === 'bn' ? teacher.nameBn : (teacher.nameEn || teacher.nameBn)}
                       </h3>
                     </div>
 
@@ -205,7 +205,7 @@ export default function FacultyDirectory() {
                     <div className="flex items-start gap-2 bg-soft/70 p-2.5 rounded-xl border border-soft-border text-xs text-deep font-semibold">
                       <BookOpen className="w-3.5 h-3.5 shrink-0 text-primary mt-0.5" />
                       <span className="line-clamp-2 leading-snug">
-                        {lang === 'bn' ? teacher.subjectBn : teacher.subjectEn}
+                        {lang === 'bn' ? teacher.subjectBn : (teacher.subjectEn || teacher.subjectBn)}
                       </span>
                     </div>
 
