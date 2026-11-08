@@ -1114,6 +1114,86 @@ export function SchoolProvider({ children }) {
     return createdStudent;
   };
 
+  const bulkApproveAdmissions = (admissionApps) => {
+    if (!Array.isArray(admissionApps) || admissionApps.length === 0) return [];
+    
+    const pendingApps = admissionApps.filter(app => app.status !== 'Approved');
+    if (pendingApps.length === 0) return [];
+
+    const approvedStudents = [];
+    const classRollCounters = {};
+
+    pendingApps.forEach(app => {
+      const targetClass = String(app.applyingClass || '6');
+      if (classRollCounters[targetClass] === undefined) {
+        const sameClassStudents = students.filter(s => String(s.class) === targetClass);
+        const maxRoll = sameClassStudents.reduce((max, s) => {
+          const r = Number(s.roll);
+          return !isNaN(r) && r > max ? r : max;
+        }, 0);
+        classRollCounters[targetClass] = maxRoll > 0 ? maxRoll + 1 : 1;
+      } else {
+        classRollCounters[targetClass] += 1;
+      }
+
+      const assignedRoll = classRollCounters[targetClass];
+      const classPad = targetClass.padStart(2, '0');
+      const rollPad = String(assignedRoll).padStart(2, '0');
+      const studentId = `BDHS-2026-${classPad}${rollPad}`;
+
+      const createdStudent = {
+        id: `stu-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        studentId: studentId,
+        roll: assignedRoll,
+        nameBn: app.studentNameBn || app.applicantNameBn || app.studentNameEn || '',
+        nameEn: (app.studentNameEn || app.applicantNameEn || '').toUpperCase(),
+        class: targetClass,
+        section: 'A',
+        group: app.group || 'General',
+        gender: app.gender || 'Male',
+        dob: app.dob || '',
+        bloodGroup: app.bloodGroup || '',
+        fatherName: app.fatherName || app.guardianName || '',
+        guardianName: app.fatherName || app.motherName || app.guardianName || '',
+        guardianPhone: app.guardianPhone || '',
+        address: app.address || ''
+      };
+
+      approvedStudents.push(createdStudent);
+
+      const targetId = app.id || app.trackingId;
+      updateAdmissionStatus(targetId, 'Approved');
+      if (app.trackingId && app.trackingId !== targetId) {
+        updateAdmissionStatus(app.trackingId, 'Approved');
+      }
+    });
+
+    if (approvedStudents.length > 0) {
+      setStudents(prev => [...approvedStudents, ...prev]);
+      if (supabase) {
+        const dbRows = approvedStudents.map(s => mappers.student.toDb(s));
+        supabase.from('students').insert(dbRows).then(({ error }) => {
+          if (error) {
+            console.warn('Supabase bulk insert students warning:', error.message);
+          }
+        });
+      }
+    }
+
+    return approvedStudents;
+  };
+
+  const bulkSetAdmissionsPending = (admissionApps) => {
+    if (!Array.isArray(admissionApps) || admissionApps.length === 0) return;
+    admissionApps.forEach(app => {
+      const targetId = app.id || app.trackingId;
+      updateAdmissionStatus(targetId, 'Pending');
+      if (app.trackingId && app.trackingId !== targetId) {
+        updateAdmissionStatus(app.trackingId, 'Pending');
+      }
+    });
+  };
+
   const addResult = (resultData) => {
     const classVal = String(resultData.class || '10');
     const rollVal = String(resultData.roll || '');
@@ -1133,6 +1213,33 @@ export function SchoolProvider({ children }) {
         if (error) console.warn('Supabase upsert result warning:', error.message);
       });
     }
+  };
+
+  const bulkAddResults = (resultsList) => {
+    if (!Array.isArray(resultsList) || resultsList.length === 0) return 0;
+    const enrichedList = resultsList.map(resultData => {
+      const classVal = String(resultData.class || '10');
+      const rollVal = String(resultData.roll || '');
+      const examVal = resultData.exam || 'SSC Test Examination 2026';
+      const yearVal = String(resultData.year || '2026');
+      const resultId = resultData.id || `${classVal}-${rollVal}-${examVal}-${yearVal}`;
+      return { ...resultData, id: resultId, class: classVal, roll: rollVal, exam: examVal, year: yearVal };
+    });
+
+    setResults(prev => {
+      const idsToReplace = new Set(enrichedList.map(r => r.id));
+      const filtered = prev.filter(r => !idsToReplace.has(r.id));
+      return [...enrichedList, ...filtered];
+    });
+
+    if (supabase) {
+      const dbRows = enrichedList.map(r => mappers.result.toDb(r));
+      supabase.from('results').upsert(dbRows).then(({ error }) => {
+        if (error) console.warn('Supabase bulk upsert results warning:', error.message);
+      });
+    }
+
+    return enrichedList.length;
   };
 
   const deleteResult = (id) => {
@@ -1384,6 +1491,7 @@ export function SchoolProvider({ children }) {
         deleteStudent,
         results,
         addResult,
+        bulkAddResults,
         deleteResult,
         gallery,
         addGalleryItem,
@@ -1395,6 +1503,8 @@ export function SchoolProvider({ children }) {
         submitAdmission,
         updateAdmissionStatus,
         approveAdmissionAndCreateStudent,
+        bulkApproveAdmissions,
+        bulkSetAdmissionsPending,
         fees,
         addFee,
         voidFeeReceipt,

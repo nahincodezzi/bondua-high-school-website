@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import * as XLSX from 'xlsx';
 import { useSchool } from '../../context/useSchool';
 import { toBanglaNumerals, toEnglishNumerals } from '../../utils/dateFormatter';
 import { calculateSubjectGrade, calculateOverallGrade } from '../../utils/gradeCalculator';
@@ -8,7 +9,13 @@ import {
   AlertCircle,
   UserCheck,
   Trash2,
-  Edit
+  Edit,
+  FileSpreadsheet,
+  Info,
+  Download,
+  FileUp,
+  X,
+  FileCheck
 } from 'lucide-react';
 
 const SUBJECT_CONFIGS = {
@@ -55,16 +62,74 @@ const SUBJECT_CONFIGS = {
   },
 };
 
+const normalizeKey = (key = '') => {
+  return String(key).trim().toLowerCase().replace(/[\s_\-()/\\.]+/g, '');
+};
+
+const findSubjectMark = (row, sub) => {
+  const targetKeys = [
+    normalizeKey(sub.name),
+    normalizeKey(sub.labelBn),
+    normalizeKey(sub.code),
+    ...(sub.name === 'Mathematics' ? ['math', 'gonit', 'গণিত', 'সাধারণগণিত'] : []),
+    ...(sub.name === 'Bangla' ? ['bangla', 'bengali', 'বাংলা', 'বাংলা১ম', 'বাংলা২য়'] : []),
+    ...(sub.name === 'English' ? ['english', 'ইংরেজি', 'ইংরেজী', 'ইংরেজি১ম', 'ইংরেজি২য়'] : []),
+    ...(sub.name === 'General Science' ? ['science', 'generalscience', 'বিজ্ঞান', 'সাধারণবিজ্ঞান'] : []),
+    ...(sub.name === 'BGS' ? ['bgs', 'bangladeshandglobalstudies', 'বাংলাদেশওবিশ্বপরিচয়', 'সমাজ', 'সমাজবিজ্ঞান'] : []),
+    ...(sub.name === 'ICT' ? ['ict', 'informationtechnology', 'তথ্যওযোগাযোগপ্রযুক্তি', 'তথ্যপ্রযুক্তি', 'কম্পিউটার'] : []),
+    ...(sub.name === 'Religion' ? ['religion', 'islam', 'hindu', 'ধর্ম', 'ধর্মওনৈতিকশিক্ষা', 'ইসলাম', 'হিন্দুধর্ম'] : []),
+    ...(sub.name === 'Physics' ? ['physics', 'পদার্থ', 'পদার্থবিজ্ঞান'] : []),
+    ...(sub.name === 'Chemistry' ? ['chemistry', 'রসায়ন', 'রসায়ন'] : []),
+    ...(sub.name === 'Biology' ? ['biology', 'জীববিজ্ঞান'] : []),
+    ...(sub.name === 'Accounting' ? ['accounting', 'হিসাববিজ্ঞান'] : []),
+    ...(sub.name === 'Business Ent.' ? ['business', 'businessent', 'businessentrepreneurship', 'ব্যবসায়উদ্যোগ', 'উদ্যোগ'] : []),
+    ...(sub.name === 'Finance & Banking' ? ['finance', 'financeandbanking', 'ফিন্যান্সওব্যাংকিং', 'ফিন্যান্স'] : []),
+    ...(sub.name === 'History' ? ['history', 'ইতিহাস'] : []),
+    ...(sub.name === 'Geography' ? ['geography', 'ভূগোল'] : []),
+    ...(sub.name === 'Civics' ? ['civics', 'পৌরনীতি', 'পৌরনীতিওনাগরিকতা'] : [])
+  ];
+
+  for (const [k, v] of Object.entries(row)) {
+    if (v === '' || v === null || v === undefined) continue;
+    const normK = normalizeKey(k);
+    if (targetKeys.some(tk => normK === tk || normK.startsWith(tk) || tk.startsWith(normK))) {
+      const num = Number(toEnglishNumerals(String(v).trim()));
+      if (!isNaN(num)) return num;
+    }
+  }
+  return null;
+};
+
+const findRoll = (row) => {
+  for (const [k, v] of Object.entries(row)) {
+    if (v === '' || v === null || v === undefined) continue;
+    const normK = normalizeKey(k);
+    if (['roll', 'rollno', 'studentroll', 'রোল', 'রোলনম্বর', 'রোলনং'].includes(normK)) {
+      const clean = toEnglishNumerals(String(v).trim());
+      if (clean) return clean;
+    }
+  }
+  return null;
+};
+
 export default function ResultManager() {
-  const { results, addResult, deleteResult, students, lang } = useSchool();
+  const { results, addResult, bulkAddResults, deleteResult, students, lang } = useSchool();
+  const [entryMode, setEntryMode] = useState('single'); // 'single' | 'bulk'
   const [examName, setExamName] = useState('SSC Test Examination 2026');
   const [selectedClass, setSelectedClass] = useState('10');
   const [selectedGroup, setSelectedGroup] = useState('Science');
   const [selectedStudentRoll, setSelectedStudentRoll] = useState('');
   const [year] = useState('2026');
   const [formError, setFormError] = useState('');
-  const [savedSuccess, setSavedSuccess] = useState(false);
+  const [savedSuccess, setSavedSuccess] = useState('');
   const [editingResultId, setEditingResultId] = useState(null);
+
+  // Bulk Excel Upload States
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [excelFile, setExcelFile] = useState(null);
+  const [parsedRows, setParsedRows] = useState([]);
+  const [parseErrors, setParseErrors] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Auto student preview
   const activeStudent = students.find(
@@ -86,6 +151,7 @@ export default function ResultManager() {
   };
 
   const handleEditResult = (r) => {
+    setEntryMode('single');
     setEditingResultId(r.id);
     setSelectedClass(String(r.class));
     setSelectedStudentRoll(String(r.roll));
@@ -185,148 +251,345 @@ export default function ResultManager() {
     };
 
     addResult(resultRecord);
-    setSavedSuccess(true);
+    setSavedSuccess('ফলাফল সফলভাবে সংরক্ষিত ও প্রকাশিত হয়েছে! পাবলিক পোর্টালে দৃশ্যমান হবে।');
     setMarks({});
     setSelectedStudentRoll('');
     setEditingResultId(null);
-    setTimeout(() => setSavedSuccess(false), 5000);
+    setTimeout(() => setSavedSuccess(''), 6000);
+  };
+
+  // Excel Sample Template Download
+  const handleDownloadTemplate = () => {
+    const targetStudents = students.filter(s => {
+      const matchCls = String(s.class) === String(selectedClass);
+      if (!isSecondary) return matchCls;
+      return matchCls && (s.group === effectiveGroup || !s.group);
+    }).sort((a, b) => (Number(a.roll) || 0) - (Number(b.roll) || 0));
+
+    const sampleRows = (targetStudents.length > 0 ? targetStudents : [
+      { roll: '1', nameBn: 'নমুনা শিক্ষার্থী ১' },
+      { roll: '2', nameBn: 'নমুনা শিক্ষার্থী ২' },
+      { roll: '3', nameBn: 'নমুনা শিক্ষার্থী ৩' }
+    ]).map(s => {
+      const row = {
+        'Roll': s.roll,
+        'Student Name (ঐচ্ছিক)': s.nameBn || s.nameEn || ''
+      };
+      currentSubjectList.forEach(sub => {
+        row[sub.name] = '';
+      });
+      return row;
+    });
+
+    const ws = XLSX.utils.json_to_sheet(sampleRows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, `Class_${selectedClass}_Marks`);
+    XLSX.writeFile(wb, `Marks_Template_Class_${selectedClass}_${effectiveGroup}.xlsx`);
+  };
+
+  // Excel File Upload & Parse
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setExcelFile(file);
+    setIsProcessing(true);
+    setParseErrors([]);
+    setParsedRows([]);
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const data = new Uint8Array(evt.target.result);
+        const wb = XLSX.read(data, { type: 'array' });
+        const firstSheetName = wb.SheetNames[0];
+        const ws = wb.Sheets[firstSheetName];
+        const jsonData = XLSX.utils.sheet_to_json(ws, { defval: '' });
+
+        if (!jsonData || jsonData.length === 0) {
+          setParseErrors(['এক্সেল ফাইলে কোনো ডাটা পাওয়া যায়নি!']);
+          setIsProcessing(false);
+          return;
+        }
+
+        const validResults = [];
+        const errors = [];
+
+        jsonData.forEach((row, index) => {
+          const rowNum = index + 2;
+          const roll = findRoll(row);
+
+          if (!roll) {
+            const hasAnyVal = Object.values(row).some(v => v !== '');
+            if (hasAnyVal) {
+              errors.push(`সারি ${rowNum}: শিক্ষার্থীর কোনো রোল নম্বর পাওয়া যায়নি।`);
+            }
+            return;
+          }
+
+          const student = students.find(s => 
+            String(s.roll) === String(roll) && String(s.class) === String(selectedClass)
+          );
+
+          if (!student) {
+            errors.push(`সারি ${rowNum} (রোল ${toBanglaNumerals(roll)}): শ্রেণি ${toBanglaNumerals(selectedClass)}-এ এই রোলের কোনো শিক্ষার্থী পাওয়া যায়নি।`);
+            return;
+          }
+
+          let matchedSubjectsCount = 0;
+          const subjectsArray = currentSubjectList.map(sub => {
+            const markVal = findSubjectMark(row, sub);
+            if (markVal !== null && markVal !== undefined) {
+              matchedSubjectsCount += 1;
+              const clampedMark = Math.min(Math.max(0, markVal), sub.max);
+              return {
+                code: sub.code,
+                name: sub.name,
+                labelBn: sub.labelBn,
+                marks: clampedMark,
+                ...calculateSubjectGrade(clampedMark, sub.max)
+              };
+            }
+            return {
+              code: sub.code,
+              name: sub.name,
+              labelBn: sub.labelBn,
+              marks: 0,
+              ...calculateSubjectGrade(0, sub.max)
+            };
+          });
+
+          if (matchedSubjectsCount === 0) {
+            errors.push(`সারি ${rowNum} (রোল ${toBanglaNumerals(roll)}): এক্সেলে কোনো বিষয়ের কলাম নামের সাথে মেলেনি।`);
+            return;
+          }
+
+          const totalPoints = subjectsArray.reduce((acc, curr) => acc + curr.point, 0);
+          const hasFail = subjectsArray.some(s => s.grade === 'F');
+          const gpaVal = hasFail ? '0.00' : (totalPoints / subjectsArray.length).toFixed(2);
+          const letterGradeVal = calculateOverallGrade(gpaVal, hasFail);
+
+          const resultRecord = {
+            id: `${selectedClass}-${roll}-${examName}-${year}`,
+            roll: String(roll),
+            studentNameBn: student.nameBn,
+            studentNameEn: student.nameEn,
+            studentId: student.studentId,
+            class: selectedClass,
+            group: effectiveGroup,
+            section: student.section || 'A',
+            exam: examName,
+            year: year,
+            gpa: gpaVal,
+            letterGrade: letterGradeVal,
+            resultStatus: hasFail ? 'FAILED' : 'PASSED',
+            subjects: subjectsArray
+          };
+
+          validResults.push(resultRecord);
+        });
+
+        setParsedRows(validResults);
+        setParseErrors(errors);
+        setIsProcessing(false);
+      } catch (err) {
+        console.error('Excel parse error:', err);
+        setParseErrors(['এক্সেল ফাইল পড়তে সমস্যা হয়েছে। অনুগ্রহ করে সঠিক .xlsx বা .csv ফাইল ব্যবহার করুন।']);
+        setIsProcessing(false);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  const handleSaveBulkResults = () => {
+    if (parsedRows.length === 0) return;
+    if (bulkAddResults) {
+      bulkAddResults(parsedRows);
+    } else {
+      parsedRows.forEach(r => addResult(r));
+    }
+    setSavedSuccess(`একসাথে ${toBanglaNumerals(parsedRows.length)} জন শিক্ষার্থীর পরীক্ষার ফলাফল সফলভাবে সংরক্ষিত ও প্রকাশিত হয়েছে!`);
+    setParsedRows([]);
+    setExcelFile(null);
+    setParseErrors([]);
+    setTimeout(() => setSavedSuccess(''), 7000);
   };
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h2 className="text-xl sm:text-2xl font-bold font-bangla text-ink">
-          ফলাফল ও নম্বর প্রদান ব্যবস্থাপনা (Marks Entry & Result Publishing)
-        </h2>
-        <p className="text-xs text-muted font-bangla">
-          পরীক্ষার নম্বর ইনপুট দিন; শ্রেণি ও বিভাগ অনুযায়ী বিষয়সমূহ স্বয়ংক্রিয়ভাবে সাজানো হবে এবং পাবলিক পোর্টালে যুক্ত হবে।
-        </p>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-bold font-bangla text-ink">
+            ফলাফল ও নম্বর প্রদান ব্যবস্থাপনা (Marks Entry & Result Publishing)
+          </h2>
+          <p className="text-xs text-muted font-bangla">
+            পরীক্ষার নম্বর এককভাবে ইনপুট দিন অথবা এক্সেল ফাইল থেকে এক ক্লিকে বাল্ক আপলোড করুন।
+          </p>
+        </div>
+
+        {/* Mode Switcher Pills */}
+        <div className="flex items-center gap-1.5 p-1 bg-white rounded-xl border border-line shadow-2xs font-bangla text-xs">
+          <button
+            type="button"
+            onClick={() => setEntryMode('single')}
+            className={`px-3.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 cursor-pointer ${
+              entryMode === 'single'
+                ? 'bg-deep text-white shadow-xs'
+                : 'text-muted hover:text-ink hover:bg-bg'
+            }`}
+          >
+            <Edit className="w-3.5 h-3.5" />
+            <span>একক এন্ট্রি (Single)</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setEntryMode('bulk')}
+            className={`px-3.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 cursor-pointer ${
+              entryMode === 'bulk'
+                ? 'bg-primary text-white shadow-xs'
+                : 'text-muted hover:text-ink hover:bg-bg'
+            }`}
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5" />
+            <span>এক্সেল বাল্ক আপলোড</span>
+            <span className="bg-accent text-ink text-[10px] px-1.5 py-0.2 rounded font-extrabold uppercase">
+              Excel
+            </span>
+          </button>
+        </div>
       </div>
 
+      {/* Success Alert Banner */}
+      {savedSuccess && (
+        <div className="p-4 bg-soft text-deep rounded-2xl text-xs font-semibold flex items-center gap-2 border border-soft-border animate-in fade-in">
+          <CheckCircle className="w-5 h-5 text-primary shrink-0" />
+          <span>{savedSuccess}</span>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Entry Form */}
+        {/* Entry Form or Bulk Upload Component */}
         <div className="lg:col-span-7 card-base bg-white p-6 rounded-2xl border border-line shadow-xs space-y-4">
-          <form onSubmit={handlePublish} className="space-y-4 text-xs font-bangla">
-            {editingResultId && (
-              <div className="p-3 bg-amber-50 text-amber-800 rounded-xl text-xs flex items-center justify-between border border-amber-200">
-                <span className="font-bold">ফলাফল সম্পাদনা মোড সক্রিয় (Edit Mode)</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEditingResultId(null);
-                    setMarks({});
-                    setSelectedStudentRoll('');
-                  }}
-                  className="text-xs underline cursor-pointer hover:text-amber-950"
-                >
-                  বাতিল করুন
-                </button>
-              </div>
-            )}
+          {entryMode === 'single' ? (
+            <form onSubmit={handlePublish} className="space-y-4 text-xs font-bangla">
+              {editingResultId && (
+                <div className="p-3 bg-amber-50 text-amber-800 rounded-xl text-xs flex items-center justify-between border border-amber-200">
+                  <span className="font-bold">ফলাফল সম্পাদনা মোড সক্রিয় (Edit Mode)</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingResultId(null);
+                      setMarks({});
+                      setSelectedStudentRoll('');
+                    }}
+                    className="text-xs underline cursor-pointer hover:text-amber-950"
+                  >
+                    বাতিল করুন
+                  </button>
+                </div>
+              )}
 
-            {/* Exam and Class Selectors */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              <div>
-                <label className="block font-bold text-ink mb-1">পরীক্ষার নাম</label>
-                <select
-                  value={examName}
-                  onChange={(e) => setExamName(e.target.value)}
-                  className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
-                >
-                  <option value="SSC Test Examination 2026">এসএসসি টেস্ট পরীক্ষা ২০২৬</option>
-                  <option value="Annual Examination 2025">বার্ষিক পরীক্ষা ২০২৫</option>
-                  <option value="Pre-Test Examination 2026">প্রাক-নির্বাচনী পরীক্ষা ২০২৬</option>
-                  <option value="Half-Yearly Examination 2026">অর্ধবার্ষিক পরীক্ষা ২০২৬</option>
-                </select>
-              </div>
+              {/* Exam and Class Selectors */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-bold text-ink mb-1">পরীক্ষার নাম</label>
+                  <select
+                    value={examName}
+                    onChange={(e) => setExamName(e.target.value)}
+                    className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
+                  >
+                    <option value="SSC Test Examination 2026">এসএসসি টেস্ট পরীক্ষা ২০২৬</option>
+                    <option value="Annual Examination 2025">বার্ষিক পরীক্ষা ২০২৫</option>
+                    <option value="Pre-Test Examination 2026">প্রাক-নির্বাচনী পরীক্ষা ২০২৬</option>
+                    <option value="Half-Yearly Examination 2026">অর্ধবার্ষিক পরীক্ষা ২০২৬</option>
+                  </select>
+                </div>
 
-              <div>
-                <label className="block font-bold text-ink mb-1">শ্রেণি</label>
-                <select
-                  value={selectedClass}
-                  onChange={(e) => {
-                    setSelectedClass(e.target.value);
-                    setFormError('');
-                  }}
-                  className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
-                >
-                  <option value="10">১০ম শ্রেণি</option>
-                  <option value="9">৯ম শ্রেণি</option>
-                  <option value="8">৮ম শ্রেণি</option>
-                  <option value="7">৭ম শ্রেণি</option>
-                  <option value="6">৬ষ্ঠ শ্রেণি</option>
-                </select>
-              </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1">শ্রেণি</label>
+                  <select
+                    value={selectedClass}
+                    onChange={(e) => {
+                      setSelectedClass(e.target.value);
+                      setFormError('');
+                    }}
+                    className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
+                  >
+                    <option value="10">১০ম শ্রেণি</option>
+                    <option value="9">৯ম শ্রেণি</option>
+                    <option value="8">৮ম শ্রেণি</option>
+                    <option value="7">৭ম শ্রেণি</option>
+                    <option value="6">৬ষ্ঠ শ্রেণি</option>
+                  </select>
+                </div>
 
-              <div>
-                <label className="block font-bold text-ink mb-1">শিক্ষার্থীর রোল *</label>
-                <input
-                  type="text"
-                  required
-                  value={selectedStudentRoll}
-                  onChange={(e) => {
-                    setSelectedStudentRoll(e.target.value);
-                    setFormError('');
-                  }}
-                  className="w-full rounded-lg border border-line p-2.5 font-mono font-bold bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
-                  placeholder="যেমন: 101"
-                />
-              </div>
-            </div>
-
-            {/* Group selector for Class 9/10 (M2 fix) */}
-            {isSecondary && (
-              <div>
-                <label className="block font-bold text-ink mb-1">বিভাগ (Group)</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {['Science', 'Business Studies', 'Humanities'].map(grp => (
-                    <button
-                      key={grp}
-                      type="button"
-                      onClick={() => setSelectedGroup(grp)}
-                      className={`py-2 px-3 rounded-lg border text-xs font-semibold cursor-pointer transition ${
-                        effectiveGroup === grp
-                          ? 'bg-deep text-white border-deep'
-                          : 'bg-bg text-ink border-line hover:border-primary'
-                      }`}
-                    >
-                      {grp === 'Science' ? 'বিজ্ঞান' : grp === 'Business Studies' ? 'ব্যবসায় শিক্ষা' : 'মানবিক'}
-                    </button>
-                  ))}
+                <div>
+                  <label className="block font-bold text-ink mb-1">শিক্ষার্থীর রোল *</label>
+                  <input
+                    type="text"
+                    required
+                    value={selectedStudentRoll}
+                    onChange={(e) => {
+                      setSelectedStudentRoll(e.target.value);
+                      setFormError('');
+                    }}
+                    className="w-full rounded-lg border border-line p-2.5 font-mono font-bold bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
+                    placeholder="যেমন: 101"
+                  />
                 </div>
               </div>
-            )}
 
-            {/* Live Student Match Confirmation Pill */}
-            {activeStudent ? (
-              <div className="p-3 bg-soft text-deep rounded-xl text-xs flex items-center justify-between border border-soft-border">
-                <div className="flex items-center gap-2">
-                  <UserCheck className="w-4 h-4 text-primary" />
-                  <span className="font-bold">শিক্ষার্থী: {activeStudent.nameBn} ({activeStudent.studentId})</span>
+              {/* Group selector for Class 9/10 */}
+              {isSecondary && (
+                <div>
+                  <label className="block font-bold text-ink mb-1">বিভাগ (Group)</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {['Science', 'Business Studies', 'Humanities'].map(grp => (
+                      <button
+                        key={grp}
+                        type="button"
+                        onClick={() => setSelectedGroup(grp)}
+                        className={`py-2 px-3 rounded-lg border text-xs font-semibold cursor-pointer transition ${
+                          effectiveGroup === grp
+                            ? 'bg-deep text-white border-deep'
+                            : 'bg-bg text-ink border-line hover:border-primary'
+                        }`}
+                      >
+                        {grp === 'Science' ? 'বিজ্ঞান' : grp === 'Business Studies' ? 'ব্যবসায় শিক্ষা' : 'মানবিক'}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <span className="font-semibold text-[11px] text-primary">শাখা {activeStudent.section} • বিভাগ {activeStudent.group}</span>
-              </div>
-            ) : selectedStudentRoll ? (
-              <div className="p-2.5 bg-danger-soft text-danger rounded-xl text-xs flex items-center gap-1.5 border border-danger-soft">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                <span>শ্রেণি {selectedClass}-এ এই রোলের কোনো শিক্ষার্থী পাওয়া যায়নি।</span>
-              </div>
-            ) : null}
+              )}
 
-            {/* Subject Marks Inputs Dynamically Rendered (M2 / H7 Fix) */}
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-bold text-ink block">
-                  {isSecondary ? `${effectiveGroup} বিভাগের নির্ধারিত বিষয়ভিত্তিক নম্বর:` : '৬ষ্ঠ-৮ম শ্রেণির নির্ধারিত বিষয়ভিত্তিক নম্বর:'}
-                </span>
-                <span className="text-[11px] text-muted font-medium">
-                  {currentSubjectList.length}টি বিষয়
-                </span>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {currentSubjectList.map((sub) => {
-                  return (
+              {/* Live Student Match Confirmation Pill */}
+              {activeStudent ? (
+                <div className="p-3 bg-soft text-deep rounded-xl text-xs flex items-center justify-between border border-soft-border">
+                  <div className="flex items-center gap-2">
+                    <UserCheck className="w-4 h-4 text-primary" />
+                    <span className="font-bold">শিক্ষার্থী: {activeStudent.nameBn} ({activeStudent.studentId})</span>
+                  </div>
+                  <span className="font-semibold text-[11px] text-primary">শাখা {activeStudent.section} • বিভাগ {activeStudent.group}</span>
+                </div>
+              ) : selectedStudentRoll ? (
+                <div className="p-2.5 bg-danger-soft text-danger rounded-xl text-xs flex items-center gap-1.5 border border-danger-soft">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>শ্রেণি {selectedClass}-এ এই রোলের কোনো শিক্ষার্থী পাওয়া যায়নি।</span>
+                </div>
+              ) : null}
+
+              {/* Subject Marks Inputs */}
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-bold text-ink block">
+                    {isSecondary ? `${effectiveGroup} বিভাগের নির্ধারিত বিষয়ভিত্তিক নম্বর:` : '৬ষ্ঠ-৮ম শ্রেণির নির্ধারিত বিষয়ভিত্তিক নম্বর:'}
+                  </span>
+                  <span className="text-[11px] text-muted font-medium">
+                    {currentSubjectList.length}টি বিষয়
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {currentSubjectList.map((sub) => (
                     <div key={sub.name} className="bg-bg p-2.5 rounded-xl border border-line">
                       <div className="flex justify-between items-center mb-1">
                         <label className="block font-bold text-ink text-[11px] truncate" title={sub.labelBn}>
@@ -345,35 +608,225 @@ export default function ResultManager() {
                         className="w-full rounded-lg border border-line p-2 font-mono text-xs font-bold text-ink bg-white focus:ring-2 focus:ring-primary focus:outline-none"
                       />
                     </div>
-                  );
-                })}
+                  ))}
+                </div>
               </div>
+
+              {/* Error Message Alert */}
+              {formError && (
+                <div className="p-3 bg-danger-soft text-danger rounded-xl text-xs font-medium flex items-center gap-2 border border-danger-soft">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{formError}</span>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="btn-primary py-2.5 px-6 rounded-lg text-xs font-bold transition shadow-xs flex items-center gap-2 cursor-pointer"
+              >
+                <Award className="w-4 h-4 text-white" />
+                <span>{editingResultId ? 'ফলাফল আপডেট করুন' : 'ফলাফল সংরক্ষণ ও প্রকাশ করুন'}</span>
+              </button>
+            </form>
+          ) : (
+            /* Bulk Excel Upload Mode */
+            <div className="space-y-5 text-xs font-bangla">
+              {/* Top Guidance & Target Settings */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 bg-soft/50 rounded-xl border border-soft-border">
+                <div className="flex items-center gap-2">
+                  <FileSpreadsheet className="w-5 h-5 text-primary shrink-0" />
+                  <div>
+                    <h4 className="font-bold text-deep text-sm">এক্সেল শিট থেকে স্বয়ংক্রিয় নম্বর আপলোড</h4>
+                    <p className="text-[11px] text-muted">এক্সেলে বিষয়ের কলামগুলো ফরমের সাথে হুবহু ম্যাচ করলেই স্বয়ংক্রিয়ভাবে ফলাফল যুক্ত হবে।</p>
+                  </div>
+                </div>
+
+                {/* The "i" Info Button Requested by User */}
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setShowInfoModal(true)}
+                    className="p-2 rounded-xl bg-primary text-white hover:bg-deep transition flex items-center gap-1.5 text-xs font-bold shadow-xs cursor-pointer active:scale-95"
+                    title="ক্লিক করে এক্সেল কলামের নিয়ম ও বিষয়ের তালিকা দেখুন"
+                  >
+                    <Info className="w-4 h-4 text-accent" />
+                    <span>কলামের নিয়ম (i)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleDownloadTemplate}
+                    className="p-2 rounded-xl bg-white text-ink border border-line hover:border-primary transition flex items-center gap-1.5 text-xs font-semibold shadow-xs cursor-pointer"
+                    title="প্রস্তুতকৃত এক্সেল টেমপ্লেট নামিয়ে নিন"
+                  >
+                    <Download className="w-3.5 h-3.5 text-primary" />
+                    <span>নমুনা টেমপ্লেট</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Target Class & Exam Selectors for Bulk Upload */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-bold text-ink mb-1">পরীক্ষার নাম</label>
+                  <select
+                    value={examName}
+                    onChange={(e) => setExamName(e.target.value)}
+                    className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
+                  >
+                    <option value="SSC Test Examination 2026">এসএসসি টেস্ট পরীক্ষা ২০২৬</option>
+                    <option value="Annual Examination 2025">বার্ষিক পরীক্ষা ২০২৫</option>
+                    <option value="Pre-Test Examination 2026">প্রাক-নির্বাচনী পরীক্ষা ২০২৬</option>
+                    <option value="Half-Yearly Examination 2026">অর্ধবার্ষিক পরীক্ষা ২০২৬</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-ink mb-1">শ্রেণি</label>
+                  <select
+                    value={selectedClass}
+                    onChange={(e) => {
+                      setSelectedClass(e.target.value);
+                      setParsedRows([]);
+                      setParseErrors([]);
+                    }}
+                    className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
+                  >
+                    <option value="10">১০ম শ্রেণি</option>
+                    <option value="9">৯ম শ্রেণি</option>
+                    <option value="8">৮ম শ্রেণি</option>
+                    <option value="7">৭ম শ্রেণি</option>
+                    <option value="6">৬ষ্ঠ শ্রেণি</option>
+                  </select>
+                </div>
+
+                {isSecondary ? (
+                  <div>
+                    <label className="block font-bold text-ink mb-1">বিভাগ (Group)</label>
+                    <select
+                      value={selectedGroup}
+                      onChange={(e) => {
+                        setSelectedGroup(e.target.value);
+                        setParsedRows([]);
+                        setParseErrors([]);
+                      }}
+                      className="w-full rounded-lg border border-line p-2.5 bg-bg text-ink focus:ring-2 focus:ring-primary focus:outline-none"
+                    >
+                      <option value="Science">বিজ্ঞান (Science)</option>
+                      <option value="Business Studies">ব্যবসায় শিক্ষা (Business)</option>
+                      <option value="Humanities">মানবিক (Humanities)</option>
+                    </select>
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block font-bold text-ink mb-1">শাখা/গ্রুপ</label>
+                    <div className="p-2.5 bg-bg border border-line rounded-lg text-muted font-semibold">সাধারণ (General)</div>
+                  </div>
+                )}
+              </div>
+
+              {/* Upload Dropzone */}
+              <div className="border-2 border-dashed border-primary/40 hover:border-primary rounded-2xl p-6 text-center bg-soft/20 transition relative">
+                <input
+                  type="file"
+                  accept=".xlsx, .xls, .csv"
+                  onChange={handleFileUpload}
+                  className="absolute inset-0 opacity-0 w-full h-full cursor-pointer z-10"
+                />
+                <div className="space-y-2 pointer-events-none">
+                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto shadow-xs border border-soft-border text-primary">
+                    <FileUp className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <span className="font-bold text-deep text-sm block">
+                      {excelFile ? excelFile.name : 'এক্সেল (.xlsx, .xls) অথবা .csv ফাইল এখানে ড্রপ করুন বা ক্লিক করে সিলেক্ট করুন'}
+                    </span>
+                    <span className="text-[11px] text-muted">
+                      শ্রেণি {toBanglaNumerals(selectedClass)} ({effectiveGroup})-এর জন্য ফাইল নির্বাচন করুন
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Processing Loader */}
+              {isProcessing && (
+                <div className="py-4 text-center text-primary font-bold animate-pulse text-xs">
+                  এক্সেল ফাইলের ডাটা যাচাই ও গ্রেড হিসাব করা হচ্ছে...
+                </div>
+              )}
+
+              {/* Parse Errors if any */}
+              {parseErrors.length > 0 && (
+                <div className="p-3.5 bg-danger-soft text-danger rounded-xl border border-danger-soft space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-xs">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>কিছু সারিতে সমস্যা পাওয়া গেছে ({toBanglaNumerals(parseErrors.length)}টি):</span>
+                  </div>
+                  <ul className="list-disc list-inside text-[11px] space-y-0.5 max-h-32 overflow-y-auto pl-1">
+                    {parseErrors.map((err, i) => (
+                      <li key={i}>{err}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Parsed Preview Table */}
+              {parsedRows.length > 0 && (
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <FileCheck className="w-4 h-4 text-emerald-600" />
+                      <span className="font-bold text-ink">
+                        {toBanglaNumerals(parsedRows.length)} জন শিক্ষার্থীর ফলাফল প্রস্তুত
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleSaveBulkResults}
+                      className="btn-primary px-5 py-2 rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 cursor-pointer active:scale-95 transition"
+                    >
+                      <Award className="w-4 h-4 text-white" />
+                      <span>সকল ফলাফল ডাটাবেজে সংরক্ষণ করুন</span>
+                    </button>
+                  </div>
+
+                  <div className="max-h-60 overflow-y-auto border border-line rounded-xl overflow-hidden">
+                    <table className="w-full text-left text-xs font-bangla">
+                      <thead className="bg-deep text-white text-[10px] uppercase font-bold sticky top-0">
+                        <tr>
+                          <th className="py-2 px-2.5 text-center">রোল</th>
+                          <th className="py-2 px-3">শিক্ষার্থীর নাম</th>
+                          <th className="py-2 px-2 text-center">বিষয়</th>
+                          <th className="py-2 px-2 text-center">জিপিএ</th>
+                          <th className="py-2 px-2 text-center">গ্রেড</th>
+                          <th className="py-2 px-2 text-center">স্ট্যাটাস</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-line bg-white">
+                        {parsedRows.map((row, idx) => (
+                          <tr key={idx} className="hover:bg-bg">
+                            <td className="py-2 px-2.5 font-mono font-bold text-center text-ink">{toBanglaNumerals(row.roll)}</td>
+                            <td className="py-2 px-3 font-semibold text-ink truncate max-w-[120px]">{row.studentNameBn}</td>
+                            <td className="py-2 px-2 text-center font-mono text-muted">{row.subjects.length}</td>
+                            <td className="py-2 px-2 text-center font-mono font-extrabold text-primary">{row.gpa}</td>
+                            <td className="py-2 px-2 text-center font-bold text-emerald-700">{row.letterGrade}</td>
+                            <td className="py-2 px-2 text-center">
+                              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                                row.resultStatus === 'PASSED' ? 'bg-soft text-primary' : 'bg-danger-soft text-danger'
+                              }`}>
+                                {row.resultStatus === 'PASSED' ? 'উত্তীর্ণ' : 'ফেল'}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
-
-            {/* Error Message Alert */}
-            {formError && (
-              <div className="p-3 bg-danger-soft text-danger rounded-xl text-xs font-medium flex items-center gap-2 border border-danger-soft">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                <span>{formError}</span>
-              </div>
-            )}
-
-            {/* Success Message Alert */}
-            {savedSuccess && (
-              <div className="p-3 bg-soft text-deep rounded-xl text-xs font-semibold flex items-center gap-2 border border-soft-border">
-                <CheckCircle className="w-4 h-4 text-primary" />
-                <span>ফলাফল সফলভাবে সংরক্ষিত ও প্রকাশিত হয়েছে! পাবলিক পোর্টালে দৃশ্যমান হবে।</span>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="btn-primary py-2.5 px-6 rounded-lg text-xs font-bold transition shadow-xs flex items-center gap-2 cursor-pointer"
-            >
-              <Award className="w-4 h-4 text-white" />
-              <span>{editingResultId ? 'ফলাফল আপডেট করুন' : 'ফলাফল সংরক্ষণ ও প্রকাশ করুন'}</span>
-            </button>
-          </form>
+          )}
         </div>
 
         {/* Existing Results List with Delete / Edit Actions (M1 Fix) */}
@@ -434,6 +887,109 @@ export default function ResultManager() {
           </div>
         </div>
       </div>
+
+      {/* Info "i" Modal - Excel Column Guidelines as Requested */}
+      {showInfoModal && (
+        <div 
+          className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="fixed inset-0 -z-10" onClick={() => setShowInfoModal(false)} />
+          <div className="bg-white max-w-xl w-full rounded-2xl shadow-2xl border border-line overflow-hidden font-bangla text-xs animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="bg-deep text-white p-5 flex items-center justify-between border-b border-primary">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent">
+                  <Info className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base text-white">এক্সেল কলাম নির্দেশিকা ও নিয়মাবলী</h3>
+                  <p className="text-[11px] text-white/80">বাল্ক নম্বর আপলোড সফল করার উপায়</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowInfoModal(false)}
+                className="p-1.5 rounded-full hover:bg-white/20 text-white transition cursor-pointer"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+              {/* Golden Rule Highlight */}
+              <div className="p-4 bg-amber-50 border border-amber-300 rounded-xl text-amber-900 space-y-1.5">
+                <span className="font-bold text-sm block flex items-center gap-1.5 text-amber-950">
+                  <span>💡</span> মূল নিয়ম (কলাম ম্যাচিং):
+                </span>
+                <p className="leading-relaxed">
+                  এক্সেলে কলামের নামগুলো নিচের ইনপুট ফরমের বিষয়ের নামের সাথে <strong>বরাবর হুবহু মিল (Match)</strong> থাকতে হবে। কলাম ম্যাচ করলেই সফটওয়্যার স্বয়ংক্রিয়ভাবে শিক্ষার্থীদের বিষয়ভিত্তিক প্রাপ্ত নম্বর, গ্রেড পয়েন্ট এবং জিপিএ হিসাব করে ডাটাবেজে যুক্ত করে দিবে।
+                </p>
+              </div>
+
+              {/* Required Columns for Currently Selected Class/Group */}
+              <div>
+                <h4 className="font-bold text-ink text-sm mb-2">
+                  শ্রেণি {toBanglaNumerals(selectedClass)} ({effectiveGroup})-এর জন্য প্রয়োজনীয় কলামসমূহ:
+                </h4>
+                <div className="bg-bg p-3.5 rounded-xl border border-line space-y-2">
+                  <div className="flex items-center justify-between pb-1.5 border-b border-line font-bold text-deep">
+                    <span>১. রোল কলাম (আবশ্যক):</span>
+                    <span className="font-mono bg-white px-2 py-0.5 rounded border border-line text-primary">Roll</span> বা <span className="font-mono bg-white px-2 py-0.5 rounded border border-line text-primary">রোল</span>
+                  </div>
+
+                  <div className="space-y-1 pt-1">
+                    <span className="font-bold text-ink block">২. বিষয়ভিত্তিক নম্বরের কলামসমূহ (ইংরেজি বা বাংলা যেকোনো একটি):</span>
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      {currentSubjectList.map((sub) => (
+                        <div key={sub.name} className="p-2 bg-white rounded-lg border border-line flex items-center justify-between">
+                          <div>
+                            <span className="font-bold text-ink block font-mono text-[11px]">{sub.name}</span>
+                            <span className="text-[10px] text-muted">বা {sub.labelBn}</span>
+                          </div>
+                          <span className="text-[10px] font-mono text-primary font-bold">Max {sub.max}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Ready Template Callout */}
+              <div className="p-3.5 bg-soft rounded-xl border border-soft-border flex items-center justify-between gap-3">
+                <div>
+                  <span className="font-bold text-deep block">রেডিমেড এক্সেল ফাইল চান?</span>
+                  <p className="text-[11px] text-muted">নিচের বাটনে ক্লিক করলেই এই শ্রেণির শিক্ষার্থীদের রোলসহ প্রস্তুতকৃত টেমপ্লেট ডাউনলোড হয়ে যাবে।</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleDownloadTemplate();
+                    setShowInfoModal(false);
+                  }}
+                  className="btn-accent px-4 py-2 rounded-xl text-xs font-bold shrink-0 flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95 transition"
+                >
+                  <Download className="w-4 h-4 text-ink" />
+                  <span>টেমপ্লেট ডাউনলোড</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 bg-bg border-t border-line flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowInfoModal(false)}
+                className="btn-secondary px-6 py-2 rounded-xl text-xs font-bold cursor-pointer"
+              >
+                বুঝেছি, বন্ধ করুন
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

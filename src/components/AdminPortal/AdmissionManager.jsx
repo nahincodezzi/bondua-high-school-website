@@ -11,11 +11,18 @@ import {
 } from 'lucide-react';
 
 export default function AdmissionManager() {
-  const { admissions, updateAdmissionStatus, approveAdmissionAndCreateStudent } = useSchool();
+  const { 
+    admissions, 
+    updateAdmissionStatus, 
+    approveAdmissionAndCreateStudent,
+    bulkApproveAdmissions,
+    bulkSetAdmissionsPending
+  } = useSchool();
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewModalApp, setViewModalApp] = useState(null);
   const [actionSuccess, setActionSuccess] = useState('');
+  const [selectedIds, setSelectedIds] = useState(new Set());
 
   // Close modal on Escape
   useEffect(() => {
@@ -51,6 +58,56 @@ export default function AdmissionManager() {
     return matchesStatus && matchesSearch;
   });
 
+  const selectedList = admissions.filter(app => selectedIds.has(app.id));
+  const selectedPendingCount = selectedList.filter(app => app.status === 'Pending').length;
+  const allFilteredSelected = filtered.length > 0 && filtered.every(app => selectedIds.has(app.id));
+  const someFilteredSelected = filtered.some(app => selectedIds.has(app.id));
+
+  const toggleSelectAll = (checked) => {
+    if (checked) {
+      setSelectedIds(new Set(filtered.map(app => app.id)));
+    } else {
+      setSelectedIds(new Set());
+    }
+  };
+
+  const toggleSelectOne = (id) => {
+    const next = new Set(selectedIds);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    setSelectedIds(next);
+  };
+
+  const handleBulkApprove = () => {
+    const pendingToApprove = selectedList.filter(app => app.status === 'Pending');
+    if (pendingToApprove.length === 0) {
+      alert('নির্বাচিত আবেদনগুলোর কোনোটিই অপেক্ষমাণ নেই!');
+      return;
+    }
+
+    if (confirm(`আপনি কি নিশ্চিত যে নির্বাচিত ${toBanglaNumerals(pendingToApprove.length)}টি অপেক্ষমাণ আবেদন একসাথে অনুমোদন করে শিক্ষার্থী তালিকায় রোল ও আইডি বরাদ্দ করতে চান?`)) {
+      const createdStudents = bulkApproveAdmissions ? bulkApproveAdmissions(pendingToApprove) : [];
+      setSelectedIds(new Set());
+      setActionSuccess(`একসাথে ${toBanglaNumerals(createdStudents.length)}টি আবেদন সফলভাবে অনুমোদিত হয়েছে এবং রোল নম্বরসহ শিক্ষার্থী ডাটাবেজে যুক্ত করা হয়েছে!`);
+      setTimeout(() => setActionSuccess(''), 7000);
+    }
+  };
+
+  const handleBulkSetPending = () => {
+    if (selectedList.length === 0) return;
+    if (confirm(`আপনি কি নির্বাচিত ${toBanglaNumerals(selectedList.length)}টি আবেদনের স্ট্যাটাস "অপেক্ষমাণ" (Pending) করতে চান?`)) {
+      if (bulkSetAdmissionsPending) {
+        bulkSetAdmissionsPending(selectedList);
+      }
+      setSelectedIds(new Set());
+      setActionSuccess(`নির্বাচিত ${toBanglaNumerals(selectedList.length)}টি আবেদনকে অপেক্ষমাণ রাখা হয়েছে।`);
+      setTimeout(() => setActionSuccess(''), 5000);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -79,7 +136,7 @@ export default function AdmissionManager() {
             <button
               key={status}
               onClick={() => setFilterStatus(status)}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition ${
+              className={`px-3 py-1.5 rounded-lg font-semibold transition cursor-pointer ${
                 filterStatus === status
                   ? 'bg-primary text-white shadow'
                   : 'bg-bg text-muted hover:bg-line'
@@ -103,6 +160,56 @@ export default function AdmissionManager() {
         </div>
       </div>
 
+      {/* Bulk Action Bar (when 1 or more items are selected) */}
+      {selectedIds.size > 0 && (
+        <div className="p-3 sm:p-4 bg-deep text-white rounded-2xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-3 font-bangla animate-in fade-in slide-in-from-top-2 border border-primary">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <span className="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-xs">
+              ✓ {toBanglaNumerals(selectedIds.size)}টি আবেদন নির্বাচিত
+            </span>
+            {selectedPendingCount > 0 ? (
+              <span className="text-xs text-accent font-semibold">
+                (অপেক্ষমাণ: {toBanglaNumerals(selectedPendingCount)}টি)
+              </span>
+            ) : (
+              <span className="text-xs text-white/70">
+                (সবগুলো অনুমোদিত)
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            {selectedPendingCount > 0 && (
+              <button
+                type="button"
+                onClick={handleBulkApprove}
+                className="btn-accent px-4 py-1.5 text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-sm cursor-pointer transition active:scale-95"
+              >
+                <CheckCircle2 className="w-4 h-4 text-ink" />
+                <span>একসাথে অনুমোদন ({toBanglaNumerals(selectedPendingCount)})</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={handleBulkSetPending}
+              className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-semibold cursor-pointer transition border border-white/20"
+              title="নির্বাচিত আবেদনগুলোকে অপেক্ষমাণ রাখুন"
+            >
+              অপেক্ষমাণ রাখুন
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSelectedIds(new Set())}
+              className="px-3 py-1.5 text-white/80 hover:text-white rounded-lg text-xs cursor-pointer transition"
+            >
+              নির্বাচন বাতিল
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Table & Mobile Cards */}
       <div className="bg-white rounded-2xl border border-line shadow-2xs overflow-hidden">
         {/* Desktop & Tablet Table (>= sm) */}
@@ -110,6 +217,21 @@ export default function AdmissionManager() {
           <table className="w-full text-left text-xs font-bangla">
             <thead className="bg-deep text-white uppercase text-[11px] font-bold">
               <tr>
+                <th className="py-3 px-3 w-10 text-center">
+                  <input
+                    type="checkbox"
+                    checked={allFilteredSelected}
+                    ref={(el) => {
+                      if (el) {
+                        el.indeterminate = someFilteredSelected && !allFilteredSelected;
+                      }
+                    }}
+                    onChange={(e) => toggleSelectAll(e.target.checked)}
+                    className="rounded border-line text-primary focus:ring-primary w-4 h-4 cursor-pointer align-middle"
+                    title="সবগুলো নির্বাচন করুন / বাতিল করুন"
+                    aria-label="Select All Applications"
+                  />
+                </th>
                 <th className="py-3 px-3">ট্র্যাকিং আইডি</th>
                 <th className="py-3 px-3">শিক্ষার্থীর নাম</th>
                 <th className="py-3 px-3">আবেদনকৃত শ্রেণি</th>
@@ -123,7 +245,19 @@ export default function AdmissionManager() {
             <tbody className="divide-y divide-line">
               {filtered.length > 0 ? (
                 filtered.map((app) => (
-                  <tr key={app.id} className="hover:bg-bg">
+                  <tr 
+                    key={app.id} 
+                    className={`hover:bg-bg transition ${selectedIds.has(app.id) ? 'bg-soft/40' : ''}`}
+                  >
+                    <td className="py-3 px-3 text-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.has(app.id)}
+                        onChange={() => toggleSelectOne(app.id)}
+                        className="rounded border-line text-primary focus:ring-primary w-4 h-4 cursor-pointer align-middle"
+                        aria-label={`Select ${app.studentNameBn || app.studentNameEn}`}
+                      />
+                    </td>
                     <td className="py-3 px-3 font-mono font-bold text-ink">{app.trackingId}</td>
                     <td className="py-3 px-3 font-semibold text-ink">
                       {app.studentNameBn || app.studentNameEn}
@@ -145,7 +279,7 @@ export default function AdmissionManager() {
                       <div className="flex items-center justify-center gap-1.5">
                         <button
                           onClick={() => setViewModalApp(app)}
-                          className="p-1.5 bg-bg hover:bg-line text-ink rounded-lg text-xs"
+                          className="p-1.5 bg-bg hover:bg-line text-ink rounded-lg text-xs cursor-pointer"
                           title="View Details"
                         >
                           <Eye className="w-3.5 h-3.5" />
@@ -154,7 +288,7 @@ export default function AdmissionManager() {
                         {app.status === 'Pending' ? (
                           <button
                             onClick={() => handleApprove(app)}
-                            className="p-1.5 bg-primary hover:bg-deep text-white rounded-lg text-xs font-bold cursor-pointer"
+                            className="p-1.5 bg-primary hover:bg-deep text-white rounded-lg text-xs font-bold cursor-pointer transition active:scale-95"
                             title="অনুমোদন ও শিক্ষার্থী তৈরি করুন"
                           >
                             <CheckCircle2 className="w-3.5 h-3.5 text-white" />
@@ -174,7 +308,7 @@ export default function AdmissionManager() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" className="py-8 text-center text-muted">
+                  <td colSpan="9" className="py-8 text-center text-muted">
                     কোনো ভর্তি আবেদন পাওয়া যায়নি।
                   </td>
                 </tr>
@@ -187,11 +321,22 @@ export default function AdmissionManager() {
         <div className="block sm:hidden divide-y divide-line font-bangla">
           {filtered.length > 0 ? (
             filtered.map((app) => (
-              <div key={app.id} className="p-4 space-y-2.5 hover:bg-bg transition">
+              <div 
+                key={app.id} 
+                className={`p-4 space-y-2.5 transition ${selectedIds.has(app.id) ? 'bg-soft/40' : 'hover:bg-bg'}`}
+              >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono font-bold text-xs text-primary">
-                    {app.trackingId}
-                  </span>
+                  <div className="flex items-center gap-2.5">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(app.id)}
+                      onChange={() => toggleSelectOne(app.id)}
+                      className="rounded border-line text-primary focus:ring-primary w-4 h-4 cursor-pointer"
+                    />
+                    <span className="font-mono font-bold text-xs text-primary">
+                      {app.trackingId}
+                    </span>
+                  </div>
                   <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                     app.status === 'Approved'
                       ? 'bg-soft text-primary'
