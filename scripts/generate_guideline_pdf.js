@@ -228,7 +228,7 @@ const htmlContent = `<!DOCTYPE html>
   <div class="section">
     <h2 class="section-title">১. লগইন ক্রেডেনশিয়ালস ও এক্সেস কন্ট্রোল (Login Credentials)</h2>
     <p>
-      অ্যাডমিন ও টিচার্স পোর্টালে (<code>/#admin</code>) প্রবেশের জন্য সিস্টেমে প্রস্তুত থাকা অ্যাকাউন্টসমূহ:
+      অ্যাডমিন ও টিচার্স পোর্টালে (<code>/#admin</code>) প্রবেশের জন্য অনুমোদিত স্টাফ অ্যাকাউন্টসমূহ:
     </p>
 
     <table>
@@ -242,34 +242,28 @@ const htmlContent = `<!DOCTYPE html>
       </thead>
       <tbody>
         <tr>
-          <td><strong>সুপার অ্যাডমিনিস্ট্রেটর</strong></td>
-          <td><span class="code-pill">superadmin</span></td>
-          <td><span class="code-pill">admin2026</span></td>
-          <td>পূর্ণ সফটওয়্যার নিয়ন্ত্রণ, ইউজার তৈরি/পাসওয়ার্ড রিসেট, সেটিংস, সিএমএস, শিক্ষার্থী, ফি ও রেজাল্ট।</td>
-        </tr>
-        <tr>
           <td><strong>ভারপ্রাপ্ত প্রধান শিক্ষক</strong></td>
           <td><span class="code-pill">headmaster</span></td>
           <td><span class="code-pill">headmaster2026</span></td>
           <td>প্রতিষ্ঠান প্রধান হিসেবে সকল অ্যাকাডেমিক, নোটিশ, সিএমএস, শিক্ষার্থী, ফি কালেকশন ও রিপোর্ট অনুমোদন।</td>
         </tr>
         <tr>
-          <td><strong>ভারপ্রাপ্ত সহ-প্রধান শিক্ষক</strong></td>
+          <td><strong>সহকারী প্রধান শিক্ষক</strong></td>
           <td><span class="code-pill">asst_headmaster</span></td>
           <td><span class="code-pill">assthead2026</span></td>
-          <td>সিএমএস কনটেন্ট, নোটিশ প্রকাশ, ফলাফল যাচাই ও শিক্ষার্থী ভর্তি তদারকি।</td>
+          <td>সিএমএস কনটেন্ট, ক্লাস ও পরীক্ষার রুটিন, নোটিশ প্রকাশ, ফলাফল যাচাই ও শিক্ষার্থী ভর্তি তদারকি।</td>
         </tr>
         <tr>
-          <td><strong>সহকারী শিক্ষক (রেজাল্ট)</strong></td>
+          <td><strong>সহকারী শিক্ষক (একাডেমিক)</strong></td>
           <td><span class="code-pill">teacher</span></td>
           <td><span class="code-pill">teacher2026</span></td>
-          <td>পরীক্ষার বিষয়ভিত্তিক নম্বর এন্ট্রি ও প্রাতিষ্ঠানিক নোটিশ দেখা।</td>
+          <td>পরীক্ষার বিষয়ভিত্তিক নম্বর ইনপুট (Marks Entry), মার্কশিট প্রস্তুতি ও প্রাতিষ্ঠানিক নোটিশ দেখা।</td>
         </tr>
         <tr>
           <td><strong>অফিস সহকারী / হিসাবরক্ষক</strong></td>
           <td><span class="code-pill">office_assistant</span></td>
           <td><span class="code-pill">office2026</span></td>
-          <td>নতুন শিক্ষার্থী ভর্তি এন্ট্রি, মানি রসিদ ও ফি কালেকশন, আইডি কার্ড প্রিন্ট।</td>
+          <td>নতুন শিক্ষার্থী ভর্তি এন্ট্রি, মানি রসিদ ও ফি কালেকশন, স্টুডেন্ট আইডি কার্ড প্রিন্ট ও ক্যাশ হিসাব।</td>
         </tr>
       </tbody>
     </table>
