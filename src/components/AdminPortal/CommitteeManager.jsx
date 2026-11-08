@@ -112,8 +112,8 @@ export default function CommitteeManager() {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_W = 600;
-        const MAX_H = 720;
+        const MAX_W = 440;
+        const MAX_H = 550;
         let w = img.width;
         let h = img.height;
         if (w > h) {
@@ -131,7 +131,7 @@ export default function CommitteeManager() {
         canvas.height = Math.round(h);
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        const optimized = canvas.toDataURL('image/jpeg', 0.88);
+        const optimized = canvas.toDataURL('image/jpeg', 0.80);
         setPresidentForm(prev => ({ ...prev, chairmanImage: optimized }));
         setPresidentUploadStatus('');
       };
@@ -176,8 +176,8 @@ export default function CommitteeManager() {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_W = 500;
-        const MAX_H = 600;
+        const MAX_W = 400;
+        const MAX_H = 500;
         let w = img.width;
         let h = img.height;
         if (w > h) {
@@ -195,7 +195,7 @@ export default function CommitteeManager() {
         canvas.height = Math.round(h);
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        const optimized = canvas.toDataURL('image/jpeg', 0.88);
+        const optimized = canvas.toDataURL('image/jpeg', 0.80);
         setMemberFormData(prev => ({ ...prev, image: optimized }));
         setMemberUploadStatus('');
       };

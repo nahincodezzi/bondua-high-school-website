@@ -49,8 +49,8 @@ export default function NoticeManager() {
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          const MAX_W = 1200;
-          const MAX_H = 1600;
+          const MAX_W = 1000;
+          const MAX_H = 1400;
           let w = img.width;
           let h = img.height;
           if (w > MAX_W || h > MAX_H) {
@@ -66,7 +66,7 @@ export default function NoticeManager() {
           canvas.height = h;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, w, h);
-          const compressed = canvas.toDataURL('image/jpeg', 0.85);
+          const compressed = canvas.toDataURL('image/jpeg', 0.76);
           setFileAttachment(compressed);
           setUploadStatus('ছবি সফলভাবে সংযুক্ত হয়েছে');
         };

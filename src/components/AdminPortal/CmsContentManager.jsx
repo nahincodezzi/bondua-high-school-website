@@ -192,18 +192,20 @@ export default function CmsContentManager() {
 
   const handleSlidesSave = async (e) => {
     if (e) e.preventDefault();
+    const tasks = [];
     if (updateHeroSlides) {
-      await updateHeroSlides(slidesForm);
+      tasks.push(updateHeroSlides(slidesForm));
     } else {
       setHeroSlides(slidesForm);
     }
     if (updateSchoolSettings) {
-      await updateSchoolSettings({
+      tasks.push(updateSchoolSettings({
         ...schoolInfo,
         hero: heroConfig,
         stats: statsList
-      });
+      }));
     }
+    await Promise.all(tasks);
     setSavedMessage(true);
     setTimeout(() => setSavedMessage(false), 3500);
   };
@@ -336,8 +338,8 @@ export default function CmsContentManager() {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_W = 1920;
-        const MAX_H = 1080;
+        const MAX_W = 1280;
+        const MAX_H = 720;
         let w = img.width;
         let h = img.height;
         if (w > MAX_W || h > MAX_H) {
@@ -353,7 +355,7 @@ export default function CmsContentManager() {
         canvas.height = h;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, w, h);
-        const compressed = canvas.toDataURL('image/jpeg', 0.88);
+        const compressed = canvas.toDataURL('image/jpeg', 0.78);
         handleSlideChange(activeSlideUploadIndex, 'image', compressed);
       };
       img.src = event.target.result;
@@ -377,8 +379,8 @@ export default function CmsContentManager() {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_W = 1920;
-        const MAX_H = 1080;
+        const MAX_W = 1280;
+        const MAX_H = 720;
         let w = img.width;
         let h = img.height;
         if (w > MAX_W || h > MAX_H) {
@@ -394,7 +396,7 @@ export default function CmsContentManager() {
         canvas.height = h;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, w, h);
-        const compressed = canvas.toDataURL('image/jpeg', 0.85);
+        const compressed = canvas.toDataURL('image/jpeg', 0.78);
         setPhotoDataUrl(compressed);
         setPhotoUploadStatus('ছবি প্রস্তুত হয়েছে');
       };

@@ -161,8 +161,8 @@ export default function SchoolSettings() {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_W = 1600;
-        const MAX_H = 1000;
+        const MAX_W = 1280;
+        const MAX_H = 800;
         let w = img.width;
         let h = img.height;
 
@@ -180,7 +180,7 @@ export default function SchoolSettings() {
         canvas.height = h;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, w, h);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.78);
         setFormData(prev => ({ ...prev, campusImage: dataUrl }));
         setCampusUploadStatus('ক্যাম্পাস ছবি আপলোড সম্পন্ন হয়েছে');
       };

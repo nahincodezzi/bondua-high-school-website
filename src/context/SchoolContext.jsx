@@ -2010,11 +2010,12 @@ export function SchoolProvider({ children }) {
 
     if (supabase) {
       try {
-        // 1. Upsert into hero_slides table with schema-compliant columns
+        // 1. Parallel upsert into hero_slides table and school_info 'hero_slides' document
         const dbSlides = slides.map(mappers.slide.toDb);
-        await supabase.from('hero_slides').upsert(dbSlides);
-        // 2. Also upsert full bilingual slides into school_info 'hero_slides' document
-        await supabase.from('school_info').upsert({ id: 'hero_slides', data: slides });
+        await Promise.all([
+          supabase.from('hero_slides').upsert(dbSlides),
+          supabase.from('school_info').upsert({ id: 'hero_slides', data: slides })
+        ]);
         return { success: true };
       } catch (err) {
         console.warn('Supabase upsert hero_slides warning:', err);

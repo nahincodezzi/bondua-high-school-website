@@ -73,8 +73,8 @@ export default function TeacherManager() {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 600;
-        const MAX_HEIGHT = 720;
+        const MAX_WIDTH = 400;
+        const MAX_HEIGHT = 480;
         let width = img.width;
         let height = img.height;
 
@@ -94,7 +94,7 @@ export default function TeacherManager() {
         canvas.height = Math.round(height);
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.88);
+        const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.80);
 
         setFormData(prev => ({
           ...prev,
