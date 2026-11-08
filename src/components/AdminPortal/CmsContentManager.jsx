@@ -15,7 +15,12 @@ import {
   X,
   ExternalLink,
   Film,
-  Play
+  Play,
+  BookOpen,
+  RotateCcw,
+  FlaskConical,
+  Briefcase,
+  Palette
 } from 'lucide-react';
 
 export default function CmsContentManager() {
@@ -34,14 +39,91 @@ export default function CmsContentManager() {
     deleteGalleryItem,
     videos,
     addVideoItem,
-    deleteVideoItem
+    deleteVideoItem,
+    academicGroups = [],
+    updateAcademicGroups
   } = useSchool();
 
-  const [activeTab, setActiveTab] = useState('gallery'); // 'gallery', 'uniform', 'slides', 'general'
+  const [activeTab, setActiveTab] = useState('gallery'); // 'gallery', 'curriculum', 'uniform', 'slides', 'general'
   const [uniformForm, setUniformForm] = useState(JSON.parse(JSON.stringify(uniformInfo)));
   const [slidesForm, setSlidesForm] = useState(JSON.parse(JSON.stringify(heroSlides)));
   const [infoForm, setInfoForm] = useState(JSON.parse(JSON.stringify(schoolInfo)));
   const [savedMessage, setSavedMessage] = useState(false);
+
+  // Academic Curriculum & Subjects States
+  const [curriculumGroups, setCurriculumGroups] = useState(() => JSON.parse(JSON.stringify(academicGroups || [])));
+  const [activeCurriculumGroupId, setActiveCurriculumGroupId] = useState('science');
+  const [newGroupSubjectInput, setNewGroupSubjectInput] = useState('');
+  const [subjectError, setSubjectError] = useState('');
+
+  const handleAddSubjectToGroup = (e) => {
+    e.preventDefault();
+    setSubjectError('');
+    if (!newGroupSubjectInput.trim()) return;
+    const cleanName = newGroupSubjectInput.trim();
+
+    setCurriculumGroups(prev => {
+      return prev.map(g => {
+        if (g.id === activeCurriculumGroupId) {
+          const existing = g.subjectsBn || [];
+          if (existing.includes(cleanName)) {
+            setSubjectError('এই বিষয়টি তালিকায় ইতোমধ্যে রয়েছে।');
+            return g;
+          }
+          return { ...g, subjectsBn: [...existing, cleanName] };
+        }
+        return g;
+      });
+    });
+    setNewGroupSubjectInput('');
+  };
+
+  const handleDeleteSubjectFromGroup = (groupId, subjectIndex) => {
+    setCurriculumGroups(prev => {
+      return prev.map(g => {
+        if (g.id === groupId) {
+          const existing = g.subjectsBn || [];
+          return { ...g, subjectsBn: existing.filter((_, idx) => idx !== subjectIndex) };
+        }
+        return g;
+      });
+    });
+  };
+
+  const handleDescriptionChange = (groupId, newDesc) => {
+    setCurriculumGroups(prev => {
+      return prev.map(g => {
+        if (g.id === groupId) {
+          return { ...g, descriptionBn: newDesc };
+        }
+        return g;
+      });
+    });
+  };
+
+  const handleSaveCurriculum = (e) => {
+    e?.preventDefault();
+    if (updateAcademicGroups) {
+      updateAcademicGroups(curriculumGroups);
+    }
+    setSavedMessage(true);
+    setTimeout(() => setSavedMessage(false), 4000);
+  };
+
+  const handleResetCurriculum = () => {
+    if (window.confirm('আপনি কি বিভাগ ও বিষয়সমূহকে মূল ডিফল্ট অবস্থায় ফিরিয়ে নিতে চান?')) {
+      import('../../data/initialData').then(mod => {
+        if (mod.initialAcademicGroups) {
+          setCurriculumGroups(JSON.parse(JSON.stringify(mod.initialAcademicGroups)));
+          if (updateAcademicGroups) {
+            updateAcademicGroups(mod.initialAcademicGroups);
+          }
+          setSavedMessage(true);
+          setTimeout(() => setSavedMessage(false), 4000);
+        }
+      });
+    }
+  };
 
   // Gallery Photo Upload States
   const [photoTitleBn, setPhotoTitleBn] = useState('');
@@ -361,7 +443,19 @@ export default function CmsContentManager() {
           }`}
         >
           <ImageIcon className="w-4 h-4 text-accent" />
-          <span>ফটো ও ভিডিও গ্যালারি আপলোড (Gallery CMS)</span>
+          <span>ফটো ও ভিডিও গ্যালারি (Gallery CMS)</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('curriculum')}
+          className={`px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-2 ${
+            activeTab === 'curriculum'
+              ? 'bg-deep text-white shadow-md'
+              : 'bg-white text-muted hover:bg-bg border border-line'
+          }`}
+        >
+          <BookOpen className="w-4 h-4 text-accent" />
+          <span>বিভাগ ও বিষয়সমূহ (Subjects CMS)</span>
         </button>
 
         <button
@@ -841,7 +935,174 @@ export default function CmsContentManager() {
         </div>
       )}
 
-      {/* 2. DRESS CODE & UNIFORM CMS */}
+      {/* 2. ACADEMIC CURRICULUM & SUBJECTS CMS */}
+      {activeTab === 'curriculum' && (
+        <div className="bg-white p-6 sm:p-8 rounded-2xl border border-line shadow-2xs space-y-6 font-bangla text-xs">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-line">
+            <div>
+              <div className="flex items-center gap-2 text-primary font-bold text-base mb-0.5">
+                <BookOpen className="w-5 h-5 text-accent" />
+                <h3>বিভাগ ও বিষয়সমূহ ব্যবস্থাপনা (Academic Disciplines & Subjects CMS)</h3>
+              </div>
+              <p className="text-[11px] text-muted">
+                মূল ওয়েবসাইটের "একাডেমিক কার্যক্রম" সেকশনে প্রদর্শিত ৩টি বিভাগের (বিজ্ঞান, ব্যবসায় শিক্ষা, মানবিক) পরিচিতি ও অন্তর্ভুক্ত বিষয়সমূহ এখান থেকে সরাসরি যোগ বা মুছে ফেলা যায়।
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleResetCurriculum}
+              className="text-xs text-muted hover:text-danger flex items-center gap-1 font-semibold transition cursor-pointer self-start sm:self-center"
+              title="ডিফল্ট বিষয়সমূহে ফিরিয়ে নিন"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>মূল ডিফল্টে রিসেট</span>
+            </button>
+          </div>
+
+          {/* Department / Group Switcher Pills */}
+          <div className="flex flex-wrap gap-2.5">
+            {curriculumGroups.map((grp) => {
+              const isActive = grp.id === activeCurriculumGroupId;
+              let IconComp = FlaskConical;
+              if (grp.id === 'business' || grp.titleBn?.includes('ব্যবসায়')) IconComp = Briefcase;
+              if (grp.id === 'humanities' || grp.titleBn?.includes('মানবিক')) IconComp = Palette;
+
+              return (
+                <button
+                  key={grp.id}
+                  type="button"
+                  onClick={() => {
+                    setActiveCurriculumGroupId(grp.id);
+                    setSubjectError('');
+                    setNewGroupSubjectInput('');
+                  }}
+                  className={`px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 transition cursor-pointer ${
+                    isActive 
+                      ? 'bg-primary text-white shadow-sm ring-2 ring-primary/20' 
+                      : 'bg-bg hover:bg-soft text-ink border border-line'
+                  }`}
+                >
+                  <IconComp className={`w-4 h-4 ${isActive ? 'text-accent' : 'text-primary'}`} />
+                  <span>{grp.titleBn}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
+                    isActive ? 'bg-white/20 text-white' : 'bg-white border border-line text-muted'
+                  }`}>
+                    {(grp.subjectsBn || []).length}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Selected Group's Detailed Configuration */}
+          {(() => {
+            const currentGrp = curriculumGroups.find(g => g.id === activeCurriculumGroupId) || curriculumGroups[0];
+            if (!currentGrp) return null;
+
+            return (
+              <div className="space-y-6 pt-2">
+                {/* Group Description */}
+                <div>
+                  <label className="block font-bold text-ink mb-1">
+                    {currentGrp.titleBn}-এর ভূমিকা / পরিচিতি বিবরণ:
+                  </label>
+                  <textarea
+                    rows="2"
+                    value={currentGrp.descriptionBn || ''}
+                    onChange={(e) => handleDescriptionChange(currentGrp.id, e.target.value)}
+                    className="w-full rounded-xl border border-line p-3 text-xs bg-bg focus:ring-2 focus:ring-primary focus:outline-none"
+                    placeholder="বিভাগের সংক্ষিপ্ত পরিচিতি লিখুন..."
+                  />
+                </div>
+
+                {/* Subjects Header and Count */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-bold text-ink block text-sm">
+                      অন্তর্ভুক্ত আবশ্যিক ও ঐচ্ছিক বিষয়সমূহ (মোট {(currentGrp.subjectsBn || []).length}টি):
+                    </span>
+                    <span className="text-[11px] text-muted">
+                      ওয়েবসাইটে এই কার্ডগুলো সরাসরি প্রদর্শিত হচ্ছে
+                    </span>
+                  </div>
+
+                  {/* Subject List Grid with Delete Buttons */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {(currentGrp.subjectsBn || []).map((subj, idx) => (
+                      <div 
+                        key={idx} 
+                        className="flex items-center justify-between gap-2.5 bg-bg p-3 rounded-xl border border-line hover:border-primary/40 transition group"
+                      >
+                        <div className="flex items-center gap-2 truncate">
+                          <CheckCircle className="w-4 h-4 text-primary shrink-0" />
+                          <span className="font-semibold text-ink truncate text-xs">{subj}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteSubjectFromGroup(currentGrp.id, idx)}
+                          className="p-1 rounded-lg text-muted hover:text-danger hover:bg-danger/10 transition cursor-pointer shrink-0"
+                          title={`"${subj}" তালিকা থেকে মুছে ফেলুন`}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Add New Subject Form for this Group */}
+                <form 
+                  onSubmit={handleAddSubjectToGroup} 
+                  className="p-4 bg-soft/50 rounded-2xl border border-soft-border space-y-3"
+                >
+                  <span className="font-bold text-deep block text-xs">
+                    ➕ {currentGrp.titleBn}-এ নতুন বিষয় যোগ করুন:
+                  </span>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <input
+                      type="text"
+                      value={newGroupSubjectInput}
+                      onChange={(e) => {
+                        setNewGroupSubjectInput(e.target.value);
+                        setSubjectError('');
+                      }}
+                      placeholder="যেমন: কৃষিশিক্ষা (Agriculture) বা চারু ও কারুকলা বা উচ্চতর পদার্থবিজ্ঞান"
+                      className="flex-1 rounded-xl border border-line p-2.5 bg-white text-ink text-xs focus:ring-2 focus:ring-primary focus:outline-none"
+                    />
+                    <button
+                      type="submit"
+                      disabled={!newGroupSubjectInput.trim()}
+                      className="btn-accent px-5 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-xs shrink-0"
+                    >
+                      <Plus className="w-4 h-4 text-ink" />
+                      <span>বিষয় যোগ করুন</span>
+                    </button>
+                  </div>
+                  {subjectError && (
+                    <p className="text-danger text-[11px] font-medium">{subjectError}</p>
+                  )}
+                </form>
+
+                {/* Save Changes Button */}
+                <div className="pt-4 border-t border-line flex justify-end">
+                  <button
+                    type="button"
+                    onClick={handleSaveCurriculum}
+                    className="btn-primary py-2.5 px-6 rounded-xl font-bold text-xs transition shadow-xs flex items-center gap-2 cursor-pointer"
+                  >
+                    <Save className="w-4 h-4 text-white" />
+                    <span>পাঠ্যক্রমের পরিবর্তনসমূহ সংরক্ষণ করুন</span>
+                  </button>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
+      {/* 3. DRESS CODE & UNIFORM CMS */}
       {activeTab === 'uniform' && (
         <form onSubmit={handleUniformSave} className="bg-white p-6 sm:p-8 rounded-2xl border border-line shadow-2xs space-y-6 font-bangla text-xs">
           <div className="flex items-center justify-between pb-3 border-b">

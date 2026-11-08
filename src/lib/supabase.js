@@ -454,6 +454,15 @@ export async function fetchAllCloudData() {
       }
     } catch {}
 
+    // Academic Groups & Subjects (Science, Business, Humanities)
+    let academicGroups = null;
+    try {
+      const groupsDoc = await supabase.from('school_info').select('*').eq('id', 'academic_groups').single();
+      if (groupsDoc.data?.data) {
+        academicGroups = groupsDoc.data.data;
+      }
+    } catch {}
+
     return {
       notices: noticesRes.data?.map(mappers.notice.fromDb) || null,
       teachers: teachersRes.data?.map(mappers.teacher.fromDb) || null,
@@ -466,6 +475,7 @@ export async function fetchAllCloudData() {
       schoolInfo: schoolInfoRes.data?.data || null,
       uniformInfo,
       academicConfig,
+      academicGroups,
       contactMessages,
       videos,
       systemUsers,

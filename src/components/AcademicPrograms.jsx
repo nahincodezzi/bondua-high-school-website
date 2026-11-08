@@ -14,65 +14,26 @@ import {
 } from 'lucide-react';
 
 export default function AcademicPrograms() {
-  const { lang, setActiveTab } = useSchool();
+  const { lang, setActiveTab, academicGroups = [] } = useSchool();
   const [activeGroupTab, setActiveGroupTab] = useState('science');
 
-  const groups = [
-    {
-      id: 'science',
-      titleBn: 'বিজ্ঞান বিভাগ (Science)',
-      titleEn: 'Science Discipline',
-      icon: FlaskConical,
-      color: 'emerald',
-      subjectsBn: [
-        'পদার্থবিজ্ঞান (Physics)',
-        'রসায়ন (Chemistry)',
-        'জীববিজ্ঞান (Biology)',
-        'উচ্চতর গণিত (Higher Mathematics)',
-        'বাংলা ও ইংরেজি (Bangla & English)',
-        'তথ্য ও যোগাযোগ প্রযুক্তি (ICT)',
-        'বাংলাদেশ ও বিশ্বপরিচয় (BGS)',
-        'ধর্ম ও নৈতিক শিক্ষা (Religion)'
-      ],
-      descriptionBn: 'বিজ্ঞান বিভাগের শিক্ষার্থীদের জন্য রয়েছে অত্যাধুনিক ল্যাবরেটরি সুবিধা ও নিয়মিত ব্যবহারিক ক্লাসের সুব্যবস্থা।'
-    },
-    {
-      id: 'business',
-      titleBn: 'ব্যবসায় শিক্ষা (Business Studies)',
-      titleEn: 'Business Studies Discipline',
-      icon: Briefcase,
-      color: 'amber',
-      subjectsBn: [
-        'হিসাববিজ্ঞান (Accounting)',
-        'ব্যবসায় উদ্যোগ (Entrepreneurship)',
-        'ফিন্যান্স ও ব্যাংকিং (Finance & Banking)',
-        'সাধারণ গণিত (General Mathematics)',
-        'বাংলা ও ইংরেজি (Bangla & English)',
-        'তথ্য ও যোগাযোগ প্রযুক্তি (ICT)',
-        'সাধারণ বিজ্ঞান (General Science)',
-        'ধর্ম ও নৈতিক শিক্ষা (Religion)'
-      ],
-      descriptionBn: 'ভবিষ্যতের দক্ষ হিসাববিদ, ব্যাংকার ও সফল উদ্যোক্তা তৈরির লক্ষ্যে বাস্তবমুখী ব্যবসায় শিক্ষা পাঠদান।'
-    },
-    {
-      id: 'humanities',
-      titleBn: 'মানবিক বিভাগ (Humanities)',
-      titleEn: 'Humanities Discipline',
-      icon: Palette,
-      color: 'blue',
-      subjectsBn: [
-        'ইতিহাস ও সামাজিক বিজ্ঞান (History)',
-        'ভূগোল ও পরিবেশ (Geography)',
-        'পৌরনীতি ও নাগরিকতা (Civics)',
-        'অর্থনীতি / কৃষি শিক্ষা (Economics / Agriculture)',
-        'বাংলা ও ইংরেজি (Bangla & English)',
-        'তথ্য ও যোগাযোগ প্রযুক্তি (ICT)',
-        'সাধারণ গণিত ও বিজ্ঞান (Math & Science)',
-        'ধর্ম ও নৈতিক শিক্ষা (Religion)'
-      ],
-      descriptionBn: 'ইতিহাস, সংস্কৃতি, সামাজিক বিজ্ঞান ও মানবিক মূল্যবোধ বিকাশের মাধ্যমে দায়িত্বশীল নাগরিক গঠন।'
+  const groups = academicGroups.map(grp => {
+    let icon = FlaskConical;
+    let color = 'emerald';
+    if (grp.id === 'business' || grp.titleBn?.includes('ব্যবসায়')) {
+      icon = Briefcase;
+      color = 'amber';
+    } else if (grp.id === 'humanities' || grp.titleBn?.includes('মানবিক')) {
+      icon = Palette;
+      color = 'blue';
     }
-  ];
+    return {
+      ...grp,
+      icon,
+      color,
+      subjectsBn: grp.subjectsBn || []
+    };
+  });
 
   const facilities = [
     {

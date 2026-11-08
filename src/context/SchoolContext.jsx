@@ -24,6 +24,7 @@ import {
   initialFees,
   initialRoutines,
   initialUsers,
+  initialAcademicGroups,
   SYSTEM_MODULES,
   ROLE_DEFINITIONS
 } from '../data/initialData';
@@ -277,6 +278,17 @@ export function SchoolProvider({ children }) {
     };
   });
 
+  const [academicGroups, setAcademicGroups] = useState(() => {
+    try {
+      const saved = localStorage.getItem('bdhs_academic_groups');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return initialAcademicGroups;
+  });
+
   const [heroSlides, setHeroSlides] = useState(() => {
     const saved = localStorage.getItem('bdhs_slides');
     return saved ? JSON.parse(saved) : initialHeroSlides;
@@ -469,6 +481,10 @@ export function SchoolProvider({ children }) {
         if (cloud.academicConfig) {
           setAcademicConfig(cloud.academicConfig);
           localStorage.setItem('bdhs_academic_config', JSON.stringify(cloud.academicConfig));
+        }
+        if (cloud.academicGroups && Array.isArray(cloud.academicGroups) && cloud.academicGroups.length > 0) {
+          setAcademicGroups(cloud.academicGroups);
+          localStorage.setItem('bdhs_academic_groups', JSON.stringify(cloud.academicGroups));
         }
         if (cloud.contactMessages && cloud.contactMessages.length > 0) setContactMessages(cloud.contactMessages);
         if (cloud.videos && cloud.videos.length > 0) setVideos(cloud.videos);
@@ -1380,6 +1396,48 @@ export function SchoolProvider({ children }) {
     }
   };
 
+  const updateAcademicGroups = (newGroups) => {
+    setAcademicGroups(newGroups);
+    localStorage.setItem('bdhs_academic_groups', JSON.stringify(newGroups));
+    if (supabase) {
+      supabase.from('school_info').upsert({ id: 'academic_groups', data: newGroups }).then(({ error }) => {
+        if (error) console.warn('Supabase upsert academic_groups warning:', error.message);
+      });
+    }
+  };
+
+  const addSubjectToGroup = (groupId, subjectName) => {
+    if (!subjectName || !subjectName.trim()) return;
+    const cleanName = subjectName.trim();
+    setAcademicGroups(prev => {
+      const next = prev.map(g => {
+        if (g.id === groupId) {
+          const existing = g.subjectsBn || [];
+          if (existing.includes(cleanName)) return g;
+          return { ...g, subjectsBn: [...existing, cleanName] };
+        }
+        return g;
+      });
+      updateAcademicGroups(next);
+      return next;
+    });
+  };
+
+  const removeSubjectFromGroup = (groupId, subjectIndex) => {
+    setAcademicGroups(prev => {
+      const next = prev.map(g => {
+        if (g.id === groupId) {
+          const existing = g.subjectsBn || [];
+          const filtered = existing.filter((_, idx) => idx !== subjectIndex);
+          return { ...g, subjectsBn: filtered };
+        }
+        return g;
+      });
+      updateAcademicGroups(next);
+      return next;
+    });
+  };
+
   const addExam = (name, labelBn = '') => {
     if (!name || !name.trim()) return null;
     const cleanName = name.trim();
@@ -1657,6 +1715,11 @@ export function SchoolProvider({ children }) {
         uniformInfo,
         setUniformInfo,
         updateUniformSettings,
+        academicGroups,
+        setAcademicGroups,
+        updateAcademicGroups,
+        addSubjectToGroup,
+        removeSubjectFromGroup,
         heroSlides,
         setHeroSlides,
         updateHeroSlides,
