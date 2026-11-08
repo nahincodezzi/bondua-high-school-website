@@ -530,23 +530,9 @@ export function SchoolProvider({ children }) {
     if (!isSupabaseConfigured || !supabase) return;
 
     let isMounted = true;
-    async function initCloudSync() {
-      try {
-        // 1. Seed any empty tables with initial baseline data
-        await seedCloudIfEmpty({
-          notices: initialNotices,
-          teachers: initialTeachers,
-          students: initialStudents,
-          admissions: initialAdmissions,
-          results: initialResults,
-          fees: initialFees,
-          heroSlides: initialHeroSlides,
-          gallery: initialGallery,
-          schoolInfo: initialSchoolInfo,
-          systemUsers: initialUsers,
-        });
 
-        // 2. Fetch live data from Supabase
+    async function syncFromCloud() {
+      try {
         const cloud = await fetchAllCloudData();
         if (!isMounted || !cloud) return;
 
@@ -642,8 +628,53 @@ export function SchoolProvider({ children }) {
       }
     }
 
+    async function initCloudSync() {
+      try {
+        // 1. Seed any empty tables with initial baseline data
+        await seedCloudIfEmpty({
+          notices: initialNotices,
+          teachers: initialTeachers,
+          students: initialStudents,
+          admissions: initialAdmissions,
+          results: initialResults,
+          fees: initialFees,
+          heroSlides: initialHeroSlides,
+          gallery: initialGallery,
+          schoolInfo: initialSchoolInfo,
+          systemUsers: initialUsers,
+        });
+
+        // 2. Fetch live data from Supabase
+        await syncFromCloud();
+      } catch (err) {
+        console.warn('Supabase cloud init error:', err);
+      }
+    }
+
     initCloudSync();
-    return () => { isMounted = false; };
+
+    // Auto-sync whenever tab becomes visible again or window regains focus across devices
+    const handleVisibility = () => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'visible' && isMounted) {
+        syncFromCloud();
+      }
+    };
+    window.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('focus', handleVisibility);
+
+    // Light periodic background sync every 60s
+    const pollInterval = setInterval(() => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'visible' && isMounted) {
+        syncFromCloud();
+      }
+    }, 60000);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('focus', handleVisibility);
+      clearInterval(pollInterval);
+    };
   }, []);
 
   useEffect(() => {
