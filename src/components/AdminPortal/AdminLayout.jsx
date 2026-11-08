@@ -42,6 +42,12 @@ export default function AdminLayout() {
     return 'overview';
   });
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [openStudentAdd, setOpenStudentAdd] = useState(false);
+
+  const handleDashboardNavigate = (targetModule, options = {}) => {
+    setOpenStudentAdd(Boolean(options?.openAdd));
+    setActiveModule(targetModule);
+  };
 
   const menuItems = [
     { id: 'overview', labelBn: 'ড্যাশবোর্ড ওভারভিউ', labelEn: 'Dashboard Overview', icon: LayoutDashboard },
@@ -315,7 +321,7 @@ export default function AdminLayout() {
             </div>
 
             <ErrorBoundary key={activeModule} onReset={() => setActiveModule('overview')}>
-              {activeModule === 'overview' && <DashboardOverview onNavigate={setActiveModule} />}
+              {activeModule === 'overview' && <DashboardOverview onNavigate={handleDashboardNavigate} />}
               {activeModule === 'users' && (
                 authUser?.role === 'superadmin' ? (
                   <UserManager />
@@ -339,7 +345,7 @@ export default function AdminLayout() {
               )}
               {activeModule === 'cms' && <CmsContentManager />}
               {activeModule === 'teachers' && <TeacherManager />}
-              {activeModule === 'students' && <StudentManager />}
+              {activeModule === 'students' && <StudentManager initialOpenAdd={openStudentAdd} />}
               {activeModule === 'admissions' && <AdmissionManager />}
               {activeModule === 'results' && <ResultManager />}
               {activeModule === 'notices' && <NoticeManager />}

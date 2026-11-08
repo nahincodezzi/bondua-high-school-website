@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import SchoolLogo from '../common/SchoolLogo';
 import { useSchool } from '../../context/useSchool';
+import { getSignatories } from '../../utils/signatories';
 import { 
   Search, 
   Plus, 
@@ -12,16 +13,23 @@ import {
   AlertCircle
 } from 'lucide-react';
 
-export default function StudentManager() {
-  const { students, addStudent, deleteStudent, schoolInfo } = useSchool();
+export default function StudentManager({ initialOpenAdd = false }) {
+  const { students, addStudent, deleteStudent, schoolInfo, teachers, systemUsers } = useSchool();
+  const signatories = getSignatories(schoolInfo, teachers, systemUsers);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedClass, setSelectedClass] = useState('all');
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(initialOpenAdd);
   const [activeIdCardStudent, setActiveIdCardStudent] = useState(null);
   const [formError, setFormError] = useState('');
 
+  const getNextRollForClass = (cls) => {
+    const sameClass = students.filter(s => String(s.class) === String(cls));
+    const max = sameClass.reduce((m, s) => Math.max(m, Number(s.roll) || 0), 0);
+    return max > 0 ? String(max + 1) : '1';
+  };
+
   const [newStudent, setNewStudent] = useState({
-    roll: '',
+    roll: '1',
     nameBn: '',
     nameEn: '',
     class: '10',
@@ -33,6 +41,26 @@ export default function StudentManager() {
     guardianPhone: '',
     address: 'বন্দুয়া দৌলতপুর, ফুলগাজী'
   });
+
+  const handleOpenAddModal = () => {
+    const nextRoll = getNextRollForClass(selectedClass === 'all' ? '10' : selectedClass);
+    const targetCls = selectedClass === 'all' ? '10' : selectedClass;
+    setNewStudent({
+      roll: nextRoll,
+      nameBn: '',
+      nameEn: '',
+      class: targetCls,
+      section: 'A',
+      group: ['9', '10'].includes(targetCls) ? 'Science' : 'General',
+      gender: 'Male',
+      dob: '2010-01-01',
+      guardianName: '',
+      guardianPhone: '',
+      address: 'বন্দুয়া দৌলতপুর, ফুলগাজী'
+    });
+    setFormError('');
+    setShowAddModal(true);
+  };
 
   const filteredStudents = students.filter(s => {
     const matchesClass = selectedClass === 'all' || s.class === selectedClass;
@@ -108,14 +136,28 @@ export default function StudentManager() {
 
   const handlePrintIdCard = () => {
     document.body.classList.add('printing-modal');
+    document.body.classList.add('printing-idcard');
     const cleanup = () => {
       document.body.classList.remove('printing-modal');
+      document.body.classList.remove('printing-idcard');
       window.removeEventListener('afterprint', cleanup);
     };
     window.addEventListener('afterprint', cleanup);
     window.print();
     setTimeout(cleanup, 1200);
   };
+
+  useEffect(() => {
+    if (!activeIdCardStudent) return;
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        e.preventDefault();
+        handlePrintIdCard();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeIdCardStudent]);
 
   return (
     <div className="space-y-6">
@@ -131,8 +173,8 @@ export default function StudentManager() {
         </div>
 
         <button
-          onClick={() => setShowAddModal(true)}
-          className="bg-primary hover:bg-primary text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center gap-2 transition shadow font-bangla"
+          onClick={handleOpenAddModal}
+          className="bg-primary hover:bg-primary text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center gap-2 transition shadow font-bangla cursor-pointer"
         >
           <Plus className="w-4 h-4 text-accent" />
           <span>নতুন শিক্ষার্থী ভর্তি করুন</span>
@@ -319,21 +361,15 @@ export default function StudentManager() {
             <form onSubmit={handleAddSubmit} className="space-y-4 text-xs font-bangla">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-ink mb-1">রোল নম্বর *</label>
-                  <input
-                    type="number"
-                    required
-                    value={newStudent.roll}
-                    onChange={(e) => setNewStudent({ ...newStudent, roll: e.target.value })}
-                    placeholder="107"
-                    className="w-full rounded-lg border border-line p-2 font-mono"
-                  />
-                </div>
-                <div>
                   <label className="block font-bold text-ink mb-1">শ্রেণি *</label>
                   <select
                     value={newStudent.class}
-                    onChange={(e) => setNewStudent({ ...newStudent, class: e.target.value })}
+                    onChange={(e) => {
+                      const cls = e.target.value;
+                      const nextR = getNextRollForClass(cls);
+                      const grp = ['9', '10'].includes(cls) ? (newStudent.group === 'General' ? 'Science' : newStudent.group) : 'General';
+                      setNewStudent({ ...newStudent, class: cls, roll: nextR, group: grp });
+                    }}
                     className="w-full rounded-lg border border-line p-2 bg-white"
                   >
                     <option value="10">১০ম শ্রেণি</option>
@@ -342,6 +378,18 @@ export default function StudentManager() {
                     <option value="7">৭ম শ্রেণি</option>
                     <option value="6">৬ষ্ঠ শ্রেণি</option>
                   </select>
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1">রোল নম্বর *</label>
+                  <input
+                    type="number"
+                    required
+                    value={newStudent.roll}
+                    onChange={(e) => setNewStudent({ ...newStudent, roll: e.target.value })}
+                    placeholder="রোল নম্বর"
+                    className="w-full rounded-lg border border-line p-2 font-mono"
+                  />
+                  <span className="text-[10px] text-muted block mt-0.5">এই শ্রেণির পরবর্তী সম্ভাব্য রোল: {getNextRollForClass(newStudent.class)}</span>
                 </div>
               </div>
 
@@ -353,7 +401,7 @@ export default function StudentManager() {
                     required
                     value={newStudent.nameBn}
                     onChange={(e) => setNewStudent({ ...newStudent, nameBn: e.target.value })}
-                    placeholder="নাম লিখুন"
+                    placeholder="নাম লিখুন (শুধুমাত্র বাংলা)"
                     className="w-full rounded-lg border border-line p-2"
                   />
                 </div>
@@ -370,17 +418,77 @@ export default function StudentManager() {
                 </div>
               </div>
 
+              {/* শাখা, বিভাগ ও লিঙ্গ (Senior QA M5 fix) */}
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-bold text-ink mb-1">শাখা *</label>
+                  <select
+                    value={newStudent.section}
+                    onChange={(e) => setNewStudent({ ...newStudent, section: e.target.value })}
+                    className="w-full rounded-lg border border-line p-2 bg-white font-mono"
+                  >
+                    <option value="A">A শাখা</option>
+                    <option value="B">B শাখা</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1">বিভাগ (গ্রুপ) *</label>
+                  {['9', '10'].includes(newStudent.class) ? (
+                    <select
+                      value={newStudent.group}
+                      onChange={(e) => setNewStudent({ ...newStudent, group: e.target.value })}
+                      className="w-full rounded-lg border border-line p-2 bg-white"
+                    >
+                      <option value="Science">বিজ্ঞান (Science)</option>
+                      <option value="Business Studies">ব্যবসায় শিক্ষা (Commerce)</option>
+                      <option value="Humanities">মানবিক (Humanities)</option>
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      disabled
+                      value="সাধারণ (General)"
+                      className="w-full rounded-lg border border-line p-2 bg-slate-100 text-muted"
+                    />
+                  )}
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1">লিঙ্গ *</label>
+                  <select
+                    value={newStudent.gender}
+                    onChange={(e) => setNewStudent({ ...newStudent, gender: e.target.value })}
+                    className="w-full rounded-lg border border-line p-2 bg-white"
+                  >
+                    <option value="Male">ছাত্র (Male)</option>
+                    <option value="Female">ছাত্রী (Female)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* জন্মতারিখ ও অভিভাবকের তথ্য (Senior QA M5 fix) */}
               <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-ink mb-1">জন্মতারিখ</label>
+                  <input
+                    type="date"
+                    value={newStudent.dob}
+                    onChange={(e) => setNewStudent({ ...newStudent, dob: e.target.value })}
+                    className="w-full rounded-lg border border-line p-2 font-mono"
+                  />
+                </div>
                 <div>
                   <label className="block font-bold text-ink mb-1">অভিভাবকের নাম</label>
                   <input
                     type="text"
                     value={newStudent.guardianName}
                     onChange={(e) => setNewStudent({ ...newStudent, guardianName: e.target.value })}
-                    placeholder="অভিভাবকের নাম"
+                    placeholder="পিতা / মাতার নাম"
                     className="w-full rounded-lg border border-line p-2"
                   />
                 </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-ink mb-1">অভিভাবকের মোবাইল নম্বর *</label>
                   <input
@@ -390,6 +498,16 @@ export default function StudentManager() {
                     onChange={(e) => setNewStudent({ ...newStudent, guardianPhone: e.target.value })}
                     placeholder="01XXXXXXXXX"
                     className="w-full rounded-lg border border-line p-2 font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1">ঠিকানা / গ্রাম</label>
+                  <input
+                    type="text"
+                    value={newStudent.address}
+                    onChange={(e) => setNewStudent({ ...newStudent, address: e.target.value })}
+                    placeholder="গ্রাম ও পোস্ট অফিস"
+                    className="w-full rounded-lg border border-line p-2"
                   />
                 </div>
               </div>
@@ -518,14 +636,16 @@ export default function StudentManager() {
               <div className="pt-2 flex justify-between items-end border-t border-primary text-[10px]">
                 <span className="text-soft font-mono">Session: 2026</span>
                 <div className="text-center">
-                  <span className="font-serif italic text-accent font-bold text-xs block">Bahar U.</span>
-                  <span className="text-white/90 font-medium">ভারপ্রাপ্ত প্রধান শিক্ষক</span>
+                  <span className="font-serif italic text-accent font-bold text-xs block">
+                    {signatories.headmaster.signature}
+                  </span>
+                  <span className="text-white/90 font-medium">{signatories.headmaster.designationBn}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>,
-        document.getElementById('root') || document.body
+        document.body
       )}
     </div>
   );

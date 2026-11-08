@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import SchoolLogo from './common/SchoolLogo';
 import { useSchool } from '../context/useSchool';
 import { toEnglishNumerals, toBanglaNumerals } from '../utils/dateFormatter';
@@ -28,6 +29,8 @@ export default function ResultSearch() {
   const handleSearch = (e) => {
     e?.preventDefault();
     setValidationError('');
+    setSearchAttempted(false);
+    setSearchedResult(null);
 
     const rawRoll = rollInput.trim();
     if (!rawRoll) {
@@ -85,6 +88,18 @@ export default function ResultSearch() {
     setSearchAttempted(false);
     setValidationError('');
   };
+
+  useEffect(() => {
+    if (!searchedResult) return;
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        e.preventDefault();
+        handlePrint();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [searchedResult]);
 
   return (
     <section className="py-12 sm:py-16 text-ink relative z-10 font-sans min-h-[700px] print:py-0 print:min-h-0 print:m-0">
@@ -319,7 +334,7 @@ export default function ResultSearch() {
                 <div>
                   <span className="text-muted block print:text-[6.5pt]">{lang === 'bn' ? 'জিপিএ (GPA):' : 'GPA Score:'}</span>
                   <span className="font-mono font-extrabold text-base print:text-[8.5pt] text-primary">
-                    {lang === 'bn' ? toBanglaNumerals(searchedResult.gpa ?? '0.00') : (searchedResult.gpa ?? '0.00')} ({searchedResult.letterGrade || searchedResult.grade || calculateOverallGrade(searchedResult.gpa, searchedResult.resultStatus === 'FAILED')})
+                    {lang === 'bn' ? toBanglaNumerals(searchedResult.gpa ?? '0.00') : (searchedResult.gpa ?? '0.00')} ({calculateOverallGrade(searchedResult.gpa, searchedResult.resultStatus === 'FAILED') || searchedResult.letterGrade || searchedResult.grade})
                   </span>
                 </div>
               </div>
@@ -374,7 +389,7 @@ export default function ResultSearch() {
                         {lang === 'bn' ? 'সর্বমোট গ্রেড পয়েন্ট গড় (GPA):' : 'Grade Point Average (GPA):'}
                       </td>
                       <td className="py-3.5 px-4 print:py-0.5 print:px-1.5 text-center text-deep font-extrabold text-base print:text-[8.5pt]">
-                        {searchedResult.letterGrade || searchedResult.grade || calculateOverallGrade(searchedResult.gpa, searchedResult.resultStatus === 'FAILED')}
+                        {calculateOverallGrade(searchedResult.gpa, searchedResult.resultStatus === 'FAILED') || searchedResult.letterGrade || searchedResult.grade}
                       </td>
                       <td className="py-3.5 px-4 print:py-0.5 print:px-1.5 text-center font-mono text-deep font-extrabold text-base print:text-[8.5pt]">
                         {lang === 'bn' ? toBanglaNumerals(searchedResult.gpa ?? '0.00') : (searchedResult.gpa ?? '0.00')}
@@ -446,6 +461,163 @@ export default function ResultSearch() {
             </p>
           </div>
         ) : null}
+
+        {/* Dedicated Single-Page Printable Marksheet Root (Portaled directly to document.body) */}
+        {typeof document !== 'undefined' && searchedResult && createPortal(
+          <div id="printable-marksheet-root" className="bg-white text-ink font-bangla p-3 space-y-2">
+            {/* Unofficial Copy Watermark Banner */}
+            <div className="bg-amber-50 border border-amber-300 text-amber-800 px-2 py-0.5 rounded text-[6.5pt] font-bold text-center font-bangla leading-tight">
+              ⚠️ {lang === 'bn' 
+                ? 'অনানুষ্ঠানিক ডিজিটাল কপি — শুধুমাত্র অবগতির জন্য প্রযোজ্য (অফিসিয়াল স্বাক্ষরিত কপির জন্য বিদ্যালয় কার্যালয়ে যোগাযোগ করুন)' 
+                : 'UNOFFICIAL DIGITAL COPY — FOR INFORMATION ONLY (Contact school office for signed original certificate)'}
+            </div>
+
+            {/* Header Letterhead */}
+            <div className="text-center border-b border-slate-900 pb-1">
+              <div className="flex justify-center mb-0.5">
+                <div className="w-8 h-8 rounded-full bg-white p-0.5 ring-1 ring-emerald-600">
+                  <SchoolLogo logo={schoolInfo.logo} />
+                </div>
+              </div>
+              <h3 className="text-[12pt] font-extrabold font-bangla text-slate-900 leading-tight">
+                {schoolInfo.nameBn}
+              </h3>
+              <p className="text-[7.5pt] text-slate-700 font-semibold font-bangla leading-tight mt-0.5">
+                {schoolInfo.addressBn} • কুমিল্লা শিক্ষা বোর্ড
+              </p>
+              <p className="text-[6.5pt] text-slate-500 font-mono leading-tight mt-0.5">
+                EIIN: {schoolInfo.eiin} • MPO Code: {schoolInfo.mpoCode} • স্থাপিত: ১৯৯০
+              </p>
+              <div className="mt-1 inline-block bg-slate-900 text-white px-2 py-0.5 rounded text-[7pt] font-bold uppercase tracking-wider font-bangla">
+                {lang === 'bn' ? 'একাডেমিক ট্রান্সক্রিপ্ট / গ্রেড শিট' : 'ACADEMIC TRANSCRIPT / GRADE REPORT'}
+              </div>
+              <p className="text-[7.5pt] text-slate-600 mt-0.5 font-bold">{searchedResult.exam}</p>
+            </div>
+
+            {/* Student Metadata Grid */}
+            <div className="grid grid-cols-4 gap-1 bg-slate-50 p-1.5 rounded border border-slate-200 text-[7.5pt]">
+              <div>
+                <span className="text-slate-500 block text-[6.5pt]">শিক্ষার্থীর নাম:</span>
+                <span className="font-bold text-slate-900 block truncate">{searchedResult.studentNameBn}</span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[6.5pt]">রোল নম্বর:</span>
+                <span className="font-mono font-bold text-slate-900">{toBanglaNumerals(searchedResult.roll)}</span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[6.5pt]">শ্রেণি ও বিভাগ:</span>
+                <span className="font-bold text-slate-900">শ্রেণি: {toBanglaNumerals(searchedResult.class)}, শাখা: {searchedResult.section}</span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[6.5pt]">বিভাগ (গ্রুপ):</span>
+                <span className="font-bold text-emerald-700">{searchedResult.group}</span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[6.5pt]">আইডি নম্বর:</span>
+                <span className="font-mono text-slate-800">{searchedResult.studentId}</span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[6.5pt]">শিক্ষাবর্ষ:</span>
+                <span className="font-mono text-slate-800">{toBanglaNumerals(searchedResult.year)}</span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[6.5pt]">ফলাফল:</span>
+                <span className="font-bold text-emerald-700">
+                  {searchedResult.resultStatus === 'PASSED' ? 'উত্তীর্ণ' : 'অনূত্তীর্ণ'}
+                </span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[6.5pt]">জিপিএ (GPA):</span>
+                <span className="font-mono font-extrabold text-emerald-700">
+                  {toBanglaNumerals(searchedResult.gpa ?? '0.00')} ({calculateOverallGrade(searchedResult.gpa, searchedResult.resultStatus === 'FAILED') || searchedResult.letterGrade || searchedResult.grade})
+                </span>
+              </div>
+            </div>
+
+            {/* Subject Marks Table */}
+            <table className="w-full text-left text-[7.5pt] border border-slate-300">
+              <thead className="bg-slate-100 text-slate-900 border-b border-slate-300 font-bold uppercase text-[7pt]">
+                <tr>
+                  <th className="py-1 px-1.5 text-center font-mono w-12">Code</th>
+                  <th className="py-1 px-2">বিষয়ের নাম</th>
+                  <th className="py-1 px-1.5 text-center w-14">পূর্ণমান</th>
+                  <th className="py-1 px-2 text-center font-mono w-16">প্রাপ্ত নম্বর</th>
+                  <th className="py-1 px-2 text-center w-16">লেটার গ্রেড</th>
+                  <th className="py-1 px-2 text-center font-mono w-16">গ্রেড পয়েন্ট</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                {searchedResult.subjects?.map((sub, i) => {
+                  const isICT = sub.code === '154' || sub.name?.toLowerCase().includes('ict');
+                  const fullMark = isICT ? 50 : 100;
+                  const subPoint = Number(sub.point) || 0;
+                  return (
+                    <tr key={i}>
+                      <td className="py-0.5 px-1.5 text-center font-mono text-slate-500">{sub.code || '-'}</td>
+                      <td className="py-0.5 px-2 font-medium text-slate-900">{sub.name}</td>
+                      <td className="py-0.5 px-1.5 text-center font-mono text-slate-600">{toBanglaNumerals(fullMark)}</td>
+                      <td className="py-0.5 px-2 text-center font-mono font-bold text-slate-900">{toBanglaNumerals(sub.marks)}</td>
+                      <td className="py-0.5 px-2 text-center font-bold text-emerald-700">{sub.grade || 'A'}</td>
+                      <td className="py-0.5 px-2 text-center font-mono font-semibold text-slate-900">{toBanglaNumerals(subPoint.toFixed(2))}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+              <tfoot className="bg-slate-50 border-t-2 border-emerald-600 font-bold text-[7.5pt]">
+                <tr>
+                  <td colSpan="4" className="py-1 px-2 text-right text-slate-900">
+                    সর্বমোট গ্রেড পয়েন্ট গড় (GPA):
+                  </td>
+                  <td className="py-1 px-2 text-center text-slate-900 font-extrabold text-[8pt]">
+                    {calculateOverallGrade(searchedResult.gpa, searchedResult.resultStatus === 'FAILED') || searchedResult.letterGrade || searchedResult.grade}
+                  </td>
+                  <td className="py-1 px-2 text-center font-mono text-slate-900 font-extrabold text-[8pt]">
+                    {toBanglaNumerals(searchedResult.gpa ?? '0.00')}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+
+            {/* Bangladesh Secondary Grading Scale Reference */}
+            <div className="bg-slate-50 p-1 rounded border border-slate-200 text-[6.5pt] text-slate-600">
+              <span className="font-bold text-slate-800 block mb-0.5">Grading Scale (Comilla Education Board):</span>
+              <div className="flex flex-wrap gap-x-2 gap-y-0.5">
+                <span>80-100: <strong className="text-emerald-700">A+ (5.00)</strong></span>
+                <span>70-79: <strong className="text-emerald-700">A (4.00)</strong></span>
+                <span>60-69: <strong className="text-emerald-700">A- (3.50)</strong></span>
+                <span>50-59: <strong className="text-emerald-700">B (3.00)</strong></span>
+                <span>40-49: <strong className="text-emerald-700">C (2.00)</strong></span>
+                <span>33-39: <strong className="text-emerald-700">D (1.00)</strong></span>
+                <span>0-32: <strong className="text-red-600">F (0.00) Fail</strong></span>
+              </div>
+            </div>
+
+            {/* Signatures & Seal */}
+            <div className="pt-2 flex justify-between items-end text-[7pt]">
+              <div className="text-center space-y-0.5 min-w-[100px]">
+                <div className="w-20 border-b border-slate-400 mx-auto pb-0.5">
+                  <span className="font-serif italic text-emerald-800 font-bold text-[9pt]">{signatories.examController.signature}</span>
+                </div>
+                <p className="font-bold text-slate-900">{signatories.examController.nameBn}</p>
+                <p className="text-slate-500 text-[6pt]">{signatories.examController.designationBn}</p>
+              </div>
+
+              <div className="w-10 h-10 rounded-full border-2 border-dashed border-emerald-600 text-emerald-700 flex flex-col items-center justify-center p-0.5 text-[5pt] text-center font-bold">
+                <span>BANDUA</span>
+                <span>SEAL</span>
+              </div>
+
+              <div className="text-center space-y-0.5 min-w-[100px]">
+                <div className="w-20 border-b border-slate-400 mx-auto pb-0.5">
+                  <span className="font-serif italic text-emerald-800 font-bold text-[9pt]">{signatories.headmaster.signature}</span>
+                </div>
+                <p className="font-bold text-slate-900">{signatories.headmaster.nameBn}</p>
+                <p className="text-slate-500 text-[6pt]">{signatories.headmaster.designationBn}</p>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
       </div>
     </section>
   );

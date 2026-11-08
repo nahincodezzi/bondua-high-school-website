@@ -43,9 +43,18 @@ function MainApp() {
 
   return (
     <div className="min-h-screen flex flex-col bg-bg text-ink font-sans relative selection:bg-accent selection:text-ink">
-      {/* Skip to Main Content Link for Keyboard & Screen Reader Accessibility (L4) */}
+      {/* Skip to Main Content Link for Keyboard & Screen Reader Accessibility (L4 / M1) */}
       <a 
         href="#main-content" 
+        onClick={(e) => {
+          e.preventDefault();
+          const el = document.getElementById('main-content');
+          if (el) {
+            el.tabIndex = -1;
+            el.focus();
+            el.scrollIntoView({ behavior: 'smooth' });
+          }
+        }}
         className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[99999] focus:px-4 focus:py-2 focus:bg-deep focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-bold focus:font-bangla focus:outline-2 focus:outline-accent"
       >
         মূল কনটেন্টে চলে যান (Skip to content)

@@ -22,6 +22,7 @@ export default function CmsContentManager() {
   const { 
     uniformInfo, 
     setUniformInfo, 
+    updateUniformSettings,
     heroSlides, 
     setHeroSlides, 
     updateHeroSlides,
@@ -69,7 +70,11 @@ export default function CmsContentManager() {
 
   const handleUniformSave = (e) => {
     e.preventDefault();
-    setUniformInfo(uniformForm);
+    if (updateUniformSettings) {
+      updateUniformSettings(uniformForm);
+    } else {
+      setUniformInfo(uniformForm);
+    }
     setSavedMessage(true);
     setTimeout(() => setSavedMessage(false), 3000);
   };
@@ -293,6 +298,9 @@ export default function CmsContentManager() {
       if (vidId) {
         finalEmbedUrl = `https://www.youtube.com/embed/${vidId}`;
         thumbnail = `https://img.youtube.com/vi/${vidId}/hqdefault.jpg`;
+      } else {
+        alert('ত্রুটি: অনুগ্রহ করে একটি সঠিক ও কার্যকর YouTube ভিডিও লিংক প্রদান করুন (যেমন: https://www.youtube.com/watch?v=... বা https://youtu.be/...)। অন্যান্য লিংক গ্রহণযোগ্য নয়।');
+        return;
       }
 
       await addVideoItem({

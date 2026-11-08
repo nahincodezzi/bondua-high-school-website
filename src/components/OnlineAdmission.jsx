@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import SchoolLogo from './common/SchoolLogo';
 import { useSchool } from '../context/useSchool';
 import { getSignatories } from '../utils/signatories';
@@ -38,6 +38,7 @@ export default function OnlineAdmission() {
   const [formErrors, setFormErrors] = useState({});
   const [submittedApplication, setSubmittedApplication] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isSubmittingRef = useRef(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,9 +51,11 @@ export default function OnlineAdmission() {
   const validateForm = () => {
     const errors = {};
 
-    // 1. Student Name (Bangla - M2 / TC13)
+    // 1. Student Name (Bangla - M2 / TC13 / Senior QA M7)
     if (!formData.studentNameBn.trim()) {
       errors.studentNameBn = lang === 'bn' ? 'শিক্ষার্থীর বাংলা নাম আবশ্যক।' : 'Bangla name is required.';
+    } else if (formData.studentNameBn.trim().length < 3) {
+      errors.studentNameBn = lang === 'bn' ? 'বাংলা নাম কমপক্ষে ৩ অক্ষরের হতে হবে (এক বা দুই অক্ষর গ্রহণযোগ্য নয়)।' : 'Name must be at least 3 characters.';
     } else if (!/^[\u0980-\u09FF\s.]+$/.test(formData.studentNameBn.trim())) {
       errors.studentNameBn = lang === 'bn' 
         ? 'বাংলা নামের ঘরে শুধুমাত্র বাংলা অক্ষর লিখুন (ইংরেজি বা সংখ্যা গ্রহণযোগ্য নয়)।' 
@@ -130,11 +133,14 @@ export default function OnlineAdmission() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (isSubmittingRef.current || isSubmitting) return;
+
     if (!validateForm()) {
       window.scrollTo({ top: 300, behavior: 'smooth' });
       return;
     }
 
+    isSubmittingRef.current = true;
     setIsSubmitting(true);
     setTimeout(() => {
       const created = submitAdmission({
@@ -146,6 +152,7 @@ export default function OnlineAdmission() {
       });
       setSubmittedApplication(created);
       setIsSubmitting(false);
+      isSubmittingRef.current = false;
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 400);
   };

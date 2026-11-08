@@ -426,46 +426,27 @@ section, [id] {
     max-width: 100% !important;
   }
 
-  /* When printing any modal, hide the entire #root and all body siblings EXCEPT the modal dialog */
-  /* This guarantees Page 1 is NOT blank and the modal content prints starting at top of Page 1 */
+  /* When printing any modal, marksheet, notice, receipt, or ID card:
+     Hide the entire #root so there is ZERO ghost height and Page 1 is NEVER BLANK! */
   body.printing-modal #root,
-  body.printing-modal > *:not(div[role="dialog"]) {
+  body.printing-marksheet #root,
+  body.printing-notice #root,
+  body.printing-receipt #root,
+  body.printing-idcard #root {
     display: none !important;
     height: 0 !important;
     min-height: 0 !important;
     max-height: 0 !important;
     overflow: hidden !important;
-    position: fixed !important;
-    left: -99999px !important;
-    top: -99999px !important;
-    visibility: hidden !important;
-  }
-
-  /* ── Result Marksheet: use visibility trick to show only marksheet ── */
-  /* body.printing-marksheet makes #root invisible but #official-marksheet visible via child override */
-  body.printing-marksheet {
-    visibility: hidden !important;
-  }
-  body.printing-marksheet #official-marksheet-screen,
-  body.printing-marksheet #official-marksheet-screen * {
-    visibility: visible !important;
-  }
-  body.printing-marksheet #official-marksheet-screen {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: auto !important;
-    z-index: 9999 !important;
-    background: white !important;
-    border: none !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   /* Reset modal overlay container so it starts at the top of Page 1 */
-  body.printing-modal div[role="dialog"] {
+  body.printing-modal div[role="dialog"],
+  body.printing-notice div[role="dialog"],
+  body.printing-receipt div[role="dialog"],
+  body.printing-idcard div[role="dialog"] {
     position: static !important;
     inset: auto !important;
     top: 0 !important;
@@ -483,11 +464,17 @@ section, [id] {
     break-before: avoid !important;
   }
 
-  body.printing-modal div[role="dialog"] > div[aria-hidden="true"] {
+  body.printing-modal div[role="dialog"] > div[aria-hidden="true"],
+  body.printing-notice div[role="dialog"] > div[aria-hidden="true"],
+  body.printing-receipt div[role="dialog"] > div[aria-hidden="true"],
+  body.printing-idcard div[role="dialog"] > div[aria-hidden="true"] {
     display: none !important;
   }
 
-  body.printing-modal div[role="dialog"] > div {
+  body.printing-modal div[role="dialog"] > div,
+  body.printing-notice div[role="dialog"] > div,
+  body.printing-receipt div[role="dialog"] > div,
+  body.printing-idcard div[role="dialog"] > div {
     max-width: 100% !important;
     box-shadow: none !important;
     border: none !important;
@@ -496,12 +483,55 @@ section, [id] {
     break-before: avoid !important;
   }
 
-  /* Marksheet Single Page Enforcement */
-  #official-marksheet {
+  /* Dedicated Printable Marksheet Container (Portaled directly to document.body) */
+  #printable-marksheet-root {
+    display: block !important;
+    position: static !important;
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 auto !important;
     padding: 0 !important;
+    background: #ffffff !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  #printable-marksheet-root table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  #printable-marksheet-root th,
+  #printable-marksheet-root td {
+    padding: 1.5px 4px !important;
+    font-size: 7pt !important;
+    line-height: 1.15 !important;
+  }
+
+  #printable-marksheet-root tfoot td {
+    padding: 2px 4px !important;
+    font-size: 7.5pt !important;
+    line-height: 1.15 !important;
+  }
+
+  #printable-marksheet-root tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Inline Marksheet Single Page Enforcement (fallback) */
+  #official-marksheet-screen,
+  #official-marksheet {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 2mm 4mm !important;
     box-shadow: none !important;
     border: 1px solid #cbd5e1 !important;
     border-radius: 4px !important;
@@ -509,8 +539,12 @@ section, [id] {
     break-inside: avoid !important;
     page-break-after: avoid !important;
     break-after: avoid !important;
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+    background: #ffffff !important;
   }
 
+  #official-marksheet-screen table,
   #official-marksheet table {
     width: 100% !important;
     border-collapse: collapse !important;
@@ -518,19 +552,23 @@ section, [id] {
     break-inside: avoid !important;
   }
 
+  #official-marksheet-screen th,
+  #official-marksheet-screen td,
   #official-marksheet th,
   #official-marksheet td {
+    padding: 1.5px 4px !important;
+    font-size: 7pt !important;
+    line-height: 1.15 !important;
+  }
+
+  #official-marksheet-screen tfoot td,
+  #official-marksheet tfoot td {
     padding: 2px 4px !important;
     font-size: 7.5pt !important;
     line-height: 1.15 !important;
   }
 
-  #official-marksheet tfoot td {
-    padding: 2.5px 4px !important;
-    font-size: 8pt !important;
-    line-height: 1.15 !important;
-  }
-
+  #official-marksheet-screen tr,
   #official-marksheet tr {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
@@ -557,7 +595,7 @@ section, [id] {
     width: 100% !important;
     max-width: 480px !important;
     margin: 0 auto !important;
-    padding: 14px 18px !important;
+    padding: 10px 14px !important;
     box-shadow: none !important;
     border: 1px solid #cbd5e1 !important;
     border-radius: 6px !important;
@@ -575,6 +613,7 @@ section, [id] {
     width: 100% !important;
     max-width: 720px !important;
     margin: 0 auto !important;
+    padding: 0 !important;
     box-shadow: none !important;
     border: 1px solid #cbd5e1 !important;
     border-radius: 6px !important;
@@ -595,13 +634,34 @@ section, [id] {
     overflow: visible !important;
   }
 
+  #official-notice-modal .screen-only,
+  #official-notice-modal .modal-footer,
+  #official-notice-modal button,
+  #official-notice-modal .no-print {
+    display: none !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+  }
+
+  #official-notice-modal .print-only-letterhead {
+    display: block !important;
+  }
+
   /* Student ID Card Print Styles */
   #student-id-card {
     max-width: 320px !important;
-    margin: 20px auto !important;
+    margin: 15px auto !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     box-shadow: none !important;
+  }
+}
+
+@media screen {
+  #printable-marksheet-root {
+    display: none !important;
   }
 }
 

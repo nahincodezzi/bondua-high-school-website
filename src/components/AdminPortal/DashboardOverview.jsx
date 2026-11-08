@@ -380,7 +380,7 @@ export default function DashboardOverview({ onNavigate }) {
                 return (
                   <button
                     key={action.id}
-                    onClick={() => onNavigate(action.id)}
+                    onClick={() => onNavigate(action.id, action.id === 'students' ? { openAdd: true } : {})}
                     className="w-full p-3 bg-bg hover:bg-soft/40 hover:border-primary rounded-xl text-left font-semibold text-ink transition flex items-center justify-between border border-line shadow-2xs cursor-pointer"
                   >
                     <span className="flex items-center gap-2">

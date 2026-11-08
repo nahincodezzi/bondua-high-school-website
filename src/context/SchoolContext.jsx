@@ -122,7 +122,7 @@ export function SchoolProvider({ children }) {
       const tabParam = params.get('tab');
       if (tabParam) return tabParam;
       const hash = window.location.hash.replace('#', '');
-      if (hash) return hash;
+      if (hash && hash !== 'main-content') return hash;
     }
     return 'home';
   });
@@ -386,6 +386,7 @@ export function SchoolProvider({ children }) {
   useEffect(() => {
     const handlePopState = () => {
       const hash = window.location.hash.replace('#', '') || 'home';
+      if (hash === 'main-content') return;
       setActiveTab(hash);
     };
     window.addEventListener('popstate', handlePopState);
@@ -430,6 +431,7 @@ export function SchoolProvider({ children }) {
         if (cloud.heroSlides && cloud.heroSlides.length > 0) setHeroSlides(cloud.heroSlides);
         if (cloud.gallery && cloud.gallery.length > 0) setGallery(cloud.gallery);
         if (cloud.schoolInfo) setSchoolInfo(cloud.schoolInfo);
+        if (cloud.uniformInfo) setUniformInfo(cloud.uniformInfo);
         if (cloud.contactMessages && cloud.contactMessages.length > 0) setContactMessages(cloud.contactMessages);
         if (cloud.videos && cloud.videos.length > 0) setVideos(cloud.videos);
         if (cloud.systemUsers && cloud.systemUsers.length > 0) setSystemUsers(cloud.systemUsers);
@@ -1223,6 +1225,16 @@ export function SchoolProvider({ children }) {
     }
   };
 
+  const updateUniformSettings = (newUniform) => {
+    setUniformInfo(newUniform);
+    localStorage.setItem('bdhs_uniform', JSON.stringify(newUniform));
+    if (supabase) {
+      supabase.from('school_info').upsert({ id: 'uniform', data: newUniform }).then(({ error }) => {
+        if (error) console.warn('Supabase upsert uniform warning:', error.message);
+      });
+    }
+  };
+
   const updateHeroSlides = (slides) => {
     setHeroSlides(slides);
     if (supabase) {
@@ -1354,6 +1366,7 @@ export function SchoolProvider({ children }) {
         updateSchoolSettings,
         uniformInfo,
         setUniformInfo,
+        updateUniformSettings,
         heroSlides,
         setHeroSlides,
         updateHeroSlides,

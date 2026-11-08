@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { initialNotices } from '../data/initialData';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
@@ -36,8 +37,8 @@ export const mappers = {
       publishDate: row.date || (row.created_at ? row.created_at.split('T')[0] : ''),
       urgent: Boolean(row.is_urgent ?? row.urgent),
       isUrgent: Boolean(row.is_urgent ?? row.urgent),
-      contentBn: row.content_bn || row.description_bn || '',
-      descriptionBn: row.description_bn || row.content_bn || '',
+      contentBn: row.content_bn || row.description_bn || initialNotices.find(n => n.id === row.id)?.contentBn || '',
+      descriptionBn: row.description_bn || row.content_bn || initialNotices.find(n => n.id === row.id)?.contentBn || '',
       contentEn: row.content_en || '',
       fileUrl: row.file_url || null,
       author: row.author || 'ভারপ্রাপ্ত প্রধান শিক্ষক',
@@ -435,6 +436,15 @@ export async function fetchAllCloudData() {
       }
     } catch {}
 
+    // Uniform Info cloud load (Senior QA M2)
+    let uniformInfo = null;
+    try {
+      const uniformDoc = await supabase.from('school_info').select('*').eq('id', 'uniform').single();
+      if (uniformDoc.data?.data) {
+        uniformInfo = uniformDoc.data.data;
+      }
+    } catch {}
+
     return {
       notices: noticesRes.data?.map(mappers.notice.fromDb) || null,
       teachers: teachersRes.data?.map(mappers.teacher.fromDb) || null,
@@ -445,6 +455,7 @@ export async function fetchAllCloudData() {
       heroSlides: slidesRes.data?.map(mappers.slide.fromDb) || null,
       gallery: galleryRes.data?.map(mappers.gallery.fromDb) || null,
       schoolInfo: schoolInfoRes.data?.data || null,
+      uniformInfo,
       contactMessages,
       videos,
       systemUsers,

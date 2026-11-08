@@ -10,7 +10,8 @@ import {
   Receipt, 
   X,
   AlertCircle,
-  UserCheck
+  UserCheck,
+  Search
 } from 'lucide-react';
 
 export default function FeeManager() {
@@ -23,6 +24,19 @@ export default function FeeManager() {
   const [method, setMethod] = useState('bKash');
   const [errorMessage, setErrorMessage] = useState('');
   const [activeReceipt, setActiveReceipt] = useState(null);
+  const [feeSearch, setFeeSearch] = useState('');
+  const [feeClassFilter, setFeeClassFilter] = useState('all');
+
+  const filteredFees = fees.filter(f => {
+    const matchClass = feeClassFilter === 'all' || String(f.class) === String(feeClassFilter);
+    const q = feeSearch.trim().toLowerCase();
+    const matchSearch = !q || 
+      f.studentName?.toLowerCase().includes(q) || 
+      String(f.studentRoll).includes(q) || 
+      f.receiptNo?.toLowerCase().includes(q) ||
+      f.feeType?.toLowerCase().includes(q);
+    return matchClass && matchSearch;
+  });
 
   // Auto student match
   const matchedStudent = students.find(
@@ -100,14 +114,28 @@ export default function FeeManager() {
 
   const handlePrint = () => {
     document.body.classList.add('printing-modal');
+    document.body.classList.add('printing-receipt');
     const cleanup = () => {
       document.body.classList.remove('printing-modal');
+      document.body.classList.remove('printing-receipt');
       window.removeEventListener('afterprint', cleanup);
     };
     window.addEventListener('afterprint', cleanup);
     window.print();
     setTimeout(cleanup, 1200);
   };
+
+  useEffect(() => {
+    if (!activeReceipt) return;
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        e.preventDefault();
+        handlePrint();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeReceipt]);
 
   const receiptModal = activeReceipt ? (
     <div 
@@ -362,34 +390,63 @@ export default function FeeManager() {
           </form>
         </div>
 
-        {/* Existing Collections Table */}
+        {/* Existing Collections Table (Senior QA M6 fix: search, class filter & summary) */}
         <div className="lg:col-span-7 card-base bg-white p-6 rounded-2xl border border-line shadow-xs space-y-4 font-bangla">
-          <div className="flex items-center justify-between pb-3 border-b border-line">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-line">
             <div>
               <h3 className="font-bold text-ink text-sm">
-                ফি আদায় ও পেমেন্ট হিস্ট্রি ({lang === 'bn' ? toBanglaNumerals(fees.length) : fees.length} টি রেকর্ড)
+                ফি আদায় ও পেমেন্ট হিস্ট্রি ({lang === 'bn' ? toBanglaNumerals(filteredFees.length) : filteredFees.length} টি রেকর্ড)
               </h3>
               <p className="text-[11px] text-muted">সর্বশেষ সংরক্ষিত ফি ট্রানজেকশন</p>
             </div>
             <span className="font-mono font-bold text-xs bg-soft text-deep px-3 py-1 rounded-full border border-soft-border">
-              মোট কার্যকর আদায়: ৳{toBanglaNumerals(fees.filter(f => f.status !== 'Voided').reduce((sum, f) => sum + Number(f.amount || 0), 0).toLocaleString())}
+              কার্যকর আদায়: ৳{toBanglaNumerals(filteredFees.filter(f => f.status !== 'Voided').reduce((sum, f) => sum + Number(f.amount || 0), 0).toLocaleString())}
             </span>
           </div>
 
-          <div className="overflow-x-auto rounded-xl border border-line">
+          {/* Search and Class Filter Bar (M6) */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5">
+            <div className="flex flex-wrap items-center gap-1 text-[11px]">
+              {['all', '10', '9', '8', '7', '6'].map(cls => (
+                <button
+                  key={cls}
+                  type="button"
+                  onClick={() => setFeeClassFilter(cls)}
+                  className={`px-2.5 py-1 rounded-lg font-semibold transition ${
+                    feeClassFilter === cls ? 'bg-primary text-white shadow-xs' : 'bg-bg text-muted hover:bg-line'
+                  }`}
+                >
+                  {cls === 'all' ? 'সকল' : `${cls} শ্রেণি`}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative w-full sm:w-48">
+              <Search className="w-3.5 h-3.5 text-muted absolute left-2.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="রশিদ, নাম বা রোল খুঁজুন..."
+                value={feeSearch}
+                onChange={(e) => setFeeSearch(e.target.value)}
+                className="w-full pl-8 pr-2.5 py-1.5 rounded-lg border border-line text-[11px] focus:ring-1 focus:ring-primary bg-bg"
+              />
+            </div>
+          </div>
+
+          <div className="overflow-x-auto rounded-xl border border-line max-h-[500px]">
             <table className="w-full text-left text-xs">
-              <thead className="bg-bg text-ink font-bold border-b border-line">
+              <thead className="bg-bg text-ink font-bold border-b border-line sticky top-0 z-10">
                 <tr>
-                  <th className="py-3 px-3">রশিদ নং</th>
-                  <th className="py-3 px-3">শিক্ষার্থী</th>
-                  <th className="py-3 px-3">শ্রেণি ও রোল</th>
-                  <th className="py-3 px-3">ফি এর ধরণ</th>
-                  <th className="py-3 px-3 text-right">পরিমাণ</th>
-                  <th className="py-3 px-3 text-center">কার্যক্রম</th>
+                  <th className="py-2.5 px-3">রশিদ নং</th>
+                  <th className="py-2.5 px-3">শিক্ষার্থী</th>
+                  <th className="py-2.5 px-3">শ্রেণি ও রোল</th>
+                  <th className="py-2.5 px-3">ফি এর ধরণ</th>
+                  <th className="py-2.5 px-3 text-right">পরিমাণ</th>
+                  <th className="py-2.5 px-3 text-center">কার্যক্রম</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
-                {fees.map((f) => {
+                {filteredFees.map((f) => {
                   const isVoided = f.status === 'Voided';
                   return (
                     <tr key={f.id} className={`hover:bg-bg transition-colors ${isVoided ? 'opacity-60 bg-slate-50' : ''}`}>
@@ -439,8 +496,8 @@ export default function FeeManager() {
         </div>
       </div>
 
-      {/* Portal-Rendered Receipt Modal */}
-      {typeof document !== 'undefined' && receiptModal && createPortal(receiptModal, document.getElementById('root') || document.body)}
+      {/* Portal-Rendered Receipt Modal (Direct to body for clean 1-page print) */}
+      {typeof document !== 'undefined' && receiptModal && createPortal(receiptModal, document.body)}
     </div>
   );
 }

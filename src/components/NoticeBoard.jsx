@@ -84,14 +84,28 @@ export default function NoticeBoard() {
 
   const handlePrintNotice = () => {
     document.body.classList.add('printing-modal');
+    document.body.classList.add('printing-notice');
     const cleanup = () => {
       document.body.classList.remove('printing-modal');
+      document.body.classList.remove('printing-notice');
       window.removeEventListener('afterprint', cleanup);
     };
     window.addEventListener('afterprint', cleanup);
     window.print();
     setTimeout(cleanup, 1200);
   };
+
+  useEffect(() => {
+    if (!activeNoticeModal) return;
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        e.preventDefault();
+        handlePrintNotice();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeNoticeModal]);
 
   const modalElement = activeNoticeModal ? (
     <div 
@@ -109,7 +123,7 @@ export default function NoticeBoard() {
 
       <div className="bg-white max-w-3xl w-full rounded-2xl shadow-2xl overflow-hidden border border-line animate-in zoom-in-95 duration-200 flex flex-col max-h-[92vh] print:max-w-full print:shadow-none print:border-none print:rounded-none print:m-0 print:max-h-none print:static" id="official-notice-modal">
         {/* Screen-Only Header */}
-        <div className="bg-deep text-white p-6 relative shrink-0 border-b border-primary print:hidden">
+        <div className="bg-deep text-white p-6 relative shrink-0 border-b border-primary screen-only no-print print:hidden">
           <button
             onClick={() => setActiveNoticeModal(null)}
             className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/20 text-white/80 hover:text-white transition cursor-pointer no-print print:hidden"
@@ -139,7 +153,7 @@ export default function NoticeBoard() {
         </div>
 
         {/* Official Printable Institutional Letterhead (Shown in Print) */}
-        <div className="hidden print:block p-4 pb-2 border-b-2 border-slate-900 bg-white">
+        <div className="hidden print:block print-only-letterhead p-4 pb-2 border-b-2 border-slate-900 bg-white">
           <div className="flex items-center justify-center gap-3">
             <div className="w-12 h-12 rounded-full border border-slate-300 p-0.5 shrink-0">
               <SchoolLogo logo={schoolInfo.logo} />
@@ -157,7 +171,7 @@ export default function NoticeBoard() {
             </div>
           </div>
           <div className="flex justify-between items-center text-[8.5pt] font-mono border-t border-b border-slate-300 py-1 mt-2 font-semibold">
-            <span>স্মারক নং: বদৌউবি/বিজ্ঞপ্তি/{(activeNoticeModal.id || 'not-1').replace('not-', '')}/২০২৬</span>
+            <span>স্মারক নং: বদৌউবি/বিজ্ঞপ্তি/{toBanglaNumerals((activeNoticeModal.id || '1').replace(/\D/g, '') || '০১')}/২০২৬</span>
             <span>তারিখ: {formatBanglaDate(activeNoticeModal.publishDate || activeNoticeModal.date, lang)}</span>
           </div>
           <div className="mt-2 text-center">
@@ -250,7 +264,7 @@ export default function NoticeBoard() {
         </div>
 
         {/* Modal Action Buttons Footer - Hidden during print */}
-        <div className="p-4 bg-white border-t border-line flex items-center justify-between gap-3 shrink-0 no-print print:hidden">
+        <div className="p-4 bg-white border-t border-line flex items-center justify-between gap-3 shrink-0 modal-footer no-print print:hidden">
           <button
             onClick={handlePrintNotice}
             className="px-4 py-2 bg-bg hover:bg-soft text-ink rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer border border-line no-print print:hidden"
@@ -468,8 +482,8 @@ export default function NoticeBoard() {
           </div>
         </div>
 
-        {/* Portal-Rendered Notice Details Modal (C7, M6) */}
-        {typeof document !== 'undefined' && modalElement && createPortal(modalElement, document.getElementById('root') || document.body)}
+        {/* Portal-Rendered Notice Details Modal (C7, M6 - Direct to body for clean 1-page print) */}
+        {typeof document !== 'undefined' && modalElement && createPortal(modalElement, document.body)}
       </div>
     </section>
   );

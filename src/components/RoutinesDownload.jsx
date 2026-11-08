@@ -36,8 +36,8 @@ export default function RoutinesDownload() {
     };
   }, [activeRoutineModal]);
 
-  // Weekly class schedule data (Sunday - Thursday, Friday & Saturday weekly holiday)
-  const scheduleData = [
+  // 1. Weekly class schedule data (Sunday - Thursday, Friday & Saturday weekly holiday)
+  const classScheduleData = [
     { period: '১ম (১০:০০ - ১০:৪৫)', sun: 'বাংলা ১ম', mon: 'গণিত', tue: 'বিজ্ঞান', wed: 'বাংলাদেশ ও বিশ্বপরিচয়', thu: 'তথ্য ও প্রযুক্তি' },
     { period: '২য় (১০:৪৫ - ১১:৩০)', sun: 'বাংলা ২য়', mon: 'পদার্থবিজ্ঞান/হিসাব', tue: 'উচ্চতর গণিত', wed: 'রসায়ন', thu: 'জীববিজ্ঞান' },
     { period: '৩য় (১১:৩০ - ১২:১৫)', sun: 'বিজ্ঞান', mon: 'ধর্ম ও নৈতিক শিক্ষা', tue: 'ইংরেজি ১ম', wed: 'বাংলা ১ম', thu: 'শারীরিক শিক্ষা' },
@@ -46,13 +46,33 @@ export default function RoutinesDownload() {
     { period: '৫ম (০১:৪৫ - ০২:৩০)', sun: 'ইতিহাস', mon: 'ইংরেজি ১ম', tue: 'জীববিজ্ঞান', wed: 'বিজ্ঞান', thu: 'ডিবেট ও ক্লাব' }
   ];
 
+  // 2. Exam schedule data (Senior QA H7 fix)
+  const examScheduleData = [
+    { date: '১০ নভেম্বর ২০২৬', day: 'রবিবার', subject: 'বাংলা ১ম পত্র (১০১)', time: 'সকাল ১০:০০ - দুপুর ০১:০০', room: 'কক্ষ ১০১ - ১০৬' },
+    { date: '১২ নভেম্বর ২০২৬', day: 'মঙ্গলবার', subject: 'বাংলা ২য় পত্র (১০২)', time: 'সকাল ১০:০০ - দুপুর ০১:০০', room: 'কক্ষ ১০১ - ১০৬' },
+    { date: '১৫ নভেম্বর ২০২৬', day: 'রবিবার', subject: 'ইংরেজি ১ম পত্র (১০৭)', time: 'সকাল ১০:০০ - দুপুর ০১:০০', room: 'কক্ষ ১০১ - ১০৬' },
+    { date: '১৭ নভেম্বর ২০২৬', day: 'মঙ্গলবার', subject: 'ইংরেজি ২য় পত্র (১০৮)', time: 'সকাল ১০:০০ - দুপুর ০১:০০', room: 'কক্ষ ১০১ - ১০৬' },
+    { date: '১৯ নভেম্বর ২০২৬', day: 'বৃহস্পতিবার', subject: 'গণিত (১০৯)', time: 'সকাল ১০:০০ - দুপুর ০১:০০', room: 'কক্ষ ১০১ - ১০৬' },
+    { date: '২২ নভেম্বর ২০২৬', day: 'রবিবার', subject: 'পদার্থবিজ্ঞান / হিসাববিজ্ঞান / পৌরনীতি', time: 'সকাল ১০:০০ - দুপুর ০১:০০', room: 'কক্ষ ২০২ - ২০৫' },
+    { date: '২৪ নভেম্বর ২০২৬', day: 'মঙ্গলবার', subject: 'রসায়ন / ফিন্যান্স / ইতিহাস', time: 'সকাল ১০:০০ - দুপুর ০১:০০', room: 'কক্ষ ২০২ - ২০৫' },
+    { date: '২৬ নভেম্বর ২০২৬', day: 'বৃহস্পতিবার', subject: 'জীববিজ্ঞান / ব্যবসায় উদ্যোগ / ভূগোল', time: 'সকাল ১০:০০ - দুপুর ০১:০০', room: 'কক্ষ ২০২ - ২০৫' }
+  ];
+
+  // 3. NCTB Curriculum & Syllabus data (Senior QA H7 fix)
+  const syllabusData = [
+    { class: '৬ষ্ঠ শ্রেণি', subject: 'সকল আবশ্যিক বিষয়', syllabus: 'NCTB প্রণীত নতুন শিক্ষাক্রম পাঠ্যপুস্তক ও ধারাবাহিক মূল্যায়ন রূপরেখা', marks: '১০০%' },
+    { class: '৭ম শ্রেণি', subject: 'সকল আবশ্যিক বিষয়', syllabus: 'অভিজ্ঞতাভিত্তিক শিখন ও সামষ্টিক মূল্যায়ন নির্দেশিকা', marks: '১০০%' },
+    { class: '৮ম শ্রেণি', subject: 'সকল আবশ্যিক বিষয়', syllabus: 'পাঠ্যবই ও বিষয়ভিত্তিক শিখন অগ্রগতি মূল্যায়ন ছক', marks: '১০০%' },
+    { class: '৯ম শ্রেণি', subject: 'বিজ্ঞান, ব্যবসায় ও মানবিক', syllabus: 'শাখাভিত্তিক NCTB পাঠ্যসূচি ও অর্ধবার্ষিক/বার্ষিক সিলেবাস ২০২৬', marks: '১০০%' },
+    { class: '১০ম শ্রেণি', subject: 'এসএসসি পরীক্ষা ২০২৬', syllabus: 'কুমিল্লা শিক্ষা বোর্ড ও NCTB অনুমোদিত সম্পূর্ণ সংক্ষিপ্ত পাঠ্যসূচি', marks: '১০০%' }
+  ];
+
   const handlePrint = () => {
     window.print();
   };
 
-  // Real download/print generator without fake alerts (H3)
+  // Real download/print generator with authentic distinct content per card (H7)
   const handleDownloadRoutine = (item) => {
-    // Generate formatted printable schedule window
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
       window.print();
@@ -61,16 +81,80 @@ export default function RoutinesDownload() {
 
     const title = lang === 'bn' ? item.titleBn : item.titleEn;
     const effective = item.effectiveDate;
+    const isExam = item.id === 'rt-02' || item.titleBn?.includes('পরীক্ষা');
+    const isSyllabus = item.id === 'rt-03' || item.titleBn?.includes('NCTB');
 
-    const computed = typeof window !== 'undefined' ? getComputedStyle(document.documentElement) : null;
-    const cDeep = computed?.getPropertyValue('--c-deep').trim() || '#0B3D2E';
-    const cPrimary = computed?.getPropertyValue('--c-primary').trim() || '#0F6B47';
-    const cSoft = computed?.getPropertyValue('--c-soft').trim() || '#E7F5EE';
-    const cSoftBorder = computed?.getPropertyValue('--c-soft-border').trim() || '#C9E7D7';
-    const cInk = computed?.getPropertyValue('--c-ink').trim() || '#1C2B22';
-    const cMuted = computed?.getPropertyValue('--c-muted').trim() || '#4A5A50';
-    const cLine = computed?.getPropertyValue('--c-line').trim() || '#E3E8E4';
-    const cBg = computed?.getPropertyValue('--c-bg').trim() || '#F6F8F5';
+    let tableHtml = '';
+    if (isExam) {
+      tableHtml = `
+        <thead>
+          <tr>
+            <th>তারিখ</th>
+            <th>বার</th>
+            <th>বিষয়ের নাম ও কোড</th>
+            <th>পরীক্ষার সময়</th>
+            <th>আসন কক্ষ</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${examScheduleData.map(row => `
+            <tr>
+              <td><strong>${row.date}</strong></td>
+              <td>${row.day}</td>
+              <td>${row.subject}</td>
+              <td>${row.time}</td>
+              <td>${row.room}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      `;
+    } else if (isSyllabus) {
+      tableHtml = `
+        <thead>
+          <tr>
+            <th>শ্রেণি</th>
+            <th>বিভাগ / শাখা</th>
+            <th>পাঠ্যসূচি ও সিলেবাস বিবরণী</th>
+            <th>মূল্যায়ন মান</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${syllabusData.map(row => `
+            <tr>
+              <td><strong>${row.class}</strong></td>
+              <td>${row.subject}</td>
+              <td>${row.syllabus}</td>
+              <td>${row.marks}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      `;
+    } else {
+      tableHtml = `
+        <thead>
+          <tr>
+            <th>পিরিয়ড / সময়</th>
+            <th>রবিবার</th>
+            <th>সোমবার</th>
+            <th>মঙ্গলবার</th>
+            <th>বুধবার</th>
+            <th>বৃহস্পতিবার</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${classScheduleData.map(row => `
+            <tr>
+              <td><strong>${row.period}</strong></td>
+              <td>${row.sun}</td>
+              <td>${row.mon}</td>
+              <td>${row.tue}</td>
+              <td>${row.wed}</td>
+              <td>${row.thu}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      `;
+    }
 
     printWindow.document.write(`
       <!DOCTYPE html>
@@ -78,59 +162,26 @@ export default function RoutinesDownload() {
       <head>
         <title>${title} - ${schoolInfo.nameBn}</title>
         <style>
-          :root {
-            --c-deep: ${cDeep};
-            --c-primary: ${cPrimary};
-            --c-soft: ${cSoft};
-            --c-soft-border: ${cSoftBorder};
-            --c-ink: ${cInk};
-            --c-muted: ${cMuted};
-            --c-line: ${cLine};
-            --c-bg: ${cBg};
-          }
-          body { font-family: 'Noto Sans Bengali', 'Anek Bangla', sans-serif; padding: 40px; color: var(--c-ink); background: #ffffff; }
-          .header { text-align: center; border-bottom: 2px solid var(--c-deep); padding-bottom: 15px; margin-bottom: 20px; }
-          h1 { color: var(--c-deep); margin: 0 0 5px 0; font-size: 24px; font-weight: 800; }
-          .subtitle { color: var(--c-muted); font-size: 13px; margin: 0; }
-          .badge { display: inline-block; background: var(--c-soft); color: var(--c-deep); border: 1px solid var(--c-soft-border); font-weight: bold; padding: 4px 12px; border-radius: 9999px; font-size: 12px; margin-top: 10px; }
-          table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
-          th, td { border: 1px solid var(--c-line); padding: 10px; text-align: left; }
-          th { background-color: var(--c-deep); color: #ffffff; font-weight: bold; }
-          tr:nth-child(even) { background-color: var(--c-bg); }
-          .footer { margin-top: 40px; display: flex; justify-content: space-between; font-size: 12px; color: var(--c-muted); }
-          @media print { .no-print { display: none; } }
+          @page { size: A4 portrait; margin: 10mm; }
+          body { font-family: 'Noto Sans Bengali', sans-serif; padding: 20px; color: #1e293b; }
+          .header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 20px; }
+          .header h1 { margin: 0; font-size: 22px; color: #047857; }
+          .header p { margin: 4px 0 0; font-size: 13px; color: #64748b; }
+          .title { text-align: center; font-size: 16px; font-weight: bold; margin-bottom: 16px; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+          th, td { border: 1px solid #cbd5e1; padding: 8px 10px; font-size: 12px; text-align: left; }
+          th { background: #f1f5f9; font-weight: bold; }
+          .footer { display: flex; justify-content: space-between; margin-top: 40px; font-size: 12px; }
         </style>
       </head>
       <body>
         <div class="header">
           <h1>${schoolInfo.nameBn}</h1>
-          <p class="subtitle">${schoolInfo.addressBn} • EIIN: ${schoolInfo.eiin}</p>
-          <div class="badge">${title}</div>
-          <p style="font-size: 12px; margin-top: 5px; color: var(--c-muted);">কার্যকরী তারিখ: ${effective}</p>
+          <p>${schoolInfo.addressBn} • EIIN: ${schoolInfo.eiin}</p>
         </div>
+        <div class="title">${title} (${effective})</div>
         <table>
-          <thead>
-            <tr>
-              <th>পিরিয়ড / সময়</th>
-              <th>রবিবার</th>
-              <th>সোমবার</th>
-              <th>মঙ্গলবার</th>
-              <th>বুধবার</th>
-              <th>বৃহস্পতিবার</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${scheduleData.map(row => `
-              <tr>
-                <td><strong>${row.period}</strong></td>
-                <td>${row.sun}</td>
-                <td>${row.mon}</td>
-                <td>${row.tue}</td>
-                <td>${row.wed}</td>
-                <td>${row.thu}</td>
-              </tr>
-            `).join('')}
-          </tbody>
+          ${tableHtml}
         </table>
         <div class="footer">
           <div><p>প্রস্তুতকারক: রুটিন কমিটি</p></div>
@@ -145,66 +196,134 @@ export default function RoutinesDownload() {
     printWindow.document.close();
   };
 
-  const modalElement = activeRoutineModal ? (
-    <div 
-      className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="routine-modal-title"
-    >
+  const modalElement = activeRoutineModal ? (() => {
+    const isExam = activeRoutineModal.id === 'rt-02' || activeRoutineModal.titleBn?.includes('পরীক্ষা');
+    const isSyllabus = activeRoutineModal.id === 'rt-03' || activeRoutineModal.titleBn?.includes('NCTB');
+
+    return (
       <div 
-        className="fixed inset-0 -z-10" 
-        onClick={() => setActiveRoutineModal(null)} 
-        aria-hidden="true" 
-      />
+        className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="routine-modal-title"
+      >
+        <div 
+          className="fixed inset-0 -z-10" 
+          onClick={() => setActiveRoutineModal(null)} 
+          aria-hidden="true" 
+        />
 
-      <div className="bg-white rounded-2xl max-w-lg w-full p-6 border border-line shadow-2xl relative">
-        <button
-          onClick={() => setActiveRoutineModal(null)}
-          className="absolute top-4 right-4 p-2 rounded-full hover:bg-bg text-muted hover:text-ink cursor-pointer"
-          aria-label="Close"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
-        <h3 id="routine-modal-title" className="text-lg font-bold font-bangla text-ink mb-2">
-          {lang === 'bn' ? activeRoutineModal.titleBn : activeRoutineModal.titleEn}
-        </h3>
-        <p className="text-xs text-primary font-mono mb-4 font-bold">
-          কার্যকরী তারিখ: {activeRoutineModal.effectiveDate}
-        </p>
-
-        <div className="bg-bg p-6 rounded-xl text-center border border-line mb-6">
-          <FileText className="w-12 h-12 text-primary mx-auto mb-2" />
-          <p className="text-xs text-ink font-bangla font-semibold">
-            {lang === 'bn' ? 'অফিসিয়াল একাডেমিক রুটিন সিডিউল' : 'Official Academic Routine Schedule'}
-          </p>
-          <p className="text-[11px] text-muted mt-1 font-bangla">
-            {lang === 'bn' ? 'সরাসরি প্রিন্ট বা ডাউনলোড করে সংগ্রহ করুন।' : 'Print or save direct schedule copy.'}
-          </p>
-        </div>
-
-        <div className="flex gap-3 no-print">
+        <div className="bg-white rounded-2xl max-w-2xl w-full p-6 border border-line shadow-2xl relative max-h-[90vh] flex flex-col font-bangla">
           <button
             onClick={() => setActiveRoutineModal(null)}
-            className="flex-1 bg-bg hover:bg-soft py-2.5 rounded-lg text-xs text-ink border border-line cursor-pointer font-bold"
+            className="absolute top-4 right-4 p-2 rounded-full hover:bg-bg text-muted hover:text-ink cursor-pointer"
+            aria-label="Close"
           >
-            {lang === 'bn' ? 'বন্ধ করুন' : 'Close'}
+            <X className="w-5 h-5" />
           </button>
-          <button
-            onClick={() => {
-              handleDownloadRoutine(activeRoutineModal);
-              setActiveRoutineModal(null);
-            }}
-            className="flex-1 btn-accent py-2.5 rounded-lg text-xs font-bold cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
-          >
-            <Printer className="w-4 h-4 text-ink" />
-            <span>{lang === 'bn' ? 'প্রিন্ট / সেভ করুন' : 'Print / Save'}</span>
-          </button>
+
+          <h3 id="routine-modal-title" className="text-lg font-bold text-ink pr-8 leading-tight">
+            {lang === 'bn' ? activeRoutineModal.titleBn : activeRoutineModal.titleEn}
+          </h3>
+          <p className="text-xs text-primary font-mono mb-4 font-bold mt-1">
+            কার্যকরী তারিখ: {activeRoutineModal.effectiveDate}
+          </p>
+
+          <div className="overflow-y-auto flex-1 border border-line rounded-xl mb-5">
+            {isExam ? (
+              <table className="w-full text-left text-xs">
+                <thead className="bg-deep text-white font-bold">
+                  <tr>
+                    <th className="p-2.5">তারিখ ও বার</th>
+                    <th className="p-2.5">বিষয়ের নাম</th>
+                    <th className="p-2.5">সময়</th>
+                    <th className="p-2.5">কক্ষ</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-line">
+                  {examScheduleData.map((row, idx) => (
+                    <tr key={idx} className="hover:bg-bg">
+                      <td className="p-2.5 font-bold text-ink">{row.date} ({row.day})</td>
+                      <td className="p-2.5 text-primary font-semibold">{row.subject}</td>
+                      <td className="p-2.5 text-muted">{row.time}</td>
+                      <td className="p-2.5 font-mono">{row.room}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : isSyllabus ? (
+              <table className="w-full text-left text-xs">
+                <thead className="bg-deep text-white font-bold">
+                  <tr>
+                    <th className="p-2.5">শ্রেণি</th>
+                    <th className="p-2.5">শাখা / বিভাগ</th>
+                    <th className="p-2.5">পাঠ্যসূচি বিবরণ</th>
+                    <th className="p-2.5 text-center">মূল্যায়ন মান</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-line">
+                  {syllabusData.map((row, idx) => (
+                    <tr key={idx} className="hover:bg-bg">
+                      <td className="p-2.5 font-bold text-ink">{row.class}</td>
+                      <td className="p-2.5 text-primary font-semibold">{row.subject}</td>
+                      <td className="p-2.5 text-muted">{row.syllabus}</td>
+                      <td className="p-2.5 text-center font-bold text-ink">{row.marks}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-deep text-white font-bold">
+                    <tr>
+                      <th className="p-2">পিরিয়ড</th>
+                      <th className="p-2">রবিবার</th>
+                      <th className="p-2">সোমবার</th>
+                      <th className="p-2">মঙ্গলবার</th>
+                      <th className="p-2">বুধবার</th>
+                      <th className="p-2">বৃহস্পতিবার</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line">
+                    {classScheduleData.map((row, idx) => (
+                      <tr key={idx} className="hover:bg-bg">
+                        <td className="p-2 font-bold text-ink whitespace-nowrap">{row.period}</td>
+                        <td className="p-2">{row.sun}</td>
+                        <td className="p-2">{row.mon}</td>
+                        <td className="p-2">{row.tue}</td>
+                        <td className="p-2">{row.wed}</td>
+                        <td className="p-2">{row.thu}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          <div className="flex gap-3 no-print">
+            <button
+              onClick={() => setActiveRoutineModal(null)}
+              className="flex-1 bg-bg hover:bg-soft py-2.5 rounded-lg text-xs text-ink border border-line cursor-pointer font-bold"
+            >
+              {lang === 'bn' ? 'বন্ধ করুন' : 'Close'}
+            </button>
+            <button
+              onClick={() => {
+                handleDownloadRoutine(activeRoutineModal);
+                setActiveRoutineModal(null);
+              }}
+              className="flex-1 btn-accent py-2.5 rounded-lg text-xs font-bold cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
+            >
+              <Printer className="w-4 h-4 text-ink" />
+              <span>{lang === 'bn' ? 'প্রিন্ট / সেভ করুন' : 'Print / Save'}</span>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  ) : null;
+    );
+  })() : null;
 
   return (
     <section className="py-12 sm:py-16 text-ink relative z-10 font-sans min-h-[700px]">

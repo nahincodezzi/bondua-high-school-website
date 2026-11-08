@@ -674,8 +674,13 @@ export default function SchoolSettings() {
                   type="text"
                   value={resetConfirmText}
                   onChange={(e) => {
-                    setResetConfirmText(e.target.value);
-                    setResetError('');
+                    const val = e.target.value;
+                    setResetConfirmText(val);
+                    if (val && val.trim().toUpperCase() !== 'RESET') {
+                      setResetError('সঠিকভাবে বড় হাতের অক্ষরে "RESET" লিখুন।');
+                    } else {
+                      setResetError('');
+                    }
                   }}
                   placeholder="RESET"
                   className="w-full rounded-lg border border-line p-2.5 font-mono text-xs font-bold text-ink bg-bg uppercase"
@@ -695,6 +700,7 @@ export default function SchoolSettings() {
                 </button>
                 <button
                   type="button"
+                  disabled={resetConfirmText.trim() !== 'RESET'}
                   onClick={() => {
                     if (resetConfirmText.trim() !== 'RESET') {
                       setResetError('দয়া করে সঠিকভাবে "RESET" লিখুন।');
@@ -705,7 +711,11 @@ export default function SchoolSettings() {
                       setShowResetModal(false);
                     }
                   }}
-                  className="flex-1 btn-danger py-2 rounded-lg text-xs font-bold transition cursor-pointer"
+                  className={`flex-1 py-2 rounded-lg text-xs font-bold transition ${
+                    resetConfirmText.trim() === 'RESET' 
+                      ? 'btn-danger cursor-pointer' 
+                      : 'bg-slate-200 text-slate-400 cursor-not-allowed opacity-60'
+                  }`}
                 >
                   রিসেট সম্পন্ন করুন
                 </button>
