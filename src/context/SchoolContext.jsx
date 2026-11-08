@@ -771,12 +771,13 @@ export function SchoolProvider({ children }) {
   };
 
   const authenticate = async (username, password) => {
-    const cleanUser = username.trim().toLowerCase();
+    const cleanUser = (username || '').trim().toLowerCase();
+    const cleanPass = (password || '').trim();
 
     // 1. Server-side Secure Authentication RPC (BUG 1 & BUG 5 fix)
     if (supabase) {
       try {
-        const computedHash = await hashPassword(password);
+        const computedHash = await hashPassword(cleanPass);
         const { data: rpcRes, error: rpcErr } = await supabase.rpc('verify_login', {
           p_username: cleanUser,
           p_password_hash: computedHash
@@ -802,6 +803,8 @@ export function SchoolProvider({ children }) {
             setAuthUser(authData);
             setLang('bn');
             localStorage.setItem('bdhs_auth_user', JSON.stringify(authData));
+            setAuthModalOpen(false);
+            setActiveTab('admin');
             return { success: true };
           } else if (row.error_code === 'LOCKED') {
             return {
@@ -836,7 +839,11 @@ export function SchoolProvider({ children }) {
 
     let passwordMatches = false;
     if (user) {
-      passwordMatches = await verifyPassword(password, user.passwordHash || user.password, cleanUser);
+      passwordMatches = await verifyPassword(cleanPass, user.passwordHash || user.password, cleanUser);
+      // Auto-handle mobile keyboard first-character auto-capitalization (e.g. Admin2026 -> admin2026)
+      if (!passwordMatches && cleanPass !== cleanPass.toLowerCase()) {
+        passwordMatches = await verifyPassword(cleanPass.toLowerCase(), user.passwordHash || user.password, cleanUser);
+      }
     }
 
     if (!user || !passwordMatches) {
@@ -1927,9 +1934,15 @@ export function SchoolProvider({ children }) {
 
   const updateHeroSlides = (slides) => {
     setHeroSlides(slides);
+    localStorage.setItem('bdhs_slides', JSON.stringify(slides));
     if (supabase) {
+      // 1. Upsert into hero_slides table with schema-compliant columns
       supabase.from('hero_slides').upsert(slides.map(mappers.slide.toDb)).then(({ error }) => {
         if (error) console.warn('Supabase upsert hero_slides warning:', error.message);
+      });
+      // 2. Also upsert full bilingual slides into school_info 'hero_slides' document
+      supabase.from('school_info').upsert({ id: 'hero_slides', data: slides }).then(({ error }) => {
+        if (error) console.warn('Supabase upsert school_info hero_slides warning:', error.message);
       });
     }
   };

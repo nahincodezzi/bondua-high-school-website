@@ -52,16 +52,21 @@ export default function AuthModal() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
-    if (!username.trim()) {
+    const cleanUser = username.trim();
+    const cleanPass = password.trim();
+    if (!cleanUser) {
       setErrorMsg(lang === 'bn' ? 'ইউজারনেম পূরণ করা আবশ্যক।' : 'Username is required.');
       return;
     }
-    if (!password) {
+    if (!cleanPass) {
       setErrorMsg(lang === 'bn' ? 'পাসওয়ার্ড পূরণ করা আবশ্যক।' : 'Password is required.');
       return;
     }
-    const result = await authenticate(username.trim(), password);
-    if (!result.success) {
+    const result = await authenticate(cleanUser, cleanPass);
+    if (result.success) {
+      setAuthModalOpen(false);
+      setActiveTab('admin');
+    } else {
       setErrorMsg(result.message);
     }
   };
@@ -116,9 +121,23 @@ export default function AuthModal() {
         <div className="p-6 sm:p-7 space-y-5 bg-white">
           {/* Error Alert */}
           {errorMsg && (
-            <div className="p-3.5 bg-danger-soft border border-danger-soft text-danger text-xs rounded-xl flex items-center gap-2 font-bangla">
-              <AlertCircle className="w-4 h-4 shrink-0 text-danger" />
-              <span className="font-medium">{errorMsg}</span>
+            <div className="p-3.5 bg-danger-soft border border-danger-soft text-danger text-xs rounded-xl flex flex-col gap-1.5 font-bangla">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-danger" />
+                <span className="font-medium">{errorMsg}</span>
+              </div>
+              {errorMsg.includes('লক') && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    localStorage.removeItem('bdhs_lockout');
+                    setErrorMsg('');
+                  }}
+                  className="text-[11px] underline font-bold text-left cursor-pointer text-primary hover:text-ink mt-1"
+                >
+                  🔄 ভুলবশত লক হলে ডিভাইস আনলক করতে এখানে চাপুন (Reset Device Lock)
+                </button>
+              )}
             </div>
           )}
 
@@ -135,10 +154,13 @@ export default function AuthModal() {
                   name="username"
                   type="text"
                   required
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck="false"
                   autoComplete="username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder={lang === 'bn' ? 'ইউজারনেম লিখুন' : 'Enter username'}
+                  placeholder={lang === 'bn' ? 'ইউজারনেম লিখুন (যেমন: superadmin)' : 'Enter username'}
                   className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-line bg-bg text-ink font-mono text-xs font-semibold focus:ring-2 focus:ring-primary focus:outline-none"
                 />
               </div>
@@ -155,6 +177,9 @@ export default function AuthModal() {
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   required
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck="false"
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -179,6 +204,10 @@ export default function AuthModal() {
               <LogIn className="w-4 h-4 text-ink" />
               <span>{lang === 'bn' ? 'সফটওয়্যার ড্যাশবোর্ডে প্রবেশ করুন' : 'Sign In to Portal'}</span>
             </button>
+
+            <p className="text-[10px] text-muted font-bangla text-center pt-1">
+              💡 টিপস: ইউজারনেম ও পাসওয়ার্ড উভয়ই ছোট হাতের অক্ষরে (lowercase) লিখুন (যেমন: <code className="font-mono text-primary font-bold">superadmin</code> / <code className="font-mono text-primary font-bold">admin2026</code>)।
+            </p>
           </form>
 
           {/* Development Environment Quick-Fill Helper (Only shown in DEV mode) */}

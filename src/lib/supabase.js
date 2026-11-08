@@ -301,11 +301,8 @@ export const mappers = {
     toDb: (s) => ({
       id: String(s.id),
       title_bn: s.titleBn || '',
-      title_en: s.titleEn || '',
       subtitle_bn: s.subtitleBn || '',
-      subtitle_en: s.subtitleEn || '',
       tag_bn: s.tagBn || '',
-      tag_en: s.tagEn || '',
       image: s.image || '',
       order: Number(s.order) || 1,
       active: s.active ?? true,
@@ -423,6 +420,15 @@ export async function fetchAllCloudData() {
       }
     } catch {}
 
+    // Hero Slides cloud load (school_info 'hero_slides' document)
+    let heroSlidesDoc = null;
+    try {
+      const slidesDocRes = await supabase.from('school_info').select('*').eq('id', 'hero_slides').maybeSingle();
+      if (slidesDocRes.data?.data && Array.isArray(slidesDocRes.data.data) && slidesDocRes.data.data.length > 0) {
+        heroSlidesDoc = slidesDocRes.data.data;
+      }
+    } catch {}
+
     // System Users cloud load (school_info 'system_users' document)
     let systemUsers = null;
     try {
@@ -475,7 +481,7 @@ export async function fetchAllCloudData() {
       admissions: admissionsRes.data?.map(mappers.admission.fromDb) || null,
       results: resultsRes.data?.map(mappers.result.fromDb) || null,
       fees: feesRes.data?.map(mappers.fee.fromDb) || null,
-      heroSlides: slidesRes.data?.map(mappers.slide.fromDb) || null,
+      heroSlides: heroSlidesDoc || slidesRes.data?.map(mappers.slide.fromDb) || null,
       gallery: galleryRes.data?.map(mappers.gallery.fromDb) || null,
       schoolInfo: schoolInfoRes.data?.data || null,
       uniformInfo,
