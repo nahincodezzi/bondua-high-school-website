@@ -13,7 +13,10 @@ import {
   Bell,
   CheckCircle2,
   Clock,
-  MessageSquare
+  MessageSquare,
+  Phone,
+  Mail,
+  Trash2
 } from 'lucide-react';
 
 export default function DashboardOverview({ onNavigate }) {
@@ -25,6 +28,7 @@ export default function DashboardOverview({ onNavigate }) {
     fees, 
     notices,
     contactMessages,
+    deleteContactMessage,
     authUser, 
     hasPermission,
     approveAdmissionAndCreateStudent
@@ -331,34 +335,121 @@ export default function DashboardOverview({ onNavigate }) {
             </>
           )}
 
-          {/* Visitor Messages Section (C4 Fix) */}
-          <div className="pt-4 border-t border-line">
-            <div className="flex items-center justify-between pb-2">
+          {/* Visitor Messages Section */}
+          <div className="pt-5 border-t border-line">
+            <div className="flex items-center justify-between pb-3">
               <div>
-                <h3 className="text-sm font-bold font-bangla text-ink flex items-center gap-2">
-                  <MessageSquare className="w-4 h-4 text-primary" />
+                <h3 className="text-sm sm:text-base font-bold font-bangla text-ink flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                    <MessageSquare className="w-4 h-4" />
+                  </div>
                   <span>ওয়েবসাইট থেকে আসা বার্তা ও অনুসন্ধান (Visitor Messages)</span>
                 </h3>
-                <p className="text-[11px] text-muted font-bangla">
-                  অভিভাবক ও দর্শনার্থীদের পাঠানো বার্তা ({contactMessages ? (lang === 'bn' ? toBanglaNumerals(contactMessages.length) : contactMessages.length) : 0}টি)
+                <p className="text-[11px] text-muted font-bangla mt-0.5">
+                  অভিভাবক ও দর্শনার্থীদের পাঠানো সাম্প্রতিক বার্তা ({contactMessages ? (lang === 'bn' ? toBanglaNumerals(contactMessages.length) : contactMessages.length) : 0}টি)
                 </p>
               </div>
             </div>
 
             {(!contactMessages || contactMessages.length === 0) ? (
-              <p className="text-xs text-muted text-center py-4 bg-bg rounded-xl border border-line">
-                বর্তমানে কোনো নতুন বার্তা নেই।
-              </p>
+              <div className="p-6 text-center bg-bg rounded-2xl border border-line">
+                <MessageSquare className="w-8 h-8 text-muted/40 mx-auto mb-2" />
+                <p className="text-xs font-semibold text-muted font-bangla">
+                  বর্তমানে কোনো নতুন বার্তা নেই। ওয়েবসাইট থেকে কেউ বার্তা পাঠালে এখানে প্রদর্শিত হবে।
+                </p>
+              </div>
             ) : (
-              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                {contactMessages.slice(0, 5).map((msg) => (
-                  <div key={msg.id} className="p-3 bg-bg rounded-xl border border-line text-xs font-bangla flex flex-col gap-1">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-ink">{msg.name}</span>
-                      <span className="font-mono text-primary text-[11px] font-semibold">{msg.phone}</span>
+              <div className="space-y-3 max-h-[460px] overflow-y-auto pr-1">
+                {contactMessages.map((msg) => (
+                  <div 
+                    key={msg.id} 
+                    className="p-4 bg-bg hover:bg-white rounded-2xl border border-line hover:border-primary/40 transition shadow-2xs font-bangla flex flex-col gap-2.5 relative"
+                  >
+                    {/* Top Row: User Avatar, Name, Subject Badge & Delete */}
+                    <div className="flex items-start justify-between gap-2 border-b border-line/60 pb-2.5">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-xs shrink-0 uppercase font-sans border border-primary/20">
+                          {msg.name ? msg.name.charAt(0) : 'U'}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-xs text-muted font-medium">name :</span>
+                            <span className="font-bold text-ink text-sm truncate">{msg.name}</span>
+                          </div>
+                          {msg.submittedAt && (
+                            <span className="text-[10px] text-muted font-mono block mt-0.5">
+                              {msg.submittedAt}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        {msg.subject && (
+                          <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-primary/10 text-primary border border-primary/20 flex items-center gap-1">
+                            <span className="text-muted text-[10px]">message sub :</span>
+                            <span>{msg.subject}</span>
+                          </span>
+                        )}
+                        {deleteContactMessage && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (window.confirm(`আপনি কি "${msg.name}"-এর এই বার্তাটি মুছে ফেলতে চান?`)) {
+                                deleteContactMessage(msg.id);
+                              }
+                            }}
+                            className="p-1 rounded-lg text-muted hover:text-danger hover:bg-danger/10 transition cursor-pointer"
+                            title="বার্তাটি মুছে ফেলুন"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
                     </div>
-                    {msg.subject && <span className="font-semibold text-deep text-[11px]">{msg.subject}</span>}
-                    <p className="text-muted text-[11px] line-clamp-2">{msg.message}</p>
+
+                    {/* Middle Row: Phone and Optional Email Badges */}
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                      {/* Phone - Always Shown */}
+                      {msg.phone && (
+                        <div className="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-lg border border-line text-ink">
+                          <Phone className="w-3.5 h-3.5 text-primary shrink-0" />
+                          <span className="text-muted text-[10px]">phone :</span>
+                          <a 
+                            href={`tel:${msg.phone}`} 
+                            className="font-mono font-bold text-primary hover:underline text-xs"
+                            title="কল করতে ক্লিক করুন"
+                          >
+                            {msg.phone}
+                          </a>
+                        </div>
+                      )}
+
+                      {/* Email - Strictly Optional: Only rendered if present */}
+                      {msg.email && msg.email.trim() !== '' && (
+                        <div className="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-lg border border-line text-ink">
+                          <Mail className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                          <span className="text-muted text-[10px]">mail :</span>
+                          <a 
+                            href={`mailto:${msg.email}`} 
+                            className="font-mono font-bold text-ink hover:text-primary hover:underline text-xs"
+                            title="ইমেইল পাঠাতে ক্লিক করুন"
+                          >
+                            {msg.email}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Bottom Row: Message / Description */}
+                    <div className="bg-white p-3 rounded-xl border border-line/70 space-y-1">
+                      <span className="text-[10px] font-bold text-muted uppercase tracking-wider block">
+                        description :
+                      </span>
+                      <p className="text-ink text-xs leading-relaxed whitespace-pre-wrap font-sans">
+                        {msg.message || '—'}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>

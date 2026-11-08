@@ -1377,6 +1377,22 @@ export function SchoolProvider({ children }) {
     return newMsg;
   };
 
+  const deleteContactMessage = (id) => {
+    setContactMessages(prev => {
+      const updated = prev.filter(m => m.id !== id);
+      localStorage.setItem('bdhs_contact_messages', JSON.stringify(updated));
+
+      if (supabase) {
+        supabase.from('contact_messages').delete().eq('id', id).then(({ error }) => {
+          if (error) {
+            supabase.from('school_info').upsert({ id: 'contact_messages', data: updated }).then(() => {});
+          }
+        });
+      }
+      return updated;
+    });
+  };
+
   const updateSchoolSettings = (newInfo) => {
     setSchoolInfo(newInfo);
     if (supabase) {
@@ -1764,6 +1780,7 @@ export function SchoolProvider({ children }) {
         deleteFeeReceipt,
         contactMessages,
         submitContactMessage,
+        deleteContactMessage,
         routines,
         resetToDefaults,
         isCloudSyncActive: isSupabaseConfigured
