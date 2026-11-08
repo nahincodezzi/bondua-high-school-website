@@ -549,6 +549,7 @@ export async function seedCloudIfEmpty(initialData) {
       const sanitized = initialData.systemUsers.map(u => {
         const c = { ...u };
         delete c.password;
+        delete c.passwordHash; // Never write password hashes to public school_info document (BUG-C2 fix)
         return c;
       });
       await supabase.from('school_info').upsert({ id: 'system_users', data: sanitized });

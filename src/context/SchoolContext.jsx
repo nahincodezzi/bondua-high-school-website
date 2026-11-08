@@ -606,7 +606,18 @@ export function SchoolProvider({ children }) {
         }
         if (cloud.contactMessages && cloud.contactMessages.length > 0) setContactMessages(cloud.contactMessages);
         if (cloud.videos && cloud.videos.length > 0) setVideos(cloud.videos);
-        if (cloud.systemUsers && cloud.systemUsers.length > 0) setSystemUsers(cloud.systemUsers);
+        if (cloud.systemUsers && cloud.systemUsers.length > 0) {
+          setSystemUsers(prev => {
+            return cloud.systemUsers.map(cu => {
+              const localMatch = prev.find(p => p.username === cu.username || p.id === cu.id);
+              const seedMatch = initialUsers.find(iu => iu.username === cu.username);
+              return {
+                ...cu,
+                passwordHash: cu.passwordHash || localMatch?.passwordHash || seedMatch?.passwordHash || ''
+              };
+            });
+          });
+        }
       } catch (err) {
         console.warn('Supabase cloud synchronization error:', err);
       }
@@ -732,6 +743,7 @@ export function SchoolProvider({ children }) {
     const sanitized = usersList.map(u => {
       const copy = { ...u };
       delete copy.password; // Never store plaintext password in cloud or storage
+      delete copy.passwordHash; // Critical: Never expose password hashes in publicly readable school_info (BUG-C2 fix)
       return copy;
     });
     supabase.from('school_info').upsert({ id: 'system_users', data: sanitized }).then(({ error }) => {
@@ -1493,12 +1505,34 @@ export function SchoolProvider({ children }) {
       id: `fee-${Date.now()}`,
       receiptNo,
       paidDate: getDhakaDateString(),
-      status: 'Paid'
+      status: 'Paid',
+      voidReason: null
     };
     setFees(prev => [newFee, ...prev]);
+
     if (supabase) {
-      supabase.from('fee_receipts').insert(mappers.fee.toDb(newFee)).then(({ error }) => {
-        if (error) console.warn('Supabase insert fee warning:', error.message);
+      const fullDb = mappers.fee.toDb(newFee);
+      supabase.from('fee_receipts').insert(fullDb).then(({ error }) => {
+        if (error) {
+          // NEW-1 Fix: PGRST204 fallback when cloud table lacks 'status' or 'void_reason' columns
+          const coreDb = {
+            id: String(newFee.id),
+            receipt_no: newFee.receiptNo,
+            student_id: newFee.studentId || null,
+            student_name: newFee.studentName || '',
+            class: String(newFee.class || ''),
+            roll: String(newFee.studentRoll || newFee.roll || ''),
+            fee_type: newFee.feeType || 'বেতন',
+            amount: Number(newFee.amount) || 0,
+            paid_date: newFee.paidDate,
+            method: newFee.method || 'Cash'
+          };
+          supabase.from('fee_receipts').insert(coreDb).then(({ error: retryErr }) => {
+            if (retryErr) {
+              console.warn('Supabase fee insert retry warning:', retryErr.message);
+            }
+          });
+        }
       });
     }
     return newFee;
