@@ -5,7 +5,7 @@ import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { runStorageMigration, getStoredItem, setStoredItem } from '../utils/storageAdapter';
 import { storeVideoFile, getVideoFile, deleteVideoFile } from '../utils/mediaStorage';
 import { getDhakaDateString } from '../utils/dateFormatter';
-import { hashPassword, verifyPassword } from '../utils/security';
+import { hashPassword, verifyPassword, hashPasswordPbkdf2 } from '../utils/security';
 import {
   supabase,
   isSupabaseConfigured,
@@ -224,8 +224,8 @@ export function SchoolProvider({ children }) {
       try {
         const rawParsed = JSON.parse(saved);
         const parsed = deepSanitizeBondua(rawParsed);
-        // Force official school identifiers & foundation date alignment
-        parsed.mpoCode = '105476301';
+        // Force official school identifiers & foundation date alignment (Official Notice 2025: MPO 0905171301)
+        parsed.mpoCode = '0905171301';
         parsed.eiin = '106644';
         parsed.foundationDate = '৮ জানুয়ারি, ১৯৯০ (স্বীকৃতি: ১ জানুয়ারি, ১৯৯৪)';
         parsed.foundationDateEn = 'January 8, 1990 (Recognized: January 1, 1994)';
@@ -752,7 +752,51 @@ export function SchoolProvider({ children }) {
   };
 
   const authenticate = async (username, password) => {
-    // Check lockout status (N2)
+    const cleanUser = username.trim().toLowerCase();
+
+    // 1. Server-side Secure Authentication RPC (BUG 1 & BUG 5 fix)
+    if (supabase) {
+      try {
+        const computedHash = await hashPassword(password);
+        const { data: rpcRes, error: rpcErr } = await supabase.rpc('verify_login', {
+          p_username: cleanUser,
+          p_password_hash: computedHash
+        });
+
+        if (!rpcErr && Array.isArray(rpcRes) && rpcRes.length > 0) {
+          const row = rpcRes[0];
+          if (row.success) {
+            localStorage.removeItem('bdhs_lockout');
+            const authData = {
+              id: `usr-${row.username}`,
+              username: row.username,
+              name: row.name_bn || row.name_en,
+              nameBn: row.name_bn,
+              nameEn: row.name_en,
+              role: row.role,
+              designation: row.designation_bn,
+              designationBn: row.designation_bn,
+              designationEn: row.designation_en,
+              permissions: row.permissions || [],
+              loginTime: new Date().toISOString()
+            };
+            setAuthUser(authData);
+            setLang('bn');
+            localStorage.setItem('bdhs_auth_user', JSON.stringify(authData));
+            return { success: true };
+          } else if (row.error_code === 'LOCKED') {
+            return {
+              success: false,
+              message: `একাধিক ভুল পাসওয়ার্ড দেওয়ায় অ্যাকাউন্টটি সার্ভার-সাইডে সাময়িকভাবে লক করা হয়েছে। আরও ${row.remaining_minutes || 15} মিনিট পর চেষ্টা করুন।`
+            };
+          }
+        }
+      } catch {
+        // RPC fallback to local verify if function not yet applied in Supabase
+      }
+    }
+
+    // 2. Client-side Local Fallback with Rate Limiting (BUG 5 client UX layer)
     const lockDataRaw = localStorage.getItem('bdhs_lockout');
     if (lockDataRaw) {
       try {
@@ -767,7 +811,6 @@ export function SchoolProvider({ children }) {
       } catch {}
     }
 
-    const cleanUser = username.trim().toLowerCase();
     const user = systemUsers.find(
       u => u.username?.toLowerCase() === cleanUser
     );
@@ -884,10 +927,10 @@ export function SchoolProvider({ children }) {
     return Array.isArray(authUser.permissions) && authUser.permissions.includes(moduleKey);
   };
 
-  // User Management Actions (Superadmin Controlled & Cloud Synced with Salted Hashing)
+  // User Management Actions (Superadmin Controlled & Cloud Synced with PBKDF2 Hashing - BUG 4)
   const addUser = async (newUser) => {
     const rawPass = newUser.password || 'admin2026';
-    const passHash = await hashPassword(rawPass, newUser.username);
+    const passHash = await hashPasswordPbkdf2(rawPass, newUser.username);
     const created = {
       ...newUser,
       id: `usr-${Date.now()}`,
@@ -911,7 +954,8 @@ export function SchoolProvider({ children }) {
 
     if (data.password) {
       const targetUser = systemUsers.find(u => u.id === targetId);
-      const passHash = await hashPassword(data.password, targetUser?.username);
+      const uName = targetUser?.username || data.username;
+      const passHash = await hashPasswordPbkdf2(data.password, uName);
       data = { ...data, passwordHash: passHash };
       delete data.password;
     }

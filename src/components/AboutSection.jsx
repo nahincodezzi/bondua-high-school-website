@@ -47,8 +47,8 @@ export default function AboutSection() {
 
               <p>
                 {lang === 'bn'
-                  ? 'কুমিল্লা শিক্ষাবোর্ডের আওতাধীন এবং শিক্ষা মন্ত্রণালয় কর্তৃক ১৯৯৪ সালে পূর্ণাঙ্গ স্বীকৃতি লাভ করে প্রতিষ্ঠানটি (EIIN: ১০৬৬৪৪, MPO: ১০৫৪৭৬৩০১)। প্রতিষ্ঠার পর থেকে অদ্যাবধি এসএসসি পরীক্ষায় শতভাগ সাফল্য ও উপজেলার শীর্ষস্থানীয় ফলাফলের সুনাম অক্ষুণ্ন রেখেছে বিদ্যালয়টি।'
-                  : 'Formally recognized under the Comilla Education Board in 1994 (EIIN: 106644, MPO Code: 105476301), the school consistently secures outstanding success in secondary school certificate examinations.'}
+                  ? `কুমিল্লা শিক্ষাবোর্ডের আওতাধীন এবং শিক্ষা মন্ত্রণালয় কর্তৃক ১৯৯৪ সালে পূর্ণাঙ্গ স্বীকৃতি লাভ করে প্রতিষ্ঠানটি (EIIN: ${schoolInfo.eiin || '১০৬৬৪৪'}, MPO: ${schoolInfo.mpoCode || '০৯০৫১৭১৩০১'})। প্রতিষ্ঠার পর থেকে অদ্যাবধি এসএসসি পরীক্ষায় শতভাগ সাফল্য ও উপজেলার শীর্ষস্থানীয় ফলাফলের সুনাম অক্ষুণ্ন রেখেছে বিদ্যালয়টি।`
+                  : `Formally recognized under the Comilla Education Board in 1994 (EIIN: ${schoolInfo.eiin || '106644'}, MPO Code: ${schoolInfo.mpoCode || '0905171301'}), the school consistently secures outstanding success in secondary school certificate examinations.`}
               </p>
 
               <div className="pt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-semibold">
@@ -58,11 +58,11 @@ export default function AboutSection() {
                 </div>
                 <div className="flex items-center gap-2.5 bg-bg p-3 rounded-xl border border-line text-ink">
                   <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
-                  <span>{lang === 'bn' ? 'EIIN কোড: ১০৬৬৪৪' : 'EIIN Code: 106644'}</span>
+                  <span>{lang === 'bn' ? `EIIN কোড: ${schoolInfo.eiin || '১০৬৬৪৪'}` : `EIIN Code: ${schoolInfo.eiin || '106644'}`}</span>
                 </div>
                 <div className="flex items-center gap-2.5 bg-bg p-3 rounded-xl border border-line text-ink">
                   <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
-                  <span>{lang === 'bn' ? 'এমপিও কোড: ১০৫৪৭৬৩০১' : 'MPO Code: 105476301'}</span>
+                  <span>{lang === 'bn' ? `এমপিও কোড: ${schoolInfo.mpoCode || '০৯০৫১৭১৩০১'}` : `MPO Code: ${schoolInfo.mpoCode || '0905171301'}`}</span>
                 </div>
                 <div className="flex items-center gap-2.5 bg-bg p-3 rounded-xl border border-line text-ink">
                   <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />

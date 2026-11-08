@@ -1,9 +1,46 @@
 /**
  * Cryptographic security utilities for School ERP
- * Uses salted SHA-256 with pepper to eliminate rainbow-table attacks (BUG-H2 fix)
+ * Implements PBKDF2 with 10,000 iterations & unique per-user salt (BUG 4 fix)
+ * Backwards-compatible with v2 salted SHA-256 and legacy unsalted SHA-256
  */
 
 const SYSTEM_PEPPER = 'bdhs_secure_pepper_2026_enterprise_v2';
+
+export async function hashPasswordPbkdf2(plainPassword, userSalt = '') {
+  if (!plainPassword) return '';
+  const cryptoObj = (typeof window !== 'undefined' && window.crypto && window.crypto.subtle)
+    ? window.crypto
+    : (typeof crypto !== 'undefined' && crypto.subtle ? crypto : null);
+
+  const enc = new TextEncoder();
+  const effectiveSalt = userSalt ? `salt_user_${userSalt.toLowerCase()}` : SYSTEM_PEPPER;
+
+  if (cryptoObj?.subtle) {
+    try {
+      const keyMaterial = await cryptoObj.subtle.importKey(
+        'raw',
+        enc.encode(plainPassword),
+        { name: 'PBKDF2' },
+        false,
+        ['deriveBits']
+      );
+      const derived = await cryptoObj.subtle.deriveBits(
+        {
+          name: 'PBKDF2',
+          salt: enc.encode(effectiveSalt),
+          iterations: 10000,
+          hash: 'SHA-256'
+        },
+        keyMaterial,
+        256
+      );
+      const hashArray = Array.from(new Uint8Array(derived));
+      return `pbkdf2$10k$` + hashArray.map(b => b.toString(16).padStart(2, '0')).join('').toLowerCase();
+    } catch {}
+  }
+
+  return hashPassword(plainPassword, effectiveSalt);
+}
 
 // Pure legacy unsalted hasher for seamless backward compatibility
 async function hashLegacyUnsalted(plainPassword) {
@@ -59,7 +96,16 @@ export async function verifyPassword(inputPassword, storedCredential, username =
 
   const target = storedCredential.trim().toLowerCase();
 
-  // 1. Verify modern salted hash (v2$)
+  // 1. Verify modern PBKDF2 hash (10,000 rounds with per-user salt)
+  if (target.startsWith('pbkdf2$')) {
+    const pbkdf2WithUser = await hashPasswordPbkdf2(inputPassword, username);
+    if (pbkdf2WithUser.toLowerCase() === target) return true;
+
+    const pbkdf2Default = await hashPasswordPbkdf2(inputPassword, '');
+    if (pbkdf2Default.toLowerCase() === target) return true;
+  }
+
+  // 2. Verify salted SHA-256 hash (v2$)
   if (target.startsWith('v2$') || target.startsWith('v2-fb-')) {
     const saltedWithUsername = await hashPassword(inputPassword, username || SYSTEM_PEPPER);
     if (saltedWithUsername.toLowerCase() === target) return true;
@@ -68,10 +114,10 @@ export async function verifyPassword(inputPassword, storedCredential, username =
     if (saltedDefault.toLowerCase() === target) return true;
   }
 
-  // 2. Backward compatibility with legacy unsalted SHA-256
+  // 3. Backward compatibility with legacy unsalted SHA-256
   const legacyHash = await hashLegacyUnsalted(inputPassword);
   if (legacyHash.toLowerCase() === target) return true;
 
-  // 3. Fallback direct match if plain string (dev legacy)
+  // 4. Fallback direct match if plain string (dev legacy)
   return inputPassword === storedCredential;
 }

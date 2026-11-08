@@ -7,7 +7,7 @@ export const initialSchoolInfo = {
   nameAlt: "Bondua Doulatpur High School",
   shortName: "BDHS",
   eiin: "106644",
-  mpoCode: "105476301",
+  mpoCode: "0905171301",
   schoolCode: "4320",
   established: 1990,
   recognized: 1994,
@@ -48,11 +48,11 @@ export const initialSchoolInfo = {
   },
   stats: [
     { id: "st-1", valueBn: "১৯৯০", valueEn: "1990", labelBn: "স্থাপিত শিক্ষাবর্ষ (স্বীকৃতি: ১৯৯৪)", labelEn: "Established Year" },
-    { id: "st-2", valueBn: "৮৫০+", valueEn: "850+", labelBn: "বর্তমান শিক্ষার্থী", labelEn: "Enrolled Students" },
+    { id: "st-2", valueBn: "৮৫০+", valueEn: "850+", labelBn: "শিক্ষার্থী ধারণক্ষমতা (নথিভুক্ত: ৫৩+)", labelEn: "Student Capacity (Enrolled: 53+)" },
     { id: "st-3", valueBn: "৯৮.৫%", valueEn: "98.5%", labelBn: "এসএসসি পাসের হার", labelEn: "SSC Board Pass Rate" },
     { id: "st-4", valueBn: "৩টি বিভাগ", valueEn: "3 Groups", labelBn: "বিজ্ঞান, ব্যবসায় ও মানবিক", labelEn: "Science, Business & Humanities" }
   ],
-  campusImage: "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&auto=format&fit=crop&q=80",
+  campusImage: "/photos/school/School_Building_Full_1920.webp",
   visionBn: "একটি বৈষম্যহীন, আধুনিক প্রযুক্তি-নির্ভর ও আদর্শ বিদ্যাপীঠ হিসেবে কুমিল্লা শিক্ষা বোর্ডের অন্যতম শ্রেষ্ঠ ও মডেল বিদ্যালয়ে রূপান্তরিত হওয়া।",
   visionEn: "To emerge as one of the premier model institutions under the Comilla Education Board, fostering discrimination-free, technology-driven, and holistic moral education.",
   missionBn: "মানসম্মত শিক্ষা, নৈতিক মূল্যবোধ ও ডিজিটাল প্রযুক্তির সমন্বয়ে প্রতিটি শিক্ষার্থীকে আধুনিক বিজ্ঞানমনস্ক, দেশপ্রেমিক ও দক্ষ মানবসম্পদ হিসেবে গড়ে তোলা।",
@@ -63,16 +63,16 @@ export const initialSchoolInfo = {
   roadEn: "Along Feni-Parshuram Road",
   addressBn: "ফেনী-পরশুরাম রোড সংলগ্ন, বন্দুয়া দৌলতপুর, আনন্দপুর ইউনিয়ন, ফুলগাজী উপজেলা, ফেনী জেলা, বাংলাদেশ",
   addressEn: "Along Feni-Parshuram Road, Bondua Daulatpur, Anandapur Union, Fulgazi, Feni, Bangladesh",
-  phone: "+880 1819-204561",
+  phone: "01824-472200",
   phoneAlt: "+880 1712-893042",
   email: "bonduas106644@gmail.com",
   website: "https://bonduadaulatpurhighschool.edu.bd",
   facebookGroupUrl: "https://www.facebook.com/groups/887015382052811/",
   facebookGroupId: "887015382052811",
-  headmasterNameBn: "জনাব বাহার উদ্দিন ভূঁইয়া",
-  headmasterNameEn: "Mr. Bahar Uddin Bhuiyan",
+  headmasterNameBn: "জনাব মোঃ জাহাঙ্গীর আলম",
+  headmasterNameEn: "Md. Jahangir Alam",
   headmasterDesignationBn: "ভারপ্রাপ্ত প্রধান শিক্ষক",
-  headmasterDesignationEn: "Acting Headmaster",
+  headmasterDesignationEn: "Acting Headmaster (Head Master, In Charge)",
   headmasterMessageBn: `বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়ের পক্ষ থেকে সবাইকে জানাই আন্তরিক শুভেচ্ছা ও অভিনন্দন। ১৯৯০ সালে প্রতিষ্ঠিত এই ঐতিহ্যবাহী বিদ্যাপীঠ ফেনী-পরশুরাম আঞ্চলিক মহাসড়কের পাশে আনন্দপুর ইউনিয়নে শিক্ষার আলোকবর্তিকা হিসেবে সেবা দিয়ে যাচ্ছে। 
 
 বর্তমান ডিজিটাল যুগে আমরা শিক্ষার্থীদের পাঠ্যবইয়ের পাশাপাশি প্রযুক্তি, বিজ্ঞান, নীতি-নৈতিকতা ও সৃজনশীল মেধা বিকাশে সচেষ্ট। একটি সমৃদ্ধ, দক্ষ ও দেশপ্রেমিক ভবিষ্যৎ প্রজন্ম গড়ে তোলাই আমাদের মূল লক্ষ্য। শিক্ষক, অভিভাবক ও শুভানুধ্যায়ীদের সহযোগিতায় বিদ্যালয়টি উত্তরোত্তর সাফল্যের শিখরে পৌঁছাবে এই প্রত্যাশা ব্যক্ত করছি।`,
@@ -125,21 +125,21 @@ export const initialUniformInfo = {
   guidelinesEn: "1. Wearing the prescribed school uniform is strictly mandatory for all students on all working days.\n2. No student will be permitted into classes or morning assembly without proper uniform and emblem.\n3. Uniforms must be clean, well-ironed, and modest."
 };
 
-// Hero Slider items (CMS Editable)
+// Hero Slider items (CMS Editable - Real School Photos)
 export const initialHeroSlides = [
   {
     id: 1,
-    image: "https://images.unsplash.com/photo-1562774053-701939374585?w=1600&auto=format&fit=crop&q=80",
+    image: "/photos/school/School_Building_Hero_16x9_1920.webp",
     tagBn: "ঐতিহ্য ও আধুনিকতার মেলবন্ধন",
     tagEn: "Tradition & Modern Excellence",
     titleBn: "বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়ে স্বাগতম",
-    titleEn: "Welcome to Bondua Doulatpur High School",
+    titleEn: "Welcome to Bondua Daulatpur High School",
     subtitleBn: "ফেনী-পরশুরাম রোড সংলগ্ন আনন্দপুর ইউনিয়নে ১৯৯০ সাল থেকে গুণগত মাধ্যমিক শিক্ষার আলোকবর্তিকা।",
     subtitleEn: "Situated along Feni-Parshuram Road, a premier secondary educational seat in Fulgazi, Feni."
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=1600&auto=format&fit=crop&q=80",
+    image: "/photos/school/School_Building_With_Signboard_16x9_1920.webp",
     tagBn: "শৃঙ্খলা, চরিত্র ও নির্ধারিত পোশাক",
     tagEn: "Discipline, Character & Proper Uniform",
     titleBn: "আদর্শ ও মূল্যবোধসম্পন্ন প্রজন্ম গড়ার অঙ্গীকার",
@@ -149,7 +149,7 @@ export const initialHeroSlides = [
   },
   {
     id: 3,
-    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1600&auto=format&fit=crop&q=80",
+    image: "/photos/school/School_Signboard_Banner_16x9_1920.webp",
     tagBn: "স্মার্ট শিক্ষা ও বিজ্ঞান চর্চা",
     tagEn: "Smart Education & Science Labs",
     titleBn: "শেখ রাসেল ডিজিটাল ল্যাব ও সমৃদ্ধ বিজ্ঞানাগার",
@@ -220,17 +220,17 @@ export const initialNotices = [
 export const initialTeachers = [
   {
     id: "tea-01",
-    nameBn: "জনাব বাহার উদ্দিন ভূঁইয়া",
-    nameEn: "Mr. Bahar Uddin Bhuiyan",
+    nameBn: "জনাব মোঃ জাহাঙ্গীর আলম",
+    nameEn: "Md. Jahangir Alam",
     designationBn: "ভারপ্রাপ্ত প্রধান শিক্ষক",
-    designationEn: "Acting Headmaster",
-    subjectBn: "ইংরেজি",
-    subjectEn: "English",
-    qualification: "বি.এ, ইংরেজি (B.A., English)",
+    designationEn: "Acting Headmaster (Head Master, In Charge)",
+    subjectBn: "হিসাব বিজ্ঞান ও গণিত",
+    subjectEn: "Accounting & Mathematics",
+    qualification: "বি.কম, এম.কম (হিসাববিজ্ঞান)",
     category: "faculty",
-    phone: "+880 1819-204561",
+    phone: "01824-472200",
     email: "bonduas106644@gmail.com",
-    image: createEducatorAvatar({ initials: "BU", role: "headmaster", designation: "Acting Headmaster", gender: "male" })
+    image: createEducatorAvatar({ initials: "JA", role: "headmaster", designation: "Acting Headmaster", gender: "male" })
   },
   {
     id: "tea-02",
@@ -912,13 +912,13 @@ export const initialUsers = [
     id: 'usr-headmaster',
     username: 'headmaster',
     passwordHash: 'b0702ec5f856b9dcc9114f5976cf618af9d90000ef19a1c6aa5cab5f264b2fb4',
-    nameBn: 'জনাব বাহার উদ্দিন ভূঁইয়া',
-    nameEn: 'Mr. Bahar Uddin Bhuiyan',
+    nameBn: 'জনাব মোঃ জাহাঙ্গীর আলম',
+    nameEn: 'Md. Jahangir Alam',
     designationBn: 'ভারপ্রাপ্ত প্রধান শিক্ষক',
-    designationEn: 'Acting Headmaster',
+    designationEn: 'Acting Headmaster (Head Master, In Charge)',
     role: 'headmaster',
     email: 'bonduas106644@gmail.com',
-    phone: '+880 1819-204561',
+    phone: '01824-472200',
     status: 'active',
     createdAt: '2026-01-05',
     permissions: ['cms', 'teachers', 'students', 'admissions', 'results', 'notices', 'fees', 'settings']
