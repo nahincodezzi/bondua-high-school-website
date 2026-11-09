@@ -14,59 +14,6 @@ import {
   mappers
 } from '../lib/supabase';
 import { DEFAULT_SCHOOL_LOGO } from '../utils/branding';
-
-function inferTeacherType(t) {
-  if (t.type === 'staff' || t.category === 'staff') return 'staff';
-  if (t.type === 'teacher' || t.category === 'faculty') return 'teacher';
-  const desBn = t.designationBn || '';
-  const desEn = t.designationEn || '';
-  if (
-    desBn.includes('অফিস সহকারী') ||
-    desBn.includes('পিয়ন') ||
-    desBn.includes('আয়া') ||
-    desBn.includes('আয়া') ||
-    desBn.includes('নিরাপত্তা') ||
-    desEn.includes('Office Assistant') ||
-    desEn.includes('Peon') ||
-    desEn.includes('Guard') ||
-    desEn.includes('Aya') ||
-    desEn.includes('Staff')
-  ) {
-    return 'staff';
-  }
-  return 'teacher';
-}
-
-function normalizeTeacherRecord(t, idx = 0) {
-  const type = inferTeacherType(t);
-  const rawPhoto = t.photo !== undefined ? t.photo : t.image;
-  const cleanPhoto =
-    rawPhoto &&
-    !String(rawPhoto).startsWith('data:image/svg+xml') &&
-    !String(rawPhoto).includes('images.unsplash.com')
-      ? rawPhoto
-      : '';
-  const orderNum =
-    t.order !== undefined && t.order !== null && t.order !== '' && !Number.isNaN(Number(t.order))
-      ? Number(t.order)
-      : idx + 1;
-
-  return {
-    ...t,
-    type,
-    category: type === 'staff' ? 'staff' : 'faculty',
-    photo: cleanPhoto,
-    image: cleanPhoto || (t.photo === '' ? '' : t.image || ''),
-    order: orderNum,
-    visible: t.visible !== false,
-  };
-}
-
-function sortTeachersList(list = []) {
-  return [...list]
-    .map((t, idx) => normalizeTeacherRecord(t, idx))
-    .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
-}
 import {
   initialSchoolInfo,
   initialUniformInfo,
@@ -429,14 +376,28 @@ export function SchoolProvider({ children }) {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return sortTeachersList(parsed);
+        if (!Array.isArray(parsed) || parsed.length < 16 || !parsed[0].nameBn.includes('বাহার')) {
+          return initialTeachers;
         }
+        // If cached teachers contain old stock unsplash fashion model images, upgrade to executive avatars while keeping user-uploaded custom photos
+        const hasStockModel = parsed.some(t => t.image && t.image.includes('images.unsplash.com'));
+        if (hasStockModel) {
+          return parsed.map((t, idx) => {
+            if (t.image && t.image.startsWith('data:image/') && !t.image.includes('svg')) {
+              return t; // Keep custom photo uploaded by user in CMS!
+            }
+            return {
+              ...t,
+              image: initialTeachers[idx]?.image || t.image
+            };
+          });
+        }
+        return parsed;
       } catch {
-        return sortTeachersList(initialTeachers);
+        return initialTeachers;
       }
     }
-    return sortTeachersList(initialTeachers);
+    return initialTeachers;
   });
 
   const [students, setStudents] = useState(() => {
@@ -576,7 +537,7 @@ export function SchoolProvider({ children }) {
         if (!isMounted || !cloud) return;
 
         if (cloud.notices && cloud.notices.length > 0) setNotices(cloud.notices);
-        if (cloud.teachers && cloud.teachers.length > 0) setTeachers(sortTeachersList(cloud.teachers));
+        if (cloud.teachers && cloud.teachers.length > 0) setTeachers(cloud.teachers);
         if (cloud.students && cloud.students.length > 0) {
           const cleanStudents = cloud.students.filter(s => {
             const name = (s.nameBn || s.nameEn || '').trim().toLowerCase();
@@ -1049,15 +1010,6 @@ export function SchoolProvider({ children }) {
   const hasPermission = (moduleKey) => {
     if (!authUser) return false;
     if (authUser.role === 'superadmin') return true;
-    if (
-      moduleKey === 'teachers' &&
-      (authUser.role === 'headmaster' ||
-        authUser.role === 'asst_headmaster' ||
-        authUser.username === 'headmaster' ||
-        authUser.username === 'asst_headmaster')
-    ) {
-      return true;
-    }
     return Array.isArray(authUser.permissions) && authUser.permissions.includes(moduleKey);
   };
 
@@ -1333,66 +1285,39 @@ export function SchoolProvider({ children }) {
     }
   };
 
-  const syncTeachersMetaToCloud = (list) => {
-    if (!supabase || !Array.isArray(list)) return;
-    const metaMap = {};
-    list.forEach((t, idx) => {
-      metaMap[t.id] = {
-        visible: t.visible !== false,
-        type: inferTeacherType(t),
-        order: Number(t.order) || idx + 1,
-        designationEn: t.designationEn || '',
-        subjectEn: t.subjectEn || '',
-        qualification: t.qualification || '',
-      };
-    });
-    supabase.from('school_info').upsert({ id: 'teachers_meta', data: metaMap }).then(({ error }) => {
-      if (error) console.warn('Supabase sync teachers_meta warning:', error.message);
-    });
-  };
-
   const addTeacher = (teacher) => {
-    const newId = teacher.id || `tea-${Date.now()}`;
-    setTeachers(prev => {
-      const maxOrder = prev.reduce((m, item) => Math.max(m, Number(item.order) || 0), 0);
-      const newTeacher = normalizeTeacherRecord({
-        ...teacher,
-        id: newId,
-        order: teacher.order !== undefined ? Number(teacher.order) : maxOrder + 1,
-        visible: teacher.visible !== false,
-      }, prev.length);
-      const next = sortTeachersList([...prev, newTeacher]);
-      if (supabase) {
-        supabase.from('teachers').insert(mappers.teacher.toDb(newTeacher)).then(({ error }) => {
-          if (error) {
-            const base = {
-              id: newTeacher.id,
-              name_bn: newTeacher.nameBn || '',
-              name_en: newTeacher.nameEn || null,
-              designation_bn: newTeacher.designationBn || '',
-              subject_bn: newTeacher.subjectBn || '',
-              phone: newTeacher.phone || '',
-              email: newTeacher.email || '',
-              education: newTeacher.qualification || newTeacher.education || '',
-              order: Number(newTeacher.order) || 10,
-              image: newTeacher.photo || newTeacher.image || null
-            };
-            supabase.from('teachers').insert(base).then(({ error: err2 }) => {
-              if (err2) console.warn('Supabase fallback insert teacher warning:', err2.message);
-            });
-          }
-        });
-        syncTeachersMetaToCloud(next);
-      }
-      return next;
-    });
+    const newTeacher = {
+      ...teacher,
+      id: `tea-${Date.now()}`
+    };
+    setTeachers(prev => [...prev, newTeacher]);
+    if (supabase) {
+      supabase.from('teachers').insert(mappers.teacher.toDb(newTeacher)).then(({ error }) => {
+        if (error) {
+          const base = {
+            id: newTeacher.id,
+            name_bn: newTeacher.nameBn || '',
+            name_en: newTeacher.nameEn || null,
+            designation_bn: newTeacher.designationBn || '',
+            subject_bn: newTeacher.subjectBn || '',
+            phone: newTeacher.phone || '',
+            email: newTeacher.email || '',
+            education: newTeacher.qualification || newTeacher.education || '',
+            order: Number(newTeacher.order) || 10,
+            image: newTeacher.image || null
+          };
+          supabase.from('teachers').insert(base).then(({ error: err2 }) => {
+            if (err2) console.warn('Supabase fallback insert teacher warning:', err2.message);
+          });
+        }
+      });
+    }
   };
 
   const updateTeacher = (id, updatedData) => {
-    setTeachers(prev => {
-      const mapped = prev.map((t, idx) => {
-        if (t.id !== id) return t;
-        const merged = normalizeTeacherRecord({ ...t, ...updatedData }, idx);
+    setTeachers(prev => prev.map(t => {
+      if (t.id === id) {
+        const merged = { ...t, ...updatedData };
         if (supabase) {
           supabase.from('teachers').update(mappers.teacher.toDb(merged)).eq('id', id).then(({ error }) => {
             if (error) {
@@ -1405,7 +1330,7 @@ export function SchoolProvider({ children }) {
                 email: merged.email || '',
                 education: merged.qualification || merged.education || '',
                 order: Number(merged.order) || 10,
-                image: merged.photo || merged.image || null
+                image: merged.image || null
               };
               supabase.from('teachers').update(base).eq('id', id).then(({ error: err2 }) => {
                 if (err2) console.warn('Supabase fallback update teacher warning:', err2.message);
@@ -1414,80 +1339,18 @@ export function SchoolProvider({ children }) {
           });
         }
         return merged;
-      });
-      const next = sortTeachersList(mapped);
-      syncTeachersMetaToCloud(next);
-      return next;
-    });
+      }
+      return t;
+    }));
   };
 
   const deleteTeacher = (id) => {
-    setTeachers(prev => {
-      const next = prev.filter(t => t.id !== id).map((t, idx) => ({ ...t, order: idx + 1 }));
-      if (supabase) {
-        supabase.from('teachers').delete().eq('id', id).then(({ error }) => {
-          if (error) console.warn('Supabase delete teacher warning:', error.message);
-        });
-        syncTeachersMetaToCloud(next);
-      }
-      return next;
-    });
-  };
-
-  const reorderTeachers = (orderedList) => {
-    const normalized = orderedList.map((t, idx) =>
-      normalizeTeacherRecord({ ...t, order: idx + 1 }, idx)
-    );
-    setTeachers(normalized);
+    setTeachers(prev => prev.filter(t => t.id !== id));
     if (supabase) {
-      normalized.forEach((t) => {
-        supabase.from('teachers').update({ order: t.order }).eq('id', t.id).then(({ error }) => {
-          if (error) console.warn('Supabase reorder teacher warning:', error.message);
-        });
+      supabase.from('teachers').delete().eq('id', id).then(({ error }) => {
+        if (error) console.warn('Supabase delete teacher warning:', error.message);
       });
-      syncTeachersMetaToCloud(normalized);
     }
-  };
-
-  const bulkAddTeachers = (newList) => {
-    if (!Array.isArray(newList) || newList.length === 0) return;
-    setTeachers(prev => {
-      const maxOrder = prev.reduce((m, item) => Math.max(m, Number(item.order) || 0), 0);
-      const timestamp = Date.now();
-      const created = newList.map((item, idx) =>
-        normalizeTeacherRecord({
-          ...item,
-          id: item.id || `tea-${timestamp}-${idx}`,
-          order: item.order !== undefined ? Number(item.order) : maxOrder + idx + 1,
-          visible: item.visible !== false,
-        }, prev.length + idx)
-      );
-      const next = sortTeachersList([...prev, ...created]);
-      if (supabase) {
-        const dbPayload = created.map(mappers.teacher.toDb);
-        supabase.from('teachers').insert(dbPayload).then(({ error }) => {
-          if (error) {
-            const basePayload = created.map(t => ({
-              id: t.id,
-              name_bn: t.nameBn || '',
-              name_en: t.nameEn || null,
-              designation_bn: t.designationBn || '',
-              subject_bn: t.subjectBn || '',
-              phone: t.phone || '',
-              email: t.email || '',
-              education: t.qualification || t.education || '',
-              order: Number(t.order) || 10,
-              image: t.photo || t.image || null
-            }));
-            supabase.from('teachers').insert(basePayload).then(({ error: err2 }) => {
-              if (err2) console.warn('Supabase bulk insert teachers warning:', err2.message);
-            });
-          }
-        });
-        syncTeachersMetaToCloud(next);
-      }
-      return next;
-    });
   };
 
   // Managing Committee Cloud Sync & Actions (Option A: school_info 'committee' document)
@@ -2348,8 +2211,6 @@ export function SchoolProvider({ children }) {
         addTeacher,
         updateTeacher,
         deleteTeacher,
-        reorderTeachers,
-        bulkAddTeachers,
         committee,
         setCommittee,
         addCommitteeMember,

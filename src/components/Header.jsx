@@ -116,16 +116,10 @@ export default function Header() {
       directTab: 'about',
       children: [
         { id: 'about', labelBn: 'পরিচিতি ও ইতিহাস', labelEn: 'About & History' },
-        { id: 'teachers', labelBn: 'শিক্ষক ও কর্মচারী', labelEn: 'Teachers & Staff' },
+        { id: 'faculty', labelBn: 'শিক্ষক ও কর্মচারী', labelEn: 'Faculty & Staff' },
         { id: 'uniform', labelBn: 'পোশাক ও ইউনিফর্ম', labelEn: 'Dress Code & Uniform' },
         { id: 'gallery', labelBn: 'ফটো গ্যালারি', labelEn: 'Photo Gallery' },
       ]
-    },
-    {
-      id: 'faculty',
-      labelBn: 'শিক্ষক ও কর্মচারী',
-      labelEn: 'Teachers',
-      directTab: 'faculty',
     },
     {
       id: 'notices',
@@ -168,19 +162,14 @@ export default function Header() {
     setActiveTab(id);
     setActiveDropdown(null);
     setMobileMenuOpen(false);
-    if (id !== 'teachers') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const isItemActive = (item) => {
-    if (activeTab === item.directTab) return true;
     if (item.children) {
-      const hasDirectTopLevel = navItems.some((n) => n.directTab === activeTab);
-      if (hasDirectTopLevel) return false;
-      return item.children.some((child) => child.id === activeTab);
+      return item.children.some((child) => child.id === activeTab) || activeTab === item.directTab;
     }
-    return false;
+    return activeTab === item.directTab;
   };
 
   const toggleMobileSection = (id) => {
@@ -202,14 +191,14 @@ export default function Header() {
             setIsFocusedInside(false);
           }
         }}
-        className={`fixed left-1/2 z-50 no-print rounded-full floating-glass-pill ${
+        className={`fixed left-1/2 z-50 no-print rounded-full overflow-hidden floating-glass-pill ${
           shouldHideNavbar 
             ? '-translate-x-1/2 -translate-y-[135%]' 
             : '-translate-x-1/2 translate-y-0'
         } ${
           isScrolled
-            ? 'top-[10px] w-[calc(100%-1.5rem)] max-w-[1280px] h-[58px] bg-deep/90 backdrop-blur-[14px] backdrop-saturate-[140%] border border-white/[0.14] shadow-[0_12px_32px_rgba(0,0,0,0.18)] floating-glass-scrolled'
-            : 'top-[16px] w-[calc(100%-2rem)] max-w-[1380px] h-[72px] bg-deep border border-white/[0.12] shadow-lg'
+            ? 'top-[10px] w-[calc(100%-1.5rem)] max-w-[1260px] h-[58px] bg-deep/90 backdrop-blur-[14px] backdrop-saturate-[140%] border border-white/[0.14] shadow-[0_12px_32px_rgba(0,0,0,0.18)] floating-glass-scrolled'
+            : 'top-[16px] w-[calc(100%-2rem)] max-w-[1360px] h-[72px] bg-deep border border-white/[0.12] shadow-lg'
         }`}
       >
         <nav className="w-full h-full px-3 sm:px-5 xl:px-6 flex items-center justify-between gap-2 sm:gap-3 xl:gap-4 select-none">
@@ -232,7 +221,7 @@ export default function Header() {
 
             <div className="hidden sm:block shrink-0 transition-all duration-300">
               <h1 className={`text-white font-bold font-bangla whitespace-nowrap leading-tight tracking-normal transition-all duration-300 group-hover:text-accent ${
-                isScrolled ? 'text-xs sm:text-sm' : 'text-xs sm:text-sm 2xl:text-base'
+                isScrolled ? 'text-xs sm:text-sm' : 'text-xs sm:text-base'
               }`}>
                 {lang === 'bn' ? (schoolInfo.nameBn || 'বিদ্যালয়ের নাম') : (schoolInfo.nameEn || 'School Name')}
               </h1>
@@ -249,7 +238,7 @@ export default function Header() {
           </div>
 
           {/* CENTER: DESKTOP NAVIGATION ITEMS */}
-          <ul className="hidden xl:flex items-center gap-0.5 2xl:gap-1.5 flex-nowrap h-full">
+          <ul className="hidden lg:flex items-center gap-0.5 xl:gap-2 flex-nowrap h-full">
             {navItems.map((item) => {
               const active = isItemActive(item);
               const hasChildren = Boolean(item.children && item.children.length > 0);
@@ -269,19 +258,14 @@ export default function Header() {
                       handleNavClick(item.directTab);
                     }}
                     aria-label={lang === 'bn' ? item.labelBn : item.labelEn}
-                    aria-haspopup={hasChildren ? 'true' : undefined}
-                    aria-expanded={hasChildren ? isDropdownOpen : undefined}
-                    className={`px-2 xl:px-2.5 2xl:px-3.5 py-1.5 xl:py-2 rounded-full whitespace-nowrap transition-all duration-200 flex items-center justify-center text-center cursor-pointer focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
+                    className={`px-2.5 xl:px-4 py-1.5 xl:py-2 rounded-full transition-all duration-200 flex items-center justify-center text-center cursor-pointer focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
                       active 
                         ? 'bg-white/[0.14] text-white shadow-xs font-bold' 
                         : 'text-white/90 hover:text-white hover:bg-white/[0.08]'
                     }`}
                   >
-                    <span className="font-bangla font-semibold text-xs 2xl:text-sm leading-none flex items-center gap-1 whitespace-nowrap">
+                    <span className="font-bangla font-semibold text-xs xl:text-sm leading-none flex items-center gap-1 xl:gap-1.5">
                       <span>{lang === 'bn' ? item.labelBn : item.labelEn}</span>
-                      {hasChildren && (
-                        <ChevronDown className={`w-3 h-3 opacity-80 transition-transform duration-150 ${isDropdownOpen ? 'rotate-180 text-accent' : ''}`} />
-                      )}
                       {active && (
                         <span className="w-1.5 h-1.5 rounded-full bg-accent shadow-xs"></span>
                       )}
@@ -327,7 +311,7 @@ export default function Header() {
           </ul>
 
           {/* RIGHT ACTION BUTTONS */}
-          <div className="flex items-center gap-1 sm:gap-1.5 2xl:gap-2.5 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2 xl:gap-2.5 shrink-0">
             {/* Primary Action Button: "পোর্টাল লগইন" in Amber */}
             {authUser ? (
               <div className="flex items-center gap-1 sm:gap-1.5">
@@ -357,8 +341,8 @@ export default function Header() {
                 onClick={() => setAuthModalOpen(true)}
                 className={`min-h-[44px] bg-accent hover:bg-accent-hover text-accent-ink font-bold rounded-full transition-all duration-300 flex items-center gap-1.5 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
                   isScrolled 
-                    ? 'px-3 sm:px-3.5 xl:px-3.5 2xl:px-4 py-2 text-xs' 
-                    : 'px-3 sm:px-4 xl:px-3.5 2xl:px-5 py-2 xl:py-2 text-xs 2xl:text-sm'
+                    ? 'px-3 sm:px-3.5 xl:px-4 py-2 text-xs' 
+                    : 'px-3 sm:px-4 xl:px-5 py-2 xl:py-2.5 text-xs sm:text-sm'
                 }`}
                 title="School Portal Login"
               >
@@ -415,7 +399,7 @@ export default function Header() {
             {/* Mobile Hamburger Menu Button (Min 44px for accessibility BUG-L3) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="min-w-[44px] min-h-[44px] xl:hidden rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95"
+              className="min-w-[44px] min-h-[44px] lg:hidden rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95"
               aria-label="মেনু খুলুন / বন্ধ করুন"
               aria-expanded={mobileMenuOpen}
             >
@@ -425,16 +409,14 @@ export default function Header() {
         </nav>
 
         {/* THIN 2.5px AMBER SCROLL PROGRESS LINE (CLIPPED BY PILL RADIUS) */}
-        <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none">
-          <div 
-            className="absolute bottom-0 left-0 h-[2.5px] bg-accent rounded-full transition-all duration-75 ease-out"
-            style={{ width: `${scrollProgress}%` }}
-            role="progressbar"
-            aria-valuenow={Math.round(scrollProgress)}
-            aria-valuemin={0}
-            aria-valuemax={100}
-          />
-        </div>
+        <div 
+          className="absolute bottom-0 left-0 h-[2.5px] bg-accent rounded-full pointer-events-none transition-all duration-75 ease-out"
+          style={{ width: `${scrollProgress}%` }}
+          role="progressbar"
+          aria-valuenow={Math.round(scrollProgress)}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        />
       </header>
 
       {/* MOBILE SLIDE-IN DRAWER FROM RIGHT */}

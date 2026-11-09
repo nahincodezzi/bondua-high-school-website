@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 
 export default function AuthModal() {
-  const { authModalOpen, setAuthModalOpen, setActiveTab, authenticate, login, lang } = useSchool();
+  const { authModalOpen, setAuthModalOpen, authenticate, login, lang } = useSchool();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
