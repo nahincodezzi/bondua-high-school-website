@@ -1,7 +1,8 @@
-// IndexedDB and Video Processing Storage Helper for Media CMS
+// IndexedDB and Media Processing Storage Helper for Media CMS
 const DB_NAME = 'bdhs_media_db';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE_NAME = 'videos';
+const PHOTO_STORE_NAME = 'photos';
 
 function openMediaDB() {
   return new Promise((resolve, reject) => {
@@ -13,6 +14,9 @@ function openMediaDB() {
       const db = e.target.result;
       if (!db.objectStoreNames.contains(STORE_NAME)) {
         db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(PHOTO_STORE_NAME)) {
+        db.createObjectStore(PHOTO_STORE_NAME, { keyPath: 'id' });
       }
     };
     request.onsuccess = () => resolve(request.result);
@@ -132,5 +136,105 @@ export function extractVideoMeta(file) {
       });
     };
   });
+}
+
+export async function storePhotoFile(id, dataUrlOrBlob) {
+  try {
+    const db = await openMediaDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(PHOTO_STORE_NAME, 'readwrite');
+      const store = tx.objectStore(PHOTO_STORE_NAME);
+      const req = store.put({ id, data: dataUrlOrBlob, timestamp: Date.now() });
+      req.onsuccess = () => resolve(true);
+      req.onerror = () => reject(req.error);
+    });
+  } catch (err) {
+    console.warn('IndexedDB storePhotoFile failed:', err);
+    return false;
+  }
+}
+
+export async function getPhotoFile(id) {
+  try {
+    const db = await openMediaDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(PHOTO_STORE_NAME, 'readonly');
+      const store = tx.objectStore(PHOTO_STORE_NAME);
+      const req = store.get(id);
+      req.onsuccess = () => resolve(req.result?.data || null);
+      req.onerror = () => reject(req.error);
+    });
+  } catch (err) {
+    console.warn('IndexedDB getPhotoFile failed:', err);
+    return null;
+  }
+}
+
+export async function deletePhotoFile(id) {
+  try {
+    const db = await openMediaDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(PHOTO_STORE_NAME, 'readwrite');
+      const store = tx.objectStore(PHOTO_STORE_NAME);
+      const req = store.delete(id);
+      req.onsuccess = () => resolve(true);
+      req.onerror = () => reject(req.error);
+    });
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Crops any image to a centered square and resizes to targetSize x targetSize
+ */
+export function processSquarePhoto(file, targetSize = 400) {
+  return new Promise((resolve, reject) => {
+    if (!file || !file.type?.startsWith('image/')) {
+      return reject(new Error('অনুগ্রহ করে সঠিক ছবি ফাইল (JPG/PNG/WebP) নির্বাচন করুন।'));
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      return reject(new Error('ছবির আকার সর্বোচ্চ ৫ মেগাবাইট (5MB) হতে পারবে।'));
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = targetSize;
+          canvas.height = targetSize;
+          const ctx = canvas.getContext('2d');
+
+          const minSide = Math.min(img.width, img.height);
+          const sx = (img.width - minSide) / 2;
+          // Bias slightly towards upper-center (portrait framing) when image is tall
+          const sy = img.height > img.width ? Math.min((img.height - minSide) * 0.25, (img.height - minSide) / 2) : (img.height - minSide) / 2;
+
+          ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, targetSize, targetSize);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.84);
+          resolve(dataUrl);
+        } catch (err) {
+          reject(err);
+        }
+      };
+      img.onerror = () => reject(new Error('ছবিটি প্রসেস করা যায়নি।'));
+      img.src = event.target?.result;
+    };
+    reader.onerror = () => reject(new Error('ফাইল পড়তে ব্যর্থ হয়েছে।'));
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * Processes, center-crops to square, caches in mediaStorage IndexedDB, and returns compact DataURL
+ */
+export async function uploadMemberPhoto(id, file, targetSize = 400) {
+  const dataUrl = await processSquarePhoto(file, targetSize);
+  if (id) {
+    await storePhotoFile(id, dataUrl);
+  }
+  return dataUrl;
 }
 

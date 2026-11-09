@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { initialNotices, initialHeroSlides } from '../data/initialData';
+import { initialNotices, initialHeroSlides, initialTeachers } from '../data/initialData';
 import { deepSanitizeBondua } from '../utils/sanitizeData';
 
 const SUPABASE_FALLBACK_URL = 'https://xpzzffxukeisfvuxxyut.supabase.co';
@@ -65,47 +65,71 @@ export const mappers = {
 
   teacher: {
     fromDb: (row) => {
-      const isStaff = row.category === 'staff' ||
-        row.designation_bn?.includes('অফিস সহকারী') ||
-        row.designation_bn?.includes('পিয়ন') ||
-        row.designation_bn?.includes('আয়া') ||
-        row.designation_en?.includes('Staff') ||
-        row.designation_en?.includes('Peon') ||
-        row.designation_en?.includes('Aya');
+      const seed = initialTeachers.find((t) => t.id === row.id);
+      const desBn = row.designation_bn || seed?.designationBn || '';
+      const desEn = row.designation_en || seed?.designationEn || '';
+      const isOfficeOrSupport =
+        desBn.includes('অফিস সহকারী') ||
+        desBn.includes('পিয়ন') ||
+        desBn.includes('আয়া') ||
+        desBn.includes('আয়া') ||
+        desBn.includes('নিরাপত্তা') ||
+        desEn.includes('Office Assistant') ||
+        desEn.includes('Staff') ||
+        desEn.includes('Peon') ||
+        desEn.includes('Guard') ||
+        desEn.includes('Aya');
+
+      const isStaff =
+        row.type === 'staff' ||
+        row.category === 'staff' ||
+        seed?.type === 'staff' ||
+        isOfficeOrSupport;
+
+      const rawImage = row.photo !== undefined ? row.photo : row.image;
+      const cleanPhoto = rawImage && !String(rawImage).startsWith('data:image/svg+xml') && !String(rawImage).includes('images.unsplash.com')
+        ? rawImage
+        : '';
 
       return {
         id: row.id,
-        nameBn: row.name_bn || '',
-        nameEn: row.name_en || '',
-        designationBn: row.designation_bn || '',
-        designationEn: row.designation_en || '',
-        subjectBn: row.subject_bn || '',
-        subjectEn: row.subject_en || '',
-        qualification: row.qualification || row.education || '',
-        category: row.category || (isStaff ? 'staff' : 'faculty'),
-        phone: row.phone || '',
-        email: row.email || '',
-        education: row.qualification || row.education || '',
-        image: row.image || null,
-        order: row.order ?? 10,
+        type: isStaff ? 'staff' : 'teacher',
+        nameBn: row.name_bn ?? seed?.nameBn ?? '',
+        nameEn: row.name_en ?? seed?.nameEn ?? '',
+        designationBn: desBn,
+        designationEn: desEn,
+        subjectBn: row.subject_bn ?? seed?.subjectBn ?? '',
+        subjectEn: row.subject_en ?? seed?.subjectEn ?? '',
+        qualification: (row.qualification !== undefined && row.qualification !== null)
+          ? row.qualification
+          : ((row.education !== undefined && row.education !== null) ? row.education : (seed?.qualification ?? '')),
+        category: isStaff ? 'staff' : 'faculty',
+        phone: row.phone ?? seed?.phone ?? '',
+        email: row.email ?? seed?.email ?? '',
+        education: (row.qualification !== undefined && row.qualification !== null)
+          ? row.qualification
+          : ((row.education !== undefined && row.education !== null) ? row.education : (seed?.qualification ?? '')),
+        photo: cleanPhoto,
+        image: row.image || cleanPhoto || '',
+        order: row.order ?? seed?.order ?? 10,
+        visible: row.visible !== false,
       };
     },
-    toDb: (t) => ({
-      id: String(t.id),
-      name_bn: t.nameBn || '',
-      name_en: t.nameEn || null,
-      designation_bn: t.designationBn || '',
-      designation_en: t.designationEn || null,
-      subject_bn: t.subjectBn || '',
-      subject_en: t.subjectEn || null,
-      phone: t.phone || '',
-      email: t.email || '',
-      education: t.qualification || t.education || '',
-      qualification: t.qualification || t.education || '',
-      category: t.category || 'faculty',
-      image: t.image || null,
-      order: Number(t.order) || 10,
-    }),
+    toDb: (t) => {
+      const photoVal = t.photo !== undefined ? t.photo : (t.image || '');
+      return {
+        id: String(t.id),
+        name_bn: t.nameBn || '',
+        name_en: t.nameEn || null,
+        designation_bn: t.designationBn || '',
+        subject_bn: t.subjectBn || '',
+        phone: t.phone || '',
+        email: t.email || '',
+        education: t.qualification || t.education || '',
+        image: photoVal || null,
+        order: Number(t.order) || 10,
+      };
+    },
   },
 
   student: {
@@ -477,9 +501,40 @@ export async function fetchAllCloudData() {
       }
     } catch {}
 
+    // Teachers extra metadata (visibility & type) stored in school_info 'teachers_meta'
+    let teachersMeta = null;
+    try {
+      const metaDoc = await supabase.from('school_info').select('*').eq('id', 'teachers_meta').maybeSingle();
+      if (metaDoc.data?.data && typeof metaDoc.data.data === 'object') {
+        teachersMeta = metaDoc.data.data;
+      }
+    } catch {}
+
+    const mappedTeachers = teachersRes.data?.map((row, idx) => {
+      const baseItem = mappers.teacher.fromDb(row);
+      const meta = teachersMeta?.[baseItem.id];
+      if (meta) {
+        const type = meta.type === 'staff' || meta.type === 'teacher' ? meta.type : baseItem.type;
+        return {
+          ...baseItem,
+          type,
+          category: type === 'staff' ? 'staff' : 'faculty',
+          visible: meta.visible !== false,
+          order: meta.order !== undefined ? Number(meta.order) : (baseItem.order ?? idx + 1),
+          designationEn: meta.designationEn !== undefined ? meta.designationEn : baseItem.designationEn,
+          subjectEn: meta.subjectEn !== undefined ? meta.subjectEn : baseItem.subjectEn,
+          qualification: meta.qualification !== undefined ? meta.qualification : baseItem.qualification,
+        };
+      }
+      return {
+        ...baseItem,
+        order: baseItem.order ?? idx + 1,
+      };
+    }) || null;
+
     return deepSanitizeBondua({
       notices: noticesRes.data?.map(mappers.notice.fromDb) || null,
-      teachers: teachersRes.data?.map(mappers.teacher.fromDb) || null,
+      teachers: mappedTeachers,
       students: studentsRes.data?.map(mappers.student.fromDb) || null,
       admissions: admissionsRes.data?.map(mappers.admission.fromDb) || null,
       results: resultsRes.data?.map(mappers.result.fromDb) || null,
