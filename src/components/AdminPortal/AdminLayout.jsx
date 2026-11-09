@@ -56,7 +56,7 @@ export default function AdminLayout() {
     { id: 'users', labelBn: 'ইউজার ও এক্সেস কন্ট্রোল', labelEn: 'User & Access Control', icon: Key, badge: 'SUPER', superadminOnly: true },
     { id: 'cms', labelBn: 'কনটেন্ট ও গ্যালারি (CMS)', labelEn: 'Content & Gallery CMS', icon: Sliders, badge: 'CMS' },
     { id: 'committee', labelBn: 'পরিচালনা পর্ষদ (Committee)', labelEn: 'Managing Committee', icon: UserCheck },
-    { id: 'teachers', labelBn: 'শিক্ষক পরিষদ (Faculty CMS)', labelEn: 'Faculty Directory CMS', icon: School },
+    { id: 'teachers', labelBn: 'শিক্ষক ও কর্মচারী', labelEn: 'Teachers & Staff', icon: School },
     { id: 'students', labelBn: 'শিক্ষার্থী ব্যবস্থাপনা', labelEn: 'Student Management', icon: Users },
     { id: 'admissions', labelBn: 'ভর্তি আবেদন যাচাই', labelEn: 'Admission Review', icon: FileCheck },
     { id: 'results', labelBn: 'ফলাফল ও গ্রেড প্রদান', labelEn: 'Result & Marks Entry', icon: Award },
@@ -349,7 +349,31 @@ export default function AdminLayout() {
               )}
               {activeModule === 'cms' && <CmsContentManager />}
               {activeModule === 'committee' && <CommitteeManager />}
-              {activeModule === 'teachers' && <TeacherManager />}
+              {activeModule === 'teachers' && (
+                hasPermission('teachers') ? (
+                  <TeacherManager />
+                ) : (
+                  <div className="bg-surface p-8 rounded-3xl border border-danger-soft text-center max-w-lg mx-auto font-bangla space-y-3 shadow-xs">
+                    <div className="w-12 h-12 rounded-full bg-danger-soft text-danger flex items-center justify-center mx-auto border border-danger-soft">
+                      <ShieldAlert className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-lg font-bold text-ink">
+                      {lang === 'bn' ? 'অননুমোদিত অ্যাক্সেস' : 'Unauthorized Access'}
+                    </h3>
+                    <p className="text-xs text-muted">
+                      {lang === 'bn'
+                        ? 'এই মডিউলে প্রবেশের অধিকার কেবল সুপার অ্যাডমিন, প্রধান শিক্ষক ও সহকারী প্রধান শিক্ষকের রয়েছে।'
+                        : 'Only Superadmin, Headmaster, and Assistant Headmaster can manage Teachers & Staff.'}
+                    </p>
+                    <button
+                      onClick={() => setActiveModule('overview')}
+                      className="btn-gold px-5 py-2 rounded-full text-xs font-bold cursor-pointer"
+                    >
+                      {lang === 'bn' ? 'ড্যাশবোর্ড ওভারভিউতে ফিরে যান' : 'Back to Overview'}
+                    </button>
+                  </div>
+                )
+              )}
               {activeModule === 'students' && <StudentManager initialOpenAdd={openStudentAdd} />}
               {activeModule === 'admissions' && <AdmissionManager />}
               {activeModule === 'results' && <ResultManager />}
