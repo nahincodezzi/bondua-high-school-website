@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSchool } from '../context/useSchool';
 import { createEducatorAvatar } from '../utils/avatarGenerator';
+import { toEnglishNumerals } from '../utils/dateFormatter';
 import { 
   Target, 
   Eye, 
@@ -71,7 +72,7 @@ export default function AboutSection() {
               <p>
                 {lang === 'bn'
                   ? `কুমিল্লা শিক্ষাবোর্ডের আওতাধীন এবং শিক্ষা মন্ত্রণালয় কর্তৃক ১৯৯৪ সালে পূর্ণাঙ্গ স্বীকৃতি লাভ করে প্রতিষ্ঠানটি (EIIN: ${schoolInfo.eiin || '১০৬৬৪৪'}, MPO: ${schoolInfo.mpoCode || '০৯০৫১৭১৩০১'})। প্রতিষ্ঠার পর থেকে অদ্যাবধি এসএসসি পরীক্ষায় শতভাগ সাফল্য ও উপজেলার শীর্ষস্থানীয় ফলাফলের সুনাম অক্ষুণ্ন রেখেছে বিদ্যালয়টি।`
-                  : `Formally recognized under the Comilla Education Board in 1994 (EIIN: ${schoolInfo.eiin || '106644'}, MPO Code: ${schoolInfo.mpoCode || '0905171301'}), the school consistently secures outstanding success in secondary school certificate examinations.`}
+                  : `Formally recognized under the Comilla Education Board in 1994 (EIIN: ${toEnglishNumerals(schoolInfo.eiin || '106644')}, MPO Code: ${toEnglishNumerals(schoolInfo.mpoCode || '0905171301')}), the school consistently secures outstanding success in secondary school certificate examinations.`}
               </p>
 
               <div className="pt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-semibold">
@@ -81,11 +82,11 @@ export default function AboutSection() {
                 </div>
                 <div className="flex items-center gap-2.5 bg-bg p-3 rounded-xl border border-line text-ink">
                   <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
-                  <span>{lang === 'bn' ? `EIIN কোড: ${schoolInfo.eiin || '১০৬৬৪৪'}` : `EIIN Code: ${schoolInfo.eiin || '106644'}`}</span>
+                  <span>{lang === 'bn' ? `EIIN কোড: ${schoolInfo.eiin || '১০৬৬৪৪'}` : `EIIN Code: ${toEnglishNumerals(schoolInfo.eiin || '106644')}`}</span>
                 </div>
                 <div className="flex items-center gap-2.5 bg-bg p-3 rounded-xl border border-line text-ink">
                   <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
-                  <span>{lang === 'bn' ? `এমপিও কোড: ${schoolInfo.mpoCode || '০৯০৫১৭১৩০১'}` : `MPO Code: ${schoolInfo.mpoCode || '0905171301'}`}</span>
+                  <span>{lang === 'bn' ? `এমপিও কোড: ${schoolInfo.mpoCode || '০৯০৫১৭১৩০১'}` : `MPO Code: ${toEnglishNumerals(schoolInfo.mpoCode || '0905171301')}`}</span>
                 </div>
                 <div className="flex items-center gap-2.5 bg-bg p-3 rounded-xl border border-line text-ink">
                   <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
@@ -210,15 +211,15 @@ export default function AboutSection() {
                   }}
                   className="flex-1 btn-gold py-2.5 px-4 rounded-xl text-xs font-bangla transition text-center cursor-pointer shadow-sm font-bold min-h-[44px] flex items-center justify-center gap-1.5"
                 >
-                  <Users className="w-4 h-4" />
+                  <Users className="w-4 h-4 shrink-0" />
                   <span>{lang === 'bn' ? 'শিক্ষক ও কর্মচারীদের তালিকা দেখুন' : 'View Faculty & Staff List'}</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('contact')}
                   className="flex-1 bg-white hover:bg-bg text-ink border border-line py-2.5 px-4 rounded-xl text-xs font-bangla transition text-center cursor-pointer shadow-xs font-semibold min-h-[44px] flex items-center justify-center gap-1.5"
                 >
-                  <UserCheck className="w-4 h-4 text-primary" />
-                  <span>{lang === 'bn' ? 'যোগাযোগের তথ্য ও ঠিকানা' : 'Contact Information & Location'}</span>
+                  <UserCheck className="w-4 h-4 text-primary shrink-0" />
+                  <span>{lang === 'bn' ? 'যোগাযোগের তথ্য ও ঠিকানা' : 'Contact & Address'}</span>
                 </button>
               </div>
             </div>

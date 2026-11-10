@@ -105,7 +105,7 @@ export default function UniformSection() {
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-line flex items-center justify-between text-xs text-muted font-semibold font-bangla">
+            <div className="mt-6 pt-4 border-t border-line flex flex-wrap items-center justify-between gap-2 text-xs text-muted font-semibold font-bangla">
               <span>{lang === 'bn' ? 'প্রতিদিন নির্ধারিত পোশাক পরা আবশ্যক' : 'Mandatory to wear prescribed uniform daily'}</span>
               <span className="badge-neutral text-[11px]">{lang === 'bn' ? 'ছাত্রদের পোশাক কোড' : 'Boys Dress Code'}</span>
             </div>
@@ -190,7 +190,7 @@ export default function UniformSection() {
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-line flex items-center justify-between text-xs text-muted font-semibold font-bangla">
+            <div className="mt-6 pt-4 border-t border-line flex flex-wrap items-center justify-between gap-2 text-xs text-muted font-semibold font-bangla">
               <span>{lang === 'bn' ? 'শালীনতা ও পরিচ্ছন্নতা বজায় রাখা আবশ্যিক' : 'Modesty and cleanliness must be maintained'}</span>
               <span className="badge-neutral text-[11px]">{lang === 'bn' ? 'ছাত্রীদের পোশাক কোড' : 'Girls Dress Code'}</span>
             </div>

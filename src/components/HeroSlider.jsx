@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSchool } from '../context/useSchool';
+import { toEnglishNumerals, toBanglaNumerals } from '../utils/dateFormatter';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -27,7 +28,8 @@ export default function HeroSlider() {
     { id: '4', valueBn: '৩টি বিভাগ', valueEn: '3 Groups', labelBn: 'বিজ্ঞান, ব্যবসায় ও মানবিক', labelEn: 'Science, Business & Humanities' },
   ];
 
-  const admYear = schoolInfo?.admissionYear || (lang === 'bn' ? '২০২৭' : '2027');
+  const rawAdmYear = schoolInfo?.admissionYear || (lang === 'bn' ? '২০২৭' : '2027');
+  const admYear = lang === 'bn' ? toBanglaNumerals(rawAdmYear) : toEnglishNumerals(rawAdmYear);
 
   // Auto-slide effect with pause on hover/focus and reduced motion awareness (L3)
   useEffect(() => {
@@ -260,10 +262,10 @@ export default function HeroSlider() {
           {statsList.map((stat, sIdx) => (
             <div key={stat.id || sIdx} className="border-r border-white/15 last:border-none px-2">
               <p className="text-2xl sm:text-3xl font-extrabold text-white">
-                {lang === 'bn' ? stat.valueBn : (stat.valueEn || stat.valueBn)}
+                {lang === 'bn' ? stat.valueBn : toEnglishNumerals(stat.valueEn || stat.valueBn)}
               </p>
               <p className="text-xs sm:text-sm text-soft font-medium font-bangla mt-0.5">
-                {lang === 'bn' ? stat.labelBn : (stat.labelEn || stat.labelBn)}
+                {lang === 'bn' ? stat.labelBn : toEnglishNumerals(stat.labelEn || stat.labelBn)}
               </p>
             </div>
           ))}

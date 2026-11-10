@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSchool } from '../context/useSchool';
+import { toEnglishNumerals } from '../utils/dateFormatter';
 import { 
   Users, 
   Search, 
@@ -13,6 +14,73 @@ import {
   ShieldCheck,
   Star
 } from 'lucide-react';
+
+const QUALIFICATION_EN_MAP = {
+  'বি.কম, এম.কম (হিসাববিজ্ঞান)': 'B.Com., M.Com. (Accounting)',
+  'ইংরেজি, বি.এ, বি.এড (B.A., B.Ed.)': 'B.A. (English), B.Ed.',
+  'বি.কম, বি.এড (B.Com., B.Ed.)': 'B.Com., B.Ed.',
+  'এম.এ, ইসলাম শিক্ষা (M.A., Islamic Studies)': 'M.A. (Islamic Studies)',
+  'বি.কম, বি.এড, বি.পি.এড (B.Com., B.Ed., B.P.Ed.)': 'B.Com., B.Ed., B.P.Ed.',
+  'বি.এ, বি.এড (B.A., B.Ed.)': 'B.A., B.Ed.',
+  'সমাজ বিজ্ঞান (B.A., Social Science)': 'B.A. (Social Science)',
+  'এম.এসসি, বি.এড (M.Sc., B.Ed.)': 'M.Sc., B.Ed.',
+  'বি.এস.সি (B.Sc., Science)': 'B.Sc. (Science)',
+  'বি.এ (B.A.)': 'B.A.',
+  'অফিস সহায়ক': 'Office Support Staff',
+  'অফিস সহায়ক': 'Office Support Staff',
+  'নিরাপত্তা প্রহরী': 'Security Guard',
+  'সহায়ক কর্মী': 'Support Staff',
+  'সহায়ক কর্মী': 'Support Staff'
+};
+
+const DEGREE_TOKEN_REPLACEMENTS = [
+  [/বি\.পি\.এড/g, 'B.P.Ed.'],
+  [/এম\.এস\.এস/g, 'M.S.S.'],
+  [/বি\.এস\.এস/g, 'B.S.S.'],
+  [/এম\.এস\.সি|এম\.এসসি/g, 'M.Sc.'],
+  [/বি\.এস\.সি|বি\.এসসি/g, 'B.Sc.'],
+  [/এম\.কম/g, 'M.Com.'],
+  [/বি\.কম/g, 'B.Com.'],
+  [/এম\.এড/g, 'M.Ed.'],
+  [/বি\.এড/g, 'B.Ed.'],
+  [/এম\.এ/g, 'M.A.'],
+  [/বি\.এ/g, 'B.A.'],
+  [/এইচ\.এস\.সি/g, 'H.S.C.'],
+  [/এস\.এস\.সি/g, 'S.S.C.'],
+  [/হিসাববিজ্ঞান|হিসাব বিজ্ঞান/g, 'Accounting'],
+  [/ইসলাম শিক্ষা/g, 'Islamic Studies'],
+  [/সমাজ বিজ্ঞান|সমাজবিজ্ঞান/g, 'Social Science'],
+  [/ভৌত বিজ্ঞান/g, 'Physical Science'],
+  [/ইংরেজি/g, 'English'],
+  [/বাংলা/g, 'Bangla'],
+  [/গণিত/g, 'Mathematics'],
+  [/বিজ্ঞান/g, 'Science'],
+  [/অফিস সহা[য়য]ক/g, 'Office Support Staff'],
+  [/নিরাপত্তা প্রহরী/g, 'Security Guard'],
+  [/সহা[য়য]ক কর্মী/g, 'Support Staff'],
+  [/পরিচ্ছন্নতাকর্মী/g, 'Attendant']
+];
+
+function getDisplayQualification(member, lang) {
+  const raw = (member?.qualification || member?.education || '').trim();
+  if (lang === 'bn') return raw;
+  if (member?.qualificationEn && String(member.qualificationEn).trim()) {
+    return String(member.qualificationEn).trim();
+  }
+  if (!raw) return '';
+  if (QUALIFICATION_EN_MAP[raw]) return QUALIFICATION_EN_MAP[raw];
+
+  const parenEnglish = raw.match(/\(([A-Za-z0-9.,\s&+-]+)\)\s*$/);
+  if (parenEnglish && /[A-Za-z]{2,}/.test(parenEnglish[1])) {
+    return parenEnglish[1].trim();
+  }
+
+  let translated = toEnglishNumerals(raw);
+  for (const [pattern, replacement] of DEGREE_TOKEN_REPLACEMENTS) {
+    translated = translated.replace(pattern, replacement);
+  }
+  return translated.replace(/\s+/g, ' ').trim();
+}
 
 function isStaffRecord(member) {
   return member?.type === 'staff' || member?.category === 'staff';
@@ -44,13 +112,18 @@ function MemberCard({ member, index, lang }) {
   const displayName = lang === 'bn' ? member.nameBn : (member.nameEn || member.nameBn);
   const displayDesignation = lang === 'bn'
     ? member.designationBn
-    : (member.designationEn || member.designationBn);
+    : (member.designationEn || member.designationBn || '')
+        .replace(/\s*\(Head Master,\s*In Charge\)/gi, '')
+        .trim();
   const rawSubject = lang === 'bn'
     ? (member.subjectBn || '')
     : (member.subjectEn || member.subjectBn || '');
   const subjectText = rawSubject.trim();
-  const qualificationText = (member.qualification || member.education || '').trim();
-  const cleanPhoneHref = (member.phone || '').replace(/[^\d+]/g, '');
+  const qualificationText = getDisplayQualification(member, lang);
+  const displayPhone = member.phone
+    ? (lang === 'bn' ? member.phone : toEnglishNumerals(member.phone))
+    : '';
+  const cleanPhoneHref = toEnglishNumerals(member.phone || '').replace(/[^\d+]/g, '');
 
   return (
     <article
@@ -154,12 +227,12 @@ function MemberCard({ member, index, lang }) {
         <div className="px-5 py-3 bg-bg border-t border-line flex items-center justify-between text-xs text-muted font-mono min-h-[44px]">
           {member.phone ? (
             <a
-              href={`tel:${cleanPhoneHref || member.phone}`}
+              href={`tel:${cleanPhoneHref || displayPhone}`}
               className="flex items-center gap-1.5 hover:text-primary transition font-semibold"
-              title={member.phone}
+              title={displayPhone}
             >
               <Phone className="w-3.5 h-3.5 text-primary shrink-0" />
-              <span className="text-[11px]">{member.phone}</span>
+              <span className="text-[11px]">{displayPhone}</span>
             </a>
           ) : (
             <span />
@@ -203,7 +276,8 @@ export default function FacultyDirectory({ sectionId = 'teachers' }) {
       t.designationEn?.toLowerCase().includes(q) ||
       t.subjectBn?.toLowerCase().includes(q) ||
       t.subjectEn?.toLowerCase().includes(q) ||
-      t.qualification?.toLowerCase().includes(q);
+      t.qualification?.toLowerCase().includes(q) ||
+      t.qualificationEn?.toLowerCase().includes(q);
 
     const isStaff = isStaffRecord(t);
     const matchesCategory =
@@ -250,7 +324,7 @@ export default function FacultyDirectory({ sectionId = 'teachers' }) {
         </div>
 
         {/* White Rounded Filter & Search Toolbar Card */}
-        <div className="bg-surface p-3 sm:p-4 rounded-3xl border border-line mb-8 flex flex-col md:flex-row items-center justify-between gap-4 font-bangla shadow-sm">
+        <div className="bg-surface p-3 sm:p-4 rounded-3xl border border-line mb-8 flex flex-col lg:flex-row items-center justify-between gap-4 font-bangla shadow-sm">
           {/* Category Filter Tabs */}
           <div className="flex flex-wrap sm:flex-nowrap bg-bg p-1 rounded-full border border-line text-xs font-bold w-full md:w-auto gap-1 sm:gap-0">
             <button

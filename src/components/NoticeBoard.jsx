@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import SchoolLogo from './common/SchoolLogo';
 import { useSchool } from '../context/useSchool';
-import { formatBanglaDate, toBanglaNumerals } from '../utils/dateFormatter';
+import { formatBanglaDate, toBanglaNumerals, toEnglishNumerals } from '../utils/dateFormatter';
 import { getSignatories } from '../utils/signatories';
 import { 
   Bell, 
@@ -164,23 +164,34 @@ export default function NoticeBoard() {
             </div>
             <div className="text-center">
               <h1 className="text-xl font-extrabold text-slate-900 font-bangla leading-tight">
-                {schoolInfo.nameBn}
+                {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || schoolInfo.nameBn)}
               </h1>
               <p className="text-[10pt] text-slate-700 font-bangla">
-                {schoolInfo.addressBn} • কুমিল্লা শিক্ষা বোর্ড
+                {lang === 'bn'
+                  ? `${schoolInfo.addressBn} • কুমিল্লা শিক্ষা বোর্ড`
+                  : `${schoolInfo.addressEn || schoolInfo.addressBn} • Comilla Education Board`}
               </p>
               <p className="text-[8pt] text-slate-600 font-mono">
-                EIIN: {schoolInfo.eiin} • MPO: {schoolInfo.mpoCode} • স্থাপিত: ১৯৯০
+                {lang === 'bn'
+                  ? `EIIN: ${schoolInfo.eiin} • MPO: ${schoolInfo.mpoCode} • স্থাপিত: ১৯৯০`
+                  : `EIIN: ${toEnglishNumerals(schoolInfo.eiin)} • MPO: ${toEnglishNumerals(schoolInfo.mpoCode)} • Est: 1990`}
               </p>
             </div>
           </div>
           <div className="flex justify-between items-center text-[8.5pt] font-mono border-t border-b border-slate-300 py-1 mt-2 font-semibold">
-            <span>স্মারক নং: বদৌউবি/বিজ্ঞপ্তি/{toBanglaNumerals((activeNoticeModal.id || '1').replace(/\D/g, '') || '০১')}/২০২৬</span>
-            <span>তারিখ: {formatBanglaDate(activeNoticeModal.publishDate || activeNoticeModal.date, lang)}</span>
+            <span>
+              {lang === 'bn'
+                ? `স্মারক নং: বদৌউবি/বিজ্ঞপ্তি/${toBanglaNumerals((activeNoticeModal.id || '1').replace(/\D/g, '') || '01')}/২০২৬`
+                : `Memo No: BDHS/Notice/${toEnglishNumerals((activeNoticeModal.id || '1').replace(/\D/g, '') || '01')}/2026`}
+            </span>
+            <span>
+              {lang === 'bn' ? 'তারিখ: ' : 'Date: '}
+              {formatBanglaDate(activeNoticeModal.publishDate || activeNoticeModal.date, lang)}
+            </span>
           </div>
           <div className="mt-2 text-center">
             <span className="inline-block bg-slate-900 text-white text-[9pt] font-bold px-3 py-0.5 rounded font-bangla uppercase tracking-wider">
-              প্রাতিষ্ঠানিক অফিসিয়াল বিজ্ঞপ্তি
+              {lang === 'bn' ? 'প্রাতিষ্ঠানিক অফিসিয়াল বিজ্ঞপ্তি' : 'Official Institutional Notice'}
             </span>
           </div>
         </div>
@@ -190,7 +201,8 @@ export default function NoticeBoard() {
           {/* Subject Line */}
           <div className="p-3 bg-white rounded-xl border border-line shadow-xs print:border-none print:shadow-none print:p-0">
             <h2 className="text-base sm:text-lg font-extrabold font-bangla text-deep border-b border-line pb-2 print:text-base print:border-b-2 print:border-slate-800">
-              বিষয়: {lang === 'bn' ? activeNoticeModal.titleBn : (activeNoticeModal.titleEn || activeNoticeModal.titleBn)}
+              {lang === 'bn' ? 'বিষয়: ' : 'Subject: '}
+              {lang === 'bn' ? activeNoticeModal.titleBn : (activeNoticeModal.titleEn || activeNoticeModal.titleBn)}
             </h2>
             <div className="mt-3 text-ink leading-relaxed text-justify print:text-[10.5pt]">
               {lang === 'bn' ? activeNoticeModal.contentBn : (activeNoticeModal.contentEn || activeNoticeModal.contentBn)}
@@ -231,17 +243,19 @@ export default function NoticeBoard() {
           )}
 
           {/* Official Sign-off & Seal */}
-          <div className="pt-6 border-t border-line text-xs text-muted flex justify-between items-end print:pt-4 print:border-t-2 print:border-slate-800">
+          <div className="pt-6 border-t border-line text-xs text-muted flex flex-wrap sm:flex-nowrap justify-between items-end gap-4 print:pt-4 print:border-t-2 print:border-slate-800">
             {/* Distribution List (Left) */}
             <div className="text-[8pt] text-slate-600 font-bangla space-y-0.5 text-left max-w-xs">
-              <p className="font-bold text-slate-800">অনুলিপি অবগতির জন্য ও কার্যার্থে প্রেরিত:</p>
-              <p>১. সহকারী প্রধান শিক্ষক ও সকল শিক্ষক-কর্মচারী</p>
-              <p>২. নোটিশ বোর্ড ও বিদ্যালয় অফিস নথি</p>
-              <p>৩. বিদ্যালয় ওয়েবসাইট / অনলাইন নোটিশ বোর্ড</p>
+              <p className="font-bold text-slate-800">
+                {lang === 'bn' ? 'অনুলিপি অবগতির জন্য ও কার্যার্থে প্রেরিত:' : 'Copy forwarded for kind information & necessary action:'}
+              </p>
+              <p>{lang === 'bn' ? '১. সহকারী প্রধান শিক্ষক ও সকল শিক্ষক-কর্মচারী' : '1. Assistant Headmaster & All Teachers / Staff'}</p>
+              <p>{lang === 'bn' ? '২. নোটিশ বোর্ড ও বিদ্যালয় অফিস নথি' : '2. School Notice Board & Office Records'}</p>
+              <p>{lang === 'bn' ? '৩. বিদ্যালয় ওয়েবসাইট / অনলাইন নোটিশ বোর্ড' : '3. Official School Website / Online Portal'}</p>
             </div>
 
             {/* Institute Official Seal Stamp (Center) */}
-            <div className="w-16 h-16 rounded-full border-2 border-dashed border-primary text-primary flex flex-col items-center justify-center p-1 text-[7px] text-center font-bold">
+            <div className="w-16 h-16 rounded-full border-2 border-dashed border-primary text-primary flex flex-col items-center justify-center p-1 text-[7px] text-center font-bold shrink-0">
               <span>BONDUA DAULATPUR</span>
               <span>HIGH SCHOOL</span>
               <span>SEAL</span>
@@ -255,13 +269,15 @@ export default function NoticeBoard() {
                 </span>
               </div>
               <p className="font-bold text-ink font-bangla text-xs print:text-[9pt]">
-                {signatories.headmaster.nameBn}
+                {lang === 'bn' ? signatories.headmaster.nameBn : (signatories.headmaster.nameEn || signatories.headmaster.nameBn)}
               </p>
               <p className="text-muted text-[10px] font-bangla print:text-[8pt]">
-                {signatories.headmaster.designationBn}
+                {lang === 'bn'
+                  ? signatories.headmaster.designationBn
+                  : (signatories.headmaster.designationEn || 'Acting Headmaster')}
               </p>
               <p className="text-muted text-[9px] print:text-[7.5pt]">
-                {schoolInfo.nameBn}
+                {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || schoolInfo.nameBn)}
               </p>
             </div>
           </div>
@@ -314,7 +330,7 @@ export default function NoticeBoard() {
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold font-bangla transition-all active:scale-95 cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold font-bangla transition-all active:scale-95 cursor-pointer whitespace-nowrap ${
                   selectedCategory === cat.id
                     ? 'bg-primary text-white shadow-xs'
                     : 'bg-bg text-ink hover:bg-soft border border-line'

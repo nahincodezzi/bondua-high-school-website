@@ -62,6 +62,31 @@ function normalizeTeacherRecord(t, idx = 0) {
   };
 }
 
+function normalizeGalleryList(list = [], seedList = []) {
+  return (Array.isArray(list) ? list : []).map((item, idx) => {
+    const seed = seedList.find(s => s.id === item.id) || seedList[idx];
+    return {
+      ...item,
+      titleEn: item.titleEn || seed?.titleEn || item.titleBn || '',
+      descriptionEn: item.descriptionEn || seed?.descriptionEn || item.titleEn || seed?.titleEn || ''
+    };
+  });
+}
+
+function normalizeAcademicGroupsList(list = [], seedList = []) {
+  return (Array.isArray(list) ? list : []).map((grp, idx) => {
+    const seed = seedList.find(s => s.id === grp.id) || seedList[idx];
+    return {
+      ...grp,
+      titleEn: grp.titleEn || seed?.titleEn || grp.titleBn || '',
+      descriptionEn: grp.descriptionEn || seed?.descriptionEn || '',
+      subjectsEn: Array.isArray(grp.subjectsEn) && grp.subjectsEn.length > 0
+        ? grp.subjectsEn
+        : (seed?.subjectsEn || [])
+    };
+  });
+}
+
 function sortTeachersList(list = []) {
   return [...list]
     .map((t, idx) => normalizeTeacherRecord(t, idx))
@@ -395,7 +420,9 @@ export function SchoolProvider({ children }) {
       const saved = localStorage.getItem('bdhs_academic_groups');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return normalizeAcademicGroupsList(parsed, initialAcademicGroups);
+        }
       }
     } catch {}
     return initialAcademicGroups;
@@ -450,8 +477,16 @@ export function SchoolProvider({ children }) {
   });
 
   const [gallery, setGallery] = useState(() => {
-    const saved = localStorage.getItem('bdhs_gallery');
-    return saved ? JSON.parse(saved) : initialGallery;
+    try {
+      const saved = localStorage.getItem('bdhs_gallery');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return normalizeGalleryList(parsed, initialGallery);
+        }
+      }
+    } catch {}
+    return initialGallery;
   });
 
   const [videos, setVideos] = useState(() => {
@@ -603,7 +638,7 @@ export function SchoolProvider({ children }) {
           setHeroSlides(cleanSlides);
           localStorage.setItem('bdhs_slides', JSON.stringify(cleanSlides));
         }
-        if (cloud.gallery && cloud.gallery.length > 0) setGallery(cloud.gallery);
+        if (cloud.gallery && cloud.gallery.length > 0) setGallery(normalizeGalleryList(cloud.gallery, initialGallery));
         if (cloud.schoolInfo) {
           const cleanInfo = deepSanitizeBondua(cloud.schoolInfo);
           cleanInfo.nameEn = cleanInfo.nameEn || 'Bondua Daulatpur High School';
@@ -641,8 +676,9 @@ export function SchoolProvider({ children }) {
           localStorage.setItem('bdhs_academic_config', JSON.stringify(cloud.academicConfig));
         }
         if (cloud.academicGroups && Array.isArray(cloud.academicGroups) && cloud.academicGroups.length > 0) {
-          setAcademicGroups(cloud.academicGroups);
-          localStorage.setItem('bdhs_academic_groups', JSON.stringify(cloud.academicGroups));
+          const normalizedGroups = normalizeAcademicGroupsList(cloud.academicGroups, initialAcademicGroups);
+          setAcademicGroups(normalizedGroups);
+          localStorage.setItem('bdhs_academic_groups', JSON.stringify(normalizedGroups));
         }
         if (cloud.contactMessages && cloud.contactMessages.length > 0) setContactMessages(cloud.contactMessages);
         if (cloud.videos && cloud.videos.length > 0) setVideos(cloud.videos);

@@ -26,21 +26,24 @@ export default function FacebookMediaHub() {
       titleEn: "Batch 2025 Reunion at Campus Ground",
       category: "cultural",
       image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&auto=format&fit=crop&q=80",
-      description: "প্রাক্তন শিক্ষার্থীদের মিলনমেলা ও স্মৃতিচারণ।"
+      description: "প্রাক্তন শিক্ষার্থীদের মিলনমেলা ও স্মৃতিচারণ।",
+      descriptionEn: "Alumni gathering and joyful reminiscence on campus."
     },
     {
       titleBn: "আন্তঃশ্রেণি ফুটবল টুর্নামেন্ট ফাইনাল ম্যাচ",
       titleEn: "Inter-Class Football Tournament Final",
       category: "sports",
       image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&auto=format&fit=crop&q=80",
-      description: "দশম শ্রেণি বনাম নবম শ্রেণির মধ্যকার রোমাঞ্চকর ফাইনাল।"
+      description: "দশম শ্রেণি বনাম নবম শ্রেণির মধ্যকার রোমাঞ্চকর ফাইনাল।",
+      descriptionEn: "Thrilling championship final between Class X and Class IX."
     },
     {
       titleBn: "জাতীয় বিজ্ঞান মেলায় শিক্ষার্থীদের উদ্ভাবনী প্রজেক্ট",
       titleEn: "Students Innovation at National Science Fair",
       category: "academic",
       image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop&q=80",
-      description: "সৌরশক্তি চালিত রোবট ও স্মার্ট ভিলেজ মডেল প্রদর্শন।"
+      description: "সৌরশক্তি চালিত রোবট ও স্মার্ট ভিলেজ মডেল প্রদর্শন।",
+      descriptionEn: "Exhibition of solar robotics and smart village innovation model."
     }
   ];
 
@@ -58,6 +61,7 @@ export default function FacebookMediaHub() {
       category,
       image: imageUrl.trim(),
       description: description || 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়ের অফিশিয়াল ফেসবুক গ্রুপ হতে সংযুক্ত।',
+      descriptionEn: lang === 'en' && description ? description : 'Imported from the official Facebook community group.',
       facebookGroupOrigin: true
     });
 
@@ -77,7 +81,7 @@ export default function FacebookMediaHub() {
     setTitleBn(preset.titleBn);
     setTitleEn(preset.titleEn);
     setCategory(preset.category);
-    setDescription(preset.description);
+    setDescription(lang === 'bn' ? preset.description : (preset.descriptionEn || preset.description));
   };
 
   // Group photos
@@ -135,7 +139,9 @@ export default function FacebookMediaHub() {
                 {facebookGroupPhotos.length + 42} <span className="text-sm font-normal text-muted">Photos</span>
               </div>
               <p className="text-xs text-muted font-bangla">
-                বিদ্যালয় পরিবারের শিক্ষার্থীদের শেয়ারকৃত স্মৃতিমালা
+                {lang === 'bn'
+                  ? 'বিদ্যালয় পরিবারের শিক্ষার্থীদের শেয়ারকৃত স্মৃতিমালা'
+                  : 'Captured memories shared by our school community'}
               </p>
             </div>
           </div>
@@ -150,10 +156,14 @@ export default function FacebookMediaHub() {
                 <span>COMMUNITY MEDIA IMPORTER (STAFF ONLY)</span>
               </div>
               <h3 className="text-xl font-bold font-bangla text-ink">
-                ফেসবুক গ্রুপ থেকে যেকোনো ছবি ওয়েবসাইটে যুক্ত করুন
+                {lang === 'bn'
+                  ? 'ফেসবুক গ্রুপ থেকে যেকোনো ছবি ওয়েবসাইটে যুক্ত করুন'
+                  : 'Import Any Photo from Facebook Group to Website'}
               </h3>
               <p className="text-xs text-muted font-bangla mt-1">
-                ফেসবুকে পোস্ট করা ছবির লিংক বা যেকোনো ইমেজ ইউআরএল (Image URL) দিয়ে মুহূর্তেই ওয়েবসাইট গ্যালারিতে যোগ করুন।
+                {lang === 'bn'
+                  ? 'ফেসবুকে পোস্ট করা ছবির লিংক বা যেকোনো ইমেজ ইউআরএল (Image URL) দিয়ে মুহূর্তেই ওয়েবসাইট গ্যালারিতে যোগ করুন।'
+                  : 'Paste a Facebook photo link or direct Image URL to instantly add it to the website gallery.'}
               </p>
             </div>
 
@@ -161,7 +171,11 @@ export default function FacebookMediaHub() {
             <div className="mb-6">
               <span className="text-xs font-bold text-muted block mb-2 font-bangla flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-accent" />
-                <span>অথবা নিচের নমুনা অ্যালবাম থেকে এক ক্লিকে লোড করুন:</span>
+                <span>
+                  {lang === 'bn'
+                    ? 'অথবা নিচের নমুনা অ্যালবাম থেকে এক ক্লিকে লোড করুন:'
+                    : 'Or load a sample album item in one click:'}
+                </span>
               </span>
               <div className="flex flex-wrap gap-2">
                 {samplePresets.map((preset, idx) => (
@@ -172,7 +186,7 @@ export default function FacebookMediaHub() {
                     className="bg-bg hover:bg-line text-ink px-3 py-1.5 rounded-full text-xs font-bangla transition border border-line flex items-center gap-1.5 cursor-pointer"
                   >
                     <Plus className="w-3 h-3 text-primary" />
-                    <span>{preset.titleBn}</span>
+                    <span>{lang === 'bn' ? preset.titleBn : preset.titleEn}</span>
                   </button>
                 ))}
               </div>
@@ -182,7 +196,7 @@ export default function FacebookMediaHub() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block font-bold text-ink mb-1.5">
-                    ছবির ডিরেক্ট লিংক (Image URL) *
+                    {lang === 'bn' ? 'ছবির ডিরেক্ট লিংক (Image URL) *' : 'Direct Image URL *'}
                   </label>
                   <input
                     type="url"
@@ -196,17 +210,17 @@ export default function FacebookMediaHub() {
 
                 <div>
                   <label className="block font-bold text-ink mb-1.5">
-                    ক্যাটাগরি নির্বাচন করুন
+                    {lang === 'bn' ? 'ক্যাটাগরি নির্বাচন করুন' : 'Select Category'}
                   </label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                     className="w-full rounded-xl p-3 border border-line bg-white text-ink focus:ring-2 focus:ring-primary"
                   >
-                    <option value="campus">ক্যাম্পাস ও প্রাঙ্গণ (Campus)</option>
-                    <option value="sports">ক্রীড়া ও খেলাধুলা (Sports)</option>
-                    <option value="cultural">সাংস্কৃতিক ও জাতীয় দিবস (Events)</option>
-                    <option value="academic">ক্লাস ও বিজ্ঞানাগার (Academic)</option>
+                    <option value="campus">{lang === 'bn' ? 'ক্যাম্পাস ও প্রাঙ্গণ (Campus)' : 'Campus & Grounds'}</option>
+                    <option value="sports">{lang === 'bn' ? 'ক্রীড়া ও খেলাধুলা (Sports)' : 'Sports & Athletics'}</option>
+                    <option value="cultural">{lang === 'bn' ? 'সাংস্কৃতিক ও জাতীয় দিবস (Events)' : 'Cultural & National Events'}</option>
+                    <option value="academic">{lang === 'bn' ? 'ক্লাস ও বিজ্ঞানাগার (Academic)' : 'Academic & Science Labs'}</option>
                   </select>
                 </div>
               </div>
@@ -214,11 +228,11 @@ export default function FacebookMediaHub() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block font-bold text-ink mb-1.5">
-                    ছবির শিরোনাম (বাংলায়)
+                    {lang === 'bn' ? 'ছবির শিরোনাম (বাংলায়)' : 'Photo Title (Bangla)'}
                   </label>
                   <input
                     type="text"
-                    placeholder="যেমন: আন্তঃশ্রেণি বিজ্ঞান অলিম্পিয়াড ২০২৬"
+                    placeholder={lang === 'bn' ? 'যেমন: আন্তঃশ্রেণি বিজ্ঞান অলিম্পিয়াড ২০২৬' : 'e.g. Title in Bangla script'}
                     value={titleBn}
                     onChange={(e) => setTitleBn(e.target.value)}
                     className="w-full rounded-xl p-3 border border-line bg-white text-ink placeholder-slate-400 focus:ring-2 focus:ring-primary"
@@ -227,7 +241,7 @@ export default function FacebookMediaHub() {
 
                 <div>
                   <label className="block font-bold text-ink mb-1.5">
-                    ছবির শিরোনাম (ইংরেজিতে)
+                    {lang === 'bn' ? 'ছবির শিরোনাম (ইংরেজিতে)' : 'Photo Title (English)'}
                   </label>
                   <input
                     type="text"
@@ -241,11 +255,11 @@ export default function FacebookMediaHub() {
 
               <div>
                 <label className="block font-bold text-ink mb-1.5">
-                  সংক্ষিপ্ত বিবরণ
+                  {lang === 'bn' ? 'সংক্ষিপ্ত বিবরণ' : 'Short Description'}
                 </label>
                 <textarea
                   rows="2"
-                  placeholder="ছবি সম্পর্কে বিস্তারিত তথ্য..."
+                  placeholder={lang === 'bn' ? 'ছবি সম্পর্কে বিস্তারিত তথ্য...' : 'Brief details about this photo...'}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className="w-full rounded-xl p-3 border border-line bg-white text-ink placeholder-slate-400 focus:ring-2 focus:ring-primary"
@@ -255,7 +269,11 @@ export default function FacebookMediaHub() {
               {successMsg && (
                 <div className="p-3.5 bg-soft text-primary rounded-xl text-xs font-semibold flex items-center gap-2 border border-soft-border">
                   <CheckCircle className="w-4 h-4 text-primary shrink-0" />
-                  <span>ছবিটি সফলভাবে প্রধান ওয়েবসাইট গ্যালারিতে যুক্ত করা হয়েছে!</span>
+                  <span>
+                    {lang === 'bn'
+                      ? 'ছবিটি সফলভাবে প্রধান ওয়েবসাইট গ্যালারিতে যুক্ত করা হয়েছে!'
+                      : 'Photo successfully imported into the public website gallery!'}
+                  </span>
                 </div>
               )}
 
@@ -264,7 +282,7 @@ export default function FacebookMediaHub() {
                 className="btn-gold py-3 px-8 rounded-full text-xs font-bold shadow-xs flex items-center gap-2 cursor-pointer"
               >
                 <UploadCloud className="w-4 h-4 text-ink" />
-                <span>গ্যালারিতে যুক্ত করুন (Import Photo)</span>
+                <span>{lang === 'bn' ? 'গ্যালারিতে যুক্ত করুন (Import Photo)' : 'Import Photo to Gallery'}</span>
               </button>
             </form>
           </div>

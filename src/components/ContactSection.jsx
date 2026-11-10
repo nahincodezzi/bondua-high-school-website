@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSchool } from '../context/useSchool';
+import { toEnglishNumerals } from '../utils/dateFormatter';
 import { 
   MapPin, 
   Phone, 
@@ -93,7 +94,9 @@ export default function ContactSection() {
                   <div>
                     <span className="font-bold text-ink block">{lang === 'bn' ? 'অবস্থান:' : 'Address:'}</span>
                     <p className="text-muted mt-0.5">{lang === 'bn' ? schoolInfo.addressBn : (schoolInfo.addressEn || 'Along Feni-Parshuram Road, Bondua Daulatpur, Anandapur Union, Fulgazi, Feni, Bangladesh')}</p>
-                    <p className="text-[11px] text-primary font-mono mt-0.5 font-bold">EIIN: {schoolInfo.eiin} • MPO: {schoolInfo.mpoCode}</p>
+                    <p className="text-[11px] text-primary font-mono mt-0.5 font-bold">
+                      EIIN: {lang === 'bn' ? schoolInfo.eiin : toEnglishNumerals(schoolInfo.eiin)} • MPO: {lang === 'bn' ? schoolInfo.mpoCode : toEnglishNumerals(schoolInfo.mpoCode)}
+                    </p>
                   </div>
                 </div>
 
@@ -103,8 +106,8 @@ export default function ContactSection() {
                   </div>
                   <div>
                     <span className="font-bold text-ink block">{lang === 'bn' ? 'হটলাইন / মোবাইল:' : 'Phone Numbers:'}</span>
-                    <p className="text-ink font-mono font-bold mt-0.5">{schoolInfo.phone}</p>
-                    <p className="text-muted font-mono text-xs">{schoolInfo.phoneAlt} ({lang === 'bn' ? 'অফিস সহকারী' : 'Office Assistant'})</p>
+                    <p className="text-ink font-mono font-bold mt-0.5">{lang === 'bn' ? schoolInfo.phone : toEnglishNumerals(schoolInfo.phone)}</p>
+                    <p className="text-muted font-mono text-xs">{lang === 'bn' ? schoolInfo.phoneAlt : toEnglishNumerals(schoolInfo.phoneAlt)} ({lang === 'bn' ? 'অফিস সহকারী' : 'Office Assistant'})</p>
                   </div>
                 </div>
 

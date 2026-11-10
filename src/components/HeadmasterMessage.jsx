@@ -7,10 +7,14 @@ export default function HeadmasterMessage() {
   const { lang, schoolInfo, teachers, setActiveTab } = useSchool();
   const fallbackHeadmaster = teachers?.find(t => t.id === 'tea-01' || t.designationBn?.includes('প্রধান শিক্ষক')) || teachers?.[0];
   const photoUrl = schoolInfo.headmasterImage || fallbackHeadmaster?.image;
+  const cleanDesignationEn =
+    (schoolInfo.headmasterDesignationEn || 'Acting Headmaster')
+      .replace(/\s*\([^)]*\)/g, '')
+      .trim() || 'Acting Headmaster';
   const headmasterAvatar = createEducatorAvatar({
     initials: 'BDHS',
     role: 'headmaster',
-    designation: 'Acting Headmaster',
+    designation: cleanDesignationEn,
     gender: 'male'
   });
 
@@ -32,8 +36,8 @@ export default function HeadmasterMessage() {
                 
                 {/* Overlay Name on Card */}
                 <div className="absolute bottom-4 left-4 right-4 text-white text-left">
-                  <span className="badge-warning text-[10px] px-2 py-0.5 rounded-full uppercase inline-block">
-                    {lang === 'bn' ? schoolInfo.headmasterDesignationBn : (schoolInfo.headmasterDesignationEn || schoolInfo.headmasterDesignationBn)}
+                  <span className="badge-warning text-[10px] px-2.5 py-0.5 rounded-full inline-block max-w-full truncate">
+                    {lang === 'bn' ? schoolInfo.headmasterDesignationBn : cleanDesignationEn}
                   </span>
                   <h3 className="text-xl font-bold font-bangla mt-1.5 text-white drop-shadow-xs">
                     {lang === 'bn' ? schoolInfo.headmasterNameBn : (schoolInfo.headmasterNameEn || schoolInfo.headmasterNameBn)}
@@ -44,18 +48,20 @@ export default function HeadmasterMessage() {
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center gap-2 text-xs font-semibold text-deep bg-soft px-4 py-1.5 rounded-full border border-soft-border shadow-xs">
-                <Award className="w-4 h-4 text-primary" />
-                <span>{lang === 'bn' ? `${schoolInfo.headmasterDesignationBn} • বি.এ (ইংরেজি)` : `${schoolInfo.headmasterDesignationEn || schoolInfo.headmasterDesignationBn} • B.A. (English)`}</span>
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-1.5 text-xs font-semibold text-deep bg-soft px-4 py-1.5 rounded-full border border-soft-border shadow-xs max-w-full text-center">
+                <Award className="w-4 h-4 text-primary shrink-0" />
+                <span>{lang === 'bn' ? `${schoolInfo.headmasterDesignationBn} • বি.এ (ইংরেজি)` : `${cleanDesignationEn} • B.A. (English)`}</span>
               </div>
             </div>
 
             {/* Headmaster's Statement & School Vision */}
             <div className="lg:col-span-7 space-y-5">
               <div className="space-y-2">
-                <div className="inline-flex items-center gap-2 text-deep font-bold text-xs uppercase tracking-wider font-bangla bg-soft px-3 py-1 rounded-full border border-soft-border">
-                  <Quote className="w-3.5 h-3.5 text-primary" />
-                  <span>{lang === 'bn' ? `${schoolInfo.headmasterDesignationBn}-এর বাণী` : `${schoolInfo.headmasterDesignationEn || schoolInfo.headmasterDesignationBn}'s Message`}</span>
+                <div className={`inline-flex items-center gap-2 text-deep font-bold text-xs font-bangla bg-soft px-3.5 py-1 rounded-full border border-soft-border max-w-full ${
+                  lang === 'bn' ? 'uppercase tracking-wider' : 'tracking-wide'
+                }`}>
+                  <Quote className="w-3.5 h-3.5 text-primary shrink-0" />
+                  <span>{lang === 'bn' ? `${schoolInfo.headmasterDesignationBn}-এর বাণী` : `${cleanDesignationEn}'s Message`}</span>
                 </div>
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-bangla text-ink leading-tight">
                   {lang === 'bn' 

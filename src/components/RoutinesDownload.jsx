@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useSchool } from '../context/useSchool';
 import { getSchoolLogo } from '../utils/branding';
+import { toEnglishNumerals } from '../utils/dateFormatter';
 import { 
   Calendar, 
   Download, 
@@ -47,6 +48,15 @@ export default function RoutinesDownload() {
     { period: '৫ম (০১:৪৫ - ০২:৩০)', sun: 'ইতিহাস', mon: 'ইংরেজি ১ম', tue: 'জীববিজ্ঞান', wed: 'বিজ্ঞান', thu: 'ডিবেট ও ক্লাব' }
   ];
 
+  const classScheduleDataEn = [
+    { period: '1st (10:00 - 10:45)', sun: 'Bangla 1st', mon: 'Mathematics', tue: 'Science', wed: 'Bangladesh & Global Studies', thu: 'ICT' },
+    { period: '2nd (10:45 - 11:30)', sun: 'Bangla 2nd', mon: 'Physics / Accounting', tue: 'Higher Math', wed: 'Chemistry', thu: 'Biology' },
+    { period: '3rd (11:30 - 12:15)', sun: 'Science', mon: 'Religion & Moral Ed.', tue: 'English 1st', wed: 'Bangla 1st', thu: 'Physical Education' },
+    { period: 'Tiffin (12:15 - 01:00)', sun: 'Prayer & Break', mon: 'Prayer & Break', tue: 'Prayer & Break', wed: 'Prayer & Break', thu: 'Prayer & Break' },
+    { period: '4th (01:00 - 01:45)', sun: 'Chemistry / Economics', mon: 'Biology / Business', tue: 'General Math', wed: 'English 2nd', thu: 'ICT Lab' },
+    { period: '5th (01:45 - 02:30)', sun: 'History', mon: 'English 1st', tue: 'Biology', wed: 'Science', thu: 'Debate & Club' }
+  ];
+
   // 2. Exam schedule data (Senior QA H7 fix)
   const examScheduleData = [
     { date: '১০ নভেম্বর ২০২৬', day: 'রবিবার', subject: 'বাংলা ১ম পত্র (১০১)', time: 'সকাল ১০:০০ - দুপুর ০১:০০', room: 'কক্ষ ১০১ - ১০৬' },
@@ -59,6 +69,17 @@ export default function RoutinesDownload() {
     { date: '২৬ নভেম্বর ২০২৬', day: 'বৃহস্পতিবার', subject: 'জীববিজ্ঞান / ব্যবসায় উদ্যোগ / ভূগোল', time: 'সকাল ১০:০০ - দুপুর ০১:০০', room: 'কক্ষ ২০২ - ২০৫' }
   ];
 
+  const examScheduleDataEn = [
+    { date: '10 Nov 2026', day: 'Sunday', subject: 'Bangla 1st Paper (101)', time: '10:00 AM - 01:00 PM', room: 'Room 101 - 106' },
+    { date: '12 Nov 2026', day: 'Tuesday', subject: 'Bangla 2nd Paper (102)', time: '10:00 AM - 01:00 PM', room: 'Room 101 - 106' },
+    { date: '15 Nov 2026', day: 'Sunday', subject: 'English 1st Paper (107)', time: '10:00 AM - 01:00 PM', room: 'Room 101 - 106' },
+    { date: '17 Nov 2026', day: 'Tuesday', subject: 'English 2nd Paper (108)', time: '10:00 AM - 01:00 PM', room: 'Room 101 - 106' },
+    { date: '19 Nov 2026', day: 'Thursday', subject: 'Mathematics (109)', time: '10:00 AM - 01:00 PM', room: 'Room 101 - 106' },
+    { date: '22 Nov 2026', day: 'Sunday', subject: 'Physics / Accounting / Civics', time: '10:00 AM - 01:00 PM', room: 'Room 202 - 205' },
+    { date: '24 Nov 2026', day: 'Tuesday', subject: 'Chemistry / Finance / History', time: '10:00 AM - 01:00 PM', room: 'Room 202 - 205' },
+    { date: '26 Nov 2026', day: 'Thursday', subject: 'Biology / Business Ent. / Geography', time: '10:00 AM - 01:00 PM', room: 'Room 202 - 205' }
+  ];
+
   // 3. NCTB Curriculum & Syllabus data (Senior QA H7 fix)
   const syllabusData = [
     { class: '৬ষ্ঠ শ্রেণি', subject: 'সকল আবশ্যিক বিষয়', syllabus: 'NCTB প্রণীত নতুন শিক্ষাক্রম পাঠ্যপুস্তক ও ধারাবাহিক মূল্যায়ন রূপরেখা', marks: '১০০%' },
@@ -67,6 +88,18 @@ export default function RoutinesDownload() {
     { class: '৯ম শ্রেণি', subject: 'বিজ্ঞান, ব্যবসায় ও মানবিক', syllabus: 'শাখাভিত্তিক NCTB পাঠ্যসূচি ও অর্ধবার্ষিক/বার্ষিক সিলেবাস ২০২৬', marks: '১০০%' },
     { class: '১০ম শ্রেণি', subject: 'এসএসসি পরীক্ষা ২০২৬', syllabus: 'কুমিল্লা শিক্ষা বোর্ড ও NCTB অনুমোদিত সম্পূর্ণ সংক্ষিপ্ত পাঠ্যসূচি', marks: '১০০%' }
   ];
+
+  const syllabusDataEn = [
+    { class: 'Class VI', subject: 'All Compulsory Subjects', syllabus: 'NCTB new curriculum textbooks & continuous assessment framework', marks: '100%' },
+    { class: 'Class VII', subject: 'All Compulsory Subjects', syllabus: 'Experiential learning & summative evaluation guidelines', marks: '100%' },
+    { class: 'Class VIII', subject: 'All Compulsory Subjects', syllabus: 'Core textbooks & subject-wise learning progress evaluation', marks: '100%' },
+    { class: 'Class IX', subject: 'Science, Business & Humanities', syllabus: 'Group-wise NCTB curriculum & Half-Yearly/Annual Syllabus 2026', marks: '100%' },
+    { class: 'Class X', subject: 'SSC Examination 2026', syllabus: 'Complete short syllabus approved by Comilla Board & NCTB', marks: '100%' }
+  ];
+
+  const activeClassSchedule = lang === 'bn' ? classScheduleData : classScheduleDataEn;
+  const activeExamSchedule = lang === 'bn' ? examScheduleData : examScheduleDataEn;
+  const activeSyllabusData = lang === 'bn' ? syllabusData : syllabusDataEn;
 
   const handlePrint = () => {
     window.print();
@@ -81,25 +114,32 @@ export default function RoutinesDownload() {
     }
 
     const title = lang === 'bn' ? item.titleBn : (item.titleEn || item.titleBn);
-    const effective = item.effectiveDate;
+    const effective = lang === 'bn' ? item.effectiveDate : toEnglishNumerals(item.effectiveDate);
     const isExam = item.id === 'rt-02' || item.titleBn?.includes('পরীক্ষা');
     const isSyllabus = item.id === 'rt-03' || item.titleBn?.includes('NCTB');
     const schoolLogoUrl = getSchoolLogo(schoolInfo);
+    const schoolTitle = lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || schoolInfo.nameBn);
+    const schoolAddr = lang === 'bn' ? schoolInfo.addressBn : (schoolInfo.addressEn || schoolInfo.addressBn);
+    const schoolEiin = lang === 'bn' ? schoolInfo.eiin : toEnglishNumerals(schoolInfo.eiin);
+    const hmName = lang === 'bn' ? schoolInfo.headmasterNameBn : (schoolInfo.headmasterNameEn || schoolInfo.headmasterNameBn);
+    const hmDesig = lang === 'bn'
+      ? schoolInfo.headmasterDesignationBn
+      : ((schoolInfo.headmasterDesignationEn || 'Acting Headmaster').replace(/\s*\(Head Master,\s*In Charge\)/gi, '').trim());
 
     let tableHtml = '';
     if (isExam) {
       tableHtml = `
         <thead>
           <tr>
-            <th>তারিখ</th>
-            <th>বার</th>
-            <th>বিষয়ের নাম ও কোড</th>
-            <th>পরীক্ষার সময়</th>
-            <th>আসন কক্ষ</th>
+            <th>${lang === 'bn' ? 'তারিখ' : 'Date'}</th>
+            <th>${lang === 'bn' ? 'বার' : 'Day'}</th>
+            <th>${lang === 'bn' ? 'বিষয়ের নাম ও কোড' : 'Subject & Code'}</th>
+            <th>${lang === 'bn' ? 'পরীক্ষার সময়' : 'Exam Time'}</th>
+            <th>${lang === 'bn' ? 'আসন কক্ষ' : 'Room'}</th>
           </tr>
         </thead>
         <tbody>
-          ${examScheduleData.map(row => `
+          ${activeExamSchedule.map(row => `
             <tr>
               <td><strong>${row.date}</strong></td>
               <td>${row.day}</td>
@@ -114,14 +154,14 @@ export default function RoutinesDownload() {
       tableHtml = `
         <thead>
           <tr>
-            <th>শ্রেণি</th>
-            <th>বিভাগ / শাখা</th>
-            <th>পাঠ্যসূচি ও সিলেবাস বিবরণী</th>
-            <th>মূল্যায়ন মান</th>
+            <th>${lang === 'bn' ? 'শ্রেণি' : 'Class'}</th>
+            <th>${lang === 'bn' ? 'বিভাগ / শাখা' : 'Group / Track'}</th>
+            <th>${lang === 'bn' ? 'পাঠ্যসূচি ও সিলেবাস বিবরণী' : 'Curriculum & Syllabus Details'}</th>
+            <th>${lang === 'bn' ? 'মূল্যায়ন মান' : 'Evaluation'}</th>
           </tr>
         </thead>
         <tbody>
-          ${syllabusData.map(row => `
+          ${activeSyllabusData.map(row => `
             <tr>
               <td><strong>${row.class}</strong></td>
               <td>${row.subject}</td>
@@ -135,16 +175,16 @@ export default function RoutinesDownload() {
       tableHtml = `
         <thead>
           <tr>
-            <th>পিরিয়ড / সময়</th>
-            <th>রবিবার</th>
-            <th>সোমবার</th>
-            <th>মঙ্গলবার</th>
-            <th>বুধবার</th>
-            <th>বৃহস্পতিবার</th>
+            <th>${lang === 'bn' ? 'পিরিয়ড / সময়' : 'Period / Time'}</th>
+            <th>${lang === 'bn' ? 'রবিবার' : 'Sunday'}</th>
+            <th>${lang === 'bn' ? 'সোমবার' : 'Monday'}</th>
+            <th>${lang === 'bn' ? 'মঙ্গলবার' : 'Tuesday'}</th>
+            <th>${lang === 'bn' ? 'বুধবার' : 'Wednesday'}</th>
+            <th>${lang === 'bn' ? 'বৃহস্পতিবার' : 'Thursday'}</th>
           </tr>
         </thead>
         <tbody>
-          ${classScheduleData.map(row => `
+          ${activeClassSchedule.map(row => `
             <tr>
               <td><strong>${row.period}</strong></td>
               <td>${row.sun}</td>
@@ -162,7 +202,7 @@ export default function RoutinesDownload() {
       <!DOCTYPE html>
       <html>
       <head>
-        <title>${title} - ${schoolInfo.nameBn}</title>
+        <title>${title} - ${schoolTitle}</title>
         <style>
           @page { size: A4 portrait; margin: 10mm; }
           body { font-family: 'Noto Sans Bengali', sans-serif; padding: 20px; color: #1e293b; }
@@ -179,16 +219,16 @@ export default function RoutinesDownload() {
       <body>
         <div class="header">
           ${schoolLogoUrl ? `<div style="display:flex;justify-content:center;margin-bottom:8px;"><img src="${schoolLogoUrl}" alt="School Logo" style="width:48px;height:48px;object-fit:contain;border-radius:50%;border:1px solid #cbd5e1;padding:2px;" /></div>` : ''}
-          <h1>${schoolInfo.nameBn}</h1>
-          <p>${schoolInfo.addressBn} • EIIN: ${schoolInfo.eiin}</p>
+          <h1>${schoolTitle}</h1>
+          <p>${schoolAddr} • EIIN: ${schoolEiin}</p>
         </div>
         <div class="title">${title} (${effective})</div>
         <table>
           ${tableHtml}
         </table>
         <div class="footer">
-          <div><p>প্রস্তুতকারক: রুটিন কমিটি</p></div>
-          <div style="text-align: right;"><p><strong>${schoolInfo.headmasterNameBn}</strong><br/>${schoolInfo.headmasterDesignationBn}</p></div>
+          <div><p>${lang === 'bn' ? 'প্রস্তুতকারক: রুটিন কমিটি' : 'Prepared by: Routine Committee'}</p></div>
+          <div style="text-align: right;"><p><strong>${hmName}</strong><br/>${hmDesig}</p></div>
         </div>
         <script>
           window.onload = function() { window.print(); }
@@ -229,7 +269,9 @@ export default function RoutinesDownload() {
             {lang === 'bn' ? activeRoutineModal.titleBn : (activeRoutineModal.titleEn || activeRoutineModal.titleBn)}
           </h3>
           <p className="text-xs text-primary font-mono mb-4 font-bold mt-1">
-            কার্যকরী তারিখ: {activeRoutineModal.effectiveDate}
+            {lang === 'bn'
+              ? `কার্যকরী তারিখ: ${activeRoutineModal.effectiveDate}`
+              : `Effective Date: ${toEnglishNumerals(activeRoutineModal.effectiveDate)}`}
           </p>
 
           <div className="overflow-y-auto flex-1 border border-line rounded-xl mb-5">
@@ -237,14 +279,14 @@ export default function RoutinesDownload() {
               <table className="w-full text-left text-xs">
                 <thead className="bg-deep text-white font-bold">
                   <tr>
-                    <th className="p-2.5">তারিখ ও বার</th>
-                    <th className="p-2.5">বিষয়ের নাম</th>
-                    <th className="p-2.5">সময়</th>
-                    <th className="p-2.5">কক্ষ</th>
+                    <th className="p-2.5">{lang === 'bn' ? 'তারিখ ও বার' : 'Date & Day'}</th>
+                    <th className="p-2.5">{lang === 'bn' ? 'বিষয়ের নাম' : 'Subject Name'}</th>
+                    <th className="p-2.5">{lang === 'bn' ? 'সময়' : 'Time'}</th>
+                    <th className="p-2.5">{lang === 'bn' ? 'কক্ষ' : 'Room'}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-line">
-                  {examScheduleData.map((row, idx) => (
+                  {activeExamSchedule.map((row, idx) => (
                     <tr key={idx} className="hover:bg-bg">
                       <td className="p-2.5 font-bold text-ink">{row.date} ({row.day})</td>
                       <td className="p-2.5 text-primary font-semibold">{row.subject}</td>
@@ -258,14 +300,14 @@ export default function RoutinesDownload() {
               <table className="w-full text-left text-xs">
                 <thead className="bg-deep text-white font-bold">
                   <tr>
-                    <th className="p-2.5">শ্রেণি</th>
-                    <th className="p-2.5">শাখা / বিভাগ</th>
-                    <th className="p-2.5">পাঠ্যসূচি বিবরণ</th>
-                    <th className="p-2.5 text-center">মূল্যায়ন মান</th>
+                    <th className="p-2.5">{lang === 'bn' ? 'শ্রেণি' : 'Class'}</th>
+                    <th className="p-2.5">{lang === 'bn' ? 'শাখা / বিভাগ' : 'Group / Track'}</th>
+                    <th className="p-2.5">{lang === 'bn' ? 'পাঠ্যসূচি বিবরণ' : 'Syllabus Details'}</th>
+                    <th className="p-2.5 text-center">{lang === 'bn' ? 'মূল্যায়ন মান' : 'Weightage'}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-line">
-                  {syllabusData.map((row, idx) => (
+                  {activeSyllabusData.map((row, idx) => (
                     <tr key={idx} className="hover:bg-bg">
                       <td className="p-2.5 font-bold text-ink">{row.class}</td>
                       <td className="p-2.5 text-primary font-semibold">{row.subject}</td>
@@ -280,16 +322,16 @@ export default function RoutinesDownload() {
                 <table className="w-full text-left text-xs">
                   <thead className="bg-deep text-white font-bold">
                     <tr>
-                      <th className="p-2">পিরিয়ড</th>
-                      <th className="p-2">রবিবার</th>
-                      <th className="p-2">সোমবার</th>
-                      <th className="p-2">মঙ্গলবার</th>
-                      <th className="p-2">বুধবার</th>
-                      <th className="p-2">বৃহস্পতিবার</th>
+                      <th className="p-2">{lang === 'bn' ? 'পিরিয়ড' : 'Period'}</th>
+                      <th className="p-2">{lang === 'bn' ? 'রবিবার' : 'Sunday'}</th>
+                      <th className="p-2">{lang === 'bn' ? 'সোমবার' : 'Monday'}</th>
+                      <th className="p-2">{lang === 'bn' ? 'মঙ্গলবার' : 'Tuesday'}</th>
+                      <th className="p-2">{lang === 'bn' ? 'বুধবার' : 'Wednesday'}</th>
+                      <th className="p-2">{lang === 'bn' ? 'বৃহস্পতিবার' : 'Thursday'}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-line">
-                    {classScheduleData.map((row, idx) => (
+                    {activeClassSchedule.map((row, idx) => (
                       <tr key={idx} className="hover:bg-bg">
                         <td className="p-2 font-bold text-ink whitespace-nowrap">{row.period}</td>
                         <td className="p-2">{row.sun}</td>
@@ -368,7 +410,7 @@ export default function RoutinesDownload() {
                   {lang === 'bn' ? item.titleBn : item.titleEn}
                 </h3>
                 <p className="text-xs text-muted font-mono">
-                  {lang === 'bn' ? `কার্যকরী তারিখ: ${item.effectiveDate}` : `Effective: ${item.effectiveDate}`}
+                  {lang === 'bn' ? `কার্যকরী তারিখ: ${item.effectiveDate}` : `Effective: ${toEnglishNumerals(item.effectiveDate)}`}
                 </p>
               </div>
 
@@ -418,18 +460,18 @@ export default function RoutinesDownload() {
             <table className="w-full text-left text-xs font-bangla">
               <thead className="bg-deep text-white border-b border-primary font-bold uppercase text-[11px]">
                 <tr>
-                  <th className="py-3 px-3">পিরিয়ড / সময়</th>
-                  <th className="py-3 px-3">রবিবার</th>
-                  <th className="py-3 px-3">সোমবার</th>
-                  <th className="py-3 px-3">মঙ্গলবার</th>
-                  <th className="py-3 px-3">বুধবার</th>
-                  <th className="py-3 px-3">বৃহস্পতিবার</th>
+                  <th className="py-3 px-3">{lang === 'bn' ? 'পিরিয়ড / সময়' : 'Period / Time'}</th>
+                  <th className="py-3 px-3">{lang === 'bn' ? 'রবিবার' : 'Sunday'}</th>
+                  <th className="py-3 px-3">{lang === 'bn' ? 'সোমবার' : 'Monday'}</th>
+                  <th className="py-3 px-3">{lang === 'bn' ? 'মঙ্গলবার' : 'Tuesday'}</th>
+                  <th className="py-3 px-3">{lang === 'bn' ? 'বুধবার' : 'Wednesday'}</th>
+                  <th className="py-3 px-3">{lang === 'bn' ? 'বৃহস্পতিবার' : 'Thursday'}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
-                {classScheduleData.map((row, idx) => (
+                {activeClassSchedule.map((row, idx) => (
                   <tr key={idx} className="hover:bg-bg transition-colors">
-                    <td className="py-3 px-3 font-mono font-bold text-primary">{row.period}</td>
+                    <td className="py-3 px-3 font-mono font-bold text-primary whitespace-nowrap">{row.period}</td>
                     <td className="py-3 px-3 text-ink">{row.sun}</td>
                     <td className="py-3 px-3 text-ink">{row.mon}</td>
                     <td className="py-3 px-3 text-ink">{row.tue}</td>

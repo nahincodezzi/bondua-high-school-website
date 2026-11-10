@@ -158,7 +158,9 @@ export default function ResultSearch() {
               >
                 {availableClasses.map((cls) => (
                   <option key={cls.key || cls.id} value={cls.key}>
-                    {cls.labelBn || `${toBanglaNumerals(cls.key)} শ্রেণি`} ({cls.labelEn || `Class ${cls.key}`})
+                    {lang === 'bn'
+                      ? `${cls.labelBn || `${toBanglaNumerals(cls.key)} শ্রেণি`} (${cls.labelEn || `Class ${cls.key}`})`
+                      : (cls.labelEn || `Class ${cls.key}`)}
                   </option>
                 ))}
               </select>
@@ -232,24 +234,24 @@ export default function ResultSearch() {
         {searchedResult ? (
           <div className="bg-white rounded-2xl shadow-md border border-line overflow-hidden relative" id="official-marksheet-screen">
             {/* Top Toolbar for Result */}
-            <div className="bg-deep text-white px-6 py-3.5 flex items-center justify-between no-print border-b border-primary">
+            <div className="bg-deep text-white px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-2.5 no-print border-b border-primary">
               <div className="flex items-center gap-2 text-xs font-semibold">
-                <FileCheck className="w-4 h-4 text-accent" />
+                <FileCheck className="w-4 h-4 text-accent shrink-0" />
                 <span className="text-white font-bangla">{lang === 'bn' ? 'অনলাইন ট্রান্সক্রিপ্ট ও গ্রেড শিট' : 'Academic Grade Sheet'}</span>
               </div>
-              <div className="flex items-center gap-2.5">
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   onClick={handleReset}
-                  className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs transition flex items-center gap-1 font-bangla border border-white/20 cursor-pointer text-white no-print print:hidden"
+                  className="px-3 sm:px-3.5 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs transition flex items-center gap-1.5 font-bangla border border-white/20 cursor-pointer text-white whitespace-nowrap no-print print:hidden"
                 >
-                  <RotateCcw className="w-3.5 h-3.5 text-accent" />
+                  <RotateCcw className="w-3.5 h-3.5 text-accent shrink-0" />
                   <span>{lang === 'bn' ? 'পুনরায় অনুসন্ধান' : 'Search Again'}</span>
                 </button>
                 <button
                   onClick={handlePrint}
-                  className="btn-accent px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer no-print print:hidden"
+                  className="btn-accent px-3.5 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer whitespace-nowrap no-print print:hidden"
                 >
-                  <Printer className="w-3.5 h-3.5 text-ink" />
+                  <Printer className="w-3.5 h-3.5 text-ink shrink-0" />
                   <span>{lang === 'bn' ? 'মার্কশিট প্রিন্ট করুন' : 'Print Marksheet'}</span>
                 </button>
               </div>
@@ -275,10 +277,12 @@ export default function ResultSearch() {
                   {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || 'Bondua Daulatpur High School')}
                 </h3>
                 <p className="text-xs sm:text-sm print:text-[7.5pt] text-ink font-semibold font-bangla print:leading-none print:mt-0.5">
-                  {schoolInfo.addressBn}
+                  {lang === 'bn'
+                    ? schoolInfo.addressBn
+                    : (schoolInfo.addressEn || schoolInfo.addressBn)}
                 </p>
                 <p className="text-xs print:text-[6.5pt] text-muted font-mono mt-1 print:mt-0.5 print:leading-none">
-                  EIIN: {schoolInfo.eiin} • MPO Code: {schoolInfo.mpoCode} • Comilla Board
+                  EIIN: {lang === 'bn' ? schoolInfo.eiin : toEnglishNumerals(schoolInfo.eiin)} • MPO Code: {lang === 'bn' ? schoolInfo.mpoCode : toEnglishNumerals(schoolInfo.mpoCode)} • Comilla Board
                 </p>
                 <div className="mt-3 print:mt-0.5 inline-block bg-deep text-white px-4 py-1 print:px-2 print:py-0.2 rounded text-xs print:text-[7pt] font-bold uppercase tracking-wider font-bangla">
                   {lang === 'bn' ? 'একাডেমিক ট্রান্সক্রিপ্ট / গ্রেড শিট' : 'ACADEMIC TRANSCRIPT / GRADE REPORT'}
@@ -336,7 +340,7 @@ export default function ResultSearch() {
               </div>
 
               {/* Subject Marks & Grades Table with Full Marks Column (M11) */}
-              <div className="border border-line rounded-xl print:rounded-md overflow-hidden print:border-slate-300">
+              <div className="border border-line rounded-xl print:rounded-md overflow-x-auto print:overflow-visible print:border-slate-300">
                 <table className="w-full text-left text-xs sm:text-sm print:text-[7.5pt]">
                   <thead className="bg-bg text-ink border-b border-line font-bold uppercase text-[11px] print:text-[7pt]">
                     <tr>
@@ -410,7 +414,7 @@ export default function ResultSearch() {
               </div>
 
               {/* Signatures & Seal */}
-              <div className="pt-8 print:pt-1.5 flex justify-between items-end text-xs print:text-[7.5pt]">
+              <div className="pt-8 print:pt-1.5 flex flex-wrap sm:flex-nowrap justify-between items-end gap-4 text-xs print:text-[7.5pt]">
                 {/* Dynamic Exam Controller (Left) */}
                 <div className="text-center space-y-0.5 min-w-[110px]">
                   <div className="w-28 print:w-20 border-b border-line mx-auto pb-0.5">
@@ -418,12 +422,16 @@ export default function ResultSearch() {
                       {signatories.examController.signature}
                     </span>
                   </div>
-                  <p className="font-bold text-ink font-bangla print:text-[7.5pt]">{signatories.examController.nameBn}</p>
-                  <p className="text-muted print:text-[6.5pt] font-bangla">{signatories.examController.designationBn}</p>
+                  <p className="font-bold text-ink font-bangla print:text-[7.5pt]">
+                    {lang === 'bn' ? signatories.examController.nameBn : (signatories.examController.nameEn || signatories.examController.nameBn)}
+                  </p>
+                  <p className="text-muted print:text-[6.5pt] font-bangla">
+                    {lang === 'bn' ? signatories.examController.designationBn : (signatories.examController.designationEn || 'Exam Controller')}
+                  </p>
                 </div>
 
                 {/* Institute Seal Stamp (Center) */}
-                <div className="w-16 h-16 print:w-9 print:h-9 rounded-full border-2 border-dashed border-primary text-primary flex flex-col items-center justify-center p-0.5 text-[7px] print:text-[4.5pt] text-center font-bold">
+                <div className="w-16 h-16 print:w-9 print:h-9 rounded-full border-2 border-dashed border-primary text-primary flex flex-col items-center justify-center p-0.5 text-[7px] print:text-[4.5pt] text-center font-bold shrink-0">
                   <span>BONDUA DAULATPUR</span>
                   <span>HIGH SCHOOL</span>
                   <span>SEAL</span>
@@ -436,8 +444,12 @@ export default function ResultSearch() {
                       {signatories.headmaster.signature}
                     </span>
                   </div>
-                  <p className="font-bold text-ink font-bangla print:text-[7.5pt]">{signatories.headmaster.nameBn}</p>
-                  <p className="text-muted font-bangla print:text-[6.5pt]">{signatories.headmaster.designationBn}</p>
+                  <p className="font-bold text-ink font-bangla print:text-[7.5pt]">
+                    {lang === 'bn' ? signatories.headmaster.nameBn : (signatories.headmaster.nameEn || signatories.headmaster.nameBn)}
+                  </p>
+                  <p className="text-muted font-bangla print:text-[6.5pt]">
+                    {lang === 'bn' ? signatories.headmaster.designationBn : (signatories.headmaster.designationEn || 'Acting Headmaster')}
+                  </p>
                 </div>
               </div>
             </div>
@@ -453,7 +465,7 @@ export default function ResultSearch() {
             <p className="text-xs text-muted font-bangla mt-1">
               {lang === 'bn' 
                 ? `রোল নং "${toBanglaNumerals(rollInput)}" এবং শ্রেণি ${toBanglaNumerals(targetClass)}-এর কোনো ফলাফল রেকর্ড পাওয়া যায়নি। অনুগ্রহ করে রোল নম্বর ও শ্রেণি যাচাই করুন অথবা বিদ্যালয় অফিসে যোগাযোগ করুন।`
-                : `No academic record found matching Roll "${rollInput}" for Class ${targetClass}. Please verify the roll number or contact the school office.`}
+                : `No academic record found matching Roll "${toEnglishNumerals(rollInput)}" for Class ${targetClass}. Please verify the roll number or contact the school office.`}
             </p>
           </div>
         ) : null}
@@ -476,13 +488,17 @@ export default function ResultSearch() {
                 </div>
               </div>
               <h3 className="text-[12pt] font-extrabold font-bangla text-slate-900 leading-tight">
-                {schoolInfo.nameBn}
+                {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || schoolInfo.nameBn)}
               </h3>
               <p className="text-[7.5pt] text-slate-700 font-semibold font-bangla leading-tight mt-0.5">
-                {schoolInfo.addressBn} • কুমিল্লা শিক্ষা বোর্ড
+                {lang === 'bn'
+                  ? `${schoolInfo.addressBn} • কুমিল্লা শিক্ষা বোর্ড`
+                  : `${schoolInfo.addressEn || schoolInfo.addressBn} • Comilla Education Board`}
               </p>
               <p className="text-[6.5pt] text-slate-500 font-mono leading-tight mt-0.5">
-                EIIN: {schoolInfo.eiin} • MPO Code: {schoolInfo.mpoCode} • স্থাপিত: ১৯৯০
+                {lang === 'bn'
+                  ? `EIIN: ${schoolInfo.eiin} • MPO Code: ${schoolInfo.mpoCode} • স্থাপিত: ১৯৯০`
+                  : `EIIN: ${toEnglishNumerals(schoolInfo.eiin)} • MPO Code: ${toEnglishNumerals(schoolInfo.mpoCode)} • Est: 1990`}
               </p>
               <div className="mt-1 inline-block bg-slate-900 text-white px-2 py-0.5 rounded text-[7pt] font-bold uppercase tracking-wider font-bangla">
                 {lang === 'bn' ? 'একাডেমিক ট্রান্সক্রিপ্ট / গ্রেড শিট' : 'ACADEMIC TRANSCRIPT / GRADE REPORT'}
@@ -493,39 +509,51 @@ export default function ResultSearch() {
             {/* Student Metadata Grid */}
             <div className="grid grid-cols-4 gap-1 bg-slate-50 p-1.5 rounded border border-slate-200 text-[7.5pt]">
               <div>
-                <span className="text-slate-500 block text-[6.5pt]">শিক্ষার্থীর নাম:</span>
-                <span className="font-bold text-slate-900 block truncate">{searchedResult.studentNameBn}</span>
-              </div>
-              <div>
-                <span className="text-slate-500 block text-[6.5pt]">রোল নম্বর:</span>
-                <span className="font-mono font-bold text-slate-900">{toBanglaNumerals(searchedResult.roll)}</span>
-              </div>
-              <div>
-                <span className="text-slate-500 block text-[6.5pt]">শ্রেণি ও বিভাগ:</span>
-                <span className="font-bold text-slate-900">শ্রেণি: {toBanglaNumerals(searchedResult.class)}, শাখা: {searchedResult.section}</span>
-              </div>
-              <div>
-                <span className="text-slate-500 block text-[6.5pt]">বিভাগ (গ্রুপ):</span>
-                <span className="font-bold text-emerald-700">{searchedResult.group}</span>
-              </div>
-              <div>
-                <span className="text-slate-500 block text-[6.5pt]">আইডি নম্বর:</span>
-                <span className="font-mono text-slate-800">{searchedResult.studentId}</span>
-              </div>
-              <div>
-                <span className="text-slate-500 block text-[6.5pt]">শিক্ষাবর্ষ:</span>
-                <span className="font-mono text-slate-800">{toBanglaNumerals(searchedResult.year)}</span>
-              </div>
-              <div>
-                <span className="text-slate-500 block text-[6.5pt]">ফলাফল:</span>
-                <span className="font-bold text-emerald-700">
-                  {searchedResult.resultStatus === 'PASSED' ? 'উত্তীর্ণ' : 'অনূত্তীর্ণ'}
+                <span className="text-slate-500 block text-[6.5pt]">{lang === 'bn' ? 'শিক্ষার্থীর নাম:' : 'Student Name:'}</span>
+                <span className="font-bold text-slate-900 block truncate">
+                  {lang === 'bn' ? searchedResult.studentNameBn : (searchedResult.studentNameEn || searchedResult.studentNameBn)}
                 </span>
               </div>
               <div>
-                <span className="text-slate-500 block text-[6.5pt]">জিপিএ (GPA):</span>
+                <span className="text-slate-500 block text-[6.5pt]">{lang === 'bn' ? 'রোল নম্বর:' : 'Roll Number:'}</span>
+                <span className="font-mono font-bold text-slate-900">
+                  {lang === 'bn' ? toBanglaNumerals(searchedResult.roll) : toEnglishNumerals(searchedResult.roll)}
+                </span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[6.5pt]">{lang === 'bn' ? 'শ্রেণি ও বিভাগ:' : 'Class & Section:'}</span>
+                <span className="font-bold text-slate-900">
+                  {lang === 'bn'
+                    ? `শ্রেণি: ${toBanglaNumerals(searchedResult.class)}, শাখা: ${searchedResult.section}`
+                    : `Class: ${toEnglishNumerals(searchedResult.class)}, Sec: ${searchedResult.section}`}
+                </span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[6.5pt]">{lang === 'bn' ? 'বিভাগ (গ্রুপ):' : 'Group:'}</span>
+                <span className="font-bold text-emerald-700">{searchedResult.group}</span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[6.5pt]">{lang === 'bn' ? 'আইডি নম্বর:' : 'Student ID:'}</span>
+                <span className="font-mono text-slate-800">{searchedResult.studentId}</span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[6.5pt]">{lang === 'bn' ? 'শিক্ষাবর্ষ:' : 'Academic Year:'}</span>
+                <span className="font-mono text-slate-800">
+                  {lang === 'bn' ? toBanglaNumerals(searchedResult.year) : toEnglishNumerals(searchedResult.year)}
+                </span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[6.5pt]">{lang === 'bn' ? 'ফলাফল:' : 'Result Status:'}</span>
+                <span className="font-bold text-emerald-700">
+                  {searchedResult.resultStatus === 'PASSED'
+                    ? (lang === 'bn' ? 'উত্তীর্ণ' : 'PASSED')
+                    : (lang === 'bn' ? 'অনূত্তীর্ণ' : 'FAILED')}
+                </span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[6.5pt]">{lang === 'bn' ? 'জিপিএ (GPA):' : 'GPA Score:'}</span>
                 <span className="font-mono font-extrabold text-emerald-700">
-                  {toBanglaNumerals(searchedResult.gpa ?? '0.00')} ({calculateOverallGrade(searchedResult.gpa, searchedResult.resultStatus === 'FAILED') || searchedResult.letterGrade || searchedResult.grade})
+                  {lang === 'bn' ? toBanglaNumerals(searchedResult.gpa ?? '0.00') : toEnglishNumerals(searchedResult.gpa ?? '0.00')} ({calculateOverallGrade(searchedResult.gpa, searchedResult.resultStatus === 'FAILED') || searchedResult.letterGrade || searchedResult.grade})
                 </span>
               </div>
             </div>
@@ -535,11 +563,11 @@ export default function ResultSearch() {
               <thead className="bg-slate-100 text-slate-900 border-b border-slate-300 font-bold uppercase text-[7pt]">
                 <tr>
                   <th className="py-1 px-1.5 text-center font-mono w-12">Code</th>
-                  <th className="py-1 px-2">বিষয়ের নাম</th>
-                  <th className="py-1 px-1.5 text-center w-14">পূর্ণমান</th>
-                  <th className="py-1 px-2 text-center font-mono w-16">প্রাপ্ত নম্বর</th>
-                  <th className="py-1 px-2 text-center w-16">লেটার গ্রেড</th>
-                  <th className="py-1 px-2 text-center font-mono w-16">গ্রেড পয়েন্ট</th>
+                  <th className="py-1 px-2">{lang === 'bn' ? 'বিষয়ের নাম' : 'Subject Name'}</th>
+                  <th className="py-1 px-1.5 text-center w-14">{lang === 'bn' ? 'পূর্ণমান' : 'Total'}</th>
+                  <th className="py-1 px-2 text-center font-mono w-16">{lang === 'bn' ? 'প্রাপ্ত নম্বর' : 'Marks'}</th>
+                  <th className="py-1 px-2 text-center w-16">{lang === 'bn' ? 'লেটার গ্রেড' : 'Grade'}</th>
+                  <th className="py-1 px-2 text-center font-mono w-16">{lang === 'bn' ? 'গ্রেড পয়েন্ট' : 'Point'}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -551,10 +579,10 @@ export default function ResultSearch() {
                     <tr key={i}>
                       <td className="py-0.5 px-1.5 text-center font-mono text-slate-500">{sub.code || '-'}</td>
                       <td className="py-0.5 px-2 font-medium text-slate-900">{sub.name}</td>
-                      <td className="py-0.5 px-1.5 text-center font-mono text-slate-600">{toBanglaNumerals(fullMark)}</td>
-                      <td className="py-0.5 px-2 text-center font-mono font-bold text-slate-900">{toBanglaNumerals(sub.marks)}</td>
+                      <td className="py-0.5 px-1.5 text-center font-mono text-slate-600">{lang === 'bn' ? toBanglaNumerals(fullMark) : fullMark}</td>
+                      <td className="py-0.5 px-2 text-center font-mono font-bold text-slate-900">{lang === 'bn' ? toBanglaNumerals(sub.marks) : toEnglishNumerals(sub.marks)}</td>
                       <td className="py-0.5 px-2 text-center font-bold text-emerald-700">{sub.grade || 'A'}</td>
-                      <td className="py-0.5 px-2 text-center font-mono font-semibold text-slate-900">{toBanglaNumerals(subPoint.toFixed(2))}</td>
+                      <td className="py-0.5 px-2 text-center font-mono font-semibold text-slate-900">{lang === 'bn' ? toBanglaNumerals(subPoint.toFixed(2)) : subPoint.toFixed(2)}</td>
                     </tr>
                   );
                 })}
@@ -562,13 +590,13 @@ export default function ResultSearch() {
               <tfoot className="bg-slate-50 border-t-2 border-emerald-600 font-bold text-[7.5pt]">
                 <tr>
                   <td colSpan="4" className="py-1 px-2 text-right text-slate-900">
-                    সর্বমোট গ্রেড পয়েন্ট গড় (GPA):
+                    {lang === 'bn' ? 'সর্বমোট গ্রেড পয়েন্ট গড় (GPA):' : 'Grade Point Average (GPA):'}
                   </td>
                   <td className="py-1 px-2 text-center text-slate-900 font-extrabold text-[8pt]">
                     {calculateOverallGrade(searchedResult.gpa, searchedResult.resultStatus === 'FAILED') || searchedResult.letterGrade || searchedResult.grade}
                   </td>
                   <td className="py-1 px-2 text-center font-mono text-slate-900 font-extrabold text-[8pt]">
-                    {toBanglaNumerals(searchedResult.gpa ?? '0.00')}
+                    {lang === 'bn' ? toBanglaNumerals(searchedResult.gpa ?? '0.00') : toEnglishNumerals(searchedResult.gpa ?? '0.00')}
                   </td>
                 </tr>
               </tfoot>
@@ -594,8 +622,12 @@ export default function ResultSearch() {
                 <div className="w-20 border-b border-slate-400 mx-auto pb-0.5">
                   <span className="font-serif italic text-emerald-800 font-bold text-[9pt]">{signatories.examController.signature}</span>
                 </div>
-                <p className="font-bold text-slate-900">{signatories.examController.nameBn}</p>
-                <p className="text-slate-500 text-[6pt]">{signatories.examController.designationBn}</p>
+                <p className="font-bold text-slate-900">
+                  {lang === 'bn' ? signatories.examController.nameBn : (signatories.examController.nameEn || signatories.examController.nameBn)}
+                </p>
+                <p className="text-slate-500 text-[6pt]">
+                  {lang === 'bn' ? signatories.examController.designationBn : (signatories.examController.designationEn || 'Exam Controller')}
+                </p>
               </div>
 
               <div className="w-10 h-10 rounded-full border-2 border-dashed border-emerald-600 text-emerald-700 flex flex-col items-center justify-center p-0.5 text-[5pt] text-center font-bold">
@@ -607,8 +639,12 @@ export default function ResultSearch() {
                 <div className="w-20 border-b border-slate-400 mx-auto pb-0.5">
                   <span className="font-serif italic text-emerald-800 font-bold text-[9pt]">{signatories.headmaster.signature}</span>
                 </div>
-                <p className="font-bold text-slate-900">{signatories.headmaster.nameBn}</p>
-                <p className="text-slate-500 text-[6pt]">{signatories.headmaster.designationBn}</p>
+                <p className="font-bold text-slate-900">
+                  {lang === 'bn' ? signatories.headmaster.nameBn : (signatories.headmaster.nameEn || signatories.headmaster.nameBn)}
+                </p>
+                <p className="text-slate-500 text-[6pt]">
+                  {lang === 'bn' ? signatories.headmaster.designationBn : (signatories.headmaster.designationEn || 'Acting Headmaster')}
+                </p>
               </div>
             </div>
           </div>,

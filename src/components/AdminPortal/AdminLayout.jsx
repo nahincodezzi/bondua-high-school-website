@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SchoolLogo from '../common/SchoolLogo';
 import { useSchool } from '../../context/useSchool';
+import { toEnglishNumerals } from '../../utils/dateFormatter';
 import { 
   LayoutDashboard, 
   Users, 
@@ -98,7 +99,7 @@ export default function AdminLayout() {
                   {lang === 'bn' ? schoolInfo.nameBn : schoolInfo.nameEn}
                 </h1>
                 <p className="text-[10px] sm:text-[11px] text-white/90 hidden sm:block truncate font-medium">
-                  CMS & ERP Management • EIIN: {schoolInfo.eiin}
+                  CMS & ERP Management • EIIN: {lang === 'bn' ? schoolInfo.eiin : toEnglishNumerals(schoolInfo.eiin)}
                 </p>
               </div>
             </div>
@@ -109,7 +110,7 @@ export default function AdminLayout() {
             {/* Language Switcher - Outline Button (hidden on < sm, available in mobile drawer) */}
             <button
               onClick={toggleLanguage}
-              className="hidden sm:flex bg-transparent hover:bg-white/10 text-white px-2.5 py-1.5 rounded-[8px] text-xs font-medium transition items-center gap-1.5 border border-white/30 cursor-pointer"
+              className="hidden sm:flex bg-transparent hover:bg-white/10 text-white px-2.5 py-1.5 rounded-[8px] text-xs font-medium transition items-center gap-1.5 border border-white/30 cursor-pointer whitespace-nowrap"
               title="Switch Language"
             >
               <Globe className="w-3.5 h-3.5 text-soft" />
@@ -144,7 +145,11 @@ export default function AdminLayout() {
                   {lang === 'bn' ? (authUser?.nameBn || authUser?.name || 'অ্যাডমিন') : (authUser?.nameEn || authUser?.name || 'Admin')}
                 </span>
                 <span className="text-[10px] text-muted hidden sm:block -mt-0.5 font-sans truncate">
-                  {authUser?.role === 'superadmin' ? 'Super Admin' : (authUser?.designationBn || authUser?.role || 'Staff')}
+                  {authUser?.role === 'superadmin'
+                    ? 'Super Admin'
+                    : (lang === 'bn'
+                        ? (authUser?.designationBn || authUser?.role || 'Staff')
+                        : ((authUser?.designationEn || authUser?.designationBn || authUser?.role || 'Staff').replace(/\s*\(Head Master,\s*In Charge\)/gi, '').trim()))}
                 </span>
               </div>
             </div>
@@ -152,7 +157,7 @@ export default function AdminLayout() {
             {/* Back to Public Web - Amber CTA (hidden on < md, available in mobile drawer) */}
             <button
               onClick={() => setActiveTab('home')}
-              className="hidden md:flex bg-accent hover:bg-accent-hover text-ink px-3.5 py-1.5 rounded-[8px] text-xs font-semibold transition items-center gap-1.5 font-bangla cursor-pointer shadow-xs"
+              className="hidden md:flex bg-accent hover:bg-accent-hover text-ink px-3.5 py-1.5 rounded-[8px] text-xs font-semibold transition items-center gap-1.5 font-bangla cursor-pointer shadow-xs whitespace-nowrap"
             >
               <Globe className="w-3.5 h-3.5 text-ink" />
               <span>{lang === 'bn' ? 'মূল ওয়েবসাইট' : 'Public Website'}</span>
@@ -270,12 +275,14 @@ export default function AdminLayout() {
             </div>
 
             <div className="flex justify-between items-center text-[11px]">
-              <span>সফটওয়্যার স্ট্যাটাস:</span>
+              <span>{lang === 'bn' ? 'সফটওয়্যার স্ট্যাটাস:' : 'System Status:'}</span>
               <span className="text-success font-medium flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-success"></span> সক্রিয়
+                <span className="w-2 h-2 rounded-full bg-success"></span> {lang === 'bn' ? 'সক্রিয়' : 'Active'}
               </span>
             </div>
-            <p className="text-[10px] text-muted mt-0.5">বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়</p>
+            <p className="text-[10px] text-muted mt-0.5 truncate">
+              {lang === 'bn' ? (schoolInfo?.nameBn || 'বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়') : (schoolInfo?.nameEn || 'Bondua Daulatpur High School')}
+            </p>
           </div>
         </aside>
 
@@ -295,7 +302,7 @@ export default function AdminLayout() {
               <div className="flex items-center gap-3.5">
                 {/* Avatar in soft green (P12) */}
                 <div className="w-10 h-10 rounded-full bg-soft text-deep font-bold flex items-center justify-center shrink-0 text-sm">
-                  {authUser?.nameBn ? authUser.nameBn.charAt(0) : 'অ'}
+                  {((lang === 'bn' ? authUser?.nameBn : (authUser?.nameEn || authUser?.nameBn)) || (lang === 'bn' ? 'অ' : 'A')).charAt(0)}
                 </div>
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
@@ -307,7 +314,11 @@ export default function AdminLayout() {
                     </span>
                     {/* Role Tag in soft green (P12) */}
                     <span className="bg-soft text-deep text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
-                      {authUser?.role === 'superadmin' ? 'সুপার অ্যাডমিন' : (authUser?.designationBn || authUser?.role || 'Staff')}
+                      {authUser?.role === 'superadmin'
+                        ? (lang === 'bn' ? 'সুপার অ্যাডমিন' : 'Super Admin')
+                        : (lang === 'bn'
+                            ? (authUser?.designationBn || authUser?.role || 'Staff')
+                            : ((authUser?.designationEn || authUser?.designationBn || authUser?.role || 'Staff').replace(/\s*\(Head Master,\s*In Charge\)/gi, '').trim()))}
                     </span>
                   </div>
                   <p className="text-[12px] text-muted mt-0.5">
@@ -320,7 +331,7 @@ export default function AdminLayout() {
               {/* Session Pill in success style with normal font (P12) */}
               <div className="flex items-center gap-2 text-xs text-deep bg-soft px-3 py-1 rounded-full font-medium ml-auto sm:ml-0">
                 <span className="w-2 h-2 rounded-full bg-success"></span>
-                <span>সক্রিয় সেশন (Active)</span>
+                <span>{lang === 'bn' ? 'সক্রিয় সেশন (Active)' : 'Active Session'}</span>
               </div>
             </div>
 
@@ -334,15 +345,19 @@ export default function AdminLayout() {
                     <div className="w-12 h-12 rounded-full bg-danger-soft text-danger flex items-center justify-center mx-auto border border-danger-soft">
                       <ShieldAlert className="w-6 h-6" />
                     </div>
-                    <h3 className="text-lg font-bold text-ink">অননুমোদিত অ্যাক্সেস (Unauthorized Access)</h3>
+                    <h3 className="text-lg font-bold text-ink">
+                      {lang === 'bn' ? 'অননুমোদিত অ্যাক্সেস (Unauthorized Access)' : 'Unauthorized Access'}
+                    </h3>
                     <p className="text-xs text-muted">
-                      এই মডিউলে প্রবেশের অধিকার শুধুমাত্র প্রধান সিস্টেম অ্যাডমিনের (Super Admin) রয়েছে।
+                      {lang === 'bn'
+                        ? 'এই মডিউলে প্রবেশের অধিকার শুধুমাত্র প্রধান সিস্টেম অ্যাডমিনের (Super Admin) রয়েছে।'
+                        : 'Only the primary System Administrator (Super Admin) has access to this module.'}
                     </p>
                     <button
                       onClick={() => setActiveModule('overview')}
                       className="btn-gold px-5 py-2 rounded-full text-xs font-bold cursor-pointer"
                     >
-                      ড্যাশবোর্ড ওভারভিউতে ফিরে যান
+                      {lang === 'bn' ? 'ড্যাশবোর্ড ওভারভিউতে ফিরে যান' : 'Back to Dashboard Overview'}
                     </button>
                   </div>
                 )

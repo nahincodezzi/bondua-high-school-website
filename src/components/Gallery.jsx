@@ -14,6 +14,17 @@ import {
   ChevronRight 
 } from 'lucide-react';
 
+const GALLERY_DESC_EN_FALLBACK = {
+  'gal-01': 'Main two-story academic building and spacious playground of Bondua Daulatpur High School.',
+  'gal-02': 'Disciplined daily morning assembly with boys in white shirts & blue pants and girls in red dresses.',
+  'gal-03': 'Colorful annual sports and athletics meet organized at the Fulgazi Upazila level.',
+  'gal-04': 'Hands-on information technology and computer training sessions for students.',
+  'gal-05': 'Well-equipped physics and chemistry science laboratory for practical experiments.',
+  'gal-06': 'Patriotic songs, poetry recitation, and cultural stage performances.',
+  'gal-07': 'Farewell reception and prayer gathering wishing academic success to SSC candidates.',
+  'gal-08': 'Morning procession and floral tributes at the Shaheed Minar on 21st February.'
+};
+
 export default function Gallery() {
   const { lang, gallery, videos, schoolInfo, setActiveTab } = useSchool();
   const [activeTabType, setActiveTabType] = useState('photos'); // 'photos' or 'videos'
@@ -79,19 +90,19 @@ export default function Gallery() {
                   : 'Join our Facebook Community to share & browse alumni memories.'}
               </span>
             </div>
-            <div className="flex items-center gap-2.5 shrink-0">
+            <div className="flex flex-wrap justify-center items-center gap-2 shrink-0">
               <a
                 href={schoolInfo.facebookGroupUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-accent font-bold px-4 py-2 transition flex items-center gap-1.5 shadow-xs text-xs cursor-pointer"
+                className="btn-accent font-bold px-4 py-2 transition flex items-center gap-1.5 shadow-xs text-xs cursor-pointer whitespace-nowrap"
               >
                 <span>{lang === 'bn' ? 'ফেসবুক গ্রুপ দেখুন' : 'Visit Group'}</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
               <button
                 onClick={() => setActiveTab('facebookHub')}
-                className="bg-white/10 hover:bg-white/20 text-white font-bold px-4 py-2 rounded-lg transition border border-white/20 text-xs cursor-pointer"
+                className="bg-white/10 hover:bg-white/20 text-white font-bold px-4 py-2 rounded-lg transition border border-white/20 text-xs cursor-pointer whitespace-nowrap"
               >
                 {lang === 'bn' ? 'মিডিয়া সিঙ্ক হাব' : 'Media Hub'}
               </button>
@@ -101,16 +112,16 @@ export default function Gallery() {
 
         {/* Media Type Switcher (Photos vs Videos) */}
         <div className="flex justify-center mb-8">
-          <div className="bg-bg p-1.5 rounded-xl border border-line shadow-xs flex items-center gap-1 sm:gap-2">
+          <div className="bg-bg p-1.5 rounded-xl border border-line shadow-xs flex flex-wrap justify-center items-center gap-1 sm:gap-2 max-w-full">
             <button
               onClick={() => setActiveTabType('photos')}
-              className={`px-5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 font-bangla cursor-pointer ${
+              className={`px-3 sm:px-5 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer ${
                 activeTabType === 'photos'
                   ? 'bg-primary text-white shadow-xs'
                   : 'text-muted hover:text-ink hover:bg-white'
               }`}
             >
-              <ImageIcon className="w-4 h-4" />
+              <ImageIcon className="w-4 h-4 shrink-0" />
               <span>{lang === 'bn' ? 'ছবি সমূহ (Photos)' : 'Photos'}</span>
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                 activeTabType === 'photos' ? 'bg-white/20 text-white' : 'bg-line text-ink'
@@ -119,13 +130,13 @@ export default function Gallery() {
 
             <button
               onClick={() => setActiveTabType('videos')}
-              className={`px-5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 font-bangla cursor-pointer ${
+              className={`px-3 sm:px-5 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer ${
                 activeTabType === 'videos'
                   ? 'bg-primary text-white shadow-xs'
                   : 'text-muted hover:text-ink hover:bg-white'
               }`}
             >
-              <Video className="w-4 h-4" />
+              <Video className="w-4 h-4 shrink-0" />
               <span>{lang === 'bn' ? 'ভিডিও সমূহ (Videos)' : 'Videos'}</span>
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                 activeTabType === 'videos' ? 'bg-white/20 text-white' : 'bg-line text-ink'
@@ -192,7 +203,9 @@ export default function Gallery() {
                       {lang === 'bn' ? item.titleBn : (item.titleEn || item.titleBn)}
                     </h3>
                     <p className="text-xs text-muted line-clamp-2 leading-relaxed">
-                      {item.description}
+                      {lang === 'bn'
+                        ? item.description
+                        : (item.descriptionEn || GALLERY_DESC_EN_FALLBACK[item.id] || item.titleEn || '')}
                     </p>
                   </div>
                 </div>
@@ -282,10 +295,12 @@ export default function Gallery() {
               <div className="p-5 bg-ink text-white border-t border-line flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
                   <h3 className="text-base font-bold font-bangla text-accent">
-                    {lang === 'bn' ? activeImageModal.titleBn : activeImageModal.titleEn}
+                    {lang === 'bn' ? activeImageModal.titleBn : (activeImageModal.titleEn || activeImageModal.titleBn)}
                   </h3>
                   <p className="text-xs text-white/90 font-medium font-bangla mt-0.5">
-                    {activeImageModal.description}
+                    {lang === 'bn'
+                      ? activeImageModal.description
+                      : (activeImageModal.descriptionEn || GALLERY_DESC_EN_FALLBACK[activeImageModal.id] || activeImageModal.titleEn || '')}
                   </p>
                 </div>
 
@@ -298,7 +313,7 @@ export default function Gallery() {
                     className="btn-gold px-4 py-2 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-md cursor-pointer"
                   >
                     <Download className="w-3.5 h-3.5" />
-                    <span>Download</span>
+                    <span>{lang === 'bn' ? 'ডাউনলোড' : 'Download'}</span>
                   </a>
                 </div>
               </div>

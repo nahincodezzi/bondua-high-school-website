@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 
 export default function AuthModal() {
-  const { authModalOpen, setAuthModalOpen, authenticate, login, lang } = useSchool();
+  const { authModalOpen, setAuthModalOpen, setActiveTab, authenticate, login, lang } = useSchool();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -136,7 +136,7 @@ export default function AuthModal() {
                 }}
                 className="text-[11px] underline font-bold text-left cursor-pointer text-primary hover:text-ink mt-1"
               >
-                🔄 ভুল প্রচেষ্টা রিসেট করতে এখানে চাপুন (Reset Attempts)
+                {lang === 'bn' ? '🔄 ভুল প্রচেষ্টা রিসেট করতে এখানে চাপুন (Reset Attempts)' : '🔄 Click here to reset failed attempts'}
               </button>
             </div>
           )}
@@ -206,7 +206,11 @@ export default function AuthModal() {
             </button>
 
             <p className="text-[10px] text-muted font-bangla text-center pt-1">
-              💡 টিপস: ইউজারনেম ও পাসওয়ার্ড উভয়ই ছোট হাতের অক্ষরে (lowercase) লিখুন (যেমন: <code className="font-mono text-primary font-bold">superadmin</code> / <code className="font-mono text-primary font-bold">admin2026</code>)।
+              {lang === 'bn' ? (
+                <>💡 টিপস: ইউজারনেম ও পাসওয়ার্ড উভয়ই ছোট হাতের অক্ষরে (lowercase) লিখুন (যেমন: <code className="font-mono text-primary font-bold">superadmin</code> / <code className="font-mono text-primary font-bold">admin2026</code>)।</>
+              ) : (
+                <>💡 Tip: Enter both username and password in lowercase (e.g., <code className="font-mono text-primary font-bold">superadmin</code> / <code className="font-mono text-primary font-bold">admin2026</code>).</>
+              )}
             </p>
           </form>
 
@@ -214,7 +218,7 @@ export default function AuthModal() {
           {import.meta.env.DEV && (
             <div className="pt-4 border-t border-line">
               <span className="text-[11px] font-bold text-muted block mb-2 font-bangla">
-                🛠️ ডেভেলপার টেস্টিং টুল (লোকাল ডেভ মোডে সক্রিয়):
+                {lang === 'bn' ? '🛠️ ডেভেলপার টেস্টিং টুল (লোকাল ডেভ মোডে সক্রিয়):' : '🛠️ Developer Testing Tool (Active in Local Dev Mode):'}
               </span>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs font-bangla">
                 <button
@@ -224,7 +228,7 @@ export default function AuthModal() {
                 >
                   <div className="font-bold text-ink flex items-center gap-1.5">
                     <Shield className="w-3.5 h-3.5 text-primary" />
-                    <span>সুপার অ্যাডমিন</span>
+                    <span>{lang === 'bn' ? 'সুপার অ্যাডমিন' : 'Super Admin'}</span>
                   </div>
                   <div className="text-[10px] text-primary font-mono mt-0.5">superadmin</div>
                 </button>
@@ -236,7 +240,7 @@ export default function AuthModal() {
                 >
                   <div className="font-bold text-ink flex items-center gap-1.5">
                     <GraduationCap className="w-3.5 h-3.5 text-primary" />
-                    <span>প্রধান শিক্ষক</span>
+                    <span>{lang === 'bn' ? 'প্রধান শিক্ষক' : 'Headmaster'}</span>
                   </div>
                   <div className="text-[10px] text-primary font-mono mt-0.5">headmaster</div>
                 </button>
@@ -248,7 +252,7 @@ export default function AuthModal() {
                 >
                   <div className="font-bold text-ink flex items-center gap-1.5">
                     <GraduationCap className="w-3.5 h-3.5 text-primary" />
-                    <span>সহ প্রধান শিক্ষক</span>
+                    <span>{lang === 'bn' ? 'সহ প্রধান শিক্ষক' : 'Asst. Headmaster'}</span>
                   </div>
                   <div className="text-[10px] text-primary font-mono mt-0.5">asst_headmaster</div>
                 </button>
@@ -260,7 +264,7 @@ export default function AuthModal() {
                 >
                   <div className="font-bold text-ink flex items-center gap-1.5">
                     <BookOpen className="w-3.5 h-3.5 text-primary" />
-                    <span>সহকারী শিক্ষক</span>
+                    <span>{lang === 'bn' ? 'সহকারী শিক্ষক' : 'Assistant Teacher'}</span>
                   </div>
                   <div className="text-[10px] text-primary font-mono mt-0.5">teacher</div>
                 </button>
@@ -272,7 +276,7 @@ export default function AuthModal() {
                 >
                   <div className="font-bold text-ink flex items-center gap-1.5">
                     <Building2 className="w-3.5 h-3.5 text-primary" />
-                    <span>অফিস সহকারী</span>
+                    <span>{lang === 'bn' ? 'অফিস সহকারী' : 'Office Assistant'}</span>
                   </div>
                   <div className="text-[10px] text-primary font-mono mt-0.5">office_assistant</div>
                 </button>

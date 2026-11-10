@@ -1,6 +1,7 @@
 import React from 'react';
 import SchoolLogo from './common/SchoolLogo';
 import { useSchool } from '../context/useSchool';
+import { toEnglishNumerals } from '../utils/dateFormatter';
 import { 
   Share2, 
   ExternalLink, 
@@ -33,7 +34,7 @@ export default function Footer() {
                   {lang === 'bn' ? (schoolInfo.nameBn || 'বিদ্যালয়ের নাম') : (schoolInfo.nameEn || 'School Name')}
                 </h3>
                 <p className="text-xs text-accent font-mono">
-                  EIIN: {schoolInfo.eiin} • MPO: {schoolInfo.mpoCode}
+                  EIIN: {lang === 'bn' ? schoolInfo.eiin : toEnglishNumerals(schoolInfo.eiin)} • MPO: {lang === 'bn' ? schoolInfo.mpoCode : toEnglishNumerals(schoolInfo.mpoCode)}
                 </p>
               </div>
             </div>
@@ -145,7 +146,7 @@ export default function Footer() {
               {lang === 'bn' ? schoolInfo.addressBn : (schoolInfo.addressEn || '')}
             </p>
             <p className="font-mono text-accent">
-              {lang === 'bn' ? `ফোন: ${schoolInfo.phone}` : `Phone: ${schoolInfo.phone}`}
+              {lang === 'bn' ? `ফোন: ${schoolInfo.phone}` : `Phone: ${toEnglishNumerals(schoolInfo.phone)}`}
             </p>
             <p className="font-mono text-accent">
               {lang === 'bn' ? `ইমেইল: ${schoolInfo.email}` : `Email: ${schoolInfo.email}`}
@@ -181,7 +182,7 @@ export default function Footer() {
           <p className="text-white/90 font-medium">
             {lang === 'bn' 
               ? `© ${CURRENT_YEAR} ${schoolInfo.nameBn} (EIIN: ${schoolInfo.eiin})। সর্বস্বত্ব সংরক্ষিত।`
-              : `© ${CURRENT_YEAR} ${schoolInfo.nameEn} (EIIN: ${schoolInfo.eiin}). All rights reserved.`}
+              : `© ${CURRENT_YEAR} ${schoolInfo.nameEn} (EIIN: ${toEnglishNumerals(schoolInfo.eiin)}). All rights reserved.`}
           </p>
 
           {/* Developer Credit - Designed and Developed by Md Jaker Ullah Chowdhury Nahin */}

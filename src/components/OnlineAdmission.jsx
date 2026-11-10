@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import SchoolLogo from './common/SchoolLogo';
 import { useSchool } from '../context/useSchool';
 import { getSignatories } from '../utils/signatories';
+import { toEnglishNumerals, toBanglaNumerals } from '../utils/dateFormatter';
 import { 
   Send, 
   CheckCircle2, 
@@ -20,6 +21,9 @@ import {
 export default function OnlineAdmission() {
   const { lang, submitAdmission, schoolInfo, teachers, systemUsers, admissions = [] } = useSchool();
   const signatories = getSignatories(schoolInfo, teachers, systemUsers);
+  const admYear = lang === 'bn'
+    ? toBanglaNumerals(schoolInfo?.admissionYear || '২০২৭')
+    : toEnglishNumerals(schoolInfo?.admissionYear || '2027');
 
   const [formData, setFormData] = useState({
     studentNameBn: '',
@@ -246,7 +250,7 @@ export default function OnlineAdmission() {
         {submittedApplication ? (
           <div className="bg-white rounded-2xl shadow-xl border border-line overflow-hidden print:rounded-none print:shadow-none print:border-none print:m-0 print:p-0" id="admission-slip">
             {/* Top Toolbar */}
-            <div className="bg-deep text-white px-6 py-3.5 flex items-center justify-between no-print print:hidden border-b border-primary">
+            <div className="bg-deep text-white px-6 py-3.5 flex flex-wrap items-center justify-between gap-2 no-print print:hidden border-b border-primary">
               <div className="flex items-center gap-2 text-xs font-semibold">
                 <CheckCircle2 className="w-4 h-4 text-accent" />
                 <span className="text-white font-bangla">{lang === 'bn' ? 'ভর্তি আবেদন সফলভাবে গৃহীত হয়েছে!' : 'Admission Application Submitted!'}</span>
@@ -280,15 +284,21 @@ export default function OnlineAdmission() {
                   {lang === 'bn' ? schoolInfo.nameBn : (schoolInfo.nameEn || 'Bondua Daulatpur High School')}
                 </h3>
                 <p className="text-xs sm:text-sm print:text-[9pt] text-ink font-semibold font-bangla">
-                  {schoolInfo.addressBn}
+                  {lang === 'bn'
+                    ? schoolInfo.addressBn
+                    : (schoolInfo.addressEn || 'Along Feni-Parshuram Road, Bondua Daulatpur, Anandapur Union, Fulgazi, Feni')}
                 </p>
                 <p className="text-xs print:text-[8pt] text-muted font-mono mt-0.5">
-                  EIIN: {schoolInfo.eiin} • কুমিল্লা শিক্ষাবোর্ড • স্থাপিত: ১৯৯০
+                  {lang === 'bn'
+                    ? `EIIN: ${schoolInfo.eiin} • কুমিল্লা শিক্ষাবোর্ড • স্থাপিত: ১৯৯০`
+                    : `EIIN: ${toEnglishNumerals(schoolInfo.eiin)} • Comilla Education Board • Est: 1990`}
                 </p>
                 <div className="mt-3 print:mt-1 inline-block bg-deep text-white px-4 py-1 print:px-2.5 print:py-0.5 rounded text-xs print:text-[8.5pt] font-bold uppercase tracking-wider font-bangla">
                   {lang === 'bn' ? 'অনলাইন ভর্তি আবেদন পত্র ও প্রবেশপত্র (Admit Slip)' : 'ONLINE ADMISSION APPLICATION & ADMIT SLIP'}
                 </div>
-                <p className="text-xs print:text-[8.5pt] font-bold text-warning mt-1.5 print:mt-0.5">শিক্ষাবর্ষ: ২০২৭ (Academic Session 2027)</p>
+                <p className="text-xs print:text-[8.5pt] font-bold text-warning mt-1.5 print:mt-0.5">
+                  {lang === 'bn' ? `শিক্ষাবর্ষ: ${admYear}` : `Academic Session ${admYear}`}
+                </p>
               </div>
 
               {/* Tracking ID Banner */}
@@ -377,16 +387,20 @@ export default function OnlineAdmission() {
                     ) : (
                       <div className="text-center p-2 text-muted">
                         <User className="w-8 h-8 text-muted/50 mx-auto mb-1" />
-                        <span className="text-[9px] font-bangla text-muted block">ছবি সংযুক্ত নেই</span>
+                        <span className="text-[9px] font-bangla text-muted block">
+                          {lang === 'bn' ? 'ছবি সংযুক্ত নেই' : 'No photo attached'}
+                        </span>
                       </div>
                     )}
                   </div>
-                  <span className="text-[9px] print:text-[7pt] text-muted font-bangla mt-1">শিক্ষার্থীর ছবি</span>
+                  <span className="text-[9px] print:text-[7pt] text-muted font-bangla mt-1">
+                    {lang === 'bn' ? 'শিক্ষার্থীর ছবি' : 'Student Photo'}
+                  </span>
                 </div>
               </div>
 
               {/* Dynamic Signatures & Official Seal */}
-              <div className="pt-6 print:pt-3 border-t border-line flex justify-between items-end text-xs print:text-[8.5pt]">
+              <div className="pt-6 print:pt-3 border-t border-line flex flex-wrap sm:flex-nowrap justify-between items-end gap-4 text-xs print:text-[8.5pt]">
                 {/* Admission Convener (Left) */}
                 <div className="text-center space-y-0.5 min-w-[120px]">
                   <div className="w-28 border-b border-slate-400 mx-auto pb-0.5">
@@ -394,12 +408,16 @@ export default function OnlineAdmission() {
                       {signatories.admissionConvener.signature}
                     </span>
                   </div>
-                  <p className="font-bold text-ink text-[9.5pt] print:text-[8.5pt]">{signatories.admissionConvener.nameBn}</p>
-                  <p className="text-muted text-[8pt] print:text-[7pt]">{signatories.admissionConvener.designationBn}</p>
+                  <p className="font-bold text-ink text-[9.5pt] print:text-[8.5pt]">
+                    {lang === 'bn' ? signatories.admissionConvener.nameBn : (signatories.admissionConvener.nameEn || signatories.admissionConvener.nameBn)}
+                  </p>
+                  <p className="text-muted text-[8pt] print:text-[7pt]">
+                    {lang === 'bn' ? signatories.admissionConvener.designationBn : (signatories.admissionConvener.designationEn || 'Convener, Admission Committee')}
+                  </p>
                 </div>
 
                 {/* Institute Seal Stamp (Center) */}
-                <div className="w-14 h-14 print:w-11 print:h-11 rounded-full border-2 border-dashed border-primary text-primary flex flex-col items-center justify-center p-0.5 text-[6px] text-center font-bold">
+                <div className="w-14 h-14 print:w-11 print:h-11 rounded-full border-2 border-dashed border-primary text-primary flex flex-col items-center justify-center p-0.5 text-[6px] text-center font-bold shrink-0">
                   <span>BONDUA DAULATPUR</span>
                   <span>HIGH SCHOOL</span>
                   <span>SEAL</span>
@@ -412,8 +430,12 @@ export default function OnlineAdmission() {
                       {signatories.headmaster.signature}
                     </span>
                   </div>
-                  <p className="font-bold text-ink text-[9.5pt] print:text-[8.5pt]">{signatories.headmaster.nameBn}</p>
-                  <p className="text-muted text-[8pt] print:text-[7pt]">{signatories.headmaster.designationBn}</p>
+                  <p className="font-bold text-ink text-[9.5pt] print:text-[8.5pt]">
+                    {lang === 'bn' ? signatories.headmaster.nameBn : (signatories.headmaster.nameEn || signatories.headmaster.nameBn)}
+                  </p>
+                  <p className="text-muted text-[8pt] print:text-[7pt]">
+                    {lang === 'bn' ? signatories.headmaster.designationBn : (signatories.headmaster.designationEn || 'Acting Headmaster')}
+                  </p>
                 </div>
               </div>
             </div>
@@ -424,8 +446,12 @@ export default function OnlineAdmission() {
             {/* Header */}
             <div className="bg-deep p-6 sm:p-8 text-center text-white border-b border-primary">
               <div className="inline-flex items-center gap-1.5 bg-soft text-deep text-xs font-bold px-4 py-1.5 rounded-full mb-3 font-bangla border border-soft-border">
-                <GraduationCap className="w-4 h-4 text-primary" />
-                <span>২০২৭ শিক্ষাবর্ষে নতুন শিক্ষার্থী ভর্তি কার্যক্রম</span>
+                <GraduationCap className="w-4 h-4 text-primary shrink-0" />
+                <span>
+                  {lang === 'bn'
+                    ? `${admYear} শিক্ষাবর্ষে নতুন শিক্ষার্থী ভর্তি কার্যক্রম`
+                    : `New Student Admission — Session ${admYear}`}
+                </span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-extrabold font-bangla text-white">
                 {lang === 'bn' ? 'অনলাইন ভর্তি আবেদন ফরম' : 'Online Admission Application Form'}
@@ -459,7 +485,9 @@ export default function OnlineAdmission() {
                       ) : (
                         <div className="text-center p-2 text-muted flex flex-col items-center">
                           <Camera className="w-6 h-6 text-primary/60 mb-1" />
-                          <span className="text-[10px] font-bangla font-semibold">পাসপোর্ট সাইজ ছবি</span>
+                          <span className="text-[10px] font-bangla font-semibold">
+                            {lang === 'bn' ? 'পাসপোর্ট সাইজ ছবি' : 'Passport Photo'}
+                          </span>
                         </div>
                       )}
                     </div>
@@ -517,7 +545,7 @@ export default function OnlineAdmission() {
                       name="studentNameBn"
                       value={formData.studentNameBn}
                       onChange={handleChange}
-                      placeholder={lang === 'bn' ? 'যেমন: তানভীর আহমেদ তানিম' : 'e.g. তানভীর আহমেদ'}
+                      placeholder={lang === 'bn' ? 'যেমন: তানভীর আহমেদ তানিম' : 'e.g. Type full name in Bangla script'}
                       className={`w-full rounded-lg border p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none ${
                         formErrors.studentNameBn ? 'border-danger-soft bg-danger-soft' : 'border-line'
                       }`}
@@ -565,10 +593,10 @@ export default function OnlineAdmission() {
                       onChange={handleChange}
                       className="w-full rounded-lg border border-line p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none"
                     >
-                      <option value="6">ষষ্ঠ শ্রেণি (Class VI)</option>
-                      <option value="7">সপ্তম শ্রেণি (Class VII)</option>
-                      <option value="8">অষ্টম শ্রেণি (Class VIII)</option>
-                      <option value="9">নবম শ্রেণি (Class IX)</option>
+                      <option value="6">{lang === 'bn' ? 'ষষ্ঠ শ্রেণি (Class VI)' : 'Class VI (6)'}</option>
+                      <option value="7">{lang === 'bn' ? 'সপ্তম শ্রেণি (Class VII)' : 'Class VII (7)'}</option>
+                      <option value="8">{lang === 'bn' ? 'অষ্টম শ্রেণি (Class VIII)' : 'Class VIII (8)'}</option>
+                      <option value="9">{lang === 'bn' ? 'নবম শ্রেণি (Class IX)' : 'Class IX (9)'}</option>
                     </select>
                   </div>
 
@@ -584,9 +612,9 @@ export default function OnlineAdmission() {
                         onChange={handleChange}
                         className="w-full rounded-lg border border-line p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none"
                       >
-                        <option value="Science">বিজ্ঞান (Science)</option>
-                        <option value="Business Studies">ব্যবসায় শিক্ষা (Business Studies)</option>
-                        <option value="Humanities">মানবিক (Humanities)</option>
+                        <option value="Science">{lang === 'bn' ? 'বিজ্ঞান (Science)' : 'Science'}</option>
+                        <option value="Business Studies">{lang === 'bn' ? 'ব্যবসায় শিক্ষা (Business Studies)' : 'Business Studies'}</option>
+                        <option value="Humanities">{lang === 'bn' ? 'মানবিক (Humanities)' : 'Humanities'}</option>
                       </select>
                     </div>
                   )}
@@ -602,8 +630,8 @@ export default function OnlineAdmission() {
                       onChange={handleChange}
                       className="w-full rounded-lg border border-line p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none"
                     >
-                      <option value="Male">ছাত্র (Male)</option>
-                      <option value="Female">ছাত্রী (Female)</option>
+                      <option value="Male">{lang === 'bn' ? 'ছাত্র (Male)' : 'Male'}</option>
+                      <option value="Female">{lang === 'bn' ? 'ছাত্রী (Female)' : 'Female'}</option>
                     </select>
                   </div>
 
@@ -747,7 +775,7 @@ export default function OnlineAdmission() {
                       name="fatherNid"
                       value={formData.fatherNid}
                       onChange={handleChange}
-                      placeholder="১০ বা ১৭ ডিজিটের এনআইডি"
+                      placeholder={lang === 'bn' ? '১০ বা ১৭ ডিজিটের এনআইডি' : '10, 13, or 17 digit NID'}
                       className={`w-full rounded-lg border p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none font-mono ${
                         formErrors.fatherNid ? 'border-danger-soft bg-danger-soft' : 'border-line'
                       }`}
@@ -796,7 +824,7 @@ export default function OnlineAdmission() {
                       name="previousGpa"
                       value={formData.previousGpa}
                       onChange={handleChange}
-                      placeholder="যেমন: 4.85"
+                      placeholder={lang === 'bn' ? 'যেমন: 4.85' : 'e.g. 4.85'}
                       className={`w-full rounded-lg border p-3 text-ink bg-bg focus:ring-2 focus:ring-primary focus:outline-none font-mono ${
                         formErrors.previousGpa ? 'border-danger-soft bg-danger-soft' : 'border-line'
                       }`}
@@ -838,16 +866,18 @@ export default function OnlineAdmission() {
               {/* Submit Buttons */}
               <div className="pt-4 border-t border-line flex flex-col sm:flex-row items-center justify-between gap-4">
                 <p className="text-xs text-muted font-bangla">
-                  * ফরম জমা দেওয়ার পর স্বয়ংক্রিয়ভাবে প্রবেশপত্র তৈরি হবে।
+                  {lang === 'bn'
+                    ? '* ফরম জমা দেওয়ার পর স্বয়ংক্রিয়ভাবে প্রবেশপত্র তৈরি হবে।'
+                    : '* An official admit slip will be generated automatically upon submission.'}
                 </p>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full sm:w-auto btn-accent py-3 px-8 text-sm transition shadow-sm flex items-center justify-center gap-2 font-bangla cursor-pointer font-bold rounded-lg"
+                  className="w-full sm:w-auto btn-accent py-3 px-8 text-sm transition shadow-sm flex items-center justify-center gap-2 font-bangla cursor-pointer font-bold rounded-lg whitespace-nowrap"
                 >
                   <Send className="w-4 h-4 text-ink" />
-                  <span>{isSubmitting ? 'প্রসেসিং হচ্ছে...' : (lang === 'bn' ? 'ভর্তি আবেদন জমা দিন' : 'Submit Application')}</span>
+                  <span>{isSubmitting ? (lang === 'bn' ? 'প্রসেসিং হচ্ছে...' : 'Processing...') : (lang === 'bn' ? 'ভর্তি আবেদন জমা দিন' : 'Submit Application')}</span>
                 </button>
               </div>
             </form>

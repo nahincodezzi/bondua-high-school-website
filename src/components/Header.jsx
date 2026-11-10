@@ -23,10 +23,49 @@ export default function Header() {
   const [isFocusedInside, setIsFocusedInside] = useState(false);
   const [mobileExpandedSection, setMobileExpandedSection] = useState(null);
   const [hasUnreadNotice, setHasUnreadNotice] = useState(true);
+  const [collapseInfo, setCollapseInfo] = useState({ key: '', width: null });
 
   const navContainerRef = useRef(null);
+  const navElRef = useRef(null);
   const lastScrollYRef = useRef(0);
   const tickingRef = useRef(false);
+
+  const layoutKey = `${lang}-${schoolInfo.nameBn || ''}-${schoolInfo.nameEn || ''}-${Boolean(authUser)}-${isScrolled}`;
+  const collapsedAtWidth = collapseInfo.key === layoutKey ? collapseInfo.width : null;
+  const forceHamburger =
+    collapsedAtWidth !== null &&
+    typeof window !== 'undefined' &&
+    window.innerWidth <= collapsedAtWidth + 40;
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (typeof window === 'undefined' || !navElRef.current) return;
+      if (window.innerWidth < 1280) return;
+      const nav = navElRef.current;
+      if (nav.scrollWidth > nav.clientWidth + 2) {
+        const curWidth = window.innerWidth;
+        setCollapseInfo((prev) => ({
+          key: layoutKey,
+          width: prev.key === layoutKey ? Math.max(prev.width || 0, curWidth) : curWidth
+        }));
+      } else if (collapsedAtWidth !== null && window.innerWidth > collapsedAtWidth + 60) {
+        setCollapseInfo({ key: layoutKey, width: null });
+      }
+    };
+
+    const raf = window.requestAnimationFrame(checkOverflow);
+    let ro;
+    if (typeof ResizeObserver !== 'undefined' && navElRef.current) {
+      ro = new ResizeObserver(checkOverflow);
+      ro.observe(navElRef.current);
+    }
+    window.addEventListener('resize', checkOverflow, { passive: true });
+    return () => {
+      window.cancelAnimationFrame(raf);
+      if (ro) ro.disconnect();
+      window.removeEventListener('resize', checkOverflow);
+    };
+  }, [layoutKey, collapsedAtWidth]);
 
   // Passive, throttled scroll listener for performance
   useEffect(() => {
@@ -208,35 +247,37 @@ export default function Header() {
             : '-translate-x-1/2 translate-y-0'
         } ${
           isScrolled
-            ? 'top-[10px] w-[calc(100%-1.5rem)] max-w-[1280px] h-[58px] bg-deep/90 backdrop-blur-[14px] backdrop-saturate-[140%] border border-white/[0.14] shadow-[0_12px_32px_rgba(0,0,0,0.18)] floating-glass-scrolled'
-            : 'top-[16px] w-[calc(100%-2rem)] max-w-[1380px] h-[72px] bg-deep border border-white/[0.12] shadow-lg'
+            ? 'top-[10px] w-[calc(100%-0.75rem)] sm:w-[calc(100%-1.5rem)] max-w-[1280px] min-[1440px]:max-w-[1360px] h-[56px] sm:h-[58px] bg-deep/90 backdrop-blur-[14px] backdrop-saturate-[140%] border border-white/[0.14] shadow-[0_12px_32px_rgba(0,0,0,0.18)] floating-glass-scrolled'
+            : 'top-[16px] w-[calc(100%-0.75rem)] sm:w-[calc(100%-2rem)] max-w-[1380px] 2xl:max-w-[1440px] h-[64px] sm:h-[72px] bg-deep border border-white/[0.12] shadow-lg'
         }`}
       >
-        <nav className="w-full h-full px-3 sm:px-5 xl:px-6 flex items-center justify-between gap-2 sm:gap-3 xl:gap-4 select-none">
-          {/* LEFT BRAND IDENTITY: CIRCULAR EMBLEM + NAME (Never truncate on desktop) */}
+        <nav ref={navElRef} className="w-full h-full px-2 sm:px-5 xl:px-5 2xl:px-6 flex items-center justify-between gap-1 sm:gap-2.5 xl:gap-3 select-none">
+          {/* LEFT BRAND IDENTITY: CIRCULAR EMBLEM + NAME */}
           <div 
             onClick={() => handleNavClick('home')}
-            className="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0 min-w-max"
+            className="flex items-center gap-1.5 sm:gap-2.5 xl:gap-3 cursor-pointer group shrink min-w-0"
             role="button"
             tabIndex={0}
             onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleNavClick('home')}
-            aria-label="হোমপেজে ফিরে যান"
+            aria-label={lang === 'bn' ? 'হোমপেজে ফিরে যান' : 'Return to homepage'}
           >
             <div 
-              className={`bg-white rounded-full p-1 ring-2 ring-accent shrink-0 shadow-md transition-all duration-300 group-hover:scale-105 ${
-                isScrolled ? 'w-9 h-9 scale-[0.88]' : 'w-11 h-11 scale-100'
+              className={`bg-white rounded-full p-0.5 sm:p-1 ring-2 ring-accent shrink-0 shadow-md transition-all duration-300 group-hover:scale-105 ${
+                isScrolled ? 'w-8 h-8 sm:w-9 sm:h-9 scale-[0.92] sm:scale-[0.88]' : 'w-9 h-9 sm:w-11 sm:h-11 scale-100'
               }`}
             >
               <SchoolLogo surface="dark" />
             </div>
 
-            <div className="hidden sm:block shrink-0 transition-all duration-300">
-              <h1 className={`text-white font-bold font-bangla whitespace-nowrap leading-tight tracking-normal transition-all duration-300 group-hover:text-accent ${
-                isScrolled ? 'text-xs sm:text-sm' : 'text-xs sm:text-sm 2xl:text-base'
+            <div className="hidden sm:block min-w-0 shrink max-w-[240px] md:max-w-[300px] xl:max-w-[235px] min-[1440px]:max-w-[280px] transition-all duration-300">
+              <h1 className={`text-white font-bold font-bangla whitespace-nowrap truncate leading-tight tracking-normal transition-all duration-300 group-hover:text-accent ${
+                isScrolled
+                  ? 'text-xs sm:text-sm'
+                  : (lang === 'en' ? 'text-xs sm:text-[13px] min-[1440px]:text-sm' : 'text-xs sm:text-sm 2xl:text-base')
               }`}>
                 {lang === 'bn' ? (schoolInfo.nameBn || 'বিদ্যালয়ের নাম') : (schoolInfo.nameEn || 'School Name')}
               </h1>
-              <p className={`text-white/90 font-sans tracking-wide whitespace-nowrap transition-all duration-300 overflow-hidden ${
+              <p className={`text-white/90 font-sans tracking-wide whitespace-nowrap truncate transition-all duration-300 overflow-hidden ${
                 isScrolled 
                   ? 'opacity-0 max-h-0 -translate-y-1' 
                   : 'opacity-100 max-h-4 text-[10px] sm:text-[11px] mt-0.5 translate-y-0'
@@ -249,7 +290,7 @@ export default function Header() {
           </div>
 
           {/* CENTER: DESKTOP NAVIGATION ITEMS */}
-          <ul className="hidden xl:flex items-center gap-0.5 2xl:gap-1.5 flex-nowrap h-full">
+          <ul className={`${forceHamburger ? 'hidden' : 'hidden xl:flex'} items-center ${lang === 'en' ? 'gap-0.5 min-[1440px]:gap-1' : 'gap-0.5 2xl:gap-1.5'} flex-nowrap h-full shrink-0`}>
             {navItems.map((item) => {
               const active = isItemActive(item);
               const hasChildren = Boolean(item.children && item.children.length > 0);
@@ -258,7 +299,7 @@ export default function Header() {
               return (
                 <li 
                   key={item.id} 
-                  className="relative h-full flex items-center"
+                  className="relative h-full flex items-center shrink-0"
                   onMouseEnter={() => hasChildren && setActiveDropdown(item.id)}
                   onMouseLeave={() => hasChildren && setActiveDropdown(null)}
                 >
@@ -271,19 +312,19 @@ export default function Header() {
                     aria-label={lang === 'bn' ? item.labelBn : item.labelEn}
                     aria-haspopup={hasChildren ? 'true' : undefined}
                     aria-expanded={hasChildren ? isDropdownOpen : undefined}
-                    className={`px-2 xl:px-2.5 2xl:px-3.5 py-1.5 xl:py-2 rounded-full whitespace-nowrap transition-all duration-200 flex items-center justify-center text-center cursor-pointer focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
+                    className={`${lang === 'en' ? 'px-2 min-[1400px]:px-2.5 2xl:px-3 py-1.5 xl:py-2' : 'px-2 xl:px-2.5 2xl:px-3.5 py-1.5 xl:py-2'} rounded-full whitespace-nowrap shrink-0 transition-all duration-200 flex items-center justify-center text-center cursor-pointer focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
                       active 
                         ? 'bg-white/[0.14] text-white shadow-xs font-bold' 
                         : 'text-white/90 hover:text-white hover:bg-white/[0.08]'
                     }`}
                   >
-                    <span className="font-bangla font-semibold text-xs 2xl:text-sm leading-none flex items-center gap-1 whitespace-nowrap">
+                    <span className={`font-bangla font-semibold ${lang === 'en' ? 'text-xs min-[1440px]:text-[13px]' : 'text-xs 2xl:text-sm'} leading-none flex items-center gap-1 whitespace-nowrap`}>
                       <span>{lang === 'bn' ? item.labelBn : item.labelEn}</span>
                       {hasChildren && (
-                        <ChevronDown className={`w-3 h-3 opacity-80 transition-transform duration-150 ${isDropdownOpen ? 'rotate-180 text-accent' : ''}`} />
+                        <ChevronDown className={`w-3 h-3 opacity-80 transition-transform duration-150 shrink-0 ${isDropdownOpen ? 'rotate-180 text-accent' : ''}`} />
                       )}
                       {active && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-accent shadow-xs"></span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent shadow-xs shrink-0"></span>
                       )}
                     </span>
                   </a>
@@ -303,7 +344,7 @@ export default function Header() {
                                 e.stopPropagation();
                                 handleNavClick(child.id);
                               }}
-                              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition-all flex items-center justify-between font-bangla cursor-pointer focus-visible:outline-2 focus-visible:outline-accent ${
+                              className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition-all flex items-center justify-between gap-2 font-bangla whitespace-nowrap cursor-pointer focus-visible:outline-2 focus-visible:outline-accent ${
                                 isChildActive
                                   ? 'bg-white/[0.15] text-white font-bold shadow-xs'
                                   : 'text-white hover:text-accent hover:bg-white/[0.08]'
@@ -311,9 +352,9 @@ export default function Header() {
                             >
                               <span>{lang === 'bn' ? child.labelBn : child.labelEn}</span>
                               {isChildActive ? (
-                                <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span>
                               ) : (
-                                <ChevronRight className="w-3.5 h-3.5 opacity-90" />
+                                <ChevronRight className="w-3.5 h-3.5 opacity-90 shrink-0" />
                               )}
                             </a>
                           );
@@ -327,38 +368,38 @@ export default function Header() {
           </ul>
 
           {/* RIGHT ACTION BUTTONS */}
-          <div className="flex items-center gap-1 sm:gap-1.5 2xl:gap-2.5 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-1.5 2xl:gap-2 shrink-0">
             {/* Primary Action Button: "পোর্টাল লগইন" in Amber */}
             {authUser ? (
-              <div className="flex items-center gap-1 sm:gap-1.5">
+              <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
                 <button
                   onClick={() => handleNavClick('admin')}
-                  className={`bg-accent hover:bg-accent-hover text-accent-ink font-bold rounded-full transition-all duration-300 flex items-center gap-1.5 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
+                  className={`bg-accent hover:bg-accent-hover text-accent-ink font-bold rounded-full transition-all duration-300 flex items-center gap-1 sm:gap-1.5 whitespace-nowrap shrink-0 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
                     isScrolled 
-                      ? 'px-3 sm:px-3.5 xl:px-4 py-1.5 text-xs' 
-                      : 'px-3 sm:px-4 xl:px-5 py-1.5 xl:py-2 text-xs sm:text-sm'
+                      ? 'px-2.5 sm:px-3.5 xl:px-4 py-1.5 text-[11px] sm:text-xs' 
+                      : 'px-2.5 sm:px-3.5 min-[1440px]:px-4 py-1.5 xl:py-2 text-[11px] sm:text-xs min-[1440px]:text-sm'
                   }`}
                   title="Open CMS Dashboard"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 text-accent-ink" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-accent-ink shrink-0" />
                   <span>{lang === 'bn' ? 'ড্যাশবোর্ড' : 'Dashboard'}</span>
                 </button>
                 <button
                   onClick={logout}
-                  className="min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-danger-soft hover:text-danger border border-white/15 text-white/90 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-accent"
+                  className="w-8 h-8 min-[400px]:w-9 min-[400px]:h-9 sm:min-w-[44px] sm:min-h-[44px] rounded-full bg-white/10 hover:bg-danger-soft hover:text-danger border border-white/15 text-white/90 flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-accent"
                   title="লগআউট (Logout)"
                   aria-label="লগআউট"
                 >
-                  <LogOut className="w-4 h-4 text-white/80" />
+                  <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white/80" />
                 </button>
               </div>
             ) : (
               <button
                 onClick={() => setAuthModalOpen(true)}
-                className={`min-h-[44px] bg-accent hover:bg-accent-hover text-accent-ink font-bold rounded-full transition-all duration-300 flex items-center gap-1.5 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
+                className={`min-h-[34px] min-[400px]:min-h-[36px] sm:min-h-[42px] bg-accent hover:bg-accent-hover text-accent-ink font-bold rounded-full transition-all duration-300 flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
                   isScrolled 
-                    ? 'px-3 sm:px-3.5 xl:px-3.5 2xl:px-4 py-2 text-xs' 
-                    : 'px-3 sm:px-4 xl:px-3.5 2xl:px-5 py-2 xl:py-2 text-xs 2xl:text-sm'
+                    ? 'px-2.5 sm:px-3.5 2xl:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs' 
+                    : 'px-2.5 sm:px-4 xl:px-3.5 2xl:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs 2xl:text-sm'
                 }`}
                 title="School Portal Login"
               >
@@ -366,20 +407,20 @@ export default function Header() {
               </button>
             )}
 
-            {/* Language Switcher - Round Icon Button (Min 44px for accessibility BUG-L3) */}
+            {/* Language Switcher - Round Icon Button */}
             <button
               onClick={toggleLanguage}
-              className="min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+              className="w-8 h-8 min-[400px]:w-9 min-[400px]:h-9 sm:min-w-[44px] sm:min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
               title="ভাষা পরিবর্তন (Toggle Language)"
               aria-label="ভাষা পরিবর্তন (Toggle Language)"
             >
-              <Globe className="w-4 h-4 text-white" />
+              <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
             </button>
 
             {/* Theme Toggle Button - Round Icon Button with Palette & Preview Dot */}
             <button
               onClick={toggleTheme}
-              className="min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+              className="w-8 h-8 min-[400px]:w-9 min-[400px]:h-9 sm:min-w-[44px] sm:min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
               title={
                 theme === 'emerald'
                   ? (lang === 'bn' ? 'ইন্ডিগো থিম' : 'Switch to Indigo theme')
@@ -387,9 +428,9 @@ export default function Header() {
               }
               aria-label="রঙের থিম পরিবর্তন করুন"
             >
-              <Palette className="w-4 h-4 text-white" />
+              <Palette className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
               <span
-                className={`absolute top-2 right-2 w-2 h-2 rounded-full ring-1 ring-white/60 ${
+                className={`absolute top-1 right-1 sm:top-2 sm:right-2 w-2 h-2 rounded-full ring-1 ring-white/60 ${
                   theme === 'emerald' ? 'bg-[#FACC15]' : 'bg-[#E8B931]'
                 }`}
                 aria-hidden="true"
@@ -402,24 +443,24 @@ export default function Header() {
                 setHasUnreadNotice(false);
                 handleNavClick('notices');
               }}
-              className="min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+              className="w-8 h-8 min-[400px]:w-9 min-[400px]:h-9 sm:min-w-[44px] sm:min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
               title="নোটিফিকেশন (Notification)"
               aria-label="নোটিফিকেশন (Notification)"
             >
-              <Bell className="w-4 h-4 text-white" />
+              <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
               {hasUnreadNotice && (
-                <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-accent ring-2 ring-deep"></span>
+                <span className="absolute top-1 right-1 sm:top-2 sm:right-2 w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-accent ring-2 ring-deep"></span>
               )}
             </button>
 
-            {/* Mobile Hamburger Menu Button (Min 44px for accessibility BUG-L3) */}
+            {/* Mobile/Overflow Hamburger Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="min-w-[44px] min-h-[44px] xl:hidden rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95"
+              className={`w-8 h-8 min-[400px]:w-9 min-[400px]:h-9 sm:min-w-[44px] sm:min-h-[44px] ${forceHamburger ? 'flex' : 'flex xl:hidden'} rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white items-center justify-center shrink-0 transition-all duration-300 cursor-pointer active:scale-95`}
               aria-label="মেনু খুলুন / বন্ধ করুন"
               aria-expanded={mobileMenuOpen}
             >
-              {mobileMenuOpen ? <X className="w-4.5 h-4.5" /> : <Menu className="w-4.5 h-4.5" />}
+              {mobileMenuOpen ? <X className="w-4 h-4 sm:w-4.5 sm:h-4.5" /> : <Menu className="w-4 h-4 sm:w-4.5 sm:h-4.5" />}
             </button>
           </div>
         </nav>
@@ -467,7 +508,7 @@ export default function Header() {
                     </h2>
                     {schoolInfo.eiin && (
                       <p className="text-white/90 text-[10px] font-mono">
-                        EIIN: {schoolInfo.eiin}
+                        EIIN: {lang === 'bn' ? schoolInfo.eiin : String(schoolInfo.eiin).replace(/[০-৯]/g, d => '0123456789'['০১২৩৪৫৬৭৮৯'.indexOf(d)] ?? d)}
                       </p>
                     )}
                   </div>
@@ -524,7 +565,7 @@ export default function Header() {
                             e.preventDefault();
                             handleNavClick(item.directTab);
                           }}
-                          className={`flex-1 text-left px-3.5 py-2.5 rounded-xl text-sm font-bold transition flex items-center justify-between ${
+                          className={`flex-1 text-left px-3.5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition flex items-center justify-between ${
                             active 
                               ? 'bg-white/[0.14] text-white shadow-xs' 
                               : 'text-white hover:text-accent hover:bg-white/[0.08]'

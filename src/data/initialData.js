@@ -244,6 +244,7 @@ export const initialTeachers = [
     subjectBn: "হিসাব বিজ্ঞান ও গণিত",
     subjectEn: "Accounting & Mathematics",
     qualification: "বি.কম, এম.কম (হিসাববিজ্ঞান)",
+    qualificationEn: "B.Com., M.Com. (Accounting)",
     category: "faculty",
     phone: "01824-472200",
     email: "bonduas106644@gmail.com",
@@ -262,6 +263,7 @@ export const initialTeachers = [
     subjectBn: "ইংরেজি",
     subjectEn: "English",
     qualification: "ইংরেজি, বি.এ, বি.এড (B.A., B.Ed.)",
+    qualificationEn: "B.A. (English), B.Ed.",
     category: "faculty",
     phone: "+880 1818-450123",
     email: "solim.majumder.bdhs@gmail.com",
@@ -280,6 +282,7 @@ export const initialTeachers = [
     subjectBn: "হিসাব বিজ্ঞান",
     subjectEn: "Accounting",
     qualification: "বি.কম, বি.এড (B.Com., B.Ed.)",
+    qualificationEn: "B.Com., B.Ed.",
     category: "faculty",
     phone: "+880 1711-234567",
     email: "jahangir.alam.bdhs@gmail.com",
@@ -298,6 +301,7 @@ export const initialTeachers = [
     subjectBn: "ইসলাম শিক্ষা",
     subjectEn: "Islamic Studies",
     qualification: "এম.এ, ইসলাম শিক্ষা (M.A., Islamic Studies)",
+    qualificationEn: "M.A. (Islamic Studies)",
     category: "faculty",
     phone: "+880 1815-998877",
     email: "jafor.chowdhury.bdhs@gmail.com",
@@ -316,6 +320,7 @@ export const initialTeachers = [
     subjectBn: "ইংরেজি, হিসাব বিজ্ঞান ও বাণিজ্য",
     subjectEn: "English, Accounting, Commerce",
     qualification: "বি.কম, বি.এড, বি.পি.এড (B.Com., B.Ed., B.P.Ed.)",
+    qualificationEn: "B.Com., B.Ed., B.P.Ed.",
     category: "faculty",
     phone: "+880 1715-667788",
     email: "hanif.bhuiyan.bdhs@gmail.com",
@@ -334,6 +339,7 @@ export const initialTeachers = [
     subjectBn: "তথ্য ও যোগাযোগ প্রযুক্তি (ICT)",
     subjectEn: "Information & Communication Technology",
     qualification: "বি.কম, বি.এড (B.Com., B.Ed.)",
+    qualificationEn: "B.Com., B.Ed.",
     category: "faculty",
     phone: "+880 1912-334455",
     email: "anwar.ict.bdhs@gmail.com",
@@ -352,6 +358,7 @@ export const initialTeachers = [
     subjectBn: "সমাজ বিজ্ঞান",
     subjectEn: "Social Science",
     qualification: "বি.এ, বি.এড (B.A., B.Ed.)",
+    qualificationEn: "B.A., B.Ed.",
     category: "faculty",
     phone: "+880 1823-112233",
     email: "ayesha.siddiqa.bdhs@gmail.com",
@@ -370,6 +377,7 @@ export const initialTeachers = [
     subjectBn: "সমাজ বিজ্ঞান",
     subjectEn: "Social Science",
     qualification: "সমাজ বিজ্ঞান (B.A., Social Science)",
+    qualificationEn: "B.A. (Social Science)",
     category: "faculty",
     phone: "+880 1817-554433",
     email: "rashida.akter.bdhs@gmail.com",
@@ -388,6 +396,7 @@ export const initialTeachers = [
     subjectBn: "ভৌত বিজ্ঞান",
     subjectEn: "Physical Science",
     qualification: "এম.এসসি, বি.এড (M.Sc., B.Ed.)",
+    qualificationEn: "M.Sc., B.Ed.",
     category: "faculty",
     phone: "+880 1716-443322",
     email: "rabeya.science.bdhs@gmail.com",
@@ -406,6 +415,7 @@ export const initialTeachers = [
     subjectBn: "গণিত",
     subjectEn: "Mathematics",
     qualification: "এম.এসসি, বি.এড (M.Sc., B.Ed.)",
+    qualificationEn: "M.Sc., B.Ed.",
     category: "faculty",
     phone: "+880 1814-776655",
     email: "redowan.math.bdhs@gmail.com",
@@ -424,6 +434,7 @@ export const initialTeachers = [
     subjectBn: "বিজ্ঞান",
     subjectEn: "Science",
     qualification: "বি.এস.সি (B.Sc., Science)",
+    qualificationEn: "B.Sc. (Science)",
     category: "faculty",
     phone: "+880 1718-990011",
     email: "chandan.sarkar.bdhs@gmail.com",
@@ -442,6 +453,7 @@ export const initialTeachers = [
     subjectBn: "প্রশাসনিক কার্যক্রম ও হিসাব",
     subjectEn: "Office Administration",
     qualification: "বি.এ (B.A.)",
+    qualificationEn: "B.A.",
     category: "staff",
     phone: "+880 1712-893042",
     email: "nurul.kabir.bdhs@gmail.com",
@@ -460,6 +472,7 @@ export const initialTeachers = [
     subjectBn: "",
     subjectEn: "",
     qualification: "অফিস সহায়ক",
+    qualificationEn: "Office Support Staff",
     category: "staff",
     phone: "+880 1819-001122",
     email: "staff.bdhs@gmail.com",
@@ -478,6 +491,7 @@ export const initialTeachers = [
     subjectBn: "",
     subjectEn: "",
     qualification: "নিরাপত্তা প্রহরী",
+    qualificationEn: "Security Guard",
     category: "staff",
     phone: "+880 1711-556677",
     email: "security.bdhs@gmail.com",
@@ -496,6 +510,7 @@ export const initialTeachers = [
     subjectBn: "",
     subjectEn: "",
     qualification: "সহায়ক কর্মী",
+    qualificationEn: "Support Staff",
     category: "staff",
     phone: "+880 1813-223344",
     email: "care.bdhs@gmail.com",
@@ -514,6 +529,7 @@ export const initialTeachers = [
     subjectBn: "",
     subjectEn: "",
     qualification: "অফিস সহায়ক",
+    qualificationEn: "Office Support Staff",
     category: "staff",
     phone: "+880 1714-889900",
     email: "staff2.bdhs@gmail.com",
@@ -701,7 +717,8 @@ export const initialGallery = [
     image: "https://images.unsplash.com/photo-1562774053-701939374585?w=900&auto=format&fit=crop&q=80",
     date: "2026-09-12",
     facebookGroupOrigin: true,
-    description: "বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়ের দ্বিতল প্রধান অ্যাকাডেমিক ভবন ও সুবিশাল খেলার মাঠ।"
+    description: "বন্দুয়া দৌলতপুর উচ্চ বিদ্যালয়ের দ্বিতল প্রধান অ্যাকাডেমিক ভবন ও সুবিশাল খেলার মাঠ।",
+    descriptionEn: "Main two-story academic building and spacious playground of Bondua Daulatpur High School."
   },
   {
     id: "gal-02",
@@ -711,7 +728,8 @@ export const initialGallery = [
     image: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=900&auto=format&fit=crop&q=80",
     date: "2026-08-20",
     facebookGroupOrigin: true,
-    description: "ছাত্রদের সাদা শার্ট ও নীল প্যান্ট এবং ছাত্রীদের লাল জামা পরিহিত প্রতিদিন সকালের শৃঙ্খলামূলক অ্যাসেম্বলি।"
+    description: "ছাত্রদের সাদা শার্ট ও নীল প্যান্ট এবং ছাত্রীদের লাল জামা পরিহিত প্রতিদিন সকালের শৃঙ্খলামূলক অ্যাসেম্বলি।",
+    descriptionEn: "Disciplined daily morning assembly with boys in white shirts & blue pants and girls in red dresses."
   },
   {
     id: "gal-03",
@@ -721,7 +739,8 @@ export const initialGallery = [
     image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&auto=format&fit=crop&q=80",
     date: "2026-02-15",
     facebookGroupOrigin: true,
-    description: "ফুলগাজী উপজেলা পর্যায়ে আয়োজিত বর্ণাঢ্য ক্রীড়া প্রতিযোগিতা।"
+    description: "ফুলগাজী উপজেলা পর্যায়ে আয়োজিত বর্ণাঢ্য ক্রীড়া প্রতিযোগিতা।",
+    descriptionEn: "Colorful annual sports and athletics meet organized at the Fulgazi Upazila level."
   },
   {
     id: "gal-04",
@@ -731,7 +750,8 @@ export const initialGallery = [
     image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=900&auto=format&fit=crop&q=80",
     date: "2026-06-18",
     facebookGroupOrigin: true,
-    description: "শিক্ষার্থীদের আধুনিক তথ্যপ্রযুক্তি ও কম্পিউটার প্রশিক্ষণ।"
+    description: "শিক্ষার্থীদের আধুনিক তথ্যপ্রযুক্তি ও কম্পিউটার প্রশিক্ষণ।",
+    descriptionEn: "Hands-on information technology and computer training sessions for students."
   },
   {
     id: "gal-05",
@@ -741,7 +761,8 @@ export const initialGallery = [
     image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=900&auto=format&fit=crop&q=80",
     date: "2026-05-10",
     facebookGroupOrigin: true,
-    description: "পদার্থবিজ্ঞান ও রসায়নের আধুনিক যন্ত্রপাতি সমৃদ্ধ বিজ্ঞানাগার।"
+    description: "পদার্থবিজ্ঞান ও রসায়নের আধুনিক যন্ত্রপাতি সমৃদ্ধ বিজ্ঞানাগার।",
+    descriptionEn: "Well-equipped physics and chemistry science laboratory for practical experiments."
   },
   {
     id: "gal-06",
@@ -751,7 +772,8 @@ export const initialGallery = [
     image: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=900&auto=format&fit=crop&q=80",
     date: "2025-12-16",
     facebookGroupOrigin: true,
-    description: "দেশাত্মবোধক গান, কবিতা আবৃত্তি ও নাটক পরিবেশনা।"
+    description: "দেশাত্মবোধক গান, কবিতা আবৃত্তি ও নাটক পরিবেশনা।",
+    descriptionEn: "Patriotic songs, poetry recitation, and cultural stage performances."
   },
   {
     id: "gal-07",
@@ -761,7 +783,8 @@ export const initialGallery = [
     image: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=900&auto=format&fit=crop&q=80",
     date: "2026-02-05",
     facebookGroupOrigin: true,
-    description: "পরীক্ষার্থীদের সাফল্য কামনা ও মিলাদ মাহফিল।"
+    description: "পরীক্ষার্থীদের সাফল্য কামনা ও মিলাদ মাহফিল।",
+    descriptionEn: "Farewell reception and prayer gathering wishing academic success to SSC candidates."
   },
   {
     id: "gal-08",
@@ -771,7 +794,8 @@ export const initialGallery = [
     image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=900&auto=format&fit=crop&q=80",
     date: "2026-02-21",
     facebookGroupOrigin: true,
-    description: "২১শে ফেব্রুয়ারির প্রভাতফেরি ও শহীদ মিনারে পুষ্পস্তবক অর্পণ।"
+    description: "২১শে ফেব্রুয়ারির প্রভাতফেরি ও শহীদ মিনারে পুষ্পস্তবক অর্পণ।",
+    descriptionEn: "Morning procession and floral tributes at the Shaheed Minar on 21st February."
   }
 ];
 
@@ -1057,6 +1081,7 @@ export const initialAcademicGroups = [
     titleBn: 'বিজ্ঞান বিভাগ (Science)',
     titleEn: 'Science Discipline',
     descriptionBn: 'বিজ্ঞান বিভাগের শিক্ষার্থীদের জন্য রয়েছে অত্যাধুনিক ল্যাবরেটরি সুবিধা ও নিয়মিত ব্যবহারিক ক্লাসের সুব্যবস্থা।',
+    descriptionEn: 'Equipped with modern science laboratories and regular practical sessions for aspiring Science students.',
     subjectsBn: [
       'পদার্থবিজ্ঞান (Physics)',
       'রসায়ন (Chemistry)',
@@ -1066,6 +1091,16 @@ export const initialAcademicGroups = [
       'তথ্য ও যোগাযোগ প্রযুক্তি (ICT)',
       'বাংলাদেশ ও বিশ্বপরিচয় (BGS)',
       'ধর্ম ও নৈতিক শিক্ষা (Religion)'
+    ],
+    subjectsEn: [
+      'Physics',
+      'Chemistry',
+      'Biology',
+      'Higher Mathematics',
+      'Bangla & English',
+      'Information & Communication Technology (ICT)',
+      'Bangladesh & Global Studies (BGS)',
+      'Religion & Moral Education'
     ]
   },
   {
@@ -1073,6 +1108,7 @@ export const initialAcademicGroups = [
     titleBn: 'ব্যবসায় শিক্ষা (Business Studies)',
     titleEn: 'Business Studies Discipline',
     descriptionBn: 'ভবিষ্যতের দক্ষ হিসাববিদ, ব্যাংকার ও সফল উদ্যোক্তা তৈরির লক্ষ্যে বাস্তবমুখী ব্যবসায় শিক্ষা পাঠদান।',
+    descriptionEn: 'Practical business and financial education designed to prepare future accountants, bankers, and entrepreneurs.',
     subjectsBn: [
       'হিসাববিজ্ঞান (Accounting)',
       'ব্যবসায় উদ্যোগ (Entrepreneurship)',
@@ -1082,6 +1118,16 @@ export const initialAcademicGroups = [
       'তথ্য ও যোগাযোগ প্রযুক্তি (ICT)',
       'সাধারণ বিজ্ঞান (General Science)',
       'ধর্ম ও নৈতিক শিক্ষা (Religion)'
+    ],
+    subjectsEn: [
+      'Accounting',
+      'Business Entrepreneurship',
+      'Finance & Banking',
+      'General Mathematics',
+      'Bangla & English',
+      'Information & Communication Technology (ICT)',
+      'General Science',
+      'Religion & Moral Education'
     ]
   },
   {
@@ -1089,6 +1135,7 @@ export const initialAcademicGroups = [
     titleBn: 'মানবিক বিভাগ (Humanities)',
     titleEn: 'Humanities Discipline',
     descriptionBn: 'ইতিহাস, সংস্কৃতি, সামাজিক বিজ্ঞান ও মানবিক মূল্যবোধ বিকাশের মাধ্যমে দায়িত্বশীল নাগরিক গঠন।',
+    descriptionEn: 'Cultivating responsible citizens through history, social science, geography, civics, and human values.',
     subjectsBn: [
       'ইতিহাস ও সামাজিক বিজ্ঞান (History)',
       'ভূগোল ও পরিবেশ (Geography)',
@@ -1098,6 +1145,16 @@ export const initialAcademicGroups = [
       'তথ্য ও যোগাযোগ প্রযুক্তি (ICT)',
       'সাধারণ গণিত ও বিজ্ঞান (Math & Science)',
       'ধর্ম ও নৈতিক শিক্ষা (Religion)'
+    ],
+    subjectsEn: [
+      'History & World Civilization',
+      'Geography & Environment',
+      'Civics & Citizenship',
+      'Economics / Agriculture Studies',
+      'Bangla & English',
+      'Information & Communication Technology (ICT)',
+      'General Mathematics & Science',
+      'Religion & Moral Education'
     ]
   }
 ];

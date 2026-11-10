@@ -9,6 +9,8 @@ export function getSignatories(schoolInfo = {}, teachers = [], systemUsers = [])
   const headmasterNameBn = schoolInfo?.headmasterNameBn || 'জনাব বাহার উদ্দিন ভূঁইয়া';
   const headmasterNameEn = schoolInfo?.headmasterNameEn || 'Bahar Uddin Bhuiyan';
   const headmasterDesignationBn = schoolInfo?.headmasterDesignationBn || 'ভারপ্রাপ্ত প্রধান শিক্ষক';
+  const headmasterDesignationEn =
+    (schoolInfo?.headmasterDesignationEn || 'Acting Headmaster').replace(/\s*\([^)]*\)/g, '').trim() || 'Acting Headmaster';
   
   // Clean cursive signature based on headmaster's English name
   const headParts = headmasterNameEn.replace(/^Mr\.?\s*/i, '').trim().split(/\s+/);
@@ -52,7 +54,9 @@ export function getSignatories(schoolInfo = {}, teachers = [], systemUsers = [])
 
   // 4. Admission Convener (Admission Committee)
   const convenerNameBn = examControllerNameBn;
+  const convenerNameEn = examControllerNameEn;
   const convenerDesignationBn = 'আহ্বায়ক, ভর্তি কমিটি';
+  const convenerDesignationEn = 'Convener, Admission Committee';
   const convenerSignature = examControllerSignature;
 
   return {
@@ -60,6 +64,7 @@ export function getSignatories(schoolInfo = {}, teachers = [], systemUsers = [])
       nameBn: headmasterNameBn,
       nameEn: headmasterNameEn,
       designationBn: headmasterDesignationBn,
+      designationEn: headmasterDesignationEn,
       signature: headmasterSignature
     },
     examController: {
@@ -78,7 +83,9 @@ export function getSignatories(schoolInfo = {}, teachers = [], systemUsers = [])
     },
     admissionConvener: {
       nameBn: convenerNameBn,
+      nameEn: convenerNameEn,
       designationBn: convenerDesignationBn,
+      designationEn: convenerDesignationEn,
       signature: convenerSignature
     }
   };

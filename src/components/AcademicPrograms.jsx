@@ -13,6 +13,48 @@ import {
   Sparkles
 } from 'lucide-react';
 
+const GROUP_EN_FALLBACK = {
+  science: {
+    descriptionEn: 'Equipped with modern science laboratories and regular practical sessions for aspiring Science students.',
+    subjectsEn: [
+      'Physics',
+      'Chemistry',
+      'Biology',
+      'Higher Mathematics',
+      'Bangla & English',
+      'Information & Communication Technology (ICT)',
+      'Bangladesh & Global Studies (BGS)',
+      'Religion & Moral Education'
+    ]
+  },
+  business: {
+    descriptionEn: 'Practical business and financial education designed to prepare future accountants, bankers, and entrepreneurs.',
+    subjectsEn: [
+      'Accounting',
+      'Business Entrepreneurship',
+      'Finance & Banking',
+      'General Mathematics',
+      'Bangla & English',
+      'Information & Communication Technology (ICT)',
+      'General Science',
+      'Religion & Moral Education'
+    ]
+  },
+  humanities: {
+    descriptionEn: 'Cultivating responsible citizens through history, social science, geography, civics, and human values.',
+    subjectsEn: [
+      'History & World Civilization',
+      'Geography & Environment',
+      'Civics & Citizenship',
+      'Economics / Agriculture Studies',
+      'Bangla & English',
+      'Information & Communication Technology (ICT)',
+      'General Mathematics & Science',
+      'Religion & Moral Education'
+    ]
+  }
+};
+
 export default function AcademicPrograms() {
   const { lang, setActiveTab, academicGroups = [] } = useSchool();
   const [activeGroupTab, setActiveGroupTab] = useState('science');
@@ -31,7 +73,11 @@ export default function AcademicPrograms() {
       ...grp,
       icon,
       color,
-      subjectsBn: grp.subjectsBn || []
+      subjectsBn: grp.subjectsBn || [],
+      subjectsEn: (Array.isArray(grp.subjectsEn) && grp.subjectsEn.length > 0)
+        ? grp.subjectsEn
+        : (GROUP_EN_FALLBACK[grp.id]?.subjectsEn || grp.subjectsBn || []),
+      descriptionEn: grp.descriptionEn || GROUP_EN_FALLBACK[grp.id]?.descriptionEn || grp.titleEn || grp.titleBn
     };
   });
 
@@ -40,6 +86,7 @@ export default function AcademicPrograms() {
       titleBn: 'শেখ রাসেল ডিজিটাল ল্যাব',
       titleEn: 'Sheikh Russel ICT Lab',
       descBn: 'উচ্চগতির ইন্টারনেট সুবিধাসহ আধুনিক কম্পিউটার ল্যাব যেখানে শিক্ষার্থীরা কোডিং ও আইসিটি দক্ষতা অর্জন করে।',
+      descEn: 'Modern computer laboratory with high-speed internet where students master coding and ICT skills.',
       icon: Monitor,
       image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600&auto=format&fit=crop&q=80'
     },
@@ -47,6 +94,7 @@ export default function AcademicPrograms() {
       titleBn: 'আধুনিক বিজ্ঞান গবেষণাগার',
       titleEn: 'Equipped Science Lab',
       descBn: 'পদার্থ, রসায়ন ও জীববিজ্ঞানের সকল প্রয়োজনীয় রাসায়নিক উপাদান ও মাইক্রোস্কোপ সমৃদ্ধ ল্যাবরেটরি।',
+      descEn: 'Laboratory equipped with microscopes, instruments, and reagents for Physics, Chemistry, and Biology.',
       icon: FlaskConical,
       image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&auto=format&fit=crop&q=80'
     },
@@ -54,6 +102,7 @@ export default function AcademicPrograms() {
       titleBn: 'সমৃদ্ধ বিদ্যালয় পাঠাগার',
       titleEn: 'School Central Library',
       descBn: 'হাজারো শিক্ষণীয় বই, পত্র-পত্রিকা, এনসাইক্লোপিডিয়া ও গল্প উপন্যাসে সমৃদ্ধ শান্ত পাঠাগার।',
+      descEn: 'Quiet academic library stocked with thousands of textbooks, periodicals, encyclopedias, and literature.',
       icon: Library,
       image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600&auto=format&fit=crop&q=80'
     },
@@ -61,6 +110,7 @@ export default function AcademicPrograms() {
       titleBn: 'সুবিশাল খেলার মাঠ ও ক্রীড়া',
       titleEn: 'Spacious Sports Ground',
       descBn: 'ফুটবল, ক্রিকেট, ভলিবল ও বার্ষিক অ্যাথলেটিকস চর্চার জন্য মনোরম সবুজ খেলার মাঠ।',
+      descEn: 'Scenic green campus playground supporting football, cricket, volleyball, and annual athletics.',
       icon: Trophy,
       image: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&auto=format&fit=crop&q=80'
     }
@@ -76,7 +126,7 @@ export default function AcademicPrograms() {
             <span>{lang === 'bn' ? 'পাঠ্যক্রম ও শিক্ষাদান' : 'Curriculum & Academic Structure'}</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-extrabold font-bangla text-ink leading-tight">
-            {lang === 'bn' ? 'অ্যাকাডেমিক পাঠ্যক্রম ও গ্রুপ পরিচিতি' : 'Academic Disciplines & Disciplines Offered'}
+            {lang === 'bn' ? 'অ্যাকাডেমিক পাঠ্যক্রম ও গ্রুপ পরিচিতি' : 'Academic Disciplines & Curriculum'}
           </h2>
           <p className="text-xs sm:text-sm text-muted font-bangla mt-2">
             {lang === 'bn'
@@ -93,7 +143,13 @@ export default function AcademicPrograms() {
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {['৬ষ্ঠ শ্রেণি (Class VI)', '৭ম শ্রেণি (Class VII)', '৮ম শ্রেণি (Class VIII)', '৯ম শ্রেণি (Class IX)', '১০ম শ্রেণি (Class X)'].map((cls, idx) => (
+            {[
+              { bn: '৬ষ্ঠ শ্রেণি (Class VI)', en: 'Class VI' },
+              { bn: '৭ম শ্রেণি (Class VII)', en: 'Class VII' },
+              { bn: '৮ম শ্রেণি (Class VIII)', en: 'Class VIII' },
+              { bn: '৯ম শ্রেণি (Class IX)', en: 'Class IX' },
+              { bn: '১০ম শ্রেণি (Class X)', en: 'Class X' }
+            ].map((cls, idx) => (
               <div 
                 key={idx} 
                 className="bg-bg hover:bg-soft/60 p-4 rounded-2xl border border-line text-center transition group hover:shadow-xs"
@@ -101,9 +157,13 @@ export default function AcademicPrograms() {
                 <span className="w-9 h-9 rounded-full bg-primary text-white font-extrabold text-sm flex items-center justify-center mx-auto mb-3 shadow-sm group-hover:bg-accent group-hover:text-ink transition-colors">
                   {lang === 'bn' ? ['৬', '৭', '৮', '৯', '১০'][idx] : (idx + 6)}
                 </span>
-                <h4 className="text-xs sm:text-sm font-bold font-bangla text-ink group-hover:text-deep transition">{cls}</h4>
+                <h4 className="text-xs sm:text-sm font-bold font-bangla text-ink group-hover:text-deep transition">
+                  {lang === 'bn' ? cls.bn : cls.en}
+                </h4>
                 <p className="text-[11px] text-muted mt-1 font-bangla">
-                  {idx >= 3 ? 'বিজ্ঞান / মানবিক / ব্যবসায় শিক্ষা' : 'সাধারণ সমন্বিত পাঠ্যক্রম'}
+                  {lang === 'bn'
+                    ? (idx >= 3 ? 'বিজ্ঞান / মানবিক / ব্যবসায় শিক্ষা' : 'সাধারণ সমন্বিত পাঠ্যক্রম')
+                    : (idx >= 3 ? 'Science / Humanities / Business Studies' : 'General Integrated Curriculum')}
                 </p>
               </div>
             ))}
@@ -165,7 +225,7 @@ export default function AcademicPrograms() {
                 </h4>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {grp.subjectsBn.map((subj, i) => (
+                  {(lang === 'bn' ? grp.subjectsBn : grp.subjectsEn).map((subj, i) => (
                     <div key={i} className="flex items-center gap-2.5 bg-bg p-3 rounded-xl border border-line text-xs font-bangla text-ink">
                       <CheckCircle className="w-4 h-4 text-primary shrink-0" />
                       <span className="font-medium">{subj}</span>
@@ -184,7 +244,9 @@ export default function AcademicPrograms() {
               {lang === 'bn' ? 'আমাদের অত্যাধুনিক সুবিধাসমূহ' : 'School Infrastructure & Campus Facilities'}
             </h3>
             <p className="text-xs text-muted font-bangla mt-1">
-              শিক্ষার্থীদের মানসম্মত শিক্ষার জন্য রয়েছে প্রয়োজনীয় আধুনিক পরিকাঠামো।
+              {lang === 'bn'
+                ? 'শিক্ষার্থীদের মানসম্মত শিক্ষার জন্য রয়েছে প্রয়োজনীয় আধুনিক পরিকাঠামো।'
+                : 'Modern campus infrastructure designed for quality secondary education.'}
             </p>
           </div>
 
@@ -200,10 +262,10 @@ export default function AcademicPrograms() {
                 </div>
                 <div className="p-5 space-y-2">
                   <h4 className="text-sm font-bold font-bangla text-ink group-hover:text-primary transition">
-                    {fac.titleBn}
+                    {lang === 'bn' ? fac.titleBn : fac.titleEn}
                   </h4>
                   <p className="text-xs text-muted font-bangla leading-relaxed line-clamp-3">
-                    {fac.descBn}
+                    {lang === 'bn' ? fac.descBn : fac.descEn}
                   </p>
                 </div>
               </div>
