@@ -131,79 +131,83 @@ export default function HeroSlider() {
                     )}
 
                     {/* Call to Actions - CMS-Driven Dynamic Buttons */}
-                    <div className="pt-2 flex flex-wrap items-center gap-2 sm:gap-3">
-                      {heroConfig.primaryBtn?.visible !== false && (
-                        <button
-                          tabIndex={isActive ? 0 : -1}
-                          onClick={() => {
-                            const tgt = (heroConfig.primaryBtn?.target || '#admission').replace('#', '');
-                            setActiveTab(tgt);
-                          }}
-                          className="btn-accent px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-base flex items-center gap-1.5 sm:gap-2 font-bangla shadow-md cursor-pointer rounded-lg"
-                        >
-                          <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-ink" />
-                          <span>
-                            {(lang === 'bn' 
-                              ? (heroConfig.primaryBtn?.labelBn || 'অনলাইন ভর্তি আবেদন {year}') 
-                              : (heroConfig.primaryBtn?.labelEn || 'Apply for Admission {year}')
-                            ).replace('{year}', admYear)}
-                          </span>
-                        </button>
-                      )}
+                    <div className="pt-2 space-y-3">
+                      <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+                        {heroConfig.primaryBtn?.visible !== false && (
+                          <button
+                            tabIndex={isActive ? 0 : -1}
+                            onClick={() => {
+                              const tgt = (heroConfig.primaryBtn?.target || '#admission').replace('#', '');
+                              setActiveTab(tgt);
+                            }}
+                            className="bg-accent hover:bg-accent-hover text-accent-ink font-bold border border-transparent px-4 sm:px-5 py-2.5 rounded-lg text-xs sm:text-sm leading-6 inline-flex items-center justify-center gap-2 font-bangla shadow-md transition cursor-pointer whitespace-nowrap"
+                          >
+                            <FileText className="w-4 h-4 shrink-0 text-accent-ink" />
+                            <span>
+                              {(lang === 'bn' 
+                                ? (heroConfig.primaryBtn?.labelBn || 'অনলাইন ভর্তি আবেদন {year}') 
+                                : (heroConfig.primaryBtn?.labelEn || 'Apply for Admission {year}')
+                              ).replace('{year}', admYear)}
+                            </span>
+                          </button>
+                        )}
 
-                      {heroConfig.secondaryBtn?.visible !== false && (
-                        <button
-                          tabIndex={isActive ? 0 : -1}
-                          onClick={() => {
-                            const tgt = (heroConfig.secondaryBtn?.target || '#results').replace('#', '');
-                            setActiveTab(tgt);
-                          }}
-                          className="bg-white/10 hover:bg-white/20 text-white font-semibold px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-xs sm:text-base border border-white/40 shadow-sm transition flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer"
-                        >
-                          <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                          <span>
-                            {lang === 'bn' 
-                              ? (heroConfig.secondaryBtn?.labelBn || 'ফলাফল অনুসন্ধান') 
-                              : (heroConfig.secondaryBtn?.labelEn || 'Check Results')}
-                          </span>
-                        </button>
-                      )}
+                        {heroConfig.secondaryBtn?.visible !== false && (
+                          <button
+                            tabIndex={isActive ? 0 : -1}
+                            onClick={() => {
+                              const tgt = (heroConfig.secondaryBtn?.target || '#results').replace('#', '');
+                              setActiveTab(tgt);
+                            }}
+                            className="bg-white/10 hover:bg-white/20 text-white font-semibold border border-white/40 hover:border-white/60 px-4 sm:px-5 py-2.5 rounded-lg text-xs sm:text-sm leading-6 inline-flex items-center justify-center gap-2 font-bangla shadow-sm backdrop-blur-xs transition cursor-pointer whitespace-nowrap"
+                          >
+                            <GraduationCap className="w-4 h-4 shrink-0 text-white" />
+                            <span>
+                              {lang === 'bn' 
+                                ? (heroConfig.secondaryBtn?.labelBn || 'ফলাফল অনুসন্ধান') 
+                                : (heroConfig.secondaryBtn?.labelEn || 'Check Results')}
+                            </span>
+                          </button>
+                        )}
 
-                      {heroConfig.tertiaryBtn?.visible !== false && (
-                        <button
-                          tabIndex={isActive ? 0 : -1}
-                          onClick={() => {
-                            const tgt = (heroConfig.tertiaryBtn?.target || '#uniform').replace('#', '');
-                            setActiveTab(tgt);
-                          }}
-                          className="text-white hover:text-primary px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 sm:gap-2 font-bangla cursor-pointer"
-                        >
-                          <Shirt className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                          <span>
-                            {lang === 'bn' 
-                              ? (heroConfig.tertiaryBtn?.labelBn || 'পোশাক নীতিমালা') 
-                              : (heroConfig.tertiaryBtn?.labelEn || 'Dress Code')}
-                          </span>
-                        </button>
-                      )}
+                        {heroConfig.tertiaryBtn?.visible !== false && (
+                          <button
+                            tabIndex={isActive ? 0 : -1}
+                            onClick={() => {
+                              const tgt = (heroConfig.tertiaryBtn?.target || '#uniform').replace('#', '');
+                              setActiveTab(tgt);
+                            }}
+                            className="bg-white/10 hover:bg-white/20 text-white font-semibold border border-white/40 hover:border-white/60 px-4 sm:px-5 py-2.5 rounded-lg text-xs sm:text-sm leading-6 inline-flex items-center justify-center gap-2 font-bangla shadow-sm backdrop-blur-xs transition cursor-pointer whitespace-nowrap"
+                          >
+                            <Shirt className="w-4 h-4 shrink-0 text-white" />
+                            <span>
+                              {lang === 'bn' 
+                                ? (heroConfig.tertiaryBtn?.labelBn || 'পোশাক নীতিমালা') 
+                                : (heroConfig.tertiaryBtn?.labelEn || 'Dress Code')}
+                            </span>
+                          </button>
+                        )}
+                      </div>
 
                       {heroConfig.socialBtn?.visible !== false && (schoolInfo.facebookGroupUrl || heroConfig.socialBtn?.url) && (
-                        <a
-                          tabIndex={isActive ? 0 : -1}
-                          href={heroConfig.socialBtn?.url || schoolInfo.facebookGroupUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-white hover:text-accent font-semibold px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 sm:gap-2"
-                          title="Join Community"
-                          aria-label="ফেসবুক কমিউনিটিতে যান"
-                        >
-                          <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                          <span className="hidden sm:inline">
-                            {lang === 'bn' 
-                              ? (heroConfig.socialBtn?.labelBn || 'ফেসবুক গ্রুপ') 
-                              : (heroConfig.socialBtn?.labelEn || 'Facebook Group')}
-                          </span>
-                        </a>
+                        <div>
+                          <a
+                            tabIndex={isActive ? 0 : -1}
+                            href={heroConfig.socialBtn?.url || schoolInfo.facebookGroupUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-white/90 hover:text-accent hover:underline underline-offset-4 text-xs sm:text-sm font-semibold transition inline-flex items-center gap-1.5 font-bangla whitespace-nowrap"
+                            title="Join Community"
+                            aria-label={lang === 'bn' ? 'অফিসিয়াল ফেসবুক গ্রুপে যান' : 'Visit Official Facebook Group'}
+                          >
+                            <Share2 className="w-4 h-4 shrink-0" />
+                            <span>
+                              {lang === 'bn' 
+                                ? (heroConfig.socialBtn?.labelBn || 'অফিসিয়াল ফেসবুক গ্রুপ') 
+                                : (heroConfig.socialBtn?.labelEn || 'Official Facebook Group')}
+                            </span>
+                          </a>
+                        </div>
                       )}
                     </div>
                   </div>
