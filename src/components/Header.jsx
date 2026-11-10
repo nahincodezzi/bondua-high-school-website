@@ -4,6 +4,7 @@ import { useSchool } from '../context/useSchool';
 import { 
   Globe, 
   Palette, 
+  LogIn,
   LogOut, 
   Menu, 
   X, 
@@ -247,15 +248,15 @@ export default function Header() {
             : '-translate-x-1/2 translate-y-0'
         } ${
           isScrolled
-            ? 'top-[10px] w-[calc(100%-0.75rem)] sm:w-[calc(100%-1.5rem)] max-w-[1280px] min-[1440px]:max-w-[1360px] h-[56px] sm:h-[58px] bg-deep/90 backdrop-blur-[14px] backdrop-saturate-[140%] border border-white/[0.14] shadow-[0_12px_32px_rgba(0,0,0,0.18)] floating-glass-scrolled'
-            : 'top-[16px] w-[calc(100%-0.75rem)] sm:w-[calc(100%-2rem)] max-w-[1380px] 2xl:max-w-[1440px] h-[64px] sm:h-[72px] bg-deep border border-white/[0.12] shadow-lg'
+            ? 'top-[10px] w-[calc(100%-0.5rem)] min-[360px]:w-[calc(100%-0.75rem)] sm:w-[calc(100%-1.5rem)] max-w-[1280px] min-[1440px]:max-w-[1360px] h-[56px] sm:h-[58px] bg-deep/90 backdrop-blur-[14px] backdrop-saturate-[140%] border border-white/[0.14] shadow-[0_12px_32px_rgba(0,0,0,0.18)] floating-glass-scrolled'
+            : 'top-[16px] w-[calc(100%-0.5rem)] min-[360px]:w-[calc(100%-0.75rem)] sm:w-[calc(100%-2rem)] max-w-[1380px] 2xl:max-w-[1440px] h-[64px] sm:h-[72px] bg-deep border border-white/[0.12] shadow-lg'
         }`}
       >
-        <nav ref={navElRef} className="w-full h-full px-2 sm:px-5 xl:px-5 2xl:px-6 flex items-center justify-between gap-1 sm:gap-2.5 xl:gap-3 select-none">
+        <nav ref={navElRef} className="w-full h-full px-2 sm:px-5 xl:px-5 2xl:px-6 flex items-center justify-between gap-1.5 sm:gap-2.5 xl:gap-3 select-none">
           {/* LEFT BRAND IDENTITY: CIRCULAR EMBLEM + NAME */}
           <div 
             onClick={() => handleNavClick('home')}
-            className="flex items-center gap-1.5 sm:gap-2.5 xl:gap-3 cursor-pointer group shrink min-w-0"
+            className="flex items-center gap-1.5 sm:gap-2.5 xl:gap-3 cursor-pointer group flex-1 xl:flex-initial min-w-0"
             role="button"
             tabIndex={0}
             onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleNavClick('home')}
@@ -263,21 +264,21 @@ export default function Header() {
           >
             <div 
               className={`bg-white rounded-full p-0.5 sm:p-1 ring-2 ring-accent shrink-0 shadow-md transition-all duration-300 group-hover:scale-105 ${
-                isScrolled ? 'w-8 h-8 sm:w-9 sm:h-9 scale-[0.92] sm:scale-[0.88]' : 'w-9 h-9 sm:w-11 sm:h-11 scale-100'
+                isScrolled ? 'w-7 h-7 min-[360px]:w-8 min-[360px]:h-8 sm:w-9 sm:h-9 scale-[0.95] sm:scale-[0.88]' : 'w-8 h-8 min-[360px]:w-9 min-[360px]:h-9 sm:w-11 sm:h-11 scale-100'
               }`}
             >
               <SchoolLogo surface="dark" />
             </div>
 
-            <div className="hidden sm:block min-w-0 shrink max-w-[240px] md:max-w-[300px] xl:max-w-[235px] min-[1440px]:max-w-[280px] transition-all duration-300">
-              <h1 className={`text-white font-bold font-bangla whitespace-nowrap truncate leading-tight tracking-normal transition-all duration-300 group-hover:text-accent ${
+            <div className="flex-1 min-w-0 md:flex-initial md:max-w-[300px] xl:max-w-[235px] min-[1440px]:max-w-[280px] transition-all duration-300">
+              <h1 className={`text-white font-bold font-bangla line-clamp-2 md:line-clamp-none md:whitespace-nowrap md:truncate leading-[1.2] md:leading-tight tracking-normal transition-all duration-300 group-hover:text-accent ${
                 isScrolled
-                  ? 'text-xs sm:text-sm'
-                  : (lang === 'en' ? 'text-xs sm:text-[13px] min-[1440px]:text-sm' : 'text-xs sm:text-sm 2xl:text-base')
+                  ? 'text-[13px] sm:text-sm'
+                  : (lang === 'en' ? 'text-[13px] sm:text-[13px] min-[1440px]:text-sm' : 'text-[13px] sm:text-sm 2xl:text-base')
               }`}>
                 {lang === 'bn' ? (schoolInfo.nameBn || 'বিদ্যালয়ের নাম') : (schoolInfo.nameEn || 'School Name')}
               </h1>
-              <p className={`text-white/90 font-sans tracking-wide whitespace-nowrap truncate transition-all duration-300 overflow-hidden ${
+              <p className={`hidden md:block text-white/90 font-sans tracking-wide whitespace-nowrap truncate transition-all duration-300 overflow-hidden ${
                 isScrolled 
                   ? 'opacity-0 max-h-0 -translate-y-1' 
                   : 'opacity-100 max-h-4 text-[10px] sm:text-[11px] mt-0.5 translate-y-0'
@@ -369,58 +370,61 @@ export default function Header() {
 
           {/* RIGHT ACTION BUTTONS */}
           <div className="flex items-center gap-1 sm:gap-1.5 2xl:gap-2 shrink-0">
-            {/* Primary Action Button: "পোর্টাল লগইন" in Amber */}
+            {/* Primary Action Button: "পোর্টাল লগইন" (icon-only below sm to keep brand name visible) */}
             {authUser ? (
               <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
                 <button
                   onClick={() => handleNavClick('admin')}
-                  className={`bg-accent hover:bg-accent-hover text-accent-ink font-bold rounded-full transition-all duration-300 flex items-center gap-1 sm:gap-1.5 whitespace-nowrap shrink-0 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
+                  className={`w-7 h-7 min-[360px]:w-8 min-[360px]:h-8 sm:w-auto sm:h-auto bg-accent hover:bg-accent-hover text-accent-ink font-bold rounded-full transition-all duration-300 flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap shrink-0 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
                     isScrolled 
-                      ? 'px-2.5 sm:px-3.5 xl:px-4 py-1.5 text-[11px] sm:text-xs' 
-                      : 'px-2.5 sm:px-3.5 min-[1440px]:px-4 py-1.5 xl:py-2 text-[11px] sm:text-xs min-[1440px]:text-sm'
+                      ? 'p-0 sm:px-3.5 xl:px-4 sm:py-1.5 text-[11px] sm:text-xs' 
+                      : 'p-0 sm:px-3.5 min-[1440px]:px-4 sm:py-1.5 xl:py-2 text-[11px] sm:text-xs min-[1440px]:text-sm'
                   }`}
-                  title="Open CMS Dashboard"
+                  title={lang === 'bn' ? 'ড্যাশবোর্ড খুলুন' : 'Open CMS Dashboard'}
+                  aria-label={lang === 'bn' ? 'ড্যাশবোর্ড খুলুন' : 'Open CMS Dashboard'}
                 >
                   <ShieldCheck className="w-3.5 h-3.5 text-accent-ink shrink-0" />
-                  <span>{lang === 'bn' ? 'ড্যাশবোর্ড' : 'Dashboard'}</span>
+                  <span className="hidden sm:inline">{lang === 'bn' ? 'ড্যাশবোর্ড' : 'Dashboard'}</span>
                 </button>
                 <button
                   onClick={logout}
-                  className="w-8 h-8 min-[400px]:w-9 min-[400px]:h-9 sm:min-w-[44px] sm:min-h-[44px] rounded-full bg-white/10 hover:bg-danger-soft hover:text-danger border border-white/15 text-white/90 flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-accent"
+                  className="hidden sm:flex sm:min-w-[44px] sm:min-h-[44px] rounded-full bg-white/10 hover:bg-danger-soft hover:text-danger border border-white/15 text-white/90 items-center justify-center shrink-0 transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-accent"
                   title="লগআউট (Logout)"
                   aria-label="লগআউট"
                 >
-                  <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white/80" />
+                  <LogOut className="w-4 h-4 text-white/80" />
                 </button>
               </div>
             ) : (
               <button
                 onClick={() => setAuthModalOpen(true)}
-                className={`min-h-[34px] min-[400px]:min-h-[36px] sm:min-h-[42px] bg-accent hover:bg-accent-hover text-accent-ink font-bold rounded-full transition-all duration-300 flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
+                className={`w-7 h-7 min-[360px]:w-8 min-[360px]:h-8 sm:w-auto sm:h-auto sm:min-h-[42px] bg-accent hover:bg-accent-hover text-accent-ink font-bold rounded-full transition-all duration-300 flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer shadow-xs hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${
                   isScrolled 
-                    ? 'px-2.5 sm:px-3.5 2xl:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs' 
-                    : 'px-2.5 sm:px-4 xl:px-3.5 2xl:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs 2xl:text-sm'
+                    ? 'p-0 sm:px-3.5 2xl:px-4 sm:py-2 text-[11px] sm:text-xs' 
+                    : 'p-0 sm:px-4 xl:px-3.5 2xl:px-5 sm:py-2 text-[11px] sm:text-xs 2xl:text-sm'
                 }`}
-                title="School Portal Login"
+                title={lang === 'bn' ? 'পোর্টাল লগইন' : 'School Portal Login'}
+                aria-label={lang === 'bn' ? 'পোর্টাল লগইন' : 'School Portal Login'}
               >
-                <span>{lang === 'bn' ? 'পোর্টাল লগইন' : 'Portal Login'}</span>
+                <LogIn className="w-3.5 h-3.5 sm:hidden text-accent-ink shrink-0" />
+                <span className="hidden sm:inline">{lang === 'bn' ? 'পোর্টাল লগইন' : 'Portal Login'}</span>
               </button>
             )}
 
             {/* Language Switcher - Round Icon Button */}
             <button
               onClick={toggleLanguage}
-              className="w-8 h-8 min-[400px]:w-9 min-[400px]:h-9 sm:min-w-[44px] sm:min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+              className="w-7 h-7 min-[360px]:w-8 min-[360px]:h-8 sm:min-w-[44px] sm:min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
               title="ভাষা পরিবর্তন (Toggle Language)"
               aria-label="ভাষা পরিবর্তন (Toggle Language)"
             >
               <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
             </button>
 
-            {/* Theme Toggle Button - Round Icon Button with Palette & Preview Dot */}
+            {/* Theme Toggle Button - Round Icon Button with Palette & Preview Dot (available inside Menu drawer below 375px) */}
             <button
               onClick={toggleTheme}
-              className="w-8 h-8 min-[400px]:w-9 min-[400px]:h-9 sm:min-w-[44px] sm:min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+              className="hidden min-[375px]:flex w-8 h-8 sm:min-w-[44px] sm:min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white items-center justify-center shrink-0 transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
               title={
                 theme === 'emerald'
                   ? (lang === 'bn' ? 'ইন্ডিগো থিম' : 'Switch to Indigo theme')
@@ -443,7 +447,7 @@ export default function Header() {
                 setHasUnreadNotice(false);
                 handleNavClick('notices');
               }}
-              className="w-8 h-8 min-[400px]:w-9 min-[400px]:h-9 sm:min-w-[44px] sm:min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+              className="w-7 h-7 min-[360px]:w-8 min-[360px]:h-8 sm:min-w-[44px] sm:min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer relative active:scale-95 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
               title="নোটিফিকেশন (Notification)"
               aria-label="নোটিফিকেশন (Notification)"
             >
@@ -456,7 +460,7 @@ export default function Header() {
             {/* Mobile/Overflow Hamburger Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`w-8 h-8 min-[400px]:w-9 min-[400px]:h-9 sm:min-w-[44px] sm:min-h-[44px] ${forceHamburger ? 'flex' : 'flex xl:hidden'} rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white items-center justify-center shrink-0 transition-all duration-300 cursor-pointer active:scale-95`}
+              className={`w-7 h-7 min-[360px]:w-8 min-[360px]:h-8 sm:min-w-[44px] sm:min-h-[44px] ${forceHamburger ? 'flex' : 'flex xl:hidden'} rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white items-center justify-center shrink-0 transition-all duration-300 cursor-pointer active:scale-95`}
               aria-label="মেনু খুলুন / বন্ধ করুন"
               aria-expanded={mobileMenuOpen}
             >
