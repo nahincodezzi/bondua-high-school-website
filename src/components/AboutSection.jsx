@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSchool } from '../context/useSchool';
 import { createEducatorAvatar } from '../utils/avatarGenerator';
-import FacultyDirectory from './FacultyDirectory';
 import { 
   Target, 
   Eye, 
@@ -36,7 +35,6 @@ export default function AboutSection() {
   });
 
   return (
-    <>
     <section className="py-12 sm:py-16 text-ink relative z-10 font-sans min-h-[700px]">
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         {/* Section Header */}
@@ -207,8 +205,8 @@ export default function AboutSection() {
               <div className="pt-2 flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={() => {
-                    setActiveTab('teachers');
-                    document.getElementById('teachers')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    setActiveTab('faculty');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
                   className="flex-1 btn-gold py-2.5 px-4 rounded-xl text-xs font-bangla transition text-center cursor-pointer shadow-sm font-bold min-h-[44px] flex items-center justify-center gap-1.5"
                 >
@@ -305,9 +303,5 @@ export default function AboutSection() {
         )}
       </div>
     </section>
-
-    {/* Teachers & Staff Council Section under About (#about -> #teachers) */}
-    <FacultyDirectory sectionId="teachers" />
-    </>
   );
 }

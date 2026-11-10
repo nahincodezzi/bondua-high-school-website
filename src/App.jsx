@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useEffect } from 'react';
+import React, { Suspense, lazy } from 'react';
 import { SchoolProvider } from './context/SchoolContext';
 import { useSchool } from './context/useSchool';
 import Header from './components/Header';
@@ -25,18 +25,6 @@ const AdminLayout = lazy(() => import('./components/AdminPortal/AdminLayout'));
 
 function MainApp() {
   const { activeTab, authUser } = useSchool();
-
-  useEffect(() => {
-    if (activeTab === 'teachers') {
-      const timer = setTimeout(() => {
-        const el = document.getElementById('teachers');
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 60);
-      return () => clearTimeout(timer);
-    }
-  }, [activeTab]);
 
   // If in admin mode, show CMS & ERP management workspace
   if (authUser && activeTab === 'admin') {
@@ -94,17 +82,16 @@ function MainApp() {
               <UniformSection />
               <NoticeBoard />
               <AcademicPrograms />
-              <FacultyDirectory sectionId="home-teachers" />
               <Gallery />
               <ContactSection />
             </>
           )}
 
           {activeTab === 'uniform' && <UniformSection />}
-          {(activeTab === 'about' || activeTab === 'teachers') && <AboutSection />}
+          {activeTab === 'about' && <AboutSection />}
           {activeTab === 'notices' && <NoticeBoard />}
           {activeTab === 'academics' && <AcademicPrograms />}
-          {activeTab === 'faculty' && <FacultyDirectory sectionId="teachers" />}
+          {(activeTab === 'faculty' || activeTab === 'teachers') && <FacultyDirectory sectionId="teachers" />}
           {activeTab === 'admission' && <OnlineAdmission />}
           {activeTab === 'results' && <ResultSearch />}
           {activeTab === 'gallery' && <Gallery />}
